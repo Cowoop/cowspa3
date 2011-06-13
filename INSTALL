@@ -1,0 +1,8 @@
+sudo apt-get install python3-dev
+virtualenv cowspa
+cd cowspa
+wget https://bitbucket.org/rafacv/werkzeug-python3/get/tip.tar.bz2
+wget https://download.github.com/ipython-ipython-py3k-9c4fead.tar.gz
+pip install tip.tar.bz2
+pip install ipython-ipython-py3k-9c4fead.tar.gz
+pip install psycopg2

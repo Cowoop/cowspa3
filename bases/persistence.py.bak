@@ -1,0 +1,195 @@
+import psycopg2
+
+from common.helpers import odict
+
+class Store(object):
+    def setup(self):
+        raise NotImplemented
+    def add(self, data):
+        raise NotImplemented
+    def get(self, id, fields, hashrows=True, execute=True):
+        """
+        returns dict keyed by field names
+        """
+        raise NotImplemented
+    def get_one_by(self, crit, fields=None, hashrows=True, execute=True):
+        """
+        crit: eg. name='Joe', lang='en'
+        -> odict
+        """
+    def get_one_by_safe(self, crit, fields=None, hashrows=True, execute=True):
+        """
+        """
+        try:
+            return self.get_one_by(crit, fields, hashrows, execute)
+        except Exception as err:
+            pass
+    def get_many(self, ids, fields, hashrows=True, execute=True):
+        """
+        returns list of dicts keyed by field names
+        """
+        raise NotImplemented
+    def get_all(self):
+        """
+        returns list of dicts keyed by field names
+        """
+    def get_by(self, crit, fields, hashrows=True, execute=True):
+        """
+        @crit: criteria dict. all records matching with crit field key-values are returned
+        returns list of dicts keyed by field names
+        """
+        raise NotImplemented
+    def get_by_clause(self, clause, fields, hashrows=True, execute=True):
+        raise NotImplemented
+    def update(self, execute=True, **mod_data):
+        raise NotImplemented
+    def remove(self, id, execute=True):
+        raise NotImplemented
+    def remove_by(self, id, execute=True):
+        raise NotImplemented
+    def query_construct(self, q, values):
+        raise NotImplemented
+    def query_exec(self, q, values, hashrows=True, log=False):
+        """
+        @q: object representing query to be executed
+        @log: logs the query
+        """
+        raise NotImplemented
+    def count(self):
+        raise NotImplemented
+    def destroy(self):
+        raise NotImplemented
+
+
+class PGStore(Store):
+
+    odicter = odict
+    cursor_getter = None # override
+    schema = {}
+
+    def __init__(self):
+        if not self.table_name:
+            self.table_name = self.__name__.lower()
+        self.load_schema()
+
+    def load_schema(self, cursor=None):
+        cursor = cursor or self.cursor_getter()
+        q = "select 1 from information_schema.tables where table_name = %s"
+        cursor.execute(q, (self.table_name,))
+        if not cursor.fetchone():
+            self.setup(cursor)
+        q = "select column_name, column_default, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_name=%s"
+        cursor.execute(q, (self.table_name,))
+        cols = cursor.fetchall()
+        schema = {}
+        for name, column_default, max_len in cols:
+            schema[name] = odict(name=name, max_len=max_len)
+            if name == 'id' and column_default == "nextval('%s_id_seq'::regclass)" % self.table_name:
+                self.auto_id = True
+        self.schema = schema
+
+    def setup(self, cursor=None):
+        cursor = cursor or self.cursor_getter()
+        print("Setting up: ", self.table_name)
+        q = "CREATE TABLE %(table_name)s (%(sql)s)" % dict(table_name=self.table_name, sql=self.create_sql)
+        try:
+            self.query_exec(q)
+        except psycopg2.ProgrammingError:
+            print(q)
+            raise
+
+    def fields2cols(self, fields):
+        cols_str = '*'
+        if fields:
+            cols_str = ', '.join(fields)
+        return cols_str
+
+    def query_exec(self, q, values=None, log=False):
+        """
+        @q: object representing query to be executed
+        @log: logs the query
+        """
+        cursor = self.cursor_getter()
+        try:
+            cursor.execute(q, values)
+        except psycopg2.ProgrammingError:
+            print(q)
+            raise
+        if cursor.description:
+            cols = (r[0] for r in cursor.description)
+            values = cursor.fetchall()
+            return self.odicter(list(zip(cols, values)))
+
+    def add(self, data):
+        cols = list(data.keys())
+        cols_str = ', '.join(cols)
+        values_str = ', '.join( ['%s' for i in cols] )
+        q = 'INSERT INTO %(table_name)s (%(cols)s) VALUES (%(values_str)s)' % \
+            dict(table_name=self.table_name, cols=cols_str, values_str=values_str)
+        values = tuple(data[k] for k in cols)
+        print(q)
+        self.query_exec(q, values)
+        if self.auto_id:
+            cursor = self.cursor_getter()
+            q = 'SELECT lastval()'
+            cursor.execute(q)
+            oid = cursor.fetchone()[0]
+            return oid
+        return True
+
+    def get(self, oid, fields=None, hashrows=True, execute=True):
+        """
+        oid: object id. match with id field of row.
+        fields: fields to include in result. None return all.
+        returns jsonable odict keyed by field names
+        """
+        cols_str = self.fields2cols(fields)
+        q = "SELECT %(cols_str)s FROM %(table_name)s WHERE id = %%s" %dict(table_name=self.table_name, cols_str=cols_str)
+        return self.query_exec(q, (oid,))
+
+    def get_one_by(self, crit, fields=None, hashrows=True, execute=True):
+        """
+        crit: eg. name='Joe', lang='en'
+        -> odict
+        """
+    def get_one_by_safe(self, crit, fields=None, hashrows=True, execute=True):
+        """
+        """
+        try:
+            return self.get_one_by(crit, fields, hashrows, execute)
+        except Exception as err:
+            pass
+    def get_many(self, ids, fields, hashrows=True, execute=True):
+        """
+        returns list of dicts keyed by field names
+        """
+        raise NotImplemented
+    def get_all(self):
+        """
+        returns list of dicts keyed by field names
+        """
+    def get_by(self, crit, fields, hashrows=True, execute=True):
+        """
+        @crit: criteria dict. all records matching with crit field key-values are returned
+        returns list of dicts keyed by field names
+        """
+        raise NotImplemented
+    def get_by_clause(self, clause, fields, hashrows=True, execute=True):
+        raise NotImplemented
+    def update(self, execute=True, **mod_data):
+        raise NotImplemented
+    def remove(self, id, execute=True):
+        raise NotImplemented
+    def remove_by(self, id, execute=True):
+        raise NotImplemented
+    def query_construct(self, conn, q):
+        raise NotImplemented
+
+    def count(self):
+        raise NotImplemented
+
+    def destroy(self, cursor=None):
+        cursor = self.cursor_getter()
+        print("Destroying: ", self.table_name)
+        q = 'DROP TABLE ' + self.table_name
+        self.query_exec(q)
