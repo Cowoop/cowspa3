@@ -233,6 +233,7 @@ class Price(PGStore):
     cost NUMERIC(16, 2),
     state INTEGER default 1 NOT NULL
     """
+# INCOMPLETE Schemas
 
 class Usage(PGStore):
     create_sql = """
@@ -246,6 +247,10 @@ class Usage(PGStore):
 class Invoice(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
+    usage_id INTEGER,
+    usage_text TEXT,
+    cost NUMERIC(16, 2)
+    """
 
 #class Activity(PGStore):
 #    name = Attribute(required=True)
