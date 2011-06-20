@@ -2,16 +2,23 @@ import bases.persistence
 
 PGStore = bases.persistence.PGStore
 
-cursor_getter = lambda x: env.context.pgcursor
+known_stores = {}
+
+def cursor_getter(*ingored):
+    return env.context.pgcursor
 
 class PGStore(PGStore):
     cursor_getter = cursor_getter
+    def __init__(self):
+        store_name = self.__class__.__name__.lower() + '_store'
+        known_stores[store_name] = self
 
+# using VARCHAR for username ensures indexing does not fail due to larger text size
 class User(PGStore):
     table_name = "account"
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    username TEXT NOT NULL UNIQUE,
+    username VARCHAR(255) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     state INTEGER default 1 NOT NULL
     """
@@ -69,7 +76,7 @@ class MemberProfile(PGStore):
     twitter TEXT[2],
     facebook TEXT[2],
     linkedin TEXT[2],
-    use_gravtar boolean default false
+    use_gravtar BOOLEAN default false
     """
 
 # Container objects
@@ -162,7 +169,7 @@ class Biz(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    enabled boolean default true NOT NULL,
+    enabled BOOLEAN default true NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     logo TEXT,
     contact INTEGER
@@ -172,7 +179,7 @@ class BizPlace(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    enabled boolean default true NOT NULL,
+    enabled BOOLEAN default true NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     contact INTEGER,
     langs TEXT[],
@@ -205,10 +212,13 @@ class Plan(PGStore):
     state INTEGER default 1 NOT NULL
     """
 
-class Subscriptions(PGStore):
+class Subscription(PGStore):
     create_sql = """
     subscriber_id INTEGER NOT NULL UNIQUE,
-    plan_id INTEGER NOT NULL
+    plan_id INTEGER NOT NULL,
+    plan_name TEXT,
+    bizplace_id INTEGER NOT NULL,
+    bizplace_name TEXT
     """
 
 class Resource(PGStore):
@@ -241,15 +251,23 @@ class Usage(PGStore):
     resource_id INTEGER,
     resource_name TEXT,
     calculated_cost NUMERIC(16, 2),
-    cost NUMERIC(16, 2)
+    cost NUMERIC(16, 2),
+    tax_dict bytea,
+    invoice_id INTEGER
     """
 
 class Invoice(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    usage_id INTEGER,
-    usage_text TEXT,
-    cost NUMERIC(16, 2)
+    number INTEGER,
+    usages INTEGER[],
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    sent TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    cost NUMERIC(16, 2),
+    tax_dict bytea,
+    start TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    endtime TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    state INTEGER default 0 NOT NULL
     """
 
 #class Activity(PGStore):
