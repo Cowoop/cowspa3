@@ -1,14 +1,11 @@
 import abc
 import psycopg2
 
-from common.helpers import odict
+from commonlib.helpers import odict
 
 class BaseStore(object):
     def setup(self):
         raise NotImplemented
-
-    def ref(self, oid):
-        return self.__class__.__name__ + ':' + str(oid)
 
     def add(self, data):
         raise NotImplemented
@@ -61,26 +58,35 @@ class BaseStore(object):
     def count(self):
         raise NotImplemented
     def destroy(self):
+        """
+        Destroys the store
+        """
         raise NotImplemented
 
 
 class PGStore(BaseStore):
 
     odicter = odict
+    table_name = None
     cursor_getter = None # override
     schema = {}
+    auto_id = False
 
-    def __init__(self):
+    def setup(self):
         if not self.table_name:
-            self.table_name = self.__name__.lower()
+            self.table_name = self.__class__.__name__.lower()
         self.load_schema()
 
-    def load_schema(self, cursor=None):
-        cursor = cursor or self.cursor_getter()
+    def ref(self, oid):
+        return self.__class__.__name__ + ':' + str(oid)
+
+    def load_schema(self):
+        cursor = self.cursor_getter()
         q = "select 1 from information_schema.tables where table_name = %s"
         cursor.execute(q, (self.table_name,))
-        if not cursor.fetchone():
-            self.setup(cursor)
+        res = cursor.fetchone()
+        if not res:
+            self.create_table()
         q = "select column_name, column_default, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_name=%s"
         cursor.execute(q, (self.table_name,))
         cols = cursor.fetchall()
@@ -91,7 +97,7 @@ class PGStore(BaseStore):
                 self.auto_id = True
         self.schema = schema
 
-    def setup(self, cursor=None):
+    def create_table(self, cursor=None):
         cursor = cursor or self.cursor_getter()
         print("Setting up: ", self.table_name)
         q = "CREATE TABLE %(table_name)s (%(sql)s)" % dict(table_name=self.table_name, sql=self.create_sql)
@@ -252,10 +258,13 @@ class PGStore(BaseStore):
         return self.query_exec(q, hashrows=False)[0][0]
 
     def destroy(self, cursor=None):
-        cursor = self.cursor_getter()
-        print("Destroying: ", self.table_name)
-        q = 'DROP TABLE ' + self.table_name
-        self.query_exec(q)
+        cursor = cursor or self.cursor_getter()
+        q = "select 1 from information_schema.tables where table_name = %s"
+        cursor.execute(q, (self.table_name,))
+        if cursor.fetchone():
+            print("Destroying: ", self.table_name)
+            q = 'DROP TABLE ' + self.table_name
+            self.query_exec(q)
 
 class DBProvider(object):
     __metaclass__ = abc.ABCMeta
@@ -281,3 +290,15 @@ class DBProvider(object):
     def tr_complete(self, context):
         """
         """
+
+class PObject(object):
+    def __init__(self, oid, ref_store):
+        self.oid = oid
+        self.ref_store = ref_store
+
+    def ref(self):
+        """
+        returns object ref
+        """
+        return self.ref_store.ref(self.oid)
+
