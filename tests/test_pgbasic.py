@@ -32,7 +32,7 @@ def test_resetup():
     user_store.setup()
 
 def test_add():
-    user_id = user_store.add(test_data)
+    user_id = user_store.add(**test_data)
     assert user_id == 1
 
 def test_get():
@@ -44,6 +44,10 @@ def test_get2():
     user2 = user_store.get_one_by(crit={'id':1})
     user3 = user_store.get_by(crit={'id':1})
     assert (user1==user2==user3[0]) == True
+
+def test_get3():
+    user = user_store.get_one_by(crit=test_data)
+    assert bool(user)
 
 def test_all():
     users = user_store.get_all()
