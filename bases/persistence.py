@@ -7,7 +7,7 @@ class BaseStore(object):
     def setup(self):
         raise NotImplemented
 
-    def add(self, data):
+    def add(self, **data):
         raise NotImplemented
     def get(self, oid, fields, hashrows=True):
         """
@@ -118,11 +118,17 @@ class PGStore(BaseStore):
         @q: object representing query to be executed
         @log: logs the query
         """
+        if values and not isinstance(values, dict):
+            values_checked = []
+            for v in values:
+                v = tuple(v) if isinstance(v, set) else v
+                values_checked.append(v)
+            values = values_checked
         cursor = self.cursor_getter()
         try:
             cursor.execute(q, values)
         except psycopg2.ProgrammingError:
-            print(q)
+            print(q, values)
             raise
         if cursor.description:
             cols = tuple(r[0] for r in cursor.description)
@@ -131,7 +137,7 @@ class PGStore(BaseStore):
                 return [self.odicter(zip(cols, v)) for v in values]
             return values
 
-    def add(self, data):
+    def add(self, **data):
         cols = list(data.keys())
         cols_str = ', '.join(cols)
         values_str = ', '.join( ['%s' for i in cols] )
@@ -163,9 +169,9 @@ class PGStore(BaseStore):
         -> odict
         """
         cols_str = self.fields2cols(fields)
-        crit_keys = crit.keys()
-        values = [crit[k] for k in crit_keys]
-        crit_keys_s = ', '.join(('%s = %%s' % k for k in crit_keys))
+        crit_keys = list(crit.keys())
+        values = tuple(crit[k] for k in crit_keys)
+        crit_keys_s = ' AND '.join(('%s = %%s' % k for k in crit_keys))
         table_name = self.table_name
         q = 'SELECT %(cols_str)s FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
         return self.query_exec(q, values, hashrows=hashrows)
@@ -207,6 +213,9 @@ class PGStore(BaseStore):
         q = "SELECT %(cols_str)s FROM %(table_name)s WHERE %(clause)s" % \
             dict(table_name=self.table_name, cols_str=cols_str, clause=clause)
         return self.query_exec(q, clause_values, hashrows=hashrows)
+
+    def get_one_by_clause(self, clause, clause_values, fields=None, hashrows=True):
+        return self.get_by_clause(clause, clause_values, fields, hashrows)[0]
 
     def update(self, oid, **mod_data):
         """
