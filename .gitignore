@@ -2,3 +2,4 @@
 *.swp
 conf_dev.py*
 conf_test.py*
+*.py,cover

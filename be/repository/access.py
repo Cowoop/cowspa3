@@ -40,6 +40,8 @@ class stores: pass
 for name, store in stores_mod.known_stores.items():
     setattr(stores, name, make_rstore(store))
 
+# objects
+
 class PObject(object):
     def __init__(self, id):
         self.id = id
@@ -56,7 +58,7 @@ class Member(PObject):
         return contactstore.get_one_by(member=id)
     @contact.setter
     def contact(self, mod_data):
-        ref = memberstore.ref(self.id)
+        ref = member_store.ref(self.id)
         contactstore.update_by(crit={'owner':ref}, mod_data=mod_data)
     @property
     def pref(self):
@@ -64,7 +66,15 @@ class Member(PObject):
     @pref.setter
     def pref(self, mod_data):
         return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
+    def info(self):
+        q = 'SELECT account.id, account.username, account.state, member_profile.display_name from member_profile \
+             INNER JOIN account ON member_profile.member = account.id WHERE account.id = %s'
+        values = (self.id,)
+        return user_store.query_exec(q, values)[0]
+    def memberships(self):
+        return subscription_store.get_by(crit=dict(subscriber_id=self.id))
 
+class Subscription(object): pass
 class Contact(object): pass
 class Biz(object): pass
 class BizPlace(object): pass
@@ -75,3 +85,14 @@ class Invoice(object): pass
 
 # functions
 
+def add_membership(member_id, plan_id):
+    plan = plan_store.get(plan_id)
+    bizplace_name = bizplace_store.get(bizplace_id, fields=['name']).name
+    data = dict(plan_id=plan_id, subscriber_id=member_id, plan_name=plan.name, bizplace_id=plan.bizplace_id, bizplace_name=bizplace_name)
+    subscription_store.add(**data)
+    return True
+
+def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
+    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE bizplace_id IN %s)'
+    clause_values = (bizplace_ids,)
+    return memberprofile_store.get_by_clause(clause, clause_values, fields)
