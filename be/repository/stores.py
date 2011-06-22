@@ -32,7 +32,7 @@ class Contact(PGStore):
     city TEXT,
     country TEXT,
     pincode TEXT,
-    homephone TEXT,
+    phone TEXT,
     mobile TEXT,
     fax TEXT,
     email TEXT NOT NULL,
@@ -46,6 +46,22 @@ class MemberPref(PGStore):
     member INTEGER NOT NULL,
     theme TEXT DEFAULT 'default',
     language TEXT DEFAULT 'en'
+    """
+
+class BillingPref(PGStore):
+    table_name = "billing_pref"
+    create_sql = """
+    owner TEXT NOT NULL,
+    name TEXT NOT NULL,
+    address TEXT,
+    city TEXT,
+    country TEXT,
+    pincode TEXT,
+    phone TEXT,
+    mobile TEXT,
+    fax TEXT,
+    email TEXT,
+    company_no TEXT
     """
 
 class MemberServices(PGStore):
@@ -84,7 +100,6 @@ class Member(PGStore):
     table_name = "member"
     create_sql = """
     id INTEGER NOT NULL,
-    contact INTEGER NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     state INTEGER default 1 NOT NULL
     """
@@ -140,6 +155,7 @@ class UserPermission(PGStore):
 
 class BizProfile(PGStore):
     create_sql = """
+    biz INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     tags TEXT[],
@@ -152,6 +168,7 @@ class BizProfile(PGStore):
 
 class BizplaceProfile(PGStore):
     create_sql = """
+    bizplace INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     tags TEXT[],
@@ -169,7 +186,7 @@ class Biz(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    enabled BOOLEAN default true NOT NULL,
+    state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     logo TEXT,
     contact INTEGER
@@ -178,14 +195,14 @@ class Biz(PGStore):
 class BizPlace(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
+    biz INTEGER,
     name TEXT NOT NULL,
-    enabled BOOLEAN default true NOT NULL,
+    state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     contact INTEGER,
     langs TEXT[],
     tz TEXT,
-    holidays smallint[],
-    biz TEXT
+    holidays smallint[]
     """
 
 class Request(PGStore):
@@ -206,7 +223,7 @@ class Plan(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    bizplace_id integer NOT NULL,
+    bizplace integer NOT NULL,
     description TEXT,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     state INTEGER default 1 NOT NULL
@@ -260,9 +277,11 @@ class Invoice(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     number INTEGER,
+    member INTEGER,
     usages INTEGER[],
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     sent TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    invoicee_details bytea,
     cost NUMERIC(16, 2),
     tax_dict bytea,
     start TIMESTAMP WITHOUT TIME ZONE NOT NULL,
