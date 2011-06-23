@@ -12,10 +12,17 @@ def new(name, bizplace_id, description=''):
     plan_id = plan_store.add(**data)
     return plan_id
 
-def list(bizplace_id):
+def info(plan_id):
     """
-    returns list of plan info dicts for requested bizplace
     """
+    return plan_store.get(plan_id)
+
+def details(plan_id):
+    """
+    """
+    d = info(plan_id)
+    d['subscribers'] = subscribers(plan_id)
+    return d
 
 def update(plan_id, mod_data):
     """
@@ -33,6 +40,11 @@ def subscribers(plan_id):
     - member id
     - display name
     """
+    member_list = []
+    for m_dict in dbaccess.find_plan_members([plan_id]):
+        m_dict['id'] = m_dict.pop('member')
+        member_list.append(m_dict)
+    return member_list
 
 def new_subscriber(plan_id, subscriber_id):
     """

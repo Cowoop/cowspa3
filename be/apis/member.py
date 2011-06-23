@@ -50,7 +50,11 @@ def list(formember_id, bizplace_ids=[]):
     my_bizplace_ids = [ms.bizplace_id for ms in member.memberships()]
     if bizplace_ids:
         bizplace_ids = set(my_bizplace_ids).intersection(bizplace_ids)
-    return dbaccess.find_bizplace_members(bizplace_ids)
+    member_list = []
+    for m_dict in dbaccess.find_bizplace_members(bizplace_ids):
+        m_dict['id'] = m_dict.pop('member')
+        member_list.append(m_dict)
+    return member_list
 
 def info(member_id):
     member = dbaccess.Member(member_id)
@@ -58,8 +62,7 @@ def info(member_id):
 
 def details(member_id):
     member = dbaccess.Member(member_id)
-    return dict(profile=member.profile,
-        contact=member.contact)
+    return dict(profile=member.profile, contact=member.contact)
 
 def search(q):
     raise NotImplemented

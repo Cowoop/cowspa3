@@ -40,8 +40,16 @@ def test_add_subscribers():
     planlib.new_subscribers(1, [1, 2, 3])
     env.context.pgcursor.connection.commit()
 
+def test_subscribers():
+    subscribers = planlib.subscribers(1)
+    assert len(subscribers) == 3
+
+def test_plan_info():
+    planlib.info(1)
+
 def test_list_members():
-    print(memberlib.list(1, [1]))
+    assert len(memberlib.list(1, [1])) == 3
+
 
 #dbaccess.find_members_in_member_bizplaces(1)
 #dbaccess.add_membership(1, 2)

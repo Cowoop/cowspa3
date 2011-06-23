@@ -93,6 +93,13 @@ def add_membership(member_id, plan_id):
     return True
 
 def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
+    bizplace_ids = tuple(bizplace_ids)
     clause = 'member IN (SELECT subscriber_id FROM subscription WHERE bizplace_id IN %s)'
     clause_values = (bizplace_ids,)
+    return memberprofile_store.get_by_clause(clause, clause_values, fields)
+
+def find_plan_members(plan_ids, fields=['member', 'display_name']):
+    plan_ids = tuple(plan_ids)
+    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE plan_id IN %s)'
+    clause_values = (plan_ids,)
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
