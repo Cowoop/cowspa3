@@ -118,17 +118,13 @@ class PGStore(BaseStore):
         @q: object representing query to be executed
         @log: logs the query
         """
-        if values and not isinstance(values, dict):
-            values_checked = []
-            for v in values:
-                v = tuple(v) if isinstance(v, set) else v
-                values_checked.append(v)
-            values = values_checked
         cursor = self.cursor_getter()
         try:
+            if getattr(env, '__debug__', True):
+                print(cursor.mogrify(q, values))
             cursor.execute(q, values)
         except psycopg2.ProgrammingError:
-            print(q, values)
+            print(cursor.mogrify(q, values))
             raise
         if cursor.description:
             cols = tuple(r[0] for r in cursor.description)

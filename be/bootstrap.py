@@ -45,6 +45,7 @@ def setup_pg_provider():
 
 def start(conf):
     setup_env(conf)
+    env.__debug__ = conf != 'conf_prod'
     provider = setup_pg_provider()
     provider.tr_start()
     setup_stores()
