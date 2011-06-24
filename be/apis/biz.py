@@ -30,6 +30,7 @@ def info(biz_id):
     """
     returns dict containing essential information of specified business
     """
+    return dbaccess.Biz(biz_id).info()
 
 def update(biz_id, mod_data):
     """

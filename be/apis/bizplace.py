@@ -25,6 +25,13 @@ def list():
     """
     returns list of bizplace info dicts
     """
+    return dbaccess.list_bizplaces()
+
+def info(bizplace_id):
+    """
+    returns dict containing essential information of specified business place
+    """
+    return dbaccess.BizPlace(bizplace_id).info()
 
 def plans(bizplace_id):
     """
@@ -35,3 +42,5 @@ def members(bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True
     """
     returns list bizplace members
     """
+
+

@@ -74,10 +74,39 @@ class Member(PObject):
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
 
+class Biz(PObject):
+    def info(self):
+        ref = biz_store.ref(self.id)
+        q = 'SELECT biz.name, biz.state, \
+             bizprofile.short_description, bizprofile.tags, bizprofile.website, bizprofile.blog, \
+             contact.address, contact.city, contact.country, contact.email \
+             from biz \
+             INNER JOIN contact ON contact.owner = %(ref)s \
+             INNER JOIN bizprofile ON bizprofile.biz = %(biz_id)s \
+             WHERE biz.id = %(biz_id)s'
+        values = dict(biz_id=self.id, ref=ref)
+        return biz_store.query_exec(q, values)[0]
+
+class BizPlace(PObject):
+    info_sql = 'SELECT bizplace.name, bizplace.state, \
+        bizplaceprofile.short_description, bizplaceprofile.tags, bizplaceprofile.website, bizplaceprofile.blog, \
+        contact.address, contact.city, contact.country, contact.email \
+        from bizplace '
+
+    def info(self):
+        ref = bizplace_store.ref(self.id)
+        q = self.info_sql + \
+        """
+        INNER JOIN contact ON contact.owner = %(ref)s
+        INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = %(bizplace_id)s
+        WHERE bizplace.id = %(bizplace_id)s
+        """
+        values = dict(bizplace_id=self.id, ref=ref)
+        return bizplace_store.query_exec(q, values)[0]
+
+
 class Subscription(object): pass
 class Contact(object): pass
-class Biz(object): pass
-class BizPlace(object): pass
 class Plan(object): pass
 class Resource(object): pass
 class Usage(object): pass
@@ -97,6 +126,14 @@ def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
     clause = 'member IN (SELECT subscriber_id FROM subscription WHERE bizplace_id IN %s)'
     clause_values = (bizplace_ids,)
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
+
+def list_bizplaces():
+    q = BizPlace.info_sql
+    q += """
+    INNER JOIN contact ON contact.owner = 'BizPlace:' || bizplace.id
+    INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = bizplace.id
+    """
+    return bizplace_store.query_exec(q)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name']):
     plan_ids = tuple(plan_ids)

@@ -28,6 +28,19 @@ def test_add_bizplace():
     env.context.pgcursor.connection.commit()
     assert bizplace_id == 1
 
+def test_biz_info():
+    d = bizlib.info(1)
+    assert (d['short_description'], d['email']) == (biz_data['short_description'], biz_data['email'])
+
+def test_bizplace_info():
+    d = bizplacelib.info(1)
+    assert (d['short_description'], d['email']) == (bizplace_data['short_description'], bizplace_data['email'])
+
+def test_list_bizplaces_list():
+    d = bizplacelib.info(1)
+    l = bizplacelib.list()
+    assert d in l
+
 def test_add_plan():
     plan_data['bizplace_id'] = 1
     plan_id = planlib.new(**plan_data)
