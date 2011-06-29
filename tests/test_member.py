@@ -22,6 +22,18 @@ def test_create_member(test_data=None):
     env.context.pgcursor.connection.commit()
     assert isinstance(member_id, int) == True
 
+def test_update_member():
+    old_name = memberlib.get(1, 'first_name')
+    new_name = 'shon'
+    mod_data = dict(first_name=new_name)
+    memberlib.update(1, profile=mod_data)
+    assert old_name == member_data['first_name']
+    assert new_name == memberlib.get(1, 'profile')['first_name']
+
+def test_auth():
+    assert memberlib.authenticate(member_data['username'], member_data['password']) == True
+    assert memberlib.authenticate(member_data['username'], 'password']) != True
+
 def test_create_more_members():
     for data in more_member_data:
         test_create_member(data)
