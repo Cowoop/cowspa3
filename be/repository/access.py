@@ -49,17 +49,17 @@ class PObject(object):
 class Member(PObject):
     @property
     def profile(self):
-        return memberprofile_store.get_one_by(member=self.id)
+        return memberprofile_store.get_one_by(crit={'member':self.id})
     @profile.setter
     def profile(self, mod_data):
-        profilestore.update_by(crit={'member':self.id}, **mod_data)
+        memberprofile_store.update_by(crit={'member':self.id}, **mod_data)
     @property
     def contact(self):
-        return contactstore.get_one_by(member=id)
+        return contact_store.get_one_by(member=id)
     @contact.setter
     def contact(self, mod_data):
         ref = member_store.ref(self.id)
-        contactstore.update_by(crit={'owner':ref}, mod_data=mod_data)
+        contact_store.update_by(crit={'owner':ref}, mod_data=mod_data)
     @property
     def pref(self):
         return memberpref_store.get_one_by(member=self.id)
@@ -113,6 +113,9 @@ class Usage(object): pass
 class Invoice(object): pass
 
 # functions
+
+def get_passphrase_by_username(username):
+    return user_store.get_by(crit={'username': username}).password
 
 def add_membership(member_id, plan_id):
     plan = plan_store.get(plan_id)
