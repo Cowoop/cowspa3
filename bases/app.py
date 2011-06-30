@@ -13,35 +13,49 @@ class Resource(object):
     _get_methods = []
     _set_methods = []
 
-class RestMapper(object):
+class Mapper(object):
+    def __init__(self, prefix=''):
+        self.prefix = prefix if prefix and prefix[0] is '/' else '/' + prefix
+        self.rules = []
+        self._map = {}
+
+    def append_rule(self, path, endpoint):
+        self.rules.append((self.prefix + path, endpoint))
 
     def connect(self, path, func):
-        pass
+        self.append_rule(path, function)
 
     def connect_collection(self, path, collection):
-        pass
+        actions_available = ((name, getattr(collection, name)) for name in dir(collection) if \
+            not name.startswith('_') and '__call__' in  dir(getattr(collection, name)))
+        for name, f in actions_available:
+            f_path = path + '/' + name
+            self.append_rule(f_path, f)
 
-    def connect_resource(self, path, resource):
-        pass
+    def create_resource(self, path, resource):
+        self.connect_collection(path, resource)
+
+    def build(self):
+        self._map = dict(self.rules)
+
+    def match(self, path):
+        return self._map[path]
 
 class Dispatcher(object):
 
-    def __init__(self, tree, pg_provider, comps=[]):
+    def __init__(self, mapper, pg_provider, comps=[]):
         self.comps = comps
-        self.tree = tree
+        self.mapper = mapper
         self.pg_provider = pg_provider
 
     def __getattr__(self, name):
         comps = object.__getattribute__(self, 'comps') + [name]
-        tree = object.__getattribute__(self, 'tree')
+        mapper = object.__getattribute__(self, 'mapper')
         pg_provider = object.__getattribute__(self, 'pg_provider')
-        dispatcher = Dispatcher(tree, pg_provider, comps)
+        dispatcher = Dispatcher(mapper, pg_provider, comps)
         return dispatcher
 
-    def execute(self, args, kw):
-        f = self.tree
-        for comp in self.comps:
-            f = getattr(f, comp)
+    def run_checks(self, f, args, kw):
 
         perms_needed = getattr(f, 'perms', None)
         if perms_needed is not None:
@@ -52,12 +66,38 @@ class Dispatcher(object):
     def __call__(self, *args, **kw):
         retcode = errors.success
         result = None
+
+        # 1. Find the callable, return if not found
+        path = '/' + ('/'.join(self.comps))
+        try:
+            f = self.mapper.match(path)
+        except AttributeError as err:
+            retcode = errors.invalid_api
+            return retcode, result
+
+        # 2. Run all checks
+        try:
+            self.run_checks(f, args, kw)
+        except errors.APIExecutionError as err:
+            print('Error', err)
+            return err.retcode, err.result
+        except Exception as err:
+            # log error
+            print(err)
+            return errors.uncaught_exception, result
+
+        # 3. Start DB Transaction and execute the API
         try:
             self.pg_provider.tr_start()
-            result = self.execute(args, kw)
+            result = f(*args, **kw)
             self.pg_provider.tr_complete()
+        except errors.APIExecutionError as err:
+            print(err)
+            return err.retcode, err.result
         except Exception as err:
             print(err)
+            # log error
             self.pg_provider.tr_abort()
+            return errors.uncaught_exception, result
 
         return retcode, result
