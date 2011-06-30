@@ -6,13 +6,14 @@ class TestDispatcher:
     def setup(self):
         bootstrap.start('conf_test')
 
-        class tree: pass
         class Maths: pass
         maths = Maths()
-        tree.maths = maths
-        tree.maths.add = lambda x,y: x+y
+        maths.add = lambda x,y: x+y
 
-        root = applib.Dispatcher(tree, env.pg_provider)
+        mapper = applib.Mapper()
+        mapper.connect_collection('maths', maths)
+        mapper.build()
+        root = applib.Dispatcher(mapper, env.pg_provider)
         self.root = root
 
     def test_call(self):

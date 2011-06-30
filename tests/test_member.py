@@ -32,7 +32,7 @@ def test_update_member():
 
 def test_auth():
     assert memberlib.authenticate(member_data['username'], member_data['password']) == True
-    assert memberlib.authenticate(member_data['username'], 'password']) != True
+    assert memberlib.authenticate(member_data['username'], 'password') != True
 
 def test_create_more_members():
     for data in more_member_data:
