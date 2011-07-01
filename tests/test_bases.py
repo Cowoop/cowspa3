@@ -12,8 +12,8 @@ class TestDispatcher:
 
         mapper = applib.Mapper()
         mapper.connect_collection('maths', maths)
-        mapper.build()
-        root = applib.Dispatcher(mapper, env.pg_provider)
+        locator = mapper.build()
+        root = applib.Dispatcher(locator, env.pg_provider)
         self.root = root
 
     def test_call(self):

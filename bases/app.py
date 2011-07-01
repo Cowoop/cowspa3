@@ -1,3 +1,6 @@
+import werkzeug.exceptions
+import werkzeug.routing as routing
+
 import bases.errors as errors
 
 class Application(object):
@@ -20,7 +23,7 @@ class Mapper(object):
         self._map = {}
 
     def append_rule(self, path, endpoint):
-        self.rules.append((self.prefix + path, endpoint))
+        self.rules.append(routing.Rule(self.prefix + path, endpoint=endpoint))
 
     def connect(self, path, func):
         self.append_rule(path, function)
@@ -36,23 +39,21 @@ class Mapper(object):
         self.connect_collection(path, resource)
 
     def build(self):
-        self._map = dict(self.rules)
-
-    def match(self, path):
-        return self._map[path]
+        m = routing.Map(self.rules)
+        return m.bind("cowspa.net", "/")
 
 class Dispatcher(object):
 
-    def __init__(self, mapper, pg_provider, comps=[]):
+    def __init__(self, locator, pg_provider, comps=[]):
         self.comps = comps
-        self.mapper = mapper
+        self.locator = locator
         self.pg_provider = pg_provider
 
     def __getattr__(self, name):
         comps = object.__getattribute__(self, 'comps') + [name]
-        mapper = object.__getattribute__(self, 'mapper')
+        locator = object.__getattribute__(self, 'locator')
         pg_provider = object.__getattribute__(self, 'pg_provider')
-        dispatcher = Dispatcher(mapper, pg_provider, comps)
+        dispatcher = Dispatcher(locator, pg_provider, comps)
         return dispatcher
 
     def run_checks(self, f, args, kw):
@@ -70,7 +71,7 @@ class Dispatcher(object):
         # 1. Find the callable, return if not found
         path = '/' + ('/'.join(self.comps))
         try:
-            f = self.mapper.match(path)
+            f, _kw = self.locator.match(path)
         except AttributeError as err:
             retcode = errors.invalid_api
             return retcode, result
@@ -89,6 +90,7 @@ class Dispatcher(object):
         # 3. Start DB Transaction and execute the API
         try:
             self.pg_provider.tr_start()
+            kw.update(_kw)
             result = f(*args, **kw)
             self.pg_provider.tr_complete()
         except errors.APIExecutionError as err:
