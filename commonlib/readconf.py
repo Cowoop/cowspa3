@@ -1,11 +1,10 @@
 import copy
-import conf_default as default
 import commonlib.helpers
 
 odict = commonlib.helpers.odict
 
 def parse_config(conf_default, conf_local=None):
-    config = odict(**copy.deepcopy(default.config))
+    config = odict(**copy.deepcopy(conf_default.config))
     if conf_local:
         local_config = conf_local.config
         for section in config:

@@ -1,4 +1,8 @@
-import builtins
+try:
+    import builtins
+except:
+    import __builtin__ as builtins # Python 2.x compatibility
+
 import commonlib
 import commonlib.readconf as readconf
 import commonlib.helpers

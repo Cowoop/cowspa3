@@ -1,8 +1,22 @@
+# Common
+git clone git@github.com:shon/cowspa3.git
+
+# Python 3
 sudo apt-get install python3-dev
-virtualenv cowspa
-cd cowspa
-wget https://bitbucket.org/rafacv/werkzeug-python3/get/tip.tar.bz2
+virtualenv cowspa3
+cd cowspa3
+. ./bin/activate
+pip install nosetest
+# wget https://bitbucket.org/rafacv/werkzeug-python3/get/tip.tar.bz2 # Does not work
 wget https://download.github.com/ipython-ipython-py3k-9c4fead.tar.gz
 pip install tip.tar.bz2
 pip install ipython-ipython-py3k-9c4fead.tar.gz
-pip install psycopg2
+
+# Python 2
+virtualenv cowspa3
+cd cowspa3
+. ./bin/activate
+
+# Common
+pip install werkzeug
+pip install ipython psycopg2 nose html2text
