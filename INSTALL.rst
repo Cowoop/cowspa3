@@ -29,7 +29,7 @@ shell
 -----
 ipython::
 
-    >>> import bootstrap
+    >>> import be.bootstrap
 
 Tests
 -----
