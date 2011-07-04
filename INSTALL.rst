@@ -35,7 +35,7 @@ Tests
 -----
 ::
 
-    nosetests -v nosetests -v tests/test_schemas.py tests/test_bases.py
+    nosetests -v tests/test_schemas.py tests/test_bases.py
     # ^ are some basic tests, there are more tests in tests/
 
 Python 3 Notes # SKIP THIS FOR NOW
