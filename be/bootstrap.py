@@ -29,12 +29,14 @@ def setup_env(conf):
         conf_local = __import__(conf)
     except Exception as err:
         print(err)
+        conf_local = None
     env.config = readconf.parse_config(conf_default, conf_local)
     commonlib.helpers.random_key_gen = commonlib.helpers.RandomKeyFactory(env.config.random_str)
     #env.mailer = commonlib.messaging.email.Mailer(env.config.mail)
     #env.mailer.start()
     env.context = localprov.local()
     builtins.env = env
+    return env
 
 def setup_stores():
     for name in dir(dbaccess.stores):
@@ -48,8 +50,8 @@ def setup_pg_provider():
     return provider
 
 def start(conf):
-    setup_env(conf)
-    env.__debug__ = conf != 'conf_prod'
+    env = setup_env(conf)
+    env.__cs_debug__ = conf != 'conf_prod'
     provider = setup_pg_provider()
     provider.tr_start()
     setup_stores()

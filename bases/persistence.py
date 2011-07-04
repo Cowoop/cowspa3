@@ -120,7 +120,7 @@ class PGStore(BaseStore):
         """
         cursor = self.cursor_getter()
         try:
-            if getattr(env, '__debug__', True):
+            if getattr(env, '__cs_debug__', True):
                 print(cursor.mogrify(q, values))
             cursor.execute(q, values)
         except psycopg2.ProgrammingError:
