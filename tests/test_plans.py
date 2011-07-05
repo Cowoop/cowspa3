@@ -13,13 +13,16 @@ def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
 
-def xteardown():
+def teardown():
     commontest.destroy_test_env()
     env.context.pgcursor.connection.commit()
 
 def test_add_biz():
-    biz_id = bizlib.new(**biz_data)
+    biz_ob = bizlib.biz_collection
+    #print biz_data['name']
+    biz_id = biz_ob.new(**biz_data)
     env.context.pgcursor.connection.commit()
+    print "sdfg"+str(biz_id)
     assert biz_id == 1
 
 def test_add_bizplace():
@@ -29,7 +32,8 @@ def test_add_bizplace():
     assert bizplace_id == 1
 
 def test_biz_info():
-    d = bizlib.info(1)
+    biz_ob = bizlib.biz_resource
+    d = biz_ob.info(1)
     assert (d['short_description'], d['email']) == (biz_data['short_description'], biz_data['email'])
 
 def test_bizplace_info():
@@ -43,25 +47,30 @@ def test_list_bizplaces_list():
 
 def test_add_plan():
     plan_data['bizplace_id'] = 1
-    plan_id = planlib.new(**plan_data)
+    plan_ob = planlib.plan_collection
+    plan_id = plan_ob.new(**plan_data)
     env.context.pgcursor.connection.commit()
     assert plan_id == 1
 
 def test_add_subscribers():
     test_member.test_create_member()
     test_member.test_create_more_members()
-    planlib.new_subscribers(1, [1, 2, 3])
+    plan_ob = planlib.plan_resource
+    plan_ob.new_subscribers(1, [1, 2, 3])
     env.context.pgcursor.connection.commit()
 
 def test_subscribers():
-    subscribers = planlib.subscribers(1)
+    plan_ob = planlib.plan_resource
+    subscribers = plan_ob.subscribers(1)
     assert len(subscribers) == 3
 
 def test_plan_info():
-    planlib.info(1)
+    plan_ob = planlib.plan_resource
+    plan_ob.info(1)
 
 def test_list_members():
-    assert len(memberlib.list(1, [1])) == 3
+    member_ob = memberlib.member_collection
+    assert len(member_ob.list(1, [1])) == 3
 
 
 #dbaccess.find_members_in_member_bizplaces(1)

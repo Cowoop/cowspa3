@@ -77,7 +77,8 @@ class MemberResource:
 
     def get(self, member_id, attrname):
         member = dbaccess.Member(member_id)
-        return getattr(member, attrname)
+	print "dsfd:"+str(member.profile)
+        return getattr(member.profile, attrname)
 
     def authenticate(self, username, password):
         encrypted = encrypt(password)

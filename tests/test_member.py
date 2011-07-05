@@ -18,17 +18,20 @@ def teardown():
 
 def test_create_member(test_data=None):
     data = test_data if test_data else member_data
-    member_id = memberlib.new(**data)
+    member_id = memberlib.member_collection.new(**data)
+    #print (member_id, type(member_id))
     env.context.pgcursor.connection.commit()
-    assert isinstance(member_id, int) == True
+    assert isinstance(member_id, (int, long)) == True
 
 def test_update_member():
-    old_name = memberlib.get(1, 'first_name')
+    old_name = memberlib.member_resource.get(1, 'first_name')
+    print (old_name)
+    pp
     new_name = 'shon'
     mod_data = dict(first_name=new_name)
-    memberlib.update(1, profile=mod_data)
+    memberlib.member_resource.update(1, profile=mod_data)
     assert old_name == member_data['first_name']
-    assert new_name == memberlib.get(1, 'profile')['first_name']
+    assert new_name == memberlib.member_resource.get(1, 'profile')['first_name']
 
 def test_auth():
     assert memberlib.authenticate(member_data['username'], member_data['password']) == True
