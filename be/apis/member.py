@@ -77,13 +77,12 @@ class MemberResource:
 
     def get(self, member_id, attrname):
         member = dbaccess.Member(member_id)
-	print "dsfd:"+str(member.profile)
         return getattr(member.profile, attrname)
 
     def authenticate(self, username, password):
         encrypted = encrypt(password)
         passphrase = dbaccess.get_passphrase_by_username(username)
-        return encrypted == password
+        return encrypted == passphrase
 
 member_resource = MemberResource()
 member_collection = MemberCollection()

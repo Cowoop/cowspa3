@@ -115,7 +115,7 @@ class Invoice(object): pass
 # functions
 
 def get_passphrase_by_username(username):
-    return user_store.get_by(crit={'username': username}).password
+    return user_store.get_by(crit={'username': username})[0].password
 
 def add_membership(member_id, plan_id):
     plan = plan_store.get(plan_id)
