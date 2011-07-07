@@ -45,7 +45,7 @@ def setup_stores():
             store.setup()
 
 def setup_pg_provider():
-    provider = pgdb.PGGreenProvider()
+    provider = pgdb.PGProvider()
     provider.startup()
     return provider
 

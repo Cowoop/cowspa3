@@ -4,7 +4,7 @@ import bases.persistence as persistence
 
 pool = None
 
-class PGGreenProvider(persistence.DBProvider):
+class PGProvider(persistence.DBProvider):
     def tr_start(self):
         conn = pool.getconn()
         env.context.pgcursor = conn.cursor()
