@@ -47,6 +47,7 @@ class PObject(object):
         self.id = id
 
 class Member(PObject):
+    store = member_store
     @property
     def profile(self):
         return memberprofile_store.get_one_by(crit={'member':self.id})
@@ -73,6 +74,14 @@ class Member(PObject):
         return user_store.query_exec(q, values)[0]
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
+    def __getattr__(self, attr):
+        store = object.__getattribute__(self, 'store')
+        return store.get(self.id, fields=[attr], hashrows=False)[0]
+    def __setattr__(self, attr, v):
+        if attr == 'id':
+            object.__setattr__(self, attr, v)
+        else:
+            self.store.update(self.id, **{attr:v})
 
 class Biz(PObject):
     def info(self):

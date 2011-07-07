@@ -12,3 +12,9 @@ class RandomKeyFactory(object):
     def __call__(self):
         return base64.b64encode(hashlib.sha256(str(random.getrandbits(256))).digest(), \
             random.choice(self.random_choices)).rstrip('==')
+
+def encrypt(secret):
+    encrypted = secret
+    return encrypted
+
+

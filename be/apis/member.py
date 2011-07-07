@@ -2,16 +2,13 @@ import datetime
 import commonlib.shared.states
 import be.repository.access as dbaccess
 import bases.app
+import commonlib.helpers as helpers
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
 contact_store = dbaccess.stores.contact_store
 profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
-
-def encrypt(secret):
-    encrypted = secret
-    return encrypted
 
 class MemberCollection:
     def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None):
@@ -20,7 +17,7 @@ class MemberCollection:
         created = datetime.datetime.now()
         if state is None: state = commonlib.shared.states.member.enabled
 
-        data = dict(username=username, password=encrypt(password), state=state)
+        data = dict(username=username, password=helpers.encrypt(password), state=state)
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
 
@@ -77,12 +74,7 @@ class MemberResource:
 
     def get(self, member_id, attrname):
         member = dbaccess.Member(member_id)
-        return getattr(member.profile, attrname)
-
-    def authenticate(self, username, password):
-        encrypted = encrypt(password)
-        passphrase = dbaccess.get_passphrase_by_username(username)
-        return encrypted == passphrase
+        return getattr(member, attrname)
 
 member_resource = MemberResource()
 member_collection = MemberCollection()
