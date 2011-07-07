@@ -4,10 +4,18 @@ import werkzeug.routing as routing
 import bases.errors as errors
 
 class Application(object):
+    def __init__(self):
+        self.on_startup = []
+        self.on_shutdown = []
+
     def startup(self):
-        pass
+        for f in self.on_startup:
+            f()
+            print self.name, ':startup::', f.__func__.__module__, '.', f.__name__
     def shutdown(self):
-        pass
+        # sys.atexit
+        for f in self.on_shutdown:
+            f()
 
 class Collection(object):
     pass
@@ -35,7 +43,7 @@ class Mapper(object):
             f_path = path + '/' + name
             self.append_rule(f_path, f)
 
-    def create_resource(self, path, resource):
+    def connect_resource(self, path, resource):
         self.connect_collection(path, resource)
 
     def build(self):
@@ -55,6 +63,9 @@ class Dispatcher(object):
         pg_provider = object.__getattribute__(self, 'pg_provider')
         dispatcher = Dispatcher(locator, pg_provider, comps)
         return dispatcher
+
+    def set_context(self, user_id):
+        env.context.user_id = user_id
 
     def run_checks(self, f, args, kw):
 
