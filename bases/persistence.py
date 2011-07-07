@@ -157,7 +157,7 @@ class PGStore(BaseStore):
         """
         cols_str = self.fields2cols(fields)
         q = "SELECT %(cols_str)s FROM %(table_name)s WHERE id = %%s" %dict(table_name=self.table_name, cols_str=cols_str)
-        return self.query_exec(q, (oid,))[0]
+        return self.query_exec(q, (oid,), hashrows=hashrows)[0]
 
     def get_by(self, crit, fields=None, hashrows=True):
         """
