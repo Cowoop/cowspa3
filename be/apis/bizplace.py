@@ -35,7 +35,7 @@ class BizplaceCollection:
         """
 
 class BizplaceResource:
-    
+
     def info(self, bizplace_id):
         """
         returns dict containing essential information of specified business place
@@ -46,6 +46,6 @@ class BizplaceResource:
         """
         returns list of plan info dicts for this business place
         """
-        
+
 bizplace_collection = BizplaceCollection()
 bizplace_resource = BizplaceResource()
