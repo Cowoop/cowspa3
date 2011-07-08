@@ -30,6 +30,7 @@ shell
 ipython::
 
     >>> import be.bootstrap
+    >>> be.bootstrap.start('conf_dev')
 
 Tests
 -----
