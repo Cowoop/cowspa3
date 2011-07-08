@@ -11,7 +11,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None):
+    def new(self, username, password, email, first_name, owner, state, language='en', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None):
 
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -21,16 +21,16 @@ class MemberCollection:
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
 
-        data = dict(owner=member_ref, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip)
+        """data = dict(owner=member_ref, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip)
         contact_id = contact_store.add(**data)
 
         data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar)
-        profile_store.add(**data)
+        profile_store.add(**data)"""
 
         data = dict(member=user_id, language=language)
         memberpref_store.add(**data)
 
-        data = dict(id=user_id, created=created)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, owner=owner, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
         member_store.add(**data)
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)

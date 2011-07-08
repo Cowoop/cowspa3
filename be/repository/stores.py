@@ -9,6 +9,7 @@ def cursor_getter(*ingored):
 
 class PGStore(PGStore):
     cursor_getter = cursor_getter
+    parent_stores = None
     def __init__(self):
         store_name = self.__class__.__name__.lower() + '_store'
         known_stores[store_name] = self
@@ -103,6 +104,7 @@ class Member(PGStore):
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     state INTEGER default 1 NOT NULL
     """
+    parent_stores = [MemberProfile(), Contact()]
 
 class Registered(PGStore):
     create_sql = """

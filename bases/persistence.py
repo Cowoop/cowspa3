@@ -73,6 +73,9 @@ class PGStore(BaseStore):
     auto_id = False
 
     def setup(self):
+        if self.parent_stores:
+            for store in self.parent_stores:
+                store.setup()
         if not self.table_name:
             self.table_name = self.__class__.__name__.lower()
         self.load_schema()
@@ -101,10 +104,12 @@ class PGStore(BaseStore):
         cursor = cursor or self.cursor_getter()
         print("Setting up: ", self.table_name)
         q = "CREATE TABLE %(table_name)s (%(sql)s)" % dict(table_name=self.table_name, sql=self.create_sql)
+        if self.parent_stores:
+            parent_tables_s = ', '.join((store.table_name for store in self.parent_stores))
+            q = q + " INHERITS(%(parent_tables)s)" % dict(parent_tables=parent_tables_s) 
         try:
             self.query_exec(q)
         except psycopg2.ProgrammingError:
-            print(q)
             raise
 
     def fields2cols(self, fields):
@@ -268,7 +273,7 @@ class PGStore(BaseStore):
         cursor.execute(q, (self.table_name,))
         if cursor.fetchone():
             print("Destroying: ", self.table_name)
-            q = 'DROP TABLE ' + self.table_name
+            q = 'DROP TABLE ' + self.table_name + ' CASCADE;'
             self.query_exec(q)
 
 class DBProvider(object):

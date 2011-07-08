@@ -39,6 +39,7 @@ def setup_env(conf):
     return env
 
 def setup_stores():
+    dependent_stores = []
     for name in dir(dbaccess.stores):
         store = getattr(dbaccess.stores, name)
         if hasattr(store, 'setup'):
