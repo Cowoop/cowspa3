@@ -3,7 +3,7 @@ import be.apis.member as memberlib
 import be.apis.user as userlib
 from nose.tools import nottest
 
-member_data = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', owner='owner', state=1)
+member_data = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', state=1)
 more_member_data = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@example.com'),
     dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@example.com'),
@@ -19,6 +19,7 @@ def teardown():
 
 def test_create_member(test_data=None):
     data = test_data if test_data else member_data
+    print data
     member_id = memberlib.member_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert isinstance(member_id, (int, long)) == True
