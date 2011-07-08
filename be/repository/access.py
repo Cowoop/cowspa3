@@ -30,7 +30,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('ref', 'setup', 'add', 'remove'):
+    for attr in ('ref', 'setup', 'add', 'remove', 'get', 'get_by', 'get_one_by'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
@@ -43,8 +43,25 @@ for name, store in stores_mod.known_stores.items():
 # objects
 
 class PObject(object):
-    def __init__(self, id):
-        self.id = id
+    store = None
+    attributes = []
+
+    def __init__(self, oid):
+        self.oid = oid
+        self.attributes = tuple(self.store.schema.keys())
+
+    def __getattr__(self, name):
+        if name in self.attributes:
+            return self.store.get(self.oid, [name], hashrows=False)[0]
+        return object.__getattribute__(self, name)
+
+    def __setattr__(self, name, v):
+        if name in self.attributes:
+            self.store.update(self.id, **{name:v})
+        object.__setattr__(self, name, v)
+
+    def update(self, **mod_data):
+        self.store.update(self.id, **mod_data)
 
 class Member(PObject):
     store = member_store
@@ -68,22 +85,15 @@ class Member(PObject):
     def pref(self, mod_data):
         return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
     def info(self):
-        q = 'SELECT account.id, account.username, account.state, member_profile.display_name from member_profile \
-             INNER JOIN account ON member_profile.member = account.id WHERE account.id = %s'
+        q = 'SELECT member_profile.member, member.state, member_profile.display_name from member_profile \
+             INNER JOIN member ON member_profile.member = member.id WHERE member.id = %s'
         values = (self.id,)
         return user_store.query_exec(q, values)[0]
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
-    def __getattr__(self, attr):
-        store = object.__getattribute__(self, 'store')
-        return store.get(self.id, fields=[attr], hashrows=False)[0]
-    def __setattr__(self, attr, v):
-        if attr == 'id':
-            object.__setattr__(self, attr, v)
-        else:
-            self.store.update(self.id, **{attr:v})
 
 class Biz(PObject):
+    store = biz_store
     def info(self):
         ref = biz_store.ref(self.id)
         q = 'SELECT biz.name, biz.state, \
@@ -97,6 +107,7 @@ class Biz(PObject):
         return biz_store.query_exec(q, values)[0]
 
 class BizPlace(PObject):
+    store = bizplace_store
     info_sql = 'SELECT bizplace.name, bizplace.state, \
         bizplaceprofile.short_description, bizplaceprofile.tags, bizplaceprofile.website, bizplaceprofile.blog, \
         contact.address, contact.city, contact.country, contact.email \
