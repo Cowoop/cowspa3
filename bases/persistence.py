@@ -11,6 +11,7 @@ class BaseStore(object):
         raise NotImplemented
     def get(self, oid, fields, hashrows=True):
         """
+        fields: list of field names
         returns dict keyed by field names
         """
         raise NotImplemented

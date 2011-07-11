@@ -1,5 +1,6 @@
 import bases.app as applib
 import be.apis
+import be.apis.user as userlib
 import be.apis.member as memberlib
 import be.repository.pgdb as pgdb
 

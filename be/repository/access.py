@@ -43,22 +43,43 @@ for name, store in stores_mod.known_stores.items():
 # objects
 
 class PObject(object):
+    """
+    >>> obj = PObject(oid)
+    >>> obj.get('fname', 'lname', 'age')
+    ('Kit', 'Walker', 304) # get returns list/tuple
+    >>> obj.get('fname')
+    'Kit' # get returns not list/tuple just a value
+    >>> obj.fname
+    'Kit'
+    >>> obj.age = 305
+    >>> obj.update(fname='Kit', age=309)
+    >>> obj.age
+    309
+    """
     store = None
     attributes = []
 
     def __init__(self, oid):
-        self.oid = oid
+        self.id = oid
         self.attributes = tuple(self.store.schema.keys())
+        self.ref = self.store.ref(oid)
 
     def __getattr__(self, name):
         if name in self.attributes:
-            return self.store.get(self.oid, [name], hashrows=False)[0]
+            return self.get(name)
         return object.__getattribute__(self, name)
 
     def __setattr__(self, name, v):
         if name in self.attributes:
             self.store.update(self.id, **{name:v})
         object.__setattr__(self, name, v)
+
+    def get(self, *names):
+        """
+        returns list of values if more than attribute names given else just the value
+        """
+        res = self.store.get(self.id, fields=names, hashrows=False)
+        return res if len(names) > 1 else res[0]
 
     def update(self, **mod_data):
         self.store.update(self.id, **mod_data)
@@ -85,15 +106,7 @@ class Member(PObject):
     def pref(self, mod_data):
         return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
     def info(self):
-        """q = 'SELECT member_profile.member, member.state, member.id, member_profile.display_name from member_profile \
-             INNER JOIN member ON member_profile.member = member.id WHERE member.id = %s'
-        values = (self.id,)
-        return user_store.query_exec(q, values)[0]"""
         return member_store.get(self.id, ['member', 'member.state', 'id', 'display_name'])
-    def get(self, attribute):
-        return member_store.get(self.id, [attribute])
-        
-        
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
 
