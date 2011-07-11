@@ -85,10 +85,15 @@ class Member(PObject):
     def pref(self, mod_data):
         return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
     def info(self):
-        q = 'SELECT member_profile.member, member.state, member_profile.display_name from member_profile \
+        """q = 'SELECT member_profile.member, member.state, member.id, member_profile.display_name from member_profile \
              INNER JOIN member ON member_profile.member = member.id WHERE member.id = %s'
         values = (self.id,)
-        return user_store.query_exec(q, values)[0]
+        return user_store.query_exec(q, values)[0]"""
+        return member_store.get(self.id, ['member', 'member.state', 'id', 'display_name'])[0]
+    def get(self, attribute):
+        return member_store.get(self.id, [attribute])[0]
+        
+        
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
 

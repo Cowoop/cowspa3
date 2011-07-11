@@ -30,7 +30,7 @@ def test_update_member():
     mod_data = dict(state=new_state)
     memberlib.member_resource.update(1, **mod_data)
     assert old_state == member_data['state']
-    #assert new_state == memberlib.member_resource.get(1, 'state')
+    assert new_state == memberlib.member_resource.get(1, 'state')
 
 def test_auth():
     assert userlib.authenticate(member_data['username'], 'password') != True
