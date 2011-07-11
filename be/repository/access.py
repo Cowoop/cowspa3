@@ -89,9 +89,9 @@ class Member(PObject):
              INNER JOIN member ON member_profile.member = member.id WHERE member.id = %s'
         values = (self.id,)
         return user_store.query_exec(q, values)[0]"""
-        return member_store.get(self.id, ['member', 'member.state', 'id', 'display_name'])[0]
+        return member_store.get(self.id, ['member', 'member.state', 'id', 'display_name'])
     def get(self, attribute):
-        return member_store.get(self.id, [attribute])[0]
+        return member_store.get(self.id, [attribute])
         
         
     def memberships(self):
