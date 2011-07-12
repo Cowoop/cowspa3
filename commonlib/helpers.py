@@ -1,20 +1,33 @@
-import base64, random, hashlib
+import os
+import hashlib
+from getpass import getpass
 
-random_key_gen = None
+def gen_key():
+	print('Username:'+os.environ['USER'])
+	passwd=getpass('Password:')
+	salt='wp45hx'
+	h=hashlib.sha256()
+	h.update(passwd+salt)
+	passwd_encrypt=h.hexdigest()
+	print('Encrypted password is=',passwd_encrypt)
+gen_key()
 
-class odict(dict):
-    def __getattr__(self, attr):
-        return self[attr]
 
-class RandomKeyFactory(object):
-    def __init__(self, s):
-        self.random_choices = (s[:2], s[2:4], s[4:6], s[6:8], s[8:10], s[10:12], s[12:14])
-    def __call__(self):
-        return base64.b64encode(hashlib.sha256(str(random.getrandbits(256))).digest(), \
-            random.choice(self.random_choices)).rstrip('==')
 
-def encrypt(secret):
-    encrypted = secret
-    return encrypted
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
