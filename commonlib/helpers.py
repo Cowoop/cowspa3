@@ -18,5 +18,5 @@ class RandomKeyFactory(object):
 
 def encrypt(s, salt=''):
     h = hashlib.sha256()
-    h.update(passwd+salt)
+    h.update(s+salt)
     return h.hexdigest()
