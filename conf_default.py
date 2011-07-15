@@ -1,6 +1,6 @@
 config = {
-    'pg_uri': 'dbname=sumit',
-    'random_str': 'CHANGE',
+    'pg_uri': 'dbname=shon',
+    'random_str': 'PLEASE_CHANGE',
     'mail': {
         'mail.on': True,
         'mail.transport': 'smtp',

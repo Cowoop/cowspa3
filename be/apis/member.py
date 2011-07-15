@@ -20,15 +20,15 @@ class MemberCollection:
         else:   
             state = commonlib.shared.states.member().to_flags(state)
 
-        data = dict(username=username, password=helpers.encrypt(password), state=state)
+        data = dict(username=username, password=helpers.encrypt(password), state=state) # TODO config salt
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
 
-        """data = dict(owner=member_ref, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip)
-        contact_id = contact_store.add(**data)
+        #data = dict(owner=member_ref, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip)
+        #contact_id = contact_store.add(**data)
 
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar)
-        profile_store.add(**data)"""
+        #data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar)
+        #profile_store.add(**data)
 
         data = dict(member=user_id, language=language)
         memberpref_store.add(**data)
