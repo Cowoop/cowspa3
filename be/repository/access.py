@@ -24,7 +24,7 @@ usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
 price_store = stores_mod.Price()
-#activity_store = stores_mod.activity_store()
+activity_store = stores_mod.Activity()
 
 class RStore(object): pass
 

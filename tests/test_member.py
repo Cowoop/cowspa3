@@ -4,7 +4,7 @@ import be.apis.member as memberlib
 import be.apis.user as userlib
 from nose.tools import nottest
 
-member_data = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', state=1)
+member_data = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', state=dict(enabled=True, hidden=False))
 more_member_data = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@example.com'),
     dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@example.com'),
@@ -36,7 +36,7 @@ def test_member_object():
 
 def test_update_member():
     old_state = memberlib.member_resource.get(1, 'state')
-    new_state = 0
+    new_state = dict(enabled=False, hidden=True)
     mod_data = dict(state=new_state)
     memberlib.member_resource.update(1, **mod_data)
     assert old_state == member_data['state']

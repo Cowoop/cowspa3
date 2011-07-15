@@ -15,7 +15,10 @@ class MemberCollection:
 
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
-        if state is None: state = commonlib.shared.states.member.enabled
+        if state is None: 
+            state = commonlib.shared.states.member.enabled
+        else:   
+            state = commonlib.shared.states.member().to_flags(state)
 
         data = dict(username=username, password=helpers.encrypt(password), state=state)
         user_id = user_store.add(**data)
@@ -63,6 +66,8 @@ class MemberResource:
     def update(self, member_id, **mod_data):
         member = dbaccess.Member(member_id)
         for attr, value in mod_data.items():
+            if attr == "state":
+                value = commonlib.shared.states.member().to_flags(value)
             setattr(member, attr, value)
 
     def info(self, member_id):
@@ -75,7 +80,10 @@ class MemberResource:
 
     def get(self, member_id, attrname):
         member = dbaccess.Member(member_id)
-        return getattr(member, attrname)
+        if attrname == 'state':
+            return commonlib.shared.states.member().to_dict(getattr(member, attrname))
+        else:
+            return getattr(member, attrname)
 
     def set(self, member_id, attrname, v):
         member = dbaccess.Member(member_id)

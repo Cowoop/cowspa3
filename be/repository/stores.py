@@ -291,6 +291,12 @@ class Invoice(PGStore):
     state INTEGER default 0 NOT NULL
     """
 
-#class Activity(PGStore):
-#    name = Attribute(required=True)
-#    created = DateTimeField(auto_now_add=False)
+class Activity(PGStore):
+    create_sql = """
+    id SERIAL NOT NULL UNIQUE,
+    category TEXT NOT NULL,
+    name TEXT NOT NULL,
+    creater TEXT NULL,
+    data TEXT NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    """
