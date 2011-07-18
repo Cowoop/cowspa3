@@ -97,7 +97,7 @@ class Member(PObject):
         return contact_store.get_one_by(member=id)
     @contact.setter
     def contact(self, mod_data):
-        ref = member_store.ref(self.id)
+        ref = self.store.ref(self.id)
         contact_store.update_by(crit={'owner':ref}, mod_data=mod_data)
     @property
     def pref(self):
@@ -106,7 +106,7 @@ class Member(PObject):
     def pref(self, mod_data):
         return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
     def info(self):
-        return member_store.get(self.id, ['member', 'member.state', 'id', 'display_name'])
+        return self.store.get(self.id, ['member', 'member.state', 'id', 'display_name'])
     def memberships(self):
         return subscription_store.get_by(crit=dict(subscriber_id=self.id))
 
@@ -142,11 +142,19 @@ class BizPlace(PObject):
         values = dict(bizplace_id=self.id, ref=ref)
         return bizplace_store.query_exec(q, values)[0]
 
+class Resource(PObject):
+    store = resource_store
+    info_fields = ['id', 'name', 'short_description']
+    def info(self):
+        return self.store.get(self.id, self.info_fields)
+    def dependencies(self):
+        deps = self.store.get(self.id, ['contains', 'contains_opt', 'requires', 'suggests', 'contained_by', 'required_by', 'suggested_by'])
+        dep_ids = list(itertools.chain(*deps.values()))
+        return resource_store.get_many(dep_ids, self.info_fields)
 
 class Subscription(object): pass
 class Contact(object): pass
 class Plan(object): pass
-class Resource(object): pass
 class Usage(object): pass
 class Invoice(object): pass
 

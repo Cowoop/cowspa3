@@ -244,7 +244,20 @@ class Resource(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    owner TEXT NOT NULL
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    state INTEGER default 1 NOT NULL,
+    owner TEXT NOT NULL,
+    short_description TEXT,
+    long_description TEXT,
+    time_based BOOLEAN DEFAULT True,
+    quantity_unit TEXT,
+    contains INTEGER[],
+    contains_opt INTEGER[],
+    suggests INTEGER[],
+    contained_by INTEGER,
+    suggested_by INTEGER[],
+    requires INTEGER[],
+    required_by INTEGER[]
     """
 
 class Pricing(PGStore):
