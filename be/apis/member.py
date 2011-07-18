@@ -18,7 +18,7 @@ class MemberCollection:
         if state is None: 
             state = commonlib.shared.states.member.enabled
         else:   
-            state = commonlib.shared.states.member().to_flags(state)
+            state = commonlib.shared.states.member.to_flags(state)
 
         data = dict(username=username, password=helpers.encrypt(password), state=state) # TODO config salt
         user_id = user_store.add(**data)
