@@ -83,6 +83,13 @@ class Resource(object):
 
 # functions
 
+def ref2name(ref):
+    store_map = dict(BizPlace=bizplace_store, Member=member_store)
+    oname, oid = ref.split(':')
+    store = store_map[oname]
+    attr = 'name' if 'name' in store.schema else 'display_name'
+    return store.get(int(oid), [attr], hashrows=False)
+
 def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password
 

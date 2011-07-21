@@ -276,6 +276,8 @@ class PGStore(BaseStore):
             print("Destroying: ", self.table_name)
             q = 'DROP TABLE ' + self.table_name + ' CASCADE;'
             self.query_exec(q)
+        else:
+            print("Does not exist:", self.table_name)
 
 class DBProvider(object):
     __metaclass__ = abc.ABCMeta
@@ -301,15 +303,3 @@ class DBProvider(object):
     def tr_complete(self, context):
         """
         """
-
-class PObject(object):
-    def __init__(self, oid, ref_store):
-        self.oid = oid
-        self.ref_store = ref_store
-
-    def ref(self):
-        """
-        returns object ref
-        """
-        return self.ref_store.ref(self.oid)
-

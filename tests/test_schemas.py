@@ -6,6 +6,8 @@ commontest.setup_test_simple_env()
 def test_create():
     import be.repository.access
     assert bool(stores.known_stores) == True
+    for store in stores.known_stores.values():
+        store.setup()
     env.context.pgcursor.connection.commit()
 
 def test_destroy():
