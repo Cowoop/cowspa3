@@ -34,7 +34,7 @@ class BizResource:
         """
         returns dict containing essential information of specified business
         """
-        return dbaccess.Biz(biz_id).info()
+        return dbaccess.biz_info(biz_id)
 
     def update(self, biz_id, mod_data):
         """

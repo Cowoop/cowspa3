@@ -15,20 +15,14 @@ class MemberCollection:
 
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
-        if state is None: 
+        if state is None:
             state = commonlib.shared.states.member.enabled
-        else:   
+        else:
             state = commonlib.shared.states.member.to_flags(state)
 
         data = dict(username=username, password=helpers.encrypt(password), state=state) # TODO config salt
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
-
-        #data = dict(owner=member_ref, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip)
-        #contact_id = contact_store.add(**data)
-
-        #data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar)
-        #profile_store.add(**data)
 
         data = dict(member=user_id, language=language)
         memberpref_store.add(**data)
@@ -48,8 +42,7 @@ class MemberCollection:
         raise NotImplemented
 
     def list(self, formember_id, bizplace_ids=[]):
-        member = dbaccess.Member(formember_id)
-        my_bizplace_ids = [ms.bizplace_id for ms in member.memberships()]
+        my_bizplace_ids = [ms.bizplace_id for ms in dbaccess.find_memberships(formember_id)]
         if bizplace_ids:
             bizplace_ids = set(my_bizplace_ids).intersection(bizplace_ids)
         member_list = []
@@ -64,30 +57,29 @@ class MemberResource:
     set_attributes = ['state']
 
     def update(self, member_id, **mod_data):
-        member = dbaccess.Member(member_id)
-        for attr, value in mod_data.items():
-            if attr == "state":
-                value = commonlib.shared.states.member().to_flags(value)
-            setattr(member, attr, value)
+        if 'state' in mod_data:
+            mod_data['state'] = commonlib.shared.states.member.to_flags(mod_data['state'])
+        member_store.update(member_id, **mod_data)
 
     def info(self, member_id):
-        member = dbaccess.Member(member_id)
-        return member.info()
+        info = member_store.get(member_id, ['id', 'state', 'display_name'])
+        info['state'] = commonlib.shared.states.member.to_dict(info['state'])
+        return info
 
     def details(self, member_id):
-        member = dbaccess.Member(member_id)
-        return dict(profile=member.profile, contact=member.contact)
+        member_ref = member_store.ref(member_id)
+        return dict(profile=memberprofile_store.get_by(member=member_id),
+            contact=contact_store.get_by(owner=member_ref))
 
     def get(self, member_id, attrname):
-        member = dbaccess.Member(member_id)
+        if not attrname in self.get_attributes: return
         if attrname == 'state':
-            return commonlib.shared.states.member().to_dict(getattr(member, attrname))
-        else:
-            return getattr(member, attrname)
+            return commonlib.shared.states.member.to_dict(member_store.get(member_id, fields=['state']).state)
+        member_store.get(member_id, fields=[attrname])
 
     def set(self, member_id, attrname, v):
-        member = dbaccess.Member(member_id)
-        return setattr(member, attrname, v)
+        if not attrname in self.set_attributes: return
+        self.update(member_id, **{attrname: v})
 
 member_resource = MemberResource()
 member_collection = MemberCollection()

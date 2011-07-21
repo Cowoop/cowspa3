@@ -25,14 +25,12 @@ def test_create_member(test_data=None):
     assert isinstance(member_id, (int, long)) == True
 
 def test_member_object():
-    m = dbaccess.Member(1)
+    m = dbaccess.member_store.get(1)
     assert m.first_name == member_data['first_name']
     m.first_name = 'Kit'
     assert m.first_name == 'Kit'
     m.update(first_name='Kit', last_name='Walker')
     assert m.first_name, m.last_name == ('Kit', 'Walker')
-    assert m.get('first_name') == 'Kit'
-    assert m.get('first_name', 'last_name') == ('Kit', 'Walker')
 
 def test_update_member():
     old_state = memberlib.member_resource.get(1, 'state')

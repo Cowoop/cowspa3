@@ -40,7 +40,7 @@ class BizplaceResource:
         """
         returns dict containing essential information of specified business place
         """
-        return dbaccess.BizPlace(bizplace_id).info()
+        return dbaccess.bizplace_info(bizplace_id)
 
     def plans(self, bizplace_id):
         """

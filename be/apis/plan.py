@@ -57,7 +57,7 @@ class PlanResource:
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         subscription_store.add(plan_id=plan_id, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
-        bizplace_name=bizplace.name, plan_name=plan.name)
+            bizplace_name=bizplace.name, plan_name=plan.name)
         return True
 
     def new_subscribers(self, plan_id, subscriber_ids):
@@ -66,8 +66,8 @@ class PlanResource:
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         for subscriber_id in subscriber_ids:
-        subscription_store.add(plan_id=plan_id, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
-            bizplace_name=bizplace.name, plan_name=plan.name)
+            subscription_store.add(plan_id=plan_id, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
+                bizplace_name=bizplace.name, plan_name=plan.name)
         return True
 
 

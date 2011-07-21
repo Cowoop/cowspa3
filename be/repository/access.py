@@ -30,7 +30,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('ref', 'setup', 'add', 'remove', 'get', 'get_by', 'get_one_by'):
+    for attr in ('ref', 'setup', 'add', 'remove', 'get', 'get_by', 'get_one_by', 'update'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
@@ -40,109 +40,38 @@ class stores: pass
 for name, store in stores_mod.known_stores.items():
     setattr(stores, name, make_rstore(store))
 
-# objects
+def find_memberships(member_id):
+    return subscription_store.get_by(crit=dict(subscriber_id=member_id))
 
-class PObject(object):
+def biz_info(biz_id):
+    ref = biz_store.ref(biz_id)
+    q = 'SELECT biz.name, biz.state, \
+         bizprofile.short_description, bizprofile.tags, bizprofile.website, bizprofile.blog, \
+         contact.address, contact.city, contact.country, contact.email \
+         from biz \
+         INNER JOIN contact ON contact.owner = %(ref)s \
+         INNER JOIN bizprofile ON bizprofile.biz = %(biz_id)s \
+         WHERE biz.id = %(biz_id)s'
+    values = dict(biz_id=biz_id, ref=ref)
+    return biz_store.query_exec(q, values)[0]
+
+bizplace_info_sql = 'SELECT bizplace.name, bizplace.state, \
+    bizplaceprofile.short_description, bizplaceprofile.tags, bizplaceprofile.website, bizplaceprofile.blog, \
+    contact.address, contact.city, contact.country, contact.email \
+    from bizplace '
+
+def bizplace_info(bizplace_id):
+    ref = bizplace_store.ref(bizplace_id)
+    q = bizplace_info_sql + \
     """
-    >>> obj = PObject(oid)
-    >>> obj.get('fname', 'lname', 'age')
-    ('Kit', 'Walker', 304) # get returns list/tuple
-    >>> obj.get('fname')
-    'Kit' # get returns not list/tuple just a value
-    >>> obj.fname
-    'Kit'
-    >>> obj.age = 305
-    >>> obj.update(fname='Kit', age=309)
-    >>> obj.age
-    309
+    INNER JOIN contact ON contact.owner = %(ref)s
+    INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = %(bizplace_id)s
+    WHERE bizplace.id = %(bizplace_id)s
     """
-    store = None
-    attributes = []
+    values = dict(bizplace_id=bizplace_id, ref=ref)
+    return bizplace_store.query_exec(q, values)[0]
 
-    def __init__(self, oid):
-        self.id = oid
-        self.attributes = tuple(self.store.schema.keys())
-        self.ref = self.store.ref(oid)
-
-    def __getattr__(self, name):
-        if name in self.attributes:
-            return self.get(name)
-        return object.__getattribute__(self, name)
-
-    def __setattr__(self, name, v):
-        if name in self.attributes:
-            self.store.update(self.id, **{name:v})
-        object.__setattr__(self, name, v)
-
-    def get(self, *names):
-        """
-        returns list of values if more than attribute names given else just the value
-        """
-        res = self.store.get(self.id, fields=names, hashrows=False)
-        return res if len(names) > 1 else res[0]
-
-    def update(self, **mod_data):
-        self.store.update(self.id, **mod_data)
-
-class Member(PObject):
-    store = member_store
-    @property
-    def profile(self):
-        return memberprofile_store.get_one_by(crit={'member':self.id})
-    @profile.setter
-    def profile(self, mod_data):
-        memberprofile_store.update_by(crit={'member':self.id}, **mod_data)
-    @property
-    def contact(self):
-        return contact_store.get_one_by(member=id)
-    @contact.setter
-    def contact(self, mod_data):
-        ref = self.store.ref(self.id)
-        contact_store.update_by(crit={'owner':ref}, mod_data=mod_data)
-    @property
-    def pref(self):
-        return memberpref_store.get_one_by(member=self.id)
-    @pref.setter
-    def pref(self, mod_data):
-        return memberpref_store.update_by(crit={'member':self.id}, **mod_data)
-    def info(self):
-        return self.store.get(self.id, ['member', 'member.state', 'id', 'display_name'])
-    def memberships(self):
-        return subscription_store.get_by(crit=dict(subscriber_id=self.id))
-
-class Biz(PObject):
-    store = biz_store
-    def info(self):
-        ref = biz_store.ref(self.id)
-        q = 'SELECT biz.name, biz.state, \
-             bizprofile.short_description, bizprofile.tags, bizprofile.website, bizprofile.blog, \
-             contact.address, contact.city, contact.country, contact.email \
-             from biz \
-             INNER JOIN contact ON contact.owner = %(ref)s \
-             INNER JOIN bizprofile ON bizprofile.biz = %(biz_id)s \
-             WHERE biz.id = %(biz_id)s'
-        values = dict(biz_id=self.id, ref=ref)
-        return biz_store.query_exec(q, values)[0]
-
-class BizPlace(PObject):
-    store = bizplace_store
-    info_sql = 'SELECT bizplace.name, bizplace.state, \
-        bizplaceprofile.short_description, bizplaceprofile.tags, bizplaceprofile.website, bizplaceprofile.blog, \
-        contact.address, contact.city, contact.country, contact.email \
-        from bizplace '
-
-    def info(self):
-        ref = bizplace_store.ref(self.id)
-        q = self.info_sql + \
-        """
-        INNER JOIN contact ON contact.owner = %(ref)s
-        INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = %(bizplace_id)s
-        WHERE bizplace.id = %(bizplace_id)s
-        """
-        values = dict(bizplace_id=self.id, ref=ref)
-        return bizplace_store.query_exec(q, values)[0]
-
-class Resource(PObject):
+class Resource(object):
     store = resource_store
     info_fields = ['id', 'name', 'short_description']
     def info(self):
@@ -151,12 +80,6 @@ class Resource(PObject):
         deps = self.store.get(self.id, ['contains', 'contains_opt', 'requires', 'suggests', 'contained_by', 'required_by', 'suggested_by'])
         dep_ids = list(itertools.chain(*deps.values()))
         return resource_store.get_many(dep_ids, self.info_fields)
-
-class Subscription(object): pass
-class Contact(object): pass
-class Plan(object): pass
-class Usage(object): pass
-class Invoice(object): pass
 
 # functions
 
@@ -177,7 +100,7 @@ def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
 
 def list_bizplaces():
-    q = BizPlace.info_sql
+    q = bizplace_info_sql
     q += """
     INNER JOIN contact ON contact.owner = 'BizPlace:' || bizplace.id
     INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = bizplace.id
