@@ -72,6 +72,7 @@ class PGStore(BaseStore):
     cursor_getter = None # override
     schema = {}
     auto_id = False
+    parent_stores = None
 
     def setup(self):
         if self.parent_stores:
@@ -155,17 +156,26 @@ class PGStore(BaseStore):
             return oid
         return True
 
-    def get(self, oid, fields=None, hashrows=True):
+    def get(self, oid, fields=[], hashrows=True):
         """
         oid: object id. match with id field of row.
         fields: fields to include in result. None return all.
+            if only one field is specfied hashrows is ignored and single value (not a row) is returned
+        hashrows: if True row(s) returned in form of a dictionary with column names as keys, else row tuple are returned
         returns jsonable odict keyed by field names
         """
+        if isinstance(fields, basestring):
+            fields = [fields]
+        fields_len = len(fields)
         cols_str = self.fields2cols(fields)
         q = "SELECT %(cols_str)s FROM %(table_name)s WHERE id = %%s" %dict(table_name=self.table_name, cols_str=cols_str)
-        return self.query_exec(q, (oid,), hashrows=hashrows)[0]
+        hashrows = hashrows and not (fields_len == 1)
+        ret = self.query_exec(q, (oid,), hashrows=hashrows)[0]
+        if fields_len == 1:
+            ret = ret[0]
+        return ret
 
-    def get_by(self, crit, fields=None, hashrows=True):
+    def get_by(self, crit, fields=[], hashrows=True):
         """
         crit: eg. name='Joe', lang='en'
         -> odict
@@ -178,14 +188,14 @@ class PGStore(BaseStore):
         q = 'SELECT %(cols_str)s FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
         return self.query_exec(q, values, hashrows=hashrows)
 
-    def get_one_by(self, crit, fields=None, hashrows=True):
+    def get_one_by(self, crit, fields=[], hashrows=True):
         """
         @crit: criteria dict. all records matching with crit field key-values are returned
         returns list of dicts keyed by field names
         """
         return self.get_by(crit, fields, hashrows)[0]
 
-    def get_one_by_safe(self, crit, fields=None, hashrows=True):
+    def get_one_by_safe(self, crit, fields=[], hashrows=True):
         """
         """
         try:
@@ -193,7 +203,7 @@ class PGStore(BaseStore):
         except Exception as err:
             pass
 
-    def get_many(self, oids, fields=None, hashrows=True):
+    def get_many(self, oids, fields=[], hashrows=True):
         """
         returns list of dicts keyed by field names
         """
@@ -202,7 +212,7 @@ class PGStore(BaseStore):
         clause_values = (tuple(oids),)
         return self.get_by_clause(clause, clause_values, fields, hashrows)
 
-    def get_all(self, fields=None, hashrows=True):
+    def get_all(self, fields=[], hashrows=True):
         """
         returns list of dicts keyed by field names
         """
@@ -210,13 +220,13 @@ class PGStore(BaseStore):
         q = "SELECT %(cols_str)s FROM %(table_name)s" %dict(table_name=self.table_name, cols_str=cols_str)
         return self.query_exec(q, hashrows=hashrows)
 
-    def get_by_clause(self, clause, clause_values, fields=None, hashrows=True):
+    def get_by_clause(self, clause, clause_values, fields=[], hashrows=True):
         cols_str = self.fields2cols(fields)
         q = "SELECT %(cols_str)s FROM %(table_name)s WHERE %(clause)s" % \
             dict(table_name=self.table_name, cols_str=cols_str, clause=clause)
         return self.query_exec(q, clause_values, hashrows=hashrows)
 
-    def get_one_by_clause(self, clause, clause_values, fields=None, hashrows=True):
+    def get_one_by_clause(self, clause, clause_values, fields=[], hashrows=True):
         return self.get_by_clause(clause, clause_values, fields, hashrows)[0]
 
     def update(self, oid, **mod_data):

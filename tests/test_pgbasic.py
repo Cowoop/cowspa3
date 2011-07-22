@@ -39,6 +39,10 @@ def test_get():
     user = user_store.get(1)
     assert user.id == 1
 
+def test_get_one_attr():
+    res = user_store.get(1, 'id')
+    assert res == 1
+
 def test_get2():
     user1 = user_store.get(1)
     user2 = user_store.get_one_by(crit={'id':1})
