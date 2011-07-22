@@ -20,7 +20,6 @@ request_store = stores_mod.Request()
 plan_store = stores_mod.Plan()
 subscription_store = stores_mod.Subscription()
 resource_store = stores_mod.Resource()
-resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
@@ -83,20 +82,15 @@ class Resource(object):
         return resource_store.get_many(dep_ids, self.info_fields)
 
 
-class Activity(object):
+def list_activities_by_categories(categories, from_date, to_date):
+    clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s'
+    clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)  
+    return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
     
-    def list_by_categories(self, categories, from_date, to_date):
-        clause = '(category = \'' + ' OR category = \''.join(category+'\'' for category in categories) + ') AND created >= %(from_date)s AND created <= %(to_date)s'
-        clause_values = dict(from_date=from_date, to_date=to_date)  
-        return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
-    
-    
-    def list_by_name(self, name, from_date, to_date):
-        clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
-        clause_values = dict(name=name, from_date=from_date, to_date=to_date)  
-        return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
-
-# functions
+def list_activities_by_name(name, from_date, to_date):
+    clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
+    clause_values = dict(name=name, from_date=from_date, to_date=to_date)  
+    return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def ref2name(ref):
     store_map = dict(BizPlace=bizplace_store, Member=member_store)
