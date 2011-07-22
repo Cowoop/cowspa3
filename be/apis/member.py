@@ -74,8 +74,8 @@ class MemberResource:
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
         if attrname == 'state':
-            return commonlib.shared.states.member.to_dict(member_store.get(member_id, fields=['state']).state)
-        member_store.get(member_id, fields=[attrname])
+            return commonlib.shared.states.member.to_dict(member_store.get(member_id, fields=['state']))
+        return member_store.get(member_id, fields=[attrname])
 
     def set(self, member_id, attrname, v):
         if not attrname in self.set_attributes: return
