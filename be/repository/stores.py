@@ -9,7 +9,6 @@ def cursor_getter(*ingored):
 
 class PGStore(PGStore):
     cursor_getter = cursor_getter
-    parent_stores = None
     def __init__(self):
         store_name = self.__class__.__name__.lower() + '_store'
         known_stores[store_name] = self

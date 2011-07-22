@@ -16,8 +16,13 @@ def teardown():
 def test_create():
     res_id = resourcelib.resource_collection.new(**resource_data)
     env.context.pgcursor.connection.commit()
-    print(res_id)
     assert res_id == 1
 
 def test_info():
-    print(resourcelib.resource_resource.info(1))
+    assert resourcelib.resource_resource.info(1).name == resource_data['name']
+
+def test_update():
+    new_name = 'GlassHouse II'
+    resourcelib.resource_resource.update(1, name=new_name)
+    env.context.pgcursor.connection.commit()
+    assert resourcelib.resource_resource.get(1, 'name') == new_name

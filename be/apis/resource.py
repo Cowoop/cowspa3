@@ -40,5 +40,13 @@ class ResourceResource:
         mod_data = dict((k,v) for k,v in mod_data.items() if k in self.set_attributes)
         resource_store.update(res_id, **mod_data)
 
+    def get(self, res_id, attrname):
+        if not attrname in self.get_attributes: return
+        return resource_store.get(res_id, fields=[attrname], hashrows=False)
+
+    def set(self, res_id, attrname, v):
+        if not attrname in self.set_attributes: return
+        self.update(res_id, **{attrname: v})
+
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()
