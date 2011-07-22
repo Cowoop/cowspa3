@@ -3,6 +3,7 @@ import commonlib.shared.states
 import be.repository.access as dbaccess
 import bases.app
 import commonlib.helpers as helpers
+import be.apis.activities as activitylib
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -33,6 +34,10 @@ class MemberCollection:
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
+        
+        data = dict(name=first_name, location=country, user_id=user_id)
+        activity_id = activitylib.activity_collection.add('MemberManagement', 'MemberCreated', user_id, data, created)
+        
         return user_id
 
     def delete(self, member_id):
@@ -60,6 +65,10 @@ class MemberResource:
         if 'state' in mod_data:
             mod_data['state'] = commonlib.shared.states.member.to_flags(mod_data['state'])
         member_store.update(member_id, **mod_data)
+        
+        data = dict(user_id=member_id, attrs=', '.join(attr for attr in mod_data))
+        created = datetime.datetime.now()
+        activity_id = activitylib.activity_collection.add('MemberManagement', 'MemberUpdated', member_id, data, created)
 
     def info(self, member_id):
         info = member_store.get(member_id, ['id', 'state', 'display_name'])

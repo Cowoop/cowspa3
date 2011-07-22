@@ -308,7 +308,7 @@ class Activity(PGStore):
     id SERIAL NOT NULL UNIQUE,
     category TEXT NOT NULL,
     name TEXT NOT NULL,
-    creater TEXT NULL,
-    data TEXT NOT NULL,
+    actor INTEGER NOT NULL,
+    data BYTEA NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """

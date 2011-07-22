@@ -81,6 +81,20 @@ class Resource(object):
         dep_ids = list(itertools.chain(*deps.values()))
         return resource_store.get_many(dep_ids, self.info_fields)
 
+
+class Activity(object):
+    
+    def list_by_categories(self, categories, from_date, to_date):
+        clause = '(category = \'' + ' OR category = \''.join(category+'\'' for category in categories) + ') AND created >= %(from_date)s AND created <= %(to_date)s'
+        clause_values = dict(from_date=from_date, to_date=to_date)  
+        return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
+    
+    
+    def list_by_name(self, name, from_date, to_date):
+        clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
+        clause_values = dict(name=name, from_date=from_date, to_date=to_date)  
+        return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
+
 # functions
 
 def ref2name(ref):
