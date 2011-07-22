@@ -16,3 +16,9 @@ class states(object):
         return state_flag
 
 class member(states): pass
+
+class resource_relations(object):
+    contains = 1
+    contains_opt = 2
+    requires = 3
+    suggests = 4

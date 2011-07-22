@@ -249,14 +249,15 @@ class Resource(PGStore):
     short_description TEXT,
     long_description TEXT,
     time_based BOOLEAN DEFAULT True,
-    quantity_unit TEXT,
-    contains INTEGER[],
-    contains_opt INTEGER[],
-    suggests INTEGER[],
-    contained_by INTEGER,
-    suggested_by INTEGER[],
-    requires INTEGER[],
-    required_by INTEGER[]
+    quantity_unit TEXT
+    """
+
+class ResourceRelation(PGStore):
+    # resourceA --relation--> resourceB
+    create_sql = """
+    resourceA INTEGER,
+    relation INTEGER,
+    resourceB INTEGER
     """
 
 class Pricing(PGStore):

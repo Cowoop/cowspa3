@@ -2,6 +2,7 @@ import datetime
 import be.repository.access as dbaccess
 
 resource_store = dbaccess.stores.resource_store
+resourcerelation_store = dbaccess.stores.resourcerelation_store
 
 class ResourceCollection:
 
@@ -16,6 +17,7 @@ class ResourceCollection:
         """
         returns list of resource info dicts
         """
+        return resource_store.get_by(owner=owner, fields=['id', 'name', 'short_description'])
 
 class ResourceResource:
 
@@ -28,7 +30,6 @@ class ResourceResource:
         """
         info_attributes = ['name', 'owner', 'short_description']
         info = resource_store.get(res_id, info_attributes)
-        print(info)
         # TODO change owner ref to name
         info['owner_id'] = info['owner']
         info['owner_name'] = dbaccess.ref2name(info['owner'])
@@ -47,6 +48,25 @@ class ResourceResource:
     def set(self, res_id, attrname, v):
         if not attrname in self.set_attributes: return
         self.update(res_id, **{attrname: v})
+
+    def set_relations(self, res_id, relations):
+        """
+        relations: list of tuples containing other resource id and relation (integer)
+        eg. Resource 12 contains resources 13, 14 and suggests 15. Assuming 1 indicates containment and 2 suggestion
+        >>> set_relations(12, [(13, 1), (14, 1), (15, 2)])
+        """
+        relation_dicts = dict(relations)
+        existing_relations = dict(resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False))
+        to_update = set(relation_dicts.keys()).intersection(existing_relations.keys())
+        to_add = set(relation_dicts.keys()).difference(to_update)
+        for resB_id in to_add:
+            resourcerelation_store.add(resourceA=res_id, relation=relation_dicts[resB_id], resourceB=resB_id)
+        for resB_id in to_update:
+            resourcerelation_store.update_by(resourceA=res_id, relation=relation_dicts[resB_id], resourceB=resB_id)
+        return resourcerelation_store.get_by(crit={'resourceA':res_id})
+
+    def get_relations(self, res_id):
+        return resourcerelation_store.get_by(crit={'resourceA':res_id}, hashrows=False)
 
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()
