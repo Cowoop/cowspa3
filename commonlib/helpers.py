@@ -1,3 +1,4 @@
+import collections
 import base64, random, hashlib
 
 random_key_gen = None
@@ -20,3 +21,24 @@ def encrypt(s, salt=''):
     h = hashlib.sha256()
     h.update(s+salt)
     return h.hexdigest()
+
+class Constants(object):
+    """
+    >>> class Statuses(Constants):
+    >>>     names = ['open', 'pending', 'closed']
+
+    >>> statuses = Statuses()
+    >>> statuses.open
+    0
+    >>> statuses.rev(0)
+    'open'
+    """
+    names = []
+    def __init__(self):
+        self.nt = collections.namedtuple(self.__class__.__name__, ' '.join(self.names))._make(range(len(self.names)))
+    def __getattr__(self, name):
+        return getattr(self.nt, name)
+    def rev(self, n):
+        return self.nt._fields[n]
+
+

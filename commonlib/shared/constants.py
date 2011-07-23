@@ -1,14 +1,14 @@
-class states(object):
-    enabled = 0
-    hidden = 1
+import commonlib.helpers
 
-    @classmethod
+Constants = commonlib.helpers.Constants
+
+class states(Constants):
+    names = ['enabled', 'hidden']
+
     def to_dict(self, state_flag):
-        attrs = (state for state in dir(self) if state[0] != '_' and not callable(getattr(self, state)))
-        state_dict = dict((state, bool(state_flag & (2 ** getattr(self, state)) )) for state in attrs)
+        state_dict = dict((state, bool(state_flag & (2 ** getattr(self, state)) )) for state in self.names)
         return state_dict
 
-    @classmethod
     def to_flags(self, state_dict):
         state_flag = 0
         for state in state_dict:
@@ -17,8 +17,8 @@ class states(object):
 
 class member(states): pass
 
-class resource_relations(object):
-    contains = 1
-    contains_opt = 2
-    requires = 3
-    suggests = 4
+class resource_relations(Constants):
+    names = ['contains', 'contains_opt', 'requires', 'suggests']
+
+member = member()
+resource_relations = resource_relations()
