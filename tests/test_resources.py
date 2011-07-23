@@ -1,6 +1,9 @@
 import commontest
 import test_plans
 import be.apis.resource as resourcelib
+import commonlib.shared.constants as constants
+
+rr = constants.resource_relations
 
 resource_data = dict(name='GlassHouse', owner='BizPlace:1', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.')
 more_resource_data = [dict(name='RES1', owner='BizPlace:1', short_description='Resource 1'),
@@ -12,7 +15,7 @@ def setup():
     env.context.pgcursor.connection.commit()
     test_plans.test_add_bizplace()
 
-def xteardown():
+def teardown():
     commontest.destroy_test_env()
     env.context.pgcursor.connection.commit()
 
@@ -37,7 +40,9 @@ def test_update():
     assert resourcelib.resource_resource.get(1, 'name') == new_name
 
 def test_set_relations():
-    relations = [(2, 1), (3, 1), (4, 2)]
+    relations = [('contains', 2), ('contains', 3), ('suggests', 4)]
     resourcelib.resource_resource.set_relations(1, relations)
     env.context.pgcursor.connection.commit()
-    assert resourcelib.resource_resource.get_relations(1) == [(1, 1, 2), (1, 1, 3), (1, 2, 4)]
+    relation_dicts = resourcelib.resource_resource.get_relations(1)
+    assert relation_dicts['suggests'] == [4]
+    assert relation_dicts['contains'] == [2, 3]

@@ -1,5 +1,7 @@
 import datetime
+import collections
 import be.repository.access as dbaccess
+import commonlib.shared.constants as constants
 
 resource_store = dbaccess.stores.resource_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
@@ -52,9 +54,10 @@ class ResourceResource:
     def set_relations(self, res_id, relations):
         """
         relations: list of tuples containing other resource id and relation (integer)
-        eg. Resource 12 contains resources 13, 14 and suggests 15. Assuming 1 indicates containment and 2 suggestion
-        >>> set_relations(12, [(13, 1), (14, 1), (15, 2)])
+        eg. Resource 12 contains resources 13, 14 and suggests 15.
+        >>> set_relations(12, [('contains', 13), ('contains', 14), ('suggests', 15)])
         """
+        relations = [(resb_id, getattr(constants.resource_relations, relation)) for relation, resb_id in relations]
         relation_dicts = dict(relations)
         existing_relations = dict(resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False))
         to_update = set(relation_dicts.keys()).intersection(existing_relations.keys())
@@ -66,7 +69,14 @@ class ResourceResource:
         return resourcerelation_store.get_by(crit={'resourceA':res_id})
 
     def get_relations(self, res_id):
-        return resourcerelation_store.get_by(crit={'resourceA':res_id}, hashrows=False)
+        """
+        returns dict keyed by relation and resource_ids as values
+        """
+        relations = resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False)
+        d = collections.defaultdict(list)
+        for relation, res_id in relations:
+            d[constants.resource_relations.rev(relation)].append(res_id)
+        return d
 
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()

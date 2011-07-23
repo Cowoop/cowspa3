@@ -1,3 +1,4 @@
+import commonlib.helpers
 import commonlib.shared.states
 import be.libs.macros as macroslib
 
@@ -25,14 +26,22 @@ def test_has_macro():
     text = 'HAS NO MACRO'
     assert macroslib.has_macro(text) == False
 
-def test_fromflags():
+def test_constants():
+    class Statuses(commonlib.helpers.Constants):
+        names = ['open', 'pending', 'closed']
+
+    statuses = Statuses()
+    assert statuses.open == 0
+    assert statuses.rev(0) == 'open'
+
+def test_state_fromflags():
     state_flags = 5
     state_dict = dummy_obj_state.to_dict(state_flags)
     assert state_flags == dummy_obj_state.to_flags(state_dict)
     state_flags = 2
     assert state_flags != dummy_obj_state.to_flags(state_dict)
 
-def test_fromdict():
+def test_state_fromdict():
     state_dict = dict(enabled=False, available=True, hidden=False)
     state_flags = dummy_obj_state.to_flags(state_dict)
     assert state_dict == dummy_obj_state.to_dict(state_flags)
