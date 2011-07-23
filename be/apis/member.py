@@ -36,7 +36,7 @@ class MemberCollection:
         #searchlib.add(search_d)
         
         data = dict(name=first_name, location=country, user_id=user_id)
-        activity_id = activitylib.activity_collection.add('MemberManagement', 'MemberCreated', user_id, data, created)
+        activity_id = activitylib.add('MemberManagement', 'MemberCreated', user_id, data, created)
         
         return user_id
 
@@ -68,7 +68,7 @@ class MemberResource:
         
         data = dict(user_id=member_id, attrs=', '.join(attr for attr in mod_data))
         created = datetime.datetime.now()
-        activity_id = activitylib.activity_collection.add('MemberManagement', 'MemberUpdated', member_id, data, created)
+        activity_id = activitylib.add('MemberManagement', 'MemberUpdated', member_id, data, created)
 
     def info(self, member_id):
         info = member_store.get(member_id, ['id', 'state', 'display_name'])
