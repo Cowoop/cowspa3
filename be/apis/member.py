@@ -28,8 +28,8 @@ class MemberCollection:
         data = dict(member=user_id, language=language)
         memberpref_store.add(**data)
 
-        owner = member_store.ref(user_id)
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, owner=owner, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
+        #owner = member_store.ref(user_id)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
         member_store.add(**data)
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)

@@ -44,31 +44,21 @@ def find_memberships(member_id):
     return subscription_store.get_by(crit=dict(subscriber_id=member_id))
 
 def biz_info(biz_id):
-    ref = biz_store.ref(biz_id)
     q = 'SELECT biz.name, biz.state, \
-         bizprofile.short_description, bizprofile.tags, bizprofile.website, bizprofile.blog, \
-         contact.address, contact.city, contact.country, contact.email \
-         from biz \
-         INNER JOIN contact ON contact.owner = %(ref)s \
-         INNER JOIN bizprofile ON bizprofile.biz = %(biz_id)s \
-         WHERE biz.id = %(biz_id)s'
-    values = dict(biz_id=biz_id, ref=ref)
+         short_description, tags, website, blog, \
+         address, city, country, email \
+         from biz WHERE id = %(biz_id)s'
+    values = dict(biz_id=biz_id)
     return biz_store.query_exec(q, values)[0]
 
-bizplace_info_sql = 'SELECT bizplace.name, bizplace.state, \
-    bizplaceprofile.short_description, bizplaceprofile.tags, bizplaceprofile.website, bizplaceprofile.blog, \
-    contact.address, contact.city, contact.country, contact.email \
-    from bizplace '
-
+bizplace_info_sql = """SELECT name, state, \
+    short_description, tags, website, blog, \
+    address, city, country, email \
+    from bizplace """
+    
 def bizplace_info(bizplace_id):
-    ref = bizplace_store.ref(bizplace_id)
-    q = bizplace_info_sql + \
-    """
-    INNER JOIN contact ON contact.owner = %(ref)s
-    INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = %(bizplace_id)s
-    WHERE bizplace.id = %(bizplace_id)s
-    """
-    values = dict(bizplace_id=bizplace_id, ref=ref)
+    q =  bizplace_info_sql + """WHERE id = %(bizplace_id)s"""
+    values = dict(bizplace_id=bizplace_id)
     return bizplace_store.query_exec(q, values)[0]
 
 class Resource(object):
@@ -117,10 +107,6 @@ def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
 
 def list_bizplaces():
     q = bizplace_info_sql
-    q += """
-    INNER JOIN contact ON contact.owner = 'BizPlace:' || bizplace.id
-    INNER JOIN bizplaceprofile ON bizplaceprofile.bizplace = bizplace.id
-    """
     return bizplace_store.query_exec(q)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name']):

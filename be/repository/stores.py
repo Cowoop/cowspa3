@@ -27,7 +27,6 @@ class Contact(PGStore):
     table_name = "contact"
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    owner TEXT NOT NULL,
     address TEXT,
     city TEXT,
     country TEXT,
@@ -156,7 +155,6 @@ class UserPermission(PGStore):
 
 class BizProfile(PGStore):
     create_sql = """
-    biz INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     tags TEXT[],
@@ -169,7 +167,6 @@ class BizProfile(PGStore):
 
 class BizplaceProfile(PGStore):
     create_sql = """
-    bizplace INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     tags TEXT[],
@@ -192,6 +189,7 @@ class Biz(PGStore):
     logo TEXT,
     contact INTEGER
     """
+    parent_stores = [BizProfile(), Contact()]
 
 class BizPlace(PGStore):
     create_sql = """
@@ -205,6 +203,7 @@ class BizPlace(PGStore):
     tz TEXT,
     holidays smallint[]
     """
+    parent_stores = [BizplaceProfile(), Contact()]
 
 class Request(PGStore):
     create_sql = """
