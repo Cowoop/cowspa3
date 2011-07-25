@@ -20,6 +20,7 @@ request_store = stores_mod.Request()
 plan_store = stores_mod.Plan()
 subscription_store = stores_mod.Subscription()
 resource_store = stores_mod.Resource()
+resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
@@ -30,7 +31,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('ref', 'setup', 'add', 'remove', 'get', 'get_by', 'get_one_by', 'update'):
+    for attr in ('ref', 'setup', 'add', 'remove', 'get', 'get_many', 'get_by', 'get_one_by', 'update'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
