@@ -44,5 +44,5 @@ def test_set_relations():
     resourcelib.resource_resource.set_relations(1, relations)
     env.context.pgcursor.connection.commit()
     relation_dicts = resourcelib.resource_resource.get_relations(1)
-    assert relation_dicts['suggests'] == [4]
-    assert relation_dicts['contains'] == [2, 3]
+    assert relation_dicts['suggests'] == [dict(id=4, name='RES3')]
+    assert relation_dicts['contains'] == [dict(id=2, name='RES1'), dict(id=3, name='RES2')]

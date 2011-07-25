@@ -70,12 +70,14 @@ class ResourceResource:
 
     def get_relations(self, res_id):
         """
-        returns dict keyed by relation and resource_ids as values
+        returns dict keyed by relation and resource_id, resource_name as values
         """
         relations = resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False)
+        other_res_ids = tuple(rel[1] for rel in relations)
+        other_resources = dict(resource_store.get_many(other_res_ids, fields=['id', 'name'], hashrows=False))
         d = collections.defaultdict(list)
-        for relation, res_id in relations:
-            d[constants.resource_relations.rev(relation)].append(res_id)
+        for relation, other_res_id in relations:
+            d[constants.resource_relations.rev(relation)].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
 
 resource_resource = ResourceResource()
