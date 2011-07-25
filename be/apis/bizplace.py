@@ -22,8 +22,10 @@ class BizplaceCollection:
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """
-        returns list bizplace members
+        returns list bizplace members in the form of tuple (id, display_name)
         """
+        # find this bizplace's plans 
+        # union of subscribers of all these plans
 
 class BizplaceResource:
 
