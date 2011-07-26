@@ -8,6 +8,7 @@ import be.apis.member as memberlib
 biz_data = dict(name='My Coworking Biz', address='118, Lotus road', city='Timbaktu', country='Mali', email='me@example.com', short_description='Social Innovators')
 bizplace_data = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='Mali', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
 plan_data = dict(name="Hub 25", description="Not just another plan")
+more_plan_data = dict(name="Plan ", description="Not just another plan")
 
 def setup():
     commontest.setup_test_env()
@@ -53,6 +54,18 @@ def test_add_subscribers():
     planlib.plan_resource.new_subscribers(1, [1, 2, 3])
     env.context.pgcursor.connection.commit()
 
+def test_find_bizplace_plans():
+    data = {}
+    data.update(more_plan_data)
+    for i in range(4):
+        data['name'] = more_plan_data['name'] + str(i)
+        data['bizplace_id'] = 1
+        planlib.plan_collection.new(**data)
+        env.context.pgcursor.connection.commit()
+    plans = bizplacelib.bizplace_resource.plans(1)
+    print plans
+    assert len(plans) == 5
+        
 def test_subscribers():
     subscribers = planlib.plan_resource.subscribers(1)
     assert len(subscribers) == 3

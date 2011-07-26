@@ -106,6 +106,11 @@ def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
     clause_values = (bizplace_ids,)
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
 
+plan_info_fields = ['id', 'name', 'bizplace', 'description']
+
+def find_bizplace_plans(bizplace_id, fields):
+    return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
+    
 def list_bizplaces():
     q = bizplace_info_sql
     return bizplace_store.query_exec(q)

@@ -24,8 +24,7 @@ class BizplaceCollection:
         """
         returns list bizplace members in the form of tuple (id, display_name)
         """
-        # find this bizplace's plans 
-        # union of subscribers of all these plans
+        return dbaccess.find_bizplace_members(bizplace_id)
 
 class BizplaceResource:
 
@@ -39,6 +38,7 @@ class BizplaceResource:
         """
         returns list of plan info dicts for this business place
         """
+        return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.plan_info_fields)
 
 bizplace_collection = BizplaceCollection()
 bizplace_resource = BizplaceResource()

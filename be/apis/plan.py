@@ -24,7 +24,7 @@ class PlanResource:
     def info(self, plan_id):
         """
         """
-        return plan_store.get(plan_id)
+        return plan_store.get(plan_id, dbaccess.plan_info_fields)
 
 
     def details(self, plan_id):
