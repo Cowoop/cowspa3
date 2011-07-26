@@ -1,3 +1,5 @@
+import cPickle
+import psycopg2
 import be.repository.stores as stores_mod
 import bases.persistence
 
@@ -56,7 +58,15 @@ bizplace_info_sql = """SELECT name, state, \
     short_description, tags, website, blog, \
     address, city, country, email \
     from bizplace """
-    
+
+class PGBinary(object):
+    @classmethod
+    def to_pg(self, data):
+        return psycopg2.Binary(cPickle.dumps(data, -1))
+    @classmethod
+    def to_python(self, data_s):
+        return cPickle.loads(str(data_s))
+
 def bizplace_info(bizplace_id):
     q =  bizplace_info_sql + """WHERE id = %(bizplace_id)s"""
     values = dict(bizplace_id=bizplace_id)
