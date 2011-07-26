@@ -205,6 +205,7 @@ class BizPlace(PGStore):
     taxes BYTEA
     """
     parent_stores = [BizplaceProfile(), Contact()]
+    pickle_cols = ['taxes']
 
 class Request(PGStore):
     create_sql = """
@@ -313,3 +314,4 @@ class Activity(PGStore):
     data BYTEA NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
+    pickle_cols = ['data']

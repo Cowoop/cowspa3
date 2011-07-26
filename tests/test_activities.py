@@ -1,6 +1,5 @@
 import commontest
 import datetime
-import cPickle
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 
@@ -34,8 +33,8 @@ def test_find_activities_by_categories():
     activity = activities[1]
     assert activity['category'] == 'MemberManagement'
     assert activity['name'] == 'MemberUpdated'
-    assert cPickle.loads(str(activity['data']))['user_id'] == 1
-    assert cPickle.loads(str(activity['data']))['attrs'] == 'state'
+    assert activity['data']['user_id'] == 1
+    assert activity['data']['attrs'] == 'state'
 
 
 def test_find_activities_by_name():
@@ -46,4 +45,4 @@ def test_find_activities_by_name():
     activity = activities[1]
     assert activity['category'] == 'MemberManagement'
     assert activity['name'] == 'MemberCreated'
-    assert cPickle.loads(str(activity['data']))['name'] == member_data2['name']
+    assert activity['data']['name'] == member_data2['name']

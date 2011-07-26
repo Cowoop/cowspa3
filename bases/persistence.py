@@ -1,5 +1,6 @@
 import abc
 import psycopg2
+import cPickle
 
 from commonlib.helpers import odict
 
@@ -65,6 +66,15 @@ class BaseStore(object):
         raise NotImplemented
 
 
+class PGBinary(object):
+    @classmethod
+    def to_pg(self, data):
+        return psycopg2.Binary(cPickle.dumps(data, -1))
+    @classmethod
+    def to_python(self, data_s):
+        return cPickle.loads(str(data_s))
+
+
 class PGStore(BaseStore):
 
     odicter = odict
@@ -73,6 +83,7 @@ class PGStore(BaseStore):
     schema = {}
     auto_id = False
     parent_stores = None
+    pickle_cols = []
 
     def setup(self):
         if self.parent_stores:
@@ -135,17 +146,24 @@ class PGStore(BaseStore):
             raise
         if cursor.description:
             cols = tuple(r[0] for r in cursor.description)
-            values = cursor.fetchall()
+            pickle_col_pos = [num for num, col in enumerate(cols) if col in self.pickle_cols]
+            rows = [list(row) for row in cursor.fetchall()]
+            for row in rows:
+                for pos in pickle_col_pos:
+                    row[pos] = PGBinary.to_python(row[pos])
             if hashrows:
-                return [self.odicter(zip(cols, v)) for v in values]
-            return values
+                return [self.odicter(zip(cols, v)) for v in rows]
+            return rows
 
     def add(self, **data):
         cols = list(data.keys())
+        cols_to_pickle = set(cols).intersection(self.pickle_cols)
         cols_str = ', '.join(cols)
         values_str = ', '.join( ['%s' for i in cols] )
         q = 'INSERT INTO %(table_name)s (%(cols)s) VALUES (%(values_str)s)' % \
             dict(table_name=self.table_name, cols=cols_str, values_str=values_str)
+        for col in cols_to_pickle:
+            data[col] = PGBinary.to_pg(data[col])
         values = tuple(data[k] for k in cols)
         self.query_exec(q, values)
         if self.auto_id:
@@ -236,10 +254,13 @@ class PGStore(BaseStore):
         -> True/False
         """
         cols = mod_data.keys()
+        cols_to_pickle = set(cols).intersection(self.pickle_cols)
         cols_str = ', '.join('%s=%%(%s)s' % (k,k) for k in mod_data.keys())
         table_name = self.table_name
         q = 'UPDATE %(table_name)s SET %(cols)s WHERE id = %(oid)s' % dict(table_name=table_name, cols=cols_str, oid=oid)
         values = dict((k, mod_data[k]) for k in cols)
+        for col in cols_to_pickle:
+            values[col] = PGBinary.to_pg(values[col])
         self.query_exec(q, values)
         return True
 
@@ -250,10 +271,13 @@ class PGStore(BaseStore):
         values = [crit[k] for k in crit_keys]
         condition = ', '.join(('%s = %%s' % k for k in crit_keys))
         cols = mod_data.keys()
+        cols_to_pickle = set(cols).intersection(self.pickle_cols)
         cols_str = ', '.join('%s=%%s' % k for k in mod_data.keys())
         table_name = self.table_name
         q = 'UPDATE %(name)s SET %(cols)s WHERE %(condition)s' % dict(name=table_name, cols=cols_str, condition=condition)
         values = [mod_data[k] for k in cols] + values
+        for col in cols_to_pickle:
+            values[col] = PGBinary.to_pg(values[col])
         self.query_exec(q, values)
         return True
 

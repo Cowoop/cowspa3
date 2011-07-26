@@ -44,15 +44,10 @@ class BizplaceResource:
         return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.plan_info_fields)
 
     def update(self, bizplace_id, **mod_data):
-        if 'taxes' in mod_data:
-            mod_data['taxes'] = dbaccess.PGBinary.to_pg(mod_data['taxes'])
         bizplace_store.update(bizplace_id, **mod_data)
 
     def get(self, bizplace_id, attrname):
         if not attrname in self.get_attributes: return
-        if attrname == 'taxes':
-            taxes_s = bizplace_store.get(bizplace_id, fields=[attrname])
-            return dbaccess.PGBinary.to_python(taxes_s)
         return bizplace_store.get(bizplace_id, fields=[attrname])
 
     def set(self, bizplace_id, attrname, v):

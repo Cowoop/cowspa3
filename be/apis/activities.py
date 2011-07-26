@@ -15,7 +15,7 @@ categories = dict(
 
 def add(category, name, actor, data, created):
 
-    data = dict(category=category, name=name, actor=actor, data=dbaccess.PGBinary.to_pg(data), created=created)
+    data = dict(category=category, name=name, actor=actor, data=data, created=created)
     activity_id = activity_store.add(**data)
     return activity_id
 
@@ -24,7 +24,7 @@ def find_activities_by_categories(category_list, from_date, to_date):
     activities = dbaccess.list_activities_by_categories(category_list, from_date, to_date)
     msg_list = []
     for act in activities:
-        msg_list.append(categories[act['category']][act['name']] % dbaccess.PGBinary.to_python(act['data']))
+        msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
 
 def find_activities_by_name(name, from_date, to_date):
@@ -32,6 +32,6 @@ def find_activities_by_name(name, from_date, to_date):
     activities = dbaccess.list_activities_by_name(name, from_date, to_date)
     msg_list = []
     for act in activities:
-        msg_list.append(categories[act['category']][act['name']] % dbaccess.PGBinary.to_python(act['data']))
+        msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
 
