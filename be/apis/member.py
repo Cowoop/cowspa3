@@ -65,7 +65,7 @@ class MemberResource:
         if 'state' in mod_data:
             mod_data['state'] = commonlib.shared.states.member.to_flags(mod_data['state'])
         member_store.update(member_id, **mod_data)
-        
+
         data = dict(user_id=member_id, attrs=', '.join(attr for attr in mod_data))
         created = datetime.datetime.now()
         activity_id = activitylib.add('MemberManagement', 'MemberUpdated', member_id, data, created)

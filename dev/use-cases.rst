@@ -11,3 +11,21 @@ Member Attributes
 Home Hub
 --------
 Hubspace has homehub concept where a member is attached one of hubs and software treats that hub as homehub of that member where in some cases granting special priviledges to hosts of the hub on that member. This is no longer required. One member may be a member of multiple hubs i.e. on tariffs for such hubs. Members sometime switch hub memberships so if earlier hub sets member 'not active' other one soon needs to activate.
+
+Tax calculation
+===============
+- There could be more than one level of taxes.
+- There should be default Tax levels per location
+- Resource tax overrides location tax levels
+
+Cost calculation
+================
+Rules
+
+- If custom cost no processing needed
+- Usual cost calculation
+    member->tariff->pricing->resource price
+    get_price(resource_id, usage_time)
+- Taxes
+    get_tax_for_resource(resource_id):
+- Other rules

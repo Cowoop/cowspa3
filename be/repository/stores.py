@@ -201,7 +201,8 @@ class BizPlace(PGStore):
     contact INTEGER,
     langs TEXT[],
     tz TEXT,
-    holidays smallint[]
+    holidays smallint[],
+    taxes BYTEA
     """
     parent_stores = [BizplaceProfile(), Contact()]
 

@@ -28,6 +28,9 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
+    get_attributes = ['taxes']
+    set_attributes = ['taxes']
+
     def info(self, bizplace_id):
         """
         returns dict containing essential information of specified business place
@@ -39,6 +42,22 @@ class BizplaceResource:
         returns list of plan info dicts for this business place
         """
         return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.plan_info_fields)
+
+    def update(self, bizplace_id, **mod_data):
+        if 'taxes' in mod_data:
+            mod_data['taxes'] = dbaccess.PGBinary.to_pg(mod_data['taxes'])
+        bizplace_store.update(bizplace_id, **mod_data)
+
+    def get(self, bizplace_id, attrname):
+        if not attrname in self.get_attributes: return
+        if attrname == 'taxes':
+            taxes_s = bizplace_store.get(bizplace_id, fields=[attrname])
+            return dbaccess.PGBinary.to_python(taxes_s)
+        return bizplace_store.get(bizplace_id, fields=[attrname])
+
+    def set(self, bizplace_id, attrname, v):
+        if not attrname in self.set_attributes: return
+        self.update(bizplace_id, **{attrname: v})
 
 bizplace_collection = BizplaceCollection()
 bizplace_resource = BizplaceResource()
