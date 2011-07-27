@@ -127,29 +127,16 @@ def find_plan_members(plan_ids, fields=['member', 'display_name']):
     
     
 def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types):
-    clause = ""
-    if start:
-        clause = 'start_time >= %(start_time)s'
-    if end:
-        if start:
-            clause += ' AND '
-        clause += 'start_time <= %(end_time)s'
-    if res_owner_refs != []:
-        if clause != "":
-            clause += ' AND '
-        clause += '(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_refs)s))'
-    if resource_ids != []:
-        if clause != "":
-            clause += ' AND '
-        clause += '(resource_id IN %(resource_ids)s)'
-    if member_ids != []:
-        if clause != "":
-            clause += ' AND '
-        clause += '(member IN %(member_ids)S)'
-    if resource_types != []:
-        if clause != "":
-            clause += ' AND '
-        clause += '(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))'  
+    clauses = []
+
+    if start: clauses.append('start_time >= %(start_time)s')
+    if end: clauses.append('start_time <= %(end_time)s')
+    if res_owner_refs: clauses.append('(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_refs)s))')
+    if resource_ids: clauses.append('(resource_id IN %(resource_ids)s)')
+    if member_ids: clauses.append('(member IN %(member_ids)s)')
+    if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
+
+    clauses_s = ' AND '.join(clauses)
     clause_values = dict(start_time=start, end_time=end, resource_ids=tuple(resource_ids), owner_refs=tuple(res_owner_refs), member_id=tuple(member_ids), resource_types=tuple(resource_types))
-    return usage_store.get_by_clause(clause, clause_values, fields=None) 
-    
+
+    return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
