@@ -69,9 +69,13 @@ class BaseStore(object):
 class PGBinary(object):
     @classmethod
     def to_pg(self, data):
+        if data == None:
+            return None
         return psycopg2.Binary(cPickle.dumps(data, -1))
     @classmethod
     def to_python(self, data_s):
+        if data_s == None:
+            return None
         return cPickle.loads(str(data_s))
 
 
