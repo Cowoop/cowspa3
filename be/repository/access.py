@@ -49,22 +49,12 @@ def find_memberships(member_id):
     return subscription_store.get_by(crit=dict(subscriber_id=member_id))
 
 def biz_info(biz_id):
-    q = 'SELECT biz.name, biz.state, \
-         short_description, tags, website, blog, \
-         address, city, country, email \
-         from biz WHERE id = %(biz_id)s'
-    values = dict(biz_id=biz_id)
-    return biz_store.query_exec(q, values)[0]
+    return biz_store.get(biz_id, ['name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email'])
 
-bizplace_info_sql = """SELECT name, state, \
-    short_description, tags, website, blog, \
-    address, city, country, email \
-    from bizplace """
+bizplace_info_fields = ['name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email']
 
 def bizplace_info(bizplace_id):
-    q =  bizplace_info_sql + """WHERE id = %(bizplace_id)s"""
-    values = dict(bizplace_id=bizplace_id)
-    return bizplace_store.query_exec(q, values)[0]
+    return bizplace_store.get(bizplace_id, bizplace_info_fields)
 
 class Resource(object):
     store = resource_store
@@ -116,8 +106,7 @@ def find_bizplace_plans(bizplace_id, fields):
     return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
     
 def list_bizplaces():
-    q = bizplace_info_sql
-    return bizplace_store.query_exec(q)
+    return bizplace_store.get_all(bizplace_info_fields)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name']):
     plan_ids = tuple(plan_ids)

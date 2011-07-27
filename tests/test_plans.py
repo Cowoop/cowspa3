@@ -63,7 +63,6 @@ def test_find_bizplace_plans():
         planlib.plan_collection.new(**data)
         env.context.pgcursor.connection.commit()
     plans = bizplacelib.bizplace_resource.plans(1)
-    print plans
     assert len(plans) == 5
         
 def test_subscribers():

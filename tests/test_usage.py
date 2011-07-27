@@ -43,6 +43,8 @@ def test_find_by():
     data = dict(start=datetime.datetime(2011,11,01,0,0,0), end=datetime.datetime(2011,12,01,0,0,0))
     usages = usagelib.usage_resource.find(**data)
     assert len(usages) == 4
+    for usage in usages:
+        assert usage['start_time'] >= data['start'] and usage['start_time'] <= data['end']
     
     data = dict(start=datetime.datetime(2011,12,01,0,0,0), resource_ids=[2,3])
     usages = usagelib.usage_resource.find(**data)
@@ -51,10 +53,12 @@ def test_find_by():
     data = dict(resource_ids=[2], res_owner_refs=['BizPlace:1'])
     usages = usagelib.usage_resource.find(**data)
     assert len(usages) == 1
+    assert usages[0]['resource_id'] in [2] 
     
     data = dict(start=datetime.datetime(2011,11,01,0,0,0), resource_types=['Type1'])
     usages = usagelib.usage_resource.find(**data)
-    assert len(usages) == 3
+    for usage in usages:
+        assert usage['start_time'] >= data['start'] and usage['resource_id'] in [1,3]
     
 def test_delete_usage():
     ret = usagelib.usage_collection.delete(1)
