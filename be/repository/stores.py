@@ -245,6 +245,7 @@ class Resource(PGStore):
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    type TEXT, 
     state INTEGER default 1 NOT NULL,
     owner TEXT NOT NULL,
     short_description TEXT,
@@ -286,8 +287,13 @@ class Usage(PGStore):
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
     tax_dict bytea,
-    invoice_id INTEGER
+    invoice_id INTEGER,
+    start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    end_time  TIMESTAMP WITHOUT TIME ZONE,
+    member INTEGER NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
+    pickle_cols = ['tax_dict']
 
 class Invoice(PGStore):
     create_sql = """

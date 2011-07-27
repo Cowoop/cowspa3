@@ -8,9 +8,9 @@ resourcerelation_store = dbaccess.stores.resourcerelation_store
 
 class ResourceCollection:
 
-    def new(self, name, owner, short_description, long_description=None):
+    def new(self, name, owner, short_description, type, long_description=None):
         created = datetime.datetime.now()
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type)
         res_id = resource_store.add(**data)
 
         return res_id

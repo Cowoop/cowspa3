@@ -5,10 +5,10 @@ import commonlib.shared.constants as constants
 
 rr = constants.resource_relations
 
-resource_data = dict(name='GlassHouse', owner='BizPlace:1', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.')
-more_resource_data = [dict(name='RES1', owner='BizPlace:1', short_description='Resource 1'),
-    dict(name='RES2', owner='BizPlace:1', short_description='Resource 2'),
-    dict(name='RES3', owner='BizPlace:1', short_description='Resource 3')]
+resource_data = dict(name='GlassHouse', owner='BizPlace:1', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1')
+more_resource_data = [dict(name='RES1', owner='BizPlace:1', short_description='Resource 1', type='Type1'),
+    dict(name='RES2', owner='BizPlace:1', short_description='Resource 2', type='Type2'),
+    dict(name='RES3', owner='BizPlace:1', short_description='Resource 3', type='Type1')]
 
 def setup():
     commontest.setup_test_env()
