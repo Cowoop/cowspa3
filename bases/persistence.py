@@ -253,7 +253,7 @@ class PGStore(BaseStore):
 
     def update(self, oid, **mod_data):
         """
-        update a row based on mod_data passed
+        update rows based on mod_data passed
         mod_data: dict
         -> True/False
         """
@@ -262,6 +262,23 @@ class PGStore(BaseStore):
         cols_str = ', '.join('%s=%%(%s)s' % (k,k) for k in mod_data.keys())
         table_name = self.table_name
         q = 'UPDATE %(table_name)s SET %(cols)s WHERE id = %(oid)s' % dict(table_name=table_name, cols=cols_str, oid=oid)
+        values = dict((k, mod_data[k]) for k in cols)
+        for col in cols_to_pickle:
+            values[col] = PGBinary.to_pg(values[col])
+        self.query_exec(q, values)
+        return True
+        
+    def update_many(self, oid, **mod_data):
+        
+        """update a row based on mod_data passed
+        mod_data: dict
+        -> True/False
+        """
+        cols = mod_data.keys()
+        cols_to_pickle = set(cols).intersection(self.pickle_cols)
+        cols_str = ', '.join('%s=%%(%s)s' % (k,k) for k in mod_data.keys())
+        table_name = self.table_name
+        q = 'UPDATE %(table_name)s SET %(cols)s WHERE id IN %(oid)s' % dict(table_name=table_name, cols=cols_str, oid=oid)
         values = dict((k, mod_data[k]) for k in cols)
         for col in cols_to_pickle:
             values[col] = PGBinary.to_pg(values[col])

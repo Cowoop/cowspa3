@@ -15,6 +15,11 @@ class UserStore(persistence.PGStore):
     """
 
 test_data = dict(username='test', password='x', enabled=True)
+test_more_data = [
+    dict(username='test1', password='x1', enabled=True),
+    dict(username='test2', password='x2', enabled=True),
+    dict(username='test3', password='x3', enabled=True)
+    ]
 
 user_store = None
 
@@ -59,9 +64,23 @@ def test_all():
     assert len(users) == count
 
 def test_many():
-    user_ids = user_store.get_all(fields=['id'], hashrows=False)
+    user_ids = [row[0] for row in user_store.get_all(fields=['id'], hashrows=False)]
     user_store.get_many(oids=user_ids)
 
+def test_add_more():
+    cnt = 2
+    for data in test_more_data:
+        user_id = user_store.add(**data)
+        assert user_id == cnt
+        cnt += 1
+
+def update_many():
+    user_store.update_many([2,4], dict( enabled = False))
+    assert user_store.get(1, 'enabled') == True
+    assert user_store.get(2, 'enabled') == False
+    assert user_store.get(4, 'enabled') == False
+    
+            
 def test_remove():
     crit = dict(id=1)
     user_store.remove_by(crit=crit)
