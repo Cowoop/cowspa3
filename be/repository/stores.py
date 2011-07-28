@@ -287,7 +287,7 @@ class Usage(PGStore):
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
     tax_dict bytea,
-    invoice_id INTEGER,
+    invoice INTEGER,
     start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time  TIMESTAMP WITHOUT TIME ZONE,
     member INTEGER NOT NULL,
@@ -298,18 +298,19 @@ class Usage(PGStore):
 class Invoice(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    number INTEGER,
+    number INTEGER UNIQUE,
     member INTEGER,
     usages INTEGER[],
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    sent TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    sent TIMESTAMP WITHOUT TIME ZONE,
     invoicee_details bytea,
     cost NUMERIC(16, 2),
     tax_dict bytea,
-    start TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    endtime TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     state INTEGER default 0 NOT NULL
     """
+    pickle_cols = ['invoicee_details', 'tax_dict']
 
 class Activity(PGStore):
     create_sql = """

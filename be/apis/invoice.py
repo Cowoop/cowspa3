@@ -1,20 +1,64 @@
-class InvoiceCollection:
-    def new():
-        """
-        """
+import datetime
+import be.repository.access as dbaccess
+import operator
 
-    def delete(invoice_id):
+invoice_store = dbaccess.invoice_store
+usage_store = dbaccess.usage_store
+
+class InvoiceCollection:
+
+    def new(self, member, usages, state=0, number=None, sent=None, invoicee_details=None, cost=None, tax_dict=None):
         """
         """
+        usage_periods = usage_store.get_many(usages, ['start_time', 'end_time'])
+        start_time = min(usage_periods, key=operator.itemgetter('start_time'))['start_time']
+        end_time = max(usage_periods, key=operator.itemgetter('end_time'))['end_time']
+        
+        created = datetime.datetime.now()
+        data = dict(member=member, usages=usages, number=number, sent=sent, invoicee_details=invoicee_details, cost=cost, tax_dict=tax_dict, start_time=start_time, end_time=end_time, state=state, created=created)
+        invoice_id = invoice_store.add(**data)
+        
+        mod_data = dict(invoice=invoice_id)
+        usage_store.update_many(usages, **mod_data)
+        
+        return invoice_id
+
+    def delete(self, invoice_id):
+        """
+        Delete Invoice
+        """
+        if invoice_store.remove(invoice_id):
+        
+            mod_data = dict(invoice=None)
+            usage_ids = usage_store.get_by(dict(invoice=invoice_id), ['id'])
+            usages = []
+            for usage_id in usage_ids:
+                usages.append(usage_id['id'])
+            return usage_store.update_many(tuple(usages), **mod_data)
+            
+        return False
+        
 
 class InvoiceResource:
-    def update(invoice_id, mod_data):
+    def update(self, invoice_id, mod_data):
         """
         """
+        if invoice_store.update(invoice_id, **mod_data):
+            if mod_data.has_key('usages'):
+                old_usages = invoice_store.get(invoice_id, ['usages'])
+                modf_data = dict(invoice=None)
+                usage_store.update_many(old_usages, **modf_data)
+            
+                new_usages = mod_data['usages']
+                modf_data = dict(invoice=invoice_id)
+                usage_store.update_many(new_usages, **modf_data)
+            return True
+        
+        return False
 
-    def send(invoice_id):
+    def send(self, invoice_id):
         """
         """
 
 invoice_collection = InvoiceCollection()
-invoice_resorce = InvoiceResource()
+invoice_resource = InvoiceResource()

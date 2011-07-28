@@ -4,11 +4,11 @@ import be.repository.access as dbaccess
 import be.apis.usage as usagelib
 import test_resources
 
-usage_data = dict(resource_id=1, resource_name='RES1', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), invoice_id=1, start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1)
+usage_data = dict(resource_id=1, resource_name='RES1', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1)
 more_usage_data = [
-    dict(resource_id=2, resource_name='RES2', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), invoice_id=1, start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
-    dict(resource_id=1, resource_name='RES1', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), invoice_id=1, start_time=datetime.datetime(2011,11,01,12,0,0), member=1),
-    dict(resource_id=3, resource_name='RES3', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), invoice_id=1, start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
+    dict(resource_id=2, resource_name='RES2', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
+    dict(resource_id=1, resource_name='RES1', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), member=1),
+    dict(resource_id=3, resource_name='RES3', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
     ]
 
 

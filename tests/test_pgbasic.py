@@ -24,12 +24,14 @@ test_more_data = [
 user_store = None
 
 def setup():
+    commontest.setup_test_env()
     global user_store
     user_store = UserStore()
     user_store.destroy()
     user_store.setup()
 
 def teardown():
+    commontest.destroy_test_env()
     user_store.destroy()
 
 def test_resetup():
@@ -76,9 +78,10 @@ def test_add_more():
 
 def update_many():
     user_store.update_many([2,4], dict( enabled = False))
-    assert user_store.get(1, 'enabled') == True
     assert user_store.get(2, 'enabled') == False
     assert user_store.get(4, 'enabled') == False
+    user_store.update_many([1], dict( enabled = False))
+    assert user_store.get(1, 'enabled') == False
     
             
 def test_remove():
