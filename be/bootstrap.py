@@ -32,8 +32,8 @@ def setup_env(conf):
         conf_local = None
     env.config = readconf.parse_config(conf_default, conf_local)
     commonlib.helpers.random_key_gen = commonlib.helpers.RandomKeyFactory(env.config.random_str)
-    #env.mailer = commonlib.messaging.email.Mailer(env.config.mail)
-    #env.mailer.start()
+    env.mailer = commonlib.messaging.email.Mailer(env.config.mail)
+    env.mailer.start()
     env.context = localprov.local()
     builtins.env = env
     return env

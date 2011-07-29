@@ -38,6 +38,8 @@ Tests
 
     nosetests -v tests/test_schemas.py tests/test_bases.py
     # ^ are some basic tests, there are more tests in tests/
+    
+    To run test_email.py create directory in cowspa3 as 'attachments' and put file 'file.pdf' in that folder.
 
 Python 3 Notes # SKIP THIS FOR NOW
 ==================================

@@ -1,17 +1,11 @@
-def test():
-    config = {
-        'mail.on': True,
-        'mail.transport': 'smtp',
-        'mail.smtp.server': 'smtp.gmail.com',
-        'mail.smtp.port': 587,
-        'mail.smtp.tls': True,
-        'mail.smtp.username': 'me@gmail.com',
-        'mail.smtp.password': 'secret',
-        'mail.smtp.debug': True,
-        'mail.utf8qp.on': True
-    }
-    mailer = Mailer(config)
-    to = "to.me@gmail.com"
+from commonlib.messaging.email import Mailer
+from conf_test import config
+import os
+
+def test_basic_send():
+    
+    mailer = Mailer(config['mail'])
+    to = config['mail']['mail.smtp.username']
     subject = "TurboMail test"
     rich = """
     <html>
@@ -19,5 +13,6 @@ def test():
             <strong>Hi There</strong>
         </body>
     </html>"""
+    attachment = os.getcwd()+'/attachments/file.pdf'
     mailer.start()
-    mailer.send("to.me@gmail.com", to, subject, rich=rich)
+    mailer.send(to, subject, rich=rich, attachment=attachment)

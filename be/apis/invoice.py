@@ -4,6 +4,7 @@ import operator
 
 invoice_store = dbaccess.invoice_store
 usage_store = dbaccess.usage_store
+member_store = dbaccess.member_store
 
 class InvoiceCollection:
 
@@ -58,6 +59,9 @@ class InvoiceResource:
     def send(self, invoice_id):
         """
         """
+        member = invoice_store.get(invoice_id, ['member'])
+        email = member_store.get(member, ['email'])
+        env.mailer.send(email, subject='Invoice Details', rich='<b>See the attached Pdf.</b>', plain='', cc=[], bcc=[], attachment='')
 
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()
