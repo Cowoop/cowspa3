@@ -236,6 +236,8 @@ class Subscription(PGStore):
     subscriber_id INTEGER NOT NULL UNIQUE,
     plan_id INTEGER NOT NULL,
     plan_name TEXT,
+    starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    ends TIMESTAMP WITHOUT TIME ZONE,
     bizplace_id INTEGER NOT NULL,
     bizplace_name TEXT
     """
@@ -245,7 +247,7 @@ class Resource(PGStore):
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    type TEXT, 
+    type TEXT,
     state INTEGER default 1 NOT NULL,
     owner TEXT NOT NULL,
     short_description TEXT,
@@ -262,22 +264,15 @@ class ResourceRelation(PGStore):
     resourceB INTEGER
     """
 
-class Pricing(PGStore):
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
-    name TEXT NOT NULL,
-    starts TIMESTAMP WITHOUT TIME ZONE NOT NULL
-    """
-
 class Price(PGStore):
     create_sql = """
-    pricing_id INTEGER NOT NULL,
-    plan_id INTEGER NOT NULL,
-    resource_id INTEGER NOT NULL,
+    plan INTEGER NOT NULL,
+    resource INTEGER NOT NULL,
+    starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    ends TIMESTAMP WITHOUT TIME ZONE,
     cost NUMERIC(16, 2),
     state INTEGER default 1 NOT NULL
     """
-# INCOMPLETE Schemas
 
 class Usage(PGStore):
     create_sql = """

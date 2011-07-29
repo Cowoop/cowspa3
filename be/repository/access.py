@@ -27,7 +27,6 @@ resource_store = stores_mod.Resource()
 resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
-pricing_store = stores_mod.Pricing()
 price_store = stores_mod.Price()
 activity_store = stores_mod.Activity()
 
@@ -42,8 +41,11 @@ def make_rstore(store):
 
 class stores: pass
 
+stores_by_type = {}
+
 for name, store in stores_mod.known_stores.items():
     setattr(stores, name, make_rstore(store))
+    stores_by_type[store.__class__.__name__] = store
 
 def find_memberships(member_id):
     return subscription_store.get_by(crit=dict(subscriber_id=member_id))
@@ -71,18 +73,22 @@ def list_activities_by_categories(categories, from_date, to_date):
     clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s'
     clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)  
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
-    
+
 def list_activities_by_name(name, from_date, to_date):
     clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
     clause_values = dict(name=name, from_date=from_date, to_date=to_date)  
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def ref2name(ref):
-    store_map = dict(BizPlace=bizplace_store, Member=member_store)
     oname, oid = ref.split(':')
-    store = store_map[oname]
+    store = stores_by_type[oname]
     attr = 'name' if 'name' in store.schema else 'display_name'
     return store.get(int(oid), [attr], hashrows=False)
+
+def ref2o(ref):
+    oname, oid = ref.split(':')
+    store = stores_by_type[oname]
+    return store.get(int(oid))
 
 def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password
@@ -129,3 +135,6 @@ def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_ty
     clause_values = dict(start_time=start, end_time=end, resource_ids=tuple(resource_ids), owner_refs=tuple(res_owner_refs), member_id=tuple(member_ids), resource_types=tuple(resource_types))
 
     return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
+
+def get_price(resource_id, member_id):
+    pass

@@ -1,3 +1,4 @@
+import datetime
 import commontest
 import test_member
 import be.apis.biz as bizlib
@@ -51,7 +52,8 @@ def test_add_plan():
 def test_add_subscribers():
     test_member.test_create_member()
     test_member.test_create_more_members()
-    planlib.plan_resource.new_subscribers(1, [1, 2, 3])
+    starts = datetime.datetime(2011, 1, 1, 0, 0, 1)
+    planlib.plan_resource.new_subscribers(1, starts, [1, 2, 3])
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():
@@ -64,7 +66,7 @@ def test_find_bizplace_plans():
         env.context.pgcursor.connection.commit()
     plans = bizplacelib.bizplace_resource.plans(1)
     assert len(plans) == 5
-        
+
 def test_subscribers():
     subscribers = planlib.plan_resource.subscribers(1)
     assert len(subscribers) == 3
