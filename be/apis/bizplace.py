@@ -28,8 +28,8 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
-    get_attributes = ['taxes']
-    set_attributes = ['taxes']
+    get_attributes = ['taxes', 'default_plan']
+    set_attributes = ['taxes', 'default_plan']
 
     def info(self, bizplace_id):
         """

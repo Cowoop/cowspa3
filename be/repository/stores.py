@@ -202,6 +202,7 @@ class BizPlace(PGStore):
     langs TEXT[],
     tz TEXT,
     holidays smallint[],
+    default_plan INTEGER,
     taxes BYTEA
     """
     parent_stores = [BizplaceProfile(), Contact()]
@@ -270,7 +271,7 @@ class Price(PGStore):
     resource INTEGER NOT NULL,
     starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     ends TIMESTAMP WITHOUT TIME ZONE,
-    cost NUMERIC(16, 2),
+    amount NUMERIC(16, 2),
     state INTEGER default 1 NOT NULL
     """
 
