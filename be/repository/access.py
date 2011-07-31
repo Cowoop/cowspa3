@@ -1,4 +1,5 @@
 import cPickle
+import datetime
 import psycopg2
 import be.repository.stores as stores_mod
 import bases.persistence
@@ -114,13 +115,14 @@ def find_bizplace_plans(bizplace_id, fields):
 def list_bizplaces():
     return bizplace_store.get_all(bizplace_info_fields)
 
-def find_plan_members(plan_ids, fields=['member', 'display_name']):
+def find_plan_members(plan_ids, fields=['member', 'display_name'], at_time=None):
     plan_ids = tuple(plan_ids)
-    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE plan_id IN %s)'
-    clause_values = (plan_ids,)
+    if not at_time: at_time = datetime.datetime.now()
+    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE plan_id IN %(plan_ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL))'
+    clause_values = dict(plan_ids=plan_ids, at_time=at_time)
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
-    
-    
+
+
 def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types):
     clauses = []
 
@@ -136,5 +138,21 @@ def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_ty
 
     return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
 
-def get_price(resource_id, member_id):
-    pass
+def get_member_plan(member_id, bizplace_id, date):
+    clause = 'subscriber_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND ends >= %(date)s'
+    values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
+    plan_ids = subscription_store.get_by_clause(clause, values, fields=['plan_id'], hashrows=False)
+    if plan_ids:
+        return plan_ids[0]
+    else:
+        return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
+
+def get_price(resource_id, member_id, usage_time):
+    # TODO: if resource owner is not bizplace then?
+    bizplace_id = resource_store.get(resource_id, fields=['bizplace_id'], hashrows=False)
+    plan_id = get_member_plan(member_id, bizplace_id, usage_time)
+    clause = 'plan = %(plan_id)s AND resource = %(resource_id)s AND starts <= %(usage_time)s AND (ends => %(usage_time)s OR ends is NULL)'
+    values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
+    price = price_store.get_by_clause(clause, values)
+    if price:
+        return price.amount

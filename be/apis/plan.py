@@ -51,23 +51,24 @@ class PlanResource:
             member_list.append(m_dict)
         return member_list
 
-    def new_subscriber(self, plan_id, subscriber_id):
+    def new_subscriber(self, plan_id, starts, subscriber_id):
         """
         """
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
-        subscription_store.add(plan_id=plan_id, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
+        subscription_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
             bizplace_name=bizplace.name, plan_name=plan.name)
+        # find old subscription
+        # set end date to it
         return True
 
-    def new_subscribers(self, plan_id, subscriber_ids):
+    def new_subscribers(self, plan_id, starts, subscriber_ids):
         """
         """
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         for subscriber_id in subscriber_ids:
-            subscription_store.add(plan_id=plan_id, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
-                bizplace_name=bizplace.name, plan_name=plan.name)
+            self.new_subscriber(plan_id, starts, subscriber_id)
         return True
 
 

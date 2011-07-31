@@ -6,7 +6,7 @@ usage_store = dbaccess.usage_store
 class UsageCollection:
 
     def add(self, resource_name, calculated_cost, cost, tax_dict, member, start_time, invoice=None, resource_id=None, end_time=None):
-        
+
         created = datetime.datetime.now()
         if not end_time:
             end_time = start_time
@@ -30,7 +30,7 @@ class UsageResource:
 
     def update(self, usage_id, mod_data):
         usage_store.update(usage_id, **mod_data)
-   
+
     def get(self, usage_id, attrname):
         """
         return value of attrname
