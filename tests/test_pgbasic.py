@@ -82,8 +82,7 @@ def update_many():
     assert user_store.get(4, 'enabled') == False
     user_store.update_many([1], dict( enabled = False))
     assert user_store.get(1, 'enabled') == False
-    
-            
+
 def test_remove():
     crit = dict(id=1)
     user_store.remove_by(crit=crit)

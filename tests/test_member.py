@@ -1,32 +1,23 @@
 import commontest
+import test_data
 import be.repository.access as dbaccess
 import be.apis.member as memberlib
 import be.apis.user as userlib
 from nose.tools import nottest
 
-member_data = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', state=dict(enabled=True, hidden=False))
-more_member_data = [
-    dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@example.com'),
-    dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@example.com'),
-    ]
-
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
 
-def teardown():
-    commontest.destroy_test_env()
-    env.context.pgcursor.connection.commit()
-
-def test_create_member(test_data=None):
-    data = test_data if test_data else member_data
+def test_create_member(data=None):
+    data = data if data else test_data.member
     member_id = memberlib.member_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert isinstance(member_id, (int, long)) == True
 
 def test_member_object():
     m = dbaccess.member_store.get(1)
-    assert m.first_name == member_data['first_name']
+    assert m.first_name == test_data.member['first_name']
     m.first_name = 'Kit'
     assert m.first_name == 'Kit'
     m.update(first_name='Kit', last_name='Walker')
@@ -37,23 +28,23 @@ def test_update_member():
     new_state = dict(enabled=False, hidden=True)
     mod_data = dict(state=new_state)
     memberlib.member_resource.update(1, **mod_data)
-    assert old_state == member_data['state']
+    assert old_state == test_data.member['state']
     assert new_state == memberlib.member_resource.get(1, 'state')
 
 def test_auth():
-    assert userlib.authenticate(member_data['username'], 'password') != True
-    assert userlib.authenticate(member_data['username'], member_data['password']) == True
+    assert userlib.authenticate(test_data.member['username'], 'password') != True
+    assert userlib.authenticate(test_data.member['username'], test_data.member['password']) == True
 
 def test_create_more_members():
-    for data in more_member_data:
+    for data in test_data.more_member:
         test_create_member(data)
 
 @nottest
 def test_create_10k_members():
     data = {}
-    data.update(member_data)
+    data.update(test_data.member)
     for i in range(10000):
-        data['username'] = member_data['username'] + str(i)
+        data['username'] = test_data.member['username'] + str(i)
         test_create_member(data)
         env.context.pgcursor.connection.commit()
 test_create_10k_members.disabled = True
@@ -61,5 +52,5 @@ test_create_10k_members.disabled = True
 def test_info():
     m_id = 1
     info = memberlib.member_resource.info(m_id)
-    assert info.id == m_id and member_data['first_name'] in info.display_name
+    assert info.id == m_id and test_data.member['first_name'] in info.display_name
 

@@ -1,37 +1,28 @@
 import commontest
-import test_plans
+import test_data
+
 import be.apis.resource as resourcelib
 import commonlib.shared.constants as constants
 
 rr = constants.resource_relations
 
-resource_data = dict(name='GlassHouse', owner='BizPlace:1', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1')
-more_resource_data = [dict(name='RES1', owner='BizPlace:1', short_description='Resource 1', type='Type1'),
-    dict(name='RES2', owner='BizPlace:1', short_description='Resource 2', type='Type2'),
-    dict(name='RES3', owner='BizPlace:1', short_description='Resource 3', type='Type1')]
-
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
-    test_plans.test_add_bizplace()
-
-def teardown():
-    commontest.destroy_test_env()
-    env.context.pgcursor.connection.commit()
 
 def test_create():
-    res_id = resourcelib.resource_collection.new(**resource_data)
+    res_id = resourcelib.resource_collection.new(**test_data.resource_data)
     env.context.pgcursor.connection.commit()
     assert res_id == 1
 
 def test_create_more():
-    for data in more_resource_data:
+    for data in test_data.more_resource:
         res_id = resourcelib.resource_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert res_id != 1
 
 def test_info():
-    assert resourcelib.resource_resource.info(1).name == resource_data['name']
+    assert resourcelib.resource_resource.info(1).name == test_data.resource_data['name']
 
 def test_update():
     new_name = 'GlassHouse II'
