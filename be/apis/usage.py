@@ -1,7 +1,7 @@
 import datetime
 import be.repository.access as dbaccess
 
-usage_store = dbaccess.usage_store
+usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 

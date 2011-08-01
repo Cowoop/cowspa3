@@ -2,9 +2,9 @@ import datetime
 import be.repository.access as dbaccess
 import operator
 
-invoice_store = dbaccess.invoice_store
-usage_store = dbaccess.usage_store
-member_store = dbaccess.member_store
+invoice_store = dbaccess.stores.invoice_store
+usage_store = dbaccess.stores.usage_store
+member_store = dbaccess.stores.member_store
 
 class InvoiceCollection:
 
