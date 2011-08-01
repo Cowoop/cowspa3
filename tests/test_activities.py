@@ -12,7 +12,9 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def teardown():
-    commontest.destroy_test_env()
+    activitylib.delete([1, 2, 3])
+    messages = activitylib.find_activities_by_categories(['MemberManagement'], cur_time, datetime.datetime.now())
+    assert len(messages) == 0
     env.context.pgcursor.connection.commit()
 
 def test_create_activities():

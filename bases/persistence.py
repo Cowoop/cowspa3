@@ -49,8 +49,16 @@ class BaseStore(object):
         raise NotImplemented
     def remove(self, oid):
         raise NotImplemented
+    def remove_many(self, oids):
+        raise NotImplemented
     def remove_by(self, crit):
         raise NotImplemented
+    def update(self, oid, **mod_data):
+        raise NotImplemented
+    def update_many(self, oids, **mod_data):
+        raise NotImplemented
+    def update_by(self, crit, **mod_data):
+        raise NotImplemented    
     def query_exec(self, q, values, hashrows=True, log=False):
         """
         @q: object representing query to be executed
@@ -307,6 +315,11 @@ class PGStore(BaseStore):
     def remove(self, oid):
         q = "DELETE FROM %s WHERE id = %%s" % self.table_name
         self.query_exec(q, (oid,))
+        return True
+    
+    def remove_many(self, oids):
+        q = "DELETE FROM %s WHERE id IN %%s" % self.table_name
+        self.query_exec(q, (tuple(oids),))
         return True
 
     def remove_by(self, crit):

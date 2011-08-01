@@ -19,6 +19,9 @@ def add(category, name, actor, data, created):
     activity_id = activity_store.add(**data)
     return activity_id
 
+def delete(activities):
+    return activity_store.remove_many(activities)
+    
 def find_activities_by_categories(category_list, from_date, to_date):
 
     activities = dbaccess.list_activities_by_categories(category_list, from_date, to_date)

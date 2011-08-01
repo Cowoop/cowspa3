@@ -13,6 +13,6 @@ def test_basic_send():
             <strong>Hi There</strong>
         </body>
     </html>"""
-    attachment = os.getcwd()+'/attachments/file.pdf'
+    attachment = os.getcwd()+'/requirements.txt'
     mailer.start()
     mailer.send(to, subject, rich=rich, attachment=attachment)
