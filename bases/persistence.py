@@ -131,7 +131,7 @@ class PGStore(BaseStore):
         q = "CREATE TABLE %(table_name)s (%(sql)s)" % dict(table_name=self.table_name, sql=self.create_sql)
         if self.parent_stores:
             parent_tables_s = ', '.join((store.table_name for store in self.parent_stores))
-            q = q + " INHERITS(%(parent_tables)s)" % dict(parent_tables=parent_tables_s) 
+            q = q + " INHERITS(%(parent_tables)s)" % dict(parent_tables=parent_tables_s)
         try:
             self.query_exec(q)
         except psycopg2.ProgrammingError:
@@ -211,12 +211,11 @@ class PGStore(BaseStore):
         -> odict
         """
         cols_str = self.fields2cols(fields)
-        crit_keys = list(crit.keys())
-        values = tuple(crit[k] for k in crit_keys)
-        crit_keys_s = ' AND '.join(('%s = %%s' % k for k in crit_keys))
+        # None (NULL) does not support = operator so needs special handling
+        crit_keys_s = ' AND '.join(('%s = %%(%s)s' if v is not None else '%s is %%(%s)s') % (k,k) for k,v in crit.items())
         table_name = self.table_name
         q = 'SELECT %(cols_str)s FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
-        return self.query_exec(q, values, hashrows=hashrows)
+        return self.query_exec(q, crit, hashrows=hashrows)
 
     def get_one_by(self, crit, fields=[], hashrows=True):
         """
