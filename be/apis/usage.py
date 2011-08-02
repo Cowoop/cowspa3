@@ -36,14 +36,13 @@ class UsageResource:
         return value of attrname
         """
         return usage_store.get(usage_id, fields=[attrname])
-        
+
     def find(self, start=None, end=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[]):
         """
-        return list of dicts which contains information of usage, which are sorted on the basis of selected criteria like start time, end time,
-        resource ids, resource owner references, member ids or resource types  
+        return list of dicts which contains information of usage, which are sorted on the basis of selected criteria like start time, end time, resource ids, resource owner references, member ids or resource types
         """
         return dbaccess.find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types)
-        
+
 
 usage_collection = UsageCollection()
 usage_resource = UsageResource()

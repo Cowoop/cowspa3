@@ -13,6 +13,7 @@ def setup():
 def test_create():
     res_id = resourcelib.resource_collection.new(**test_data.resource_data)
     env.context.pgcursor.connection.commit()
+    test_data.resource_id = res_id
     assert res_id == 1
 
 def test_create_more():

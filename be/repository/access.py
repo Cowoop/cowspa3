@@ -28,7 +28,7 @@ resource_store = stores_mod.Resource()
 resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
-price_store = stores_mod.Price()
+pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
 
 class RStore(object): pass
@@ -147,12 +147,15 @@ def get_member_plan(member_id, bizplace_id, date):
     else:
         return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
 
+def get_resource_pricing(plan_id, resource_id, usage_time):
+    clause = 'plan = %(plan_id)s AND resource = %(resource_id)s AND starts <= %(usage_time)s AND (ends => %(usage_time)s OR ends is NULL)'
+    values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
+    return price_store.get_by_clause(clause, values, fields=['id', 'starts', 'ends', 'amount'])
+
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?
     bizplace_id = resource_store.get(resource_id, fields=['bizplace_id'], hashrows=False)
     plan_id = get_member_plan(member_id, bizplace_id, usage_time)
-    clause = 'plan = %(plan_id)s AND resource = %(resource_id)s AND starts <= %(usage_time)s AND (ends => %(usage_time)s OR ends is NULL)'
-    values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
-    price = price_store.get_by_clause(clause, values)
-    if price:
-        return price.amount
+    pricing = get_resource_pricing(plan_id, resource_id, usage_time)
+    if pricing:
+        return pricing.amount

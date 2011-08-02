@@ -10,10 +10,6 @@ def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
 
-def teardown():
-    commontest.destroy_test_env()
-    env.context.pgcursor.connection.commit()
-
 def test_add_usage():
     usage_id = usagelib.usage_collection.add(**test_data.usage)
     env.context.pgcursor.connection.commit()

@@ -265,8 +265,9 @@ class ResourceRelation(PGStore):
     resourceB INTEGER
     """
 
-class Price(PGStore):
+class Pricing(PGStore):
     create_sql = """
+    id SERIAL NOT NULL UNIQUE,
     plan INTEGER NOT NULL,
     resource INTEGER NOT NULL,
     starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -289,6 +290,7 @@ class Usage(PGStore):
     member INTEGER NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
+    #price INTEGER NOT NULL,
     pickle_cols = ['tax_dict']
 
 class Invoice(PGStore):

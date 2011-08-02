@@ -16,6 +16,7 @@ def test_add_plan():
     test_data.plan_data['bizplace_id'] = 1
     plan_id = planlib.plan_collection.new(**test_data.plan_data)
     env.context.pgcursor.connection.commit()
+    test_data.plan_id = plan_id
     assert plan_id == 1
 
 def test_add_subscribers():

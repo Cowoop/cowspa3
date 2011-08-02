@@ -34,10 +34,10 @@ class MemberCollection:
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
-        
+
         data = dict(name=first_name, location=country, user_id=user_id)
         activity_id = activitylib.add('MemberManagement', 'MemberCreated', user_id, data, created)
-        
+
         return user_id
 
     def delete(self, member_id):

@@ -19,6 +19,7 @@ def test_add_bizplace():
     test_data.bizplace['biz_id'] = 1
     bizplace_id = bizplacelib.bizplace_collection.new(**test_data.bizplace)
     env.context.pgcursor.connection.commit()
+    test_data.bizplace_id = bizplace_id
     assert bizplace_id == 1
 
 def test_biz_info():
