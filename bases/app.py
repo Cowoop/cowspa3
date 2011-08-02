@@ -106,6 +106,8 @@ class Dispatcher(object):
             self.pg_provider.tr_complete()
         except errors.APIExecutionError as err:
             print(err)
+            if getattr(err, 'hint', None):
+                pass # do something with hint
             return err.retcode, err.result
         except Exception as err:
             print(err)
