@@ -14,6 +14,7 @@ def test_create_member(data=None):
     member_id = memberlib.member_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert isinstance(member_id, (int, long)) == True
+    return member_id
 
 def test_member_object():
     m = dbaccess.member_store.get(1)

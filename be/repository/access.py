@@ -72,12 +72,12 @@ class Resource(object):
 
 def list_activities_by_categories(categories, from_date, to_date):
     clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s'
-    clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)  
+    clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def list_activities_by_name(name, from_date, to_date):
     clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
-    clause_values = dict(name=name, from_date=from_date, to_date=to_date)  
+    clause_values = dict(name=name, from_date=from_date, to_date=to_date)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def ref2name(ref):
@@ -90,6 +90,8 @@ def ref2o(ref):
     oname, oid = ref.split(':')
     store = stores_by_type[oname]
     return store.get(int(oid))
+
+ref2id = lambda ref: int(ref.split(':')[1])
 
 def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password
@@ -139,23 +141,24 @@ def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_ty
     return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
 
 def get_member_plan(member_id, bizplace_id, date):
-    clause = 'subscriber_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND ends >= %(date)s'
+    clause = 'subscriber_id = %(subscriber_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
     plan_ids = subscription_store.get_by_clause(clause, values, fields=['plan_id'], hashrows=False)
     if plan_ids:
-        return plan_ids[0]
+        return plan_ids[0][0]
     else:
         return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
 
 def get_resource_pricing(plan_id, resource_id, usage_time):
-    clause = 'plan = %(plan_id)s AND resource = %(resource_id)s AND starts <= %(usage_time)s AND (ends => %(usage_time)s OR ends is NULL)'
+    clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
-    return price_store.get_by_clause(clause, values, fields=['id', 'starts', 'ends', 'amount'])
+    return pricing_store.get_by_clause(clause, values, fields=['id', 'starts', 'ends', 'amount'])
 
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?
-    bizplace_id = resource_store.get(resource_id, fields=['bizplace_id'], hashrows=False)
+    bizplace_ref = resource_store.get(resource_id, fields=['owner'], hashrows=False)
+    bizplace_id = ref2id(bizplace_ref)
     plan_id = get_member_plan(member_id, bizplace_id, usage_time)
     pricing = get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
-        return pricing.amount
+        return pricing[0].amount

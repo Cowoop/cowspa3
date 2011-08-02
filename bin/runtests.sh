@@ -9,4 +9,4 @@ tests/test_usage.py \
 tests/test_pricing.py \
 # Add tests above this line
 
-#nosetests -vx  --pdb-failures --pdb tests/test_schemas.py # Destroys all stores
+nosetests -vx  --pdb-failures --pdb tests/test_schemas.py # Destroys all stores

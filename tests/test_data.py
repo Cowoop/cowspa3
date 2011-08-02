@@ -12,9 +12,14 @@ default_plan_data = dict(name="Hub Connect", description="Guest Tariff")
 
 member = dict(username='shon', password='secret', first_name='Shon', email='me@example.com', state=dict(enabled=True, hidden=False))
 
-more_member= [
+more_member = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@example.com'),
     dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@example.com'),
+    ]
+
+even_more_members = [
+    dict(username='mama', password='secret', first_name='Mandrake', last_name='Magician', email='mama@example.com'),
+    dict(username='lothar', password='secret', first_name='Lothar', last_name='', email='lothar@example.com'),
     ]
 
 invoice_data = dict(member=1, usages=[1,3])
