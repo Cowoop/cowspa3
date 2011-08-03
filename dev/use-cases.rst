@@ -29,3 +29,59 @@ Rules
 - Taxes
     get_tax_for_resource(resource_id):
 - Other rules
+
+
+Director Features
+=================
+- BizPlace
+    - Create
+    - Edit
+
+Host Features
+=============
+
+- Member management
+    - Create
+    - Edit
+    - Reports/Export
+    - Search
+
+- BizPlace
+    - Edit
+
+- Resource Management
+    - Create
+    - Edit
+    - Remove
+    - Grouping
+
+- Plans
+    - Create
+    - Edit
+    - Activate/De Activate
+    - Remove
+
+- Pricing
+    - Create/ Schedule
+    - Edit
+
+- Invoicing and Billing
+    - Create
+    - Generate
+    - Create usage
+
+- Reports
+    - ?
+
+Host Navigation
+===============
+- Dashboard
+
+- Profile
+
+- Invoicing
+    - My Invoices
+    - Generate Invoices
+    - Search
+
+
