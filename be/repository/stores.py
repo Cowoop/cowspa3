@@ -281,6 +281,7 @@ class Usage(PGStore):
     id SERIAL NOT NULL UNIQUE,
     resource_id INTEGER,
     resource_name TEXT,
+    quantity REAL,
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
     tax_dict bytea,
