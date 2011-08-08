@@ -1,5 +1,11 @@
+import datetime
+import commonlib
 import be.repository.access as dbaccess
+import be.errors as errors
 import commonlib.helpers as helpers
+
+user_store = dbaccess.stores.user_store
+session_store = dbaccess.stores.session_store
 
 def authenticate(username, password):
     """
@@ -14,13 +20,14 @@ def authenticate(username, password):
 
 def create_session(user_id):
     token  = commonlib.helpers.random_key_gen()
-    session_store.add(token, user_id)
+    created = datetime.datetime.now()
+    session_store.add(token=token, user_id=user_id, created=created)
     return token
 
 def get_or_create_session(username):
-    user = userstore.get_one_by(username=username)
+    user = user_store.get_one_by(crit=dict(username=username))
     try:
-        session = session_store.get_one_by(user_id=user.id)
+        session = session_store.get_one_by(crit=dict(user_id=user.id))
         token = session.token
     except IndexError:
         token = create_session(user.id)
@@ -37,7 +44,7 @@ def session_lookup(token):
 def login(username, password):
     if authenticate(username, password):
         return get_or_create_session(username)
-    raise errors.WrapperException(errors.auth_failed, '')
+    raise errors.ErrorWithHint('Authentication failed')
 
 def logout(token):
     try:
