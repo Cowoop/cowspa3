@@ -1,0 +1,3 @@
+placeholder for browsers not supporting it: https://github.com/ryanseddon/H5F (h5f.js)
+jsonrpc dependency: https://raw.github.com/douglascrockford/JSON-js/master/json2.js
+jsonrpc cleint: https://github.com/datagraph/jquery-jsonrpc

@@ -1,15 +1,19 @@
 import bases.app as applib
 import be.apis
 import be.apis.user as userlib
-import be.apis.member as memberlib
 import be.repository.pgdb as pgdb
+import jsonrpc2
 
-mapper = applib.Mapper()
-mapper.connect_collection('members', memberlib.member_collection)
-mapper.connect_resource('members/<int:member_id>', memberlib.member_resource)
-
-locator = mapper.build()
 pg_provider = pgdb.PGProvider()
 
-app = applib.Application()
-app.root = applib.Dispatcher(locator, pg_provider)
+class CSAPIExecutor(applib.APIExecutor):
+    wrappers = []
+
+class CowspaApp(applib.Application):
+    mapper = jsonrpc2.JsonRpc()
+    APIExecutor = CSAPIExecutor
+
+cowspa = CowspaApp()
+cowspa.connect(userlib.login)
+
+cowspa.startup()
