@@ -54,9 +54,9 @@ def start(conf):
     env = setup_env(conf)
     env.__cs_debug__ = conf != 'conf_prod'
     provider = setup_pg_provider()
-    provider.tr_start()
+    provider.tr_start(env.context)
     setup_stores()
-    provider.tr_complete()
+    provider.tr_complete(env.context)
     env.pg_provider = provider
 
 #start(conf='conf_dev')

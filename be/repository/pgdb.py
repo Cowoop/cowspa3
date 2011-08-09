@@ -5,17 +5,17 @@ import bases.persistence as persistence
 pool = None
 
 class PGProvider(persistence.DBProvider):
-    def tr_start(self):
+    def tr_start(self, context):
         conn = pool.getconn()
-        env.context.pgcursor = conn.cursor()
+        context.pgcursor = conn.cursor()
 
-    def tr_complete(self):
-        cur = env.context.pgcursor
+    def tr_complete(self, context):
+        cur = context.pgcursor
         cur.connection.commit()
         pool.putconn(cur.connection)
 
-    def tr_abort(self):
-        cur = env.context.pgcursor
+    def tr_abort(self, context):
+        cur = context.pgcursor
         cur.execute('abort')
 
     def startup(self):
