@@ -5,6 +5,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class LoginPage(fe.bases.CSAnonPage):
+    title = "Cowspa | Login"
     def main(self):
         container = tf.DIV()
         username = tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username")
