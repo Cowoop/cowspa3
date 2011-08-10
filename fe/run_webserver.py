@@ -5,7 +5,6 @@ from jsonrpc2 import JsonRpc
 path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
-print sys.path
 
 from flask import Flask, jsonify, url_for, session, redirect, request
 app = Flask(__name__)
@@ -18,6 +17,7 @@ be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
 
+@apps.route('/app/login', methods
 @app.route('/app', methods=['GET', 'POST', 'DELETE'])
 def api_dispatch():
     params = request.json
