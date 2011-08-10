@@ -1,4 +1,5 @@
 import abc
+import itertools
 import psycopg2
 import cPickle
 
@@ -186,6 +187,31 @@ class PGStore(BaseStore):
             return oid
         return True
 
+    def add_many(self, items):
+        """
+        items: list of dicts
+        returns ONLY oid of last item added. TODO: can we get oids of all the items without using executemany
+        """
+        cols = list(items[0].keys())
+        cols_str = ', '.join(cols)
+        value_str = '(' + (', '.join( [('%s') for c in cols] )) + ')'
+        values_str = ', '.join((value_str for i in items))
+        q = 'INSERT INTO %(table_name)s (%(cols)s) VALUES %(values_str)s' % \
+            dict(table_name=self.table_name, cols=cols_str, values_str=values_str)
+        cols_to_pickle = set(cols).intersection(self.pickle_cols)
+        for item in items:
+            for col in cols_to_pickle:
+                item[col] = PGBinary.to_pg(item[col])
+        values = tuple(itertools.chain(*(tuple(item[c] for c in cols) for item in items)))
+        self.query_exec(q, tuple(values))
+        if self.auto_id:
+            cursor = self.cursor_getter()
+            q = 'SELECT lastval()'
+            cursor.execute(q)
+            oid = cursor.fetchone()[0]
+            return oid
+        return True
+
     def get(self, oid, fields=[], hashrows=True):
         """
         oid: object id. match with id field of row.
@@ -328,6 +354,12 @@ class PGStore(BaseStore):
         table_name = self.table_name
         q = 'DELETE FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
         self.query_exec(q, values)
+        return True
+
+    def remove_by_clause(self, clause, clause_values):
+        table_name = self.table_name
+        q = 'DELETE FROM %(table_name)s WHERE %(clause)s' % locals()
+        self.query_exec(q, values, clause_values)
         return True
 
     def count(self):
