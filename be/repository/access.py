@@ -13,10 +13,8 @@ memberpref_store = stores_mod.MemberPref()
 memberprofile_store = stores_mod.MemberProfile()
 registered_store = stores_mod.Registered()
 session_store = stores_mod.Session()
-permission_store = stores_mod.Permission()
-role_store = stores_mod.Role()
-user_perms_store = stores_mod.UserPermission()
-user_roles_store = stores_mod.UserRole()
+userpermissions_store = stores_mod.UserPermission()
+userrole_store = stores_mod.UserRole()
 biz_store = stores_mod.Biz()
 bizplace_store = stores_mod.BizPlace()
 bizprofile_store = stores_mod.BizProfile()
@@ -35,7 +33,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('ref', 'setup', 'add', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_all', 'update', 'update_many', 'update_by'):
+    for attr in ('ref', 'setup', 'add', 'add_many', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_all', 'update', 'update_many', 'update_by'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
@@ -162,3 +160,7 @@ def get_price(resource_id, member_id, usage_time):
     pricing = get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
         return pricing[0].amount
+
+def remove_user_roles(user_id, roles):
+    clause = 'user_id = %(user_id)s AND role IN %(roles)s'
+    userrole_store.remove_by_clause(clause, dict(user_id=user_id, roles=tuple(roles)))

@@ -122,35 +122,16 @@ class Session(PGStore):
     last_seen TIMESTAMP WITHOUT TIME ZONE
     """
 
-class Permission(PGStore):
-    table_name = "permission"
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
-    name TEXT NOT NULL UNIQUE,
-    label TEXT,
-    description TEXT
-    """
-
-class Role(PGStore):
-    table_name = "role"
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
-    name TEXT NOT NULL UNIQUE,
-    label TEXT,
-    description TEXT,
-    permissions smallint[] NOT NULL
-    """
-
 class UserRole(PGStore):
     create_sql = """
     user_id integer NOT NULL,
-    role_id TEXT NOT NULL
+    role TEXT NOT NULL
     """
 
 class UserPermission(PGStore):
     create_sql = """
     user_id integer NOT NULL,
-    permission_id TEXT NOT NULL
+    permission TEXT NOT NULL
     """
 
 class BizProfile(PGStore):
