@@ -1,8 +1,8 @@
 import datetime
 import be.repository.access as dbaccess
 
-biz_store = dbaccess.biz_store
-bizplace_store = dbaccess.bizplace_store
+biz_store = dbaccess.stores.biz_store
+bizplace_store = dbaccess.stores.bizplace_store
 
 class BizplaceCollection:
     def new(self, biz_id, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None):
