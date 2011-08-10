@@ -35,7 +35,7 @@ def get_or_create_session(username):
 
 def session_lookup(token):
     try:
-        session = session_store.get_one_by(token=token)
+        session = session_store.get_one_by(crit=dict(token=token))
         user_id = session.user_id
     except IndexError:
         user_id = None
@@ -45,6 +45,9 @@ def login(username, password):
     if authenticate(username, password):
         return get_or_create_session(username)
     raise errors.ErrorWithHint('Authentication failed')
+
+def set_context(session_id):
+    env.context.user_id = session_lookup(session_id)
 
 def logout(token):
     try:
