@@ -70,11 +70,8 @@ def test_many():
     user_store.get_many(oids=user_ids)
 
 def test_add_more():
-    cnt = 2
-    for data in test_more_data:
-        user_id = user_store.add(**data)
-        assert user_id == cnt
-        cnt += 1
+    ids = user_store.add_many(test_more_data)
+    assert ids == [2,3,4]
 
 def update_many():
     user_store.update_many([2,4], dict( enabled = False))
