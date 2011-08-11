@@ -3,6 +3,8 @@ import commonlib
 import be.repository.access as dbaccess
 import be.errors as errors
 import commonlib.helpers as helpers
+import be.apis.member as memberlib
+import be.apis.role as rolelib
 
 user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
@@ -56,4 +58,9 @@ def logout(token):
     except Exception, err:
         print err
 
-
+def create_superuser(username, password, email, first_name, context):
+    member_data = dict(username=username, password=password, email=email, first_name=first_name)
+    user_id = memberlib.member_collection.new(**member_data)
+    role_data = dict(user_id=user_id, roles=['admin'], context=context)
+    return rolelib.assign(**role_data)
+    
