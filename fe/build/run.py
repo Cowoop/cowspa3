@@ -6,6 +6,10 @@ sys.path.append('.')
 import sphc
 import fe
 import fe.src.pages as pagelib
+import fe.src.member_pages as memberlib
+import fe.src.bizplace_pages as bizplacelib
+import fe.src.plan_pages as planlib
+import fe.src.resource_pages as resourcelib
 
 pathjoin = os.path.join
 
@@ -17,7 +21,11 @@ srcroot = 'fe/src'
 contribs = ['js', 'css']
 
 pages = [(pagelib.InvoicingPage, 'invoicing/home'),
-         (pagelib.LoginPage, 'login')
+         (memberlib.MemberCreate, 'member/create'),
+         (pagelib.LoginPage, 'login'),
+         (bizplacelib.BizplaceCreate, 'bizplace/create'),
+         (planlib.PlanCreate, 'plan/create'),
+         (resourcelib.ResourceCreate, 'resource/create')
         ]
 
 def copydirs(srcs, dst, verbose=False):
