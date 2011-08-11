@@ -25,7 +25,8 @@ pages = [(pagelib.InvoicingPage, 'invoicing/home'),
          (pagelib.LoginPage, 'login'),
          (bizplacelib.BizplaceCreate, 'bizplace/create'),
          (planlib.PlanCreate, 'plan/create'),
-         (resourcelib.ResourceCreate, 'resource/create')
+         (resourcelib.ResourceCreate, 'resource/create'),
+         (pagelib.SuperuserCreate, 'setup'),
         ]
 
 def copydirs(srcs, dst, verbose=False):
