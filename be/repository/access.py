@@ -4,6 +4,8 @@ import psycopg2
 import be.repository.stores as stores_mod
 import bases.persistence
 
+refsep = '::'
+
 PGBinary = bases.persistence.PGBinary
 
 user_store = stores_mod.User()
@@ -164,3 +166,7 @@ def get_price(resource_id, member_id, usage_time):
 def remove_user_roles(user_id, roles):
     clause = 'user_id = %(user_id)s AND role IN %(roles)s'
     userrole_store.remove_by_clause(clause, dict(user_id=user_id, roles=tuple(roles)))
+
+def remove_user_permissions(user_id, permissions):
+    clause = 'user_id = %(user_id)s AND permission IN %(permissions)s'
+    userrole_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))

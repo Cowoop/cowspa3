@@ -43,4 +43,3 @@ more_usages = [
     dict(resource_id=3, resource_name='RES3', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
     ]
 
-role_data = dict(context = 'BizPlace:1', roles = ['director', 'host'], user_id = 1)
