@@ -6,6 +6,7 @@ path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
+import be.apis.user as userlib
 from flask import Flask, jsonify, url_for, session, redirect, request
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -17,12 +18,19 @@ be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
 
-@apps.route('/app/login', methods
+@app.route('/app/login', methods=['POST'])
 @app.route('/app', methods=['GET', 'POST', 'DELETE'])
 def api_dispatch():
     params = request.json
     #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
     data = cowspa.mapper(params)
+    if params['method'] == 'login':
+        auth_token = data['result']
+        userlib.set_context(auth_token)
+        resp = jsonify(data)
+        resp.set_cookie('authcookie',value=auth_token)
+        resp.set_cookie('user_id',value=env.context.user_id)
+        return resp
     return jsonify(data)
 
 @app.route('/<path:path>', methods=['GET'])
