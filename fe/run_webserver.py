@@ -18,8 +18,7 @@ be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
 
-@app.route('/app/login', methods=['POST'])
-@app.route('/app', methods=['GET', 'POST', 'DELETE'])
+@app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
     params = request.json
     #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
