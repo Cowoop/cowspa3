@@ -60,5 +60,6 @@ def logout(token):
 
 def create_superuser(username, password, email, first_name):
     user_id = memberlib.member_collection.new(username, password, email, first_name)
-    return rolelib.assign(user_id, ['admin'])
+    rolelib.assign(user_id, ['admin'])
+    return user_id
     

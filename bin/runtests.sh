@@ -8,6 +8,7 @@ tests/test_resources.py \
 tests/test_plans.py \
 tests/test_usage.py \
 tests/test_pricing.py \
+tests/test_roles.py \
 # Add tests above this line
 
 #nosetests -vx  --pdb-failures --pdb tests/test_schemas.py # Destroys all stores
