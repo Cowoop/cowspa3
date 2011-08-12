@@ -58,7 +58,7 @@ class MemberCollection:
 
     def search(q, options={'mybizplace': True}, limit=5):
         """
-        q: (first or last name or both) or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
+        q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
             mybizplace:
                 if True only members having membership in the bizplaces where the current user has membership are returned
