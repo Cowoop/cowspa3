@@ -14,44 +14,44 @@ class ResourceCreate(BasePage):
         fields = []
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Name', For='resource_name')
-        field.input = tf.INPUT(**{'type':'text', 'id':'resource_name', 'name':'resource_name', 'data-bind':'value: resource_name'})
+        field.label = tf.LABEL(content = 'Name', For='name')
+        field.input = tf.INPUT(type='text', id='name', name='name')
         fields.append(field)
 
         field = tf.DIV()
         field.label = tf.LABEL('Type : ', FOR='type')
-        field.input = tf.SELECT(**{'id':'type_list', 'name':'type_list', 'data-bind':'selectedOptions: type'})
+        field.input = tf.SELECT(id='type', name='type')
         for type in types.resource_types:
             field.input.option = tf.OPTION(type, value = type)
             
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Short Description : ', FOR="short_desc")
-        field.input = tf.TEXTAREA(**{ 'id':'short_desc', 'name':'short_desc', 'rows':2, 'cols':25, 'data-bind':'value: short_desc'})
+        field.label = tf.LABEL(content = 'Short Description : ', FOR="short_description")
+        field.input = tf.TEXTAREA( id='short_description', name='short_description', rows=2, cols=25)
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Long Description : ', FOR="long_desc")
-        field.input = tf.TEXTAREA(**{'id':'long_desc', 'name':'long_desc', 'rows':5, 'cols':25, 'data-bind':'value: long_desc'})
+        field.label = tf.LABEL(content = 'Long Description : ', FOR="long_description")
+        field.input = tf.TEXTAREA(id='long_description', name='long_description', rows=5, cols=25)
         fields.append(field)
 
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Quantity Unit : ', FOR='quantity_unit')
-        field.input = tf.INPUT(**{'type':'text', 'id':'quantity_unit', 'name':'quantity_unit', 'data-bind':'value: quantity_unit'})
+        field.input = tf.INPUT(type='text', id='quantity_unit', name='quantity_unit')
         fields.append(field)
 
         field = tf.DIV()
-        field.input = tf.INPUT(**{'type':'checkbox', 'id':'time_based', 'name':'time_based' ,'value':'Time Based', 'data-bind':'checked: time_based'})
+        field.input = tf.INPUT(type='checkbox', id='time_based', name='time_based')
         field.text = 'Time Based'
         fields.append(field)
         
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", **{'id':'Save-btn', 'data-bind':'click: clicked'})
+        field.button = tf.BUTTON("Save", id='save-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="create_resource")
+        form  = tf.FORM(id="createresource_form")
         for field in fields:
             field.line = tf.BR()
             form.content = field

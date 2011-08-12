@@ -36,7 +36,7 @@ class MemberCreate(BasePage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Re enter Password : ', FOR='re_password')
-        field.input = tf.INPUT(type='password', id='re_password', name='re_password')
+        field.input = tf.INPUT(type='password', id='re_password')
         fields.append(field)
 
         field = tf.DIV()

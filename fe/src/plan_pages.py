@@ -13,26 +13,26 @@ class PlanCreate(BasePage):
         fields = []
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Name', For='plan_name')
-        field.input = tf.INPUT(**{'type':'text', 'id':'plan_name', 'name':'plan_name', 'data-bind':'value: plan_name'})
+        field.label = tf.LABEL(content = 'Name : ', For='plan_name')
+        field.input = tf.INPUT(type='text', id='name', name='name')
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL('Bizplace ID : ', FOR='bizplace_id')
-        field.input = tf.SELECT(**{'id':'bizplace_ids', 'name':'bizplace_ids', 'data-bind':'selectedOptions: bizplace_id'})
+        field.label = tf.LABEL(content = 'Bizplace ID : ', FOR='bizplace_id')
+        field.input = tf.SELECT(id='bizplace_id', name='bizplace_id')
         field.input.option = tf.OPTION("1", value="1")
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Description : ', FOR="desc")
-        field.input = tf.TEXTAREA(**{'id':'desc', 'name':'desc', 'rows':2, 'cols':25, 'data-bind':'value: description'})
+        field.label = tf.LABEL(content = 'Description : ', FOR="description")
+        field.input = tf.TEXTAREA(id='description', name='description', rows=2, cols=25)
         fields.append(field)
         
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", **{'id':'Save-btn', 'data-bind':'click: clicked'})
+        field.button = tf.BUTTON("Save", id='save-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="create_plan")
+        form  = tf.FORM(id="createplan_form")
         for field in fields:
             field.line = tf.BR()
             form.content = field
