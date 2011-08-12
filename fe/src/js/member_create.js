@@ -1,13 +1,9 @@
 H5F.setup(document.getElementById('createmember_form'));
 $('#save-btn').click(function () {
-    var params = {  
-        'first_name' : $("input#first_name").val(),
-        'last_name' : $("input#last_name").val(),
-        'username' : $("input#username").val(),
-        'password' : $("input#password").val(),
-        'language' : $("select#language").val(),
-        'country' : $("select#country").val(),
-        'email' : $("input#email").val()
+    var inputs = $('#createmember_form').serializeArray();
+    var params = {}
+    for(var i in inputs){
+        params[inputs[i].name] = inputs[i].value;
         }
     function success() {
         $('#CreateMember-msg').html("<big>☑</big> Member Created successful.");
