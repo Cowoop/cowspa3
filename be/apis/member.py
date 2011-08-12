@@ -56,6 +56,18 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
+    def search(q, options={'mybizplace': True}, limit=5):
+        """
+        q: (first or last name or both) or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
+        options:
+            mybizplace:
+                if True only members having membership in the bizplaces where the current user has membership are returned
+                if False membership is not considered
+                membership check is not required if current user has admin role
+        limit: number of results to return
+        return -> list of tuples containing member's display name and member id
+        """
+
 class MemberResource:
 
     get_attributes = ['state']
