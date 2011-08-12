@@ -23,7 +23,7 @@ def api_dispatch():
     params = request.json
     #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
     data = cowspa.mapper(params)
-    if params['method'] == 'login' and ('result' in data.keys()):
+    if params['method'] == 'login' and 'result' in data:
         auth_token = data['result']
         userlib.set_context(auth_token)
         resp = jsonify(data)

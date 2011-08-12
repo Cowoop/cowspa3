@@ -21,7 +21,7 @@ srcroot = 'fe/src'
 contribs = ['js', 'css']
 
 pages = [(pagelib.InvoicingPage, 'invoicing/home'),
-         (memberlib.MemberCreate, 'member/create'),
+         (memberlib.MemberCreate, 'member/new'),
          (pagelib.LoginPage, 'login'),
          (bizplacelib.BizplaceCreate, 'bizplace/create'),
          (planlib.PlanCreate, 'plan/create'),

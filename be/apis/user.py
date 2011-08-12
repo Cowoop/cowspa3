@@ -58,9 +58,7 @@ def logout(token):
     except Exception, err:
         print err
 
-def create_superuser(username, password, email, first_name, context):
-    member_data = dict(username=username, password=password, email=email, first_name=first_name)
-    user_id = memberlib.member_collection.new(**member_data)
-    role_data = dict(user_id=user_id, roles=['admin'], context=context)
-    return rolelib.assign(**role_data)
+def create_superuser(username, password, email, first_name):
+    user_id = memberlib.member_collection.new(username, password, email, first_name)
+    return rolelib.assign(user_id, ['admin'])
     
