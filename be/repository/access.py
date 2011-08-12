@@ -149,6 +149,22 @@ def get_member_plan(member_id, bizplace_id, date):
     else:
         return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
 
+def search_member(keys, options, limit):
+    fields = ['id', 'display_name']
+    if len(keys) == 1:
+        try:
+            keys[0] = int(keys[0])
+            clause = 'id = %(key)s'
+        except: 
+            keys[0] += "%"
+            clause = 'first_name LIKE %(key)s OR last_name LIKE %(key)s OR email LIKE %(key)s OR organization LIKE %(key)s'
+        values = dict(key=keys[0], limit=limit)
+    elif len(keys) == 2:
+        clause = '(first_name = %(key1)s AND last_name = %(key2)s) OR (first_name = %(key2)s AND last_name = %(key1)s)'
+        values = dict(key1=keys[0], key2=keys[1], limit=limit)
+    clause += ' LIMIT %(limit)s'    
+    return member_store.get_by_clause(clause, values, fields)
+        
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)

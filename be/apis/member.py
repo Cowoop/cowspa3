@@ -56,7 +56,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(q, options={'mybizplace': True}, limit=5):
+    def search(self, q, options={'mybizplace': True}, limit=5):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -67,6 +67,8 @@ class MemberCollection:
         limit: number of results to return
         return -> list of tuples containing member's display name and member id
         """
+        keys = q.split()
+        return dbaccess.search_member(keys, options, limit)
 
 class MemberResource:
 

@@ -54,4 +54,12 @@ def test_info():
     m_id = 1
     info = memberlib.member_resource.info(m_id)
     assert info.id == m_id and test_data.member['first_name'] in info.display_name
-
+    
+def test_search():
+    result = memberlib.member_collection.search("pet")
+    assert len(result) == 2
+    result = memberlib.member_collection.search("1")
+    assert result[0]['display_name'] == "Shon "
+    result = memberlib.member_collection.search("Peter Parker")
+    assert result[0]['id'] == 2
+    assert len(memberlib.member_collection.search("XYZ")) == 0
