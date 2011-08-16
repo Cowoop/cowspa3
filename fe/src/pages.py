@@ -35,7 +35,7 @@ class SuperuserCreate(BasePage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'First Name : ', For="first_name")
-        field.input = tf.INPUT(type='text', id='first_name', name='first_name')
+        field.input = tf.INPUT('required', type='text', id='first_name', name='first_name')
         fields.append(field)
         
         field = tf.DIV()
@@ -59,7 +59,7 @@ class SuperuserCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        field.button = tf.BUTTON("Create", id='save-btn', type='button')
         fields.append(field)
         
         form  = tf.FORM(id="createsuper_form")
