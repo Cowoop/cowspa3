@@ -2,3 +2,5 @@ placeholder for browsers not supporting it: https://github.com/ryanseddon/H5F (h
 jsonrpc dependency: https://raw.github.com/douglascrockford/JSON-js/master/json2.js
 jsonrpc cleint: https://github.com/datagraph/jquery-jsonrpc
 jquery cookies plugin: https://github.com/carhartl/jquery-cookie/blob/master/jquery.cookie.js
+html5widgets: html5Widgets.js EventHelpers.js html5.js modernizr.com/modernizr-1.5.min.js
+    https://github.com/zoltan-dulac/html5Widgets
