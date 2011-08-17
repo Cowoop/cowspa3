@@ -10,11 +10,6 @@ class CSPage(sphc.more.HTML5Page):
     css_links = ['/css/emastic-type.css', '/css/common.css', '/css/grid.css']
     jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js']
 
-    def toplinks_bar(self):
-        toplinks_container = sphc.DIV(Class='toplinks')
-        toplinks_container.links = self.top_links
-        return toplinks_container
-
 class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
 
@@ -47,3 +42,16 @@ class CSAuthedPage(CSPage):
         ('Resources', '#', None),
         ('Reports', '#', None),
         ]
+    def topbar(self):
+        topbar = tf.DIV(Class='topbar')
+        product_name = tf.DIV('c o w s p a', Class='logo')
+        links = []
+        for label, link in self.top_links[:-1]:
+            links.append(tf.A(label, href=link))
+            links.append(' | ')
+        last_link = self.top_links[-1]
+        links.append(tf.A(last_link[0], href=last_link[1]))
+
+        topbar.logo = product_name
+        topbar.links = links
+        return topbar
