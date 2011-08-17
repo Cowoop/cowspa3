@@ -12,10 +12,10 @@ role_map = dict(director='Director', host='Host')
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
- 
+
 def test_create_superuser():
     user_id = userlib.create_superuser(**test_data.super_user)
-    assert rolelib.get_user_roles(user_id)['global'] == ["Admin"] 
+    assert rolelib.get_user_roles(user_id)['global'] == ["Admin"]
 
 def test_assign_role():
     rolelib.assign(**role_data)
@@ -23,7 +23,12 @@ def test_assign_role():
     assert set(role_map.values()).issubset(roles_dict[test_data.bizplace['name']]) == True
     env.context.pgcursor.connection.commit()
 
-@nottest
+def test_reassign_role():
+    rolelib.assign(**role_data)
+    roles_dict = rolelib.get_user_roles(role_data['user_id'])
+    assert set(role_map.values()).issubset(roles_dict[test_data.bizplace['name']]) == True
+    env.context.pgcursor.connection.commit()
+
 def test_revoke_role():
     rolelib.revoke(**role_data)
     roles_dict = rolelib.get_user_roles(role_data['user_id'])
