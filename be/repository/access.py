@@ -75,9 +75,9 @@ def list_activities_by_categories(categories, from_date, to_date):
     clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
-def list_activities_by_name(name, from_date, to_date):
-    clause = 'name = %(name)s AND created >= %(from_date)s AND created <= %(to_date)s'
-    clause_values = dict(name=name, from_date=from_date, to_date=to_date)
+def list_activities_by_names(names, from_date, to_date):
+    clause = '(name IN %(names)s) AND created >= %(from_date)s AND created <= %(to_date)s'
+    clause_values = dict(names=tuple(names), from_date=from_date, to_date=to_date)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def ref2name(ref):
@@ -151,19 +151,26 @@ def get_member_plan(member_id, bizplace_id, date):
 
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
+    query = 'SELECT member.id, member.display_name FROM member'
+    clause = ""
+    if 'admin' not in env.context.roles:
+        query += ', subscription'
+        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
     if len(keys) == 1:
         try:
             keys[0] = int(keys[0])
-            clause = 'id = %(key)s'
+            clause += 'id = %(key)s'
         except: 
             keys[0] += "%"
-            clause = 'first_name LIKE %(key)s OR last_name LIKE %(key)s OR email LIKE %(key)s OR organization LIKE %(key)s'
+            clause += '(first_name LIKE %(key)s OR last_name LIKE %(key)s OR email LIKE %(key)s OR organization LIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
     elif len(keys) == 2:
-        clause = '(first_name = %(key1)s AND last_name = %(key2)s) OR (first_name = %(key2)s AND last_name = %(key1)s)'
+        clause += '((first_name = %(key1)s AND last_name = %(key2)s) OR (first_name = %(key2)s AND last_name = %(key1)s))'
         values = dict(key1=keys[0], key2=keys[1], limit=limit)
-    clause += ' LIMIT %(limit)s'    
-    return member_store.get_by_clause(clause, values, fields)
+    query  += ' WHERE '+clause+' LIMIT %(limit)s'  
+    values['subscriber_id'] =  env.context.user_id
+    
+    return member_store.query_exec(query, values)
         
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'

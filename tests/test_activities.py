@@ -39,12 +39,13 @@ def test_find_activities_by_categories():
     assert activity['data']['attrs'] == 'state'
 
 
-def test_find_activities_by_name():
+def test_find_activities_by_names():
 
-    messages = activitylib.find_activities_by_name('MemberCreated', cur_time, datetime.datetime.now())
+    messages = activitylib.find_activities_by_names(['MemberCreated'], cur_time, datetime.datetime.now())
     #for msg in messages: print msg
-    activities = dbaccess.list_activities_by_name('MemberCreated', cur_time, datetime.datetime.now())
+    activities = dbaccess.list_activities_by_names(['MemberCreated'], cur_time, datetime.datetime.now())
     activity = activities[1]
     assert activity['category'] == 'MemberManagement'
     assert activity['name'] == 'MemberCreated'
     assert activity['data']['name'] == member_data2['name']
+    
