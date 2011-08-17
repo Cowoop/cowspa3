@@ -1,4 +1,3 @@
-H5F.setup(document.getElementById('createbizplace_form'));
 $('#save-btn').click(function () {
     var inputs = $('#createbizplace_form').serializeArray();
     var params = {}

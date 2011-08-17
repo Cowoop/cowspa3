@@ -1,4 +1,3 @@
-H5F.setup(document.getElementById('login_form'));
 $('#login-btn').click(function () {
     var inputs = $('#login_form').serializeArray();
     var params = {}

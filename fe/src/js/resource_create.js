@@ -1,4 +1,3 @@
-H5F.setup(document.getElementById('createresource_form'));
 $('#save-btn').click(function () {
     var inputs = $('#createresource_form').serializeArray();
     var params = {}

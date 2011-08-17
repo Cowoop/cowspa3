@@ -1,4 +1,3 @@
-H5F.setup(document.getElementById('createplan_form'));
 $('#save-btn').click(function () {
     var inputs = $('#createplan_form').serializeArray();
     var params = {}

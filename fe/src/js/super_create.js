@@ -1,4 +1,3 @@
-H5F.setup(document.getElementById('createsuper_form'));
 $('#save-btn').click(function () {
     var inputs = $('#createsuper_form').serializeArray();
     var params = {}
