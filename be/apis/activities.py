@@ -1,8 +1,20 @@
+import itertools
 import be.repository.access as dbaccess
 
 activity_store = dbaccess.stores.activity_store
 
-categories = dict(
+class Categories(dict):
+    """
+    subclassing dict to guarantee uniqueness of event name
+    """
+    def __init__(self, *args, **kw):
+        super(Categories, self).__init__(*args, **kw)
+        self.all_eventnames = tuple(itertools.chain(*(v.keys() for v in self.values())))
+        for eventname in self.all_eventnames:
+            if self.all_eventnames.count(eventname) > 1:
+                raise Exception("Event name not unique: " + eventname)
+
+categories = Categories(
     MemberManagement = dict(
         MemberCreated = 'New member created %(name)s.',
         MemberUpdated = '%(attrs)s updated by %(user_id)s.',
@@ -14,10 +26,10 @@ categories = dict(
     )
 
 role_activities = dict(
-    admin : dict( MemberManagement = ['MemberUpdated'], Security = ['PasswordChanged']),
-    member : dict( MemberManagement = ['MemberCreated', 'MemberUpdated', 'MemberDeleted'])
+    admin = dict( MemberManagement = ['MemberUpdated'], Security = ['PasswordChanged']),
+    member = dict( MemberManagement = ['MemberCreated', 'MemberUpdated', 'MemberDeleted'])
     )
-    
+
 def add(category, name, actor, data, created):
 
     data = dict(category=category, name=name, actor=actor, data=data, created=created)
@@ -26,7 +38,7 @@ def add(category, name, actor, data, created):
 
 def delete(activities):
     return activity_store.remove_many(activities)
-    
+
 def find_activities_by_categories(category_list, from_date, to_date):
 
     activities = dbaccess.list_activities_by_categories(category_list, from_date, to_date)
