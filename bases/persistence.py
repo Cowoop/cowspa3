@@ -359,7 +359,7 @@ class PGStore(BaseStore):
     def remove_by_clause(self, clause, clause_values):
         table_name = self.table_name
         q = 'DELETE FROM %(table_name)s WHERE %(clause)s' % locals()
-        self.query_exec(q, values, clause_values)
+        self.query_exec(q, clause_values)
         return True
 
     def count(self):
