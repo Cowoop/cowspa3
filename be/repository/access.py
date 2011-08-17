@@ -4,7 +4,8 @@ import psycopg2
 import be.repository.stores as stores_mod
 import bases.persistence
 
-refsep = '::'
+refsep = ':'
+ctxsep = '::'
 
 PGBinary = bases.persistence.PGBinary
 
@@ -160,7 +161,7 @@ def search_member(keys, options, limit):
         try:
             keys[0] = int(keys[0])
             clause += 'id = %(key)s'
-        except: 
+        except:
             keys[0] += "%"
             clause += '(first_name LIKE %(key)s OR last_name LIKE %(key)s OR email LIKE %(key)s OR organization LIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
@@ -171,7 +172,7 @@ def search_member(keys, options, limit):
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
-        
+
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
@@ -192,4 +193,4 @@ def remove_user_roles(user_id, roles):
 
 def remove_user_permissions(user_id, permissions):
     clause = 'user_id = %(user_id)s AND permission IN %(permissions)s'
-    userrole_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))
+    userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))
