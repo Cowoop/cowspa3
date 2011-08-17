@@ -45,11 +45,13 @@ def session_lookup(token):
 
 def login(username, password):
     if authenticate(username, password):
+        set_context
         return get_or_create_session(username)
     raise errors.ErrorWithHint('Authentication failed')
 
 def set_context(session_id):
     env.context.user_id = session_lookup(session_id)
+    # env.context.roles = userrole_store.get_by(user_id=user_id) # ['BizPlace:15']
 
 def logout(token):
     try:
