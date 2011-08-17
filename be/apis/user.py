@@ -45,13 +45,15 @@ def session_lookup(token):
 
 def login(username, password):
     if authenticate(username, password):
-        set_context
-        return get_or_create_session(username)
+        auth_token = get_or_create_session(username)
+        set_context(auth_token)
+        return auth_token
     raise errors.ErrorWithHint('Authentication failed')
 
 def set_context(session_id):
     env.context.user_id = session_lookup(session_id)
-    # env.context.roles = userrole_store.get_by(user_id=user_id) # ['BizPlace:15']
+    roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['role'], False)
+    env.context.roles = [role[0] for role in roles]
 
 def logout(token):
     try:

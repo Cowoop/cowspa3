@@ -6,7 +6,6 @@ path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-import be.apis.user as userlib
 from flask import Flask, jsonify, url_for, session, redirect, request
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -25,7 +24,6 @@ def api_dispatch():
     data = cowspa.mapper(params)
     if params['method'] == 'login' and 'result' in data:
         auth_token = data['result']
-        userlib.set_context(auth_token)
         resp = jsonify(data)
         resp.set_cookie('authcookie',value=auth_token)
         resp.set_cookie('user_id',value=env.context.user_id)
