@@ -26,8 +26,7 @@ categories = Categories(
     )
 
 role_activities = dict(
-    admin = dict( MemberManagement = ['MemberUpdated'], Security = ['PasswordChanged']),
-    member = dict( MemberManagement = ['MemberCreated', 'MemberUpdated', 'MemberDeleted'])
+    admin = dict( MemberManagement = ['MemberUpdated'], Security = [])
     )
 
 def add(category, name, actor, data, created):
@@ -47,11 +46,25 @@ def find_activities_by_categories(category_list, from_date, to_date):
         msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
 
-def find_activities_by_name(name, from_date, to_date):
+def find_activities_by_names(names, from_date, to_date):
 
-    activities = dbaccess.list_activities_by_name(name, from_date, to_date)
+    activities = dbaccess.list_activities_by_names(names, from_date, to_date)
     msg_list = []
     for act in activities:
         msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
-
+ 
+def find_role_activities(from_date, to_date):
+    
+    names = []
+    roles = env.context.roles
+    for role in roles:
+        for category in categories:
+            if role_activities[role][category]:
+                 for activity in role_activities[role][category]:
+                    names.append(activity)
+            else:
+                 for activity in categories[category]:
+                    names.append(activity)
+    return find_activities_by_names(names, from_date, to_date)
+    
