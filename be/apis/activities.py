@@ -13,6 +13,11 @@ categories = dict(
         )
     )
 
+role_activities = dict(
+    admin : dict( MemberManagement = ['MemberUpdated'], Security = ['PasswordChanged']),
+    member : dict( MemberManagement = ['MemberCreated', 'MemberUpdated', 'MemberDeleted'])
+    )
+    
 def add(category, name, actor, data, created):
 
     data = dict(category=category, name=name, actor=actor, data=data, created=created)
