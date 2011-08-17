@@ -19,12 +19,13 @@ def test_create_superuser():
 
 def test_assign_role():
     rolelib.assign(**role_data)
-    roles_dict = rolelib.get_user_roles()
-    assert set(role_map.values()).issubset(roles_dict[test_data['bizplace']['name']]) == True
+    roles_dict = rolelib.get_user_roles(role_data['user_id'])
+    assert set(role_map.values()).issubset(roles_dict[test_data.bizplace['name']]) == True
     env.context.pgcursor.connection.commit()
 
-def test_assign_role():
-    rolelib.revoke(**test_data.role_data)
-    roles_dict = rolelib.get_user_roles()
-    assert set(role_map.values()).intersection(roles_dict[test_data['bizplace']['name']]) = set()
+@nottest
+def test_revoke_role():
+    rolelib.revoke(**role_data)
+    roles_dict = rolelib.get_user_roles(role_data['user_id'])
+    assert set(role_map.values()).intersection(roles_dict[test_data.bizplace['name']]) == set()
     env.context.pgcursor.connection.commit()
