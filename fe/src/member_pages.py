@@ -11,7 +11,7 @@ class MemberCreate(BasePage):
     title = 'New Member'
     def  main(self):
         container = tf.DIV()
-        
+
         fields = []
 
         field = tf.DIV()
@@ -59,14 +59,14 @@ class MemberCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        field.button = tf.BUTTON("Create", id='save-btn', type='button')
         fields.append(field)
-        
+
         form  = tf.FORM(id="createmember_form")
         for field in fields:
             field.line = tf.BR()
             form.content = field
-        
+
         container.form = form
         container.msg = tf.SPAN(id="CreateMember-msg")
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
