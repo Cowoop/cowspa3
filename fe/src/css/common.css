@@ -14,7 +14,11 @@ nav ul li a { text-decoration:none; color: WHITE;}
     border-radius:4px; -moz-border-radius:4px; font:2em; }
 .navlink-opt a { text-decoration: none; color: WHITE; }
 .navlink-opt-item { padding-left: 1em; padding-right: 1em; }
-#main { border: 0.2em solid #560005; border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0em;  background: WHITE;}
+#main { border: 0.2em solid #560005; border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0em;  background: WHITE; margin-bottom: 1em;}
+
 .topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: absolute; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
 .topbar a {text-decoration: none; color: WHITE; padding: 1em;}
 .topbar .logo {float: left; display: inline; color: WHITE;}
+
+.bottombar {text-align: center; width: 100%; background: #560005; color: WHITE; position: static; opacity: 1; bottom: 0; left: 0; right: 0; font-size: 0.8em;}
+.bottombar a {text-decoration: none; color: WHITE; padding: 1em;}
