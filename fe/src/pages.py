@@ -37,14 +37,14 @@ class SuperuserCreate(BasePage):
     title = 'New Super User'
     def  main(self):
         container = tf.DIV()
-
+        
         fields = []
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'First Name : ', For="first_name")
         field.input = tf.INPUT('required', type='text', id='first_name', name='first_name')
         fields.append(field)
-
+        
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Username : ', FOR="username")
         field.input = tf.INPUT(type='text', id='username', name='username')
@@ -56,11 +56,6 @@ class SuperuserCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Re enter Password : ', FOR='re_password')
-        field.input = tf.INPUT(type='password', id='re_password')
-        fields.append(field)
-
-        field = tf.DIV()
         field.label = tf.LABEL(content = 'Email : ', FOR='email')
         field.input = tf.INPUT(type='email', id='email', name='email')
         fields.append(field)
@@ -68,12 +63,12 @@ class SuperuserCreate(BasePage):
         field = tf.DIV()
         field.button = tf.BUTTON("Create", id='save-btn', type='button')
         fields.append(field)
-
+        
         form  = tf.FORM(id="createsuper_form")
         for field in fields:
             field.line = tf.BR()
             form.content = field
-
+        
         container.form = form
         container.msg = tf.SPAN(id="CreateSuper-msg")
         container.script = tf.SCRIPT(open("fe/src/js/super_create.js").read(), escape=False, type="text/javascript", language="javascript")
