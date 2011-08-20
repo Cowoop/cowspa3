@@ -152,9 +152,10 @@ def get_member_plan(member_id, bizplace_id, date):
 
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
-    query = 'SELECT member.id, member.display_name FROM member'
+    query = 'SELECT member.id, member.display_name as name, member.email FROM member'
     clause = ""
-    if 'admin' not in env.context.roles:
+    ids = env.context.user_id;
+    if 'admin' not in env.context.roles or options['mybizplace']:
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
     if len(keys) == 1:
@@ -162,13 +163,13 @@ def search_member(keys, options, limit):
             keys[0] = int(keys[0])
             clause += 'id = %(key)s'
         except:
-            keys[0] += "%"
-            clause += '(first_name LIKE %(key)s OR last_name LIKE %(key)s OR email LIKE %(key)s OR organization LIKE %(key)s)'
+            keys[0] = keys[0].lower() + "%"
+            clause += '(lower(first_name) LIKE %(key)s OR lower(last_name) LIKE %(key)s OR lower(email) LIKE %(key)s OR lower(organization) LIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
     elif len(keys) == 2:
-        clause += '((first_name = %(key1)s AND last_name = %(key2)s) OR (first_name = %(key2)s AND last_name = %(key1)s))'
-        values = dict(key1=keys[0], key2=keys[1], limit=limit)
-    query  += ' WHERE '+clause+' LIMIT %(limit)s'  
+        clause += '((lower(first_name) = %(key1)s AND lower(last_name) like %(key2)s) OR (lower(first_name) like %(key2)s AND lower(last_name) = %(key1)s))'
+        values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
+    query  += ' WHERE '+clause+' AND id != %(subscriber_id)s LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
