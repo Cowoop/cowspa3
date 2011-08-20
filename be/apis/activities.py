@@ -26,7 +26,8 @@ categories = Categories(
     )
 
 role_activities = dict(
-    admin = dict( MemberManagement = ['MemberUpdated'], Security = [])
+    admin = dict( MemberManagement = ['MemberUpdated'], Security = []),
+    member = dict( MemberManagement = ['MemberUpdated', 'MemberCreated'], Security = ['PasswordChanged'])
     )
 
 def add(category, name, actor, data, created):
@@ -66,5 +67,5 @@ def find_role_activities(from_date, to_date):
             else:
                  for activity in categories[category]:
                     names.append(activity)
-    return find_activities_by_names(names, from_date, to_date)
+    return find_activities_by_names(list(set(names)), from_date, to_date)
     
