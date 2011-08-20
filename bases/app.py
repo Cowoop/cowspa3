@@ -11,8 +11,6 @@ class APIExecutor(object):
             if target_pref is None: target_pref = getattr(wrapper, 'default', None)
             if target_pref:
                 f = wrapper(f)
-                functools.update_wrapper(f, target)
-
         self.f = f
 
     def __call__(self, *args, **kw):
@@ -45,5 +43,10 @@ class Application(object):
         for f in self.on_shutdown:
             f()
 
+    def tr_start(self):
+        for f in self.on_tr_start:
+            f()
 
-
+    def tr_complete(self):
+        for f in self.on_tr_complete:
+            f()

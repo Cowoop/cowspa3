@@ -10,6 +10,8 @@ import jsonrpc2
 import be.wrappers as wrapperlib
 
 pg_provider = pgdb.PGProvider()
+pg_tr_start = lambda: pg_provider.tr_start(env.context)
+pg_tr_complete = lambda: pg_provider.tr_complete(env.context)
 
 class CSAPIExecutor(applib.APIExecutor):
     wrappers = [wrapperlib.pg_transaction]
@@ -17,6 +19,8 @@ class CSAPIExecutor(applib.APIExecutor):
 class CowspaApp(applib.Application):
     mapper = jsonrpc2.JsonRpc()
     APIExecutor = CSAPIExecutor
+    on_tr_start = [pg_tr_start]
+    on_tr_complete = [pg_tr_complete]
 
 cowspa = CowspaApp()
 cowspa.connect(userlib.login)
@@ -25,4 +29,5 @@ cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
 cowspa.connect(planlib.plan_collection.new, "plan.new")
 cowspa.connect(resourcelib.resource_collection.new, "resource.new")
 cowspa.connect(userlib.create_superuser, "member.create_admin")
+cowspa.connect(memberlib.member_collection.search, "member.search")
 cowspa.startup()
