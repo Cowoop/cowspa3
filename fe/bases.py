@@ -7,8 +7,8 @@ html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelper
 
 class CSPage(sphc.more.HTML5Page):
     current_tab = 'Home'
-    css_links = ['/css/emastic-type.css', '/css/common.css', '/css/grid.css']
-    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js']
+    css_links = ['/css/emastic-type.css', '/css/common.css', '/css/grid.css', '/css/token-input.css']
+    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js']
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
 class CSAnonPage(CSPage):

@@ -4,3 +4,9 @@ jsonrpc cleint: https://github.com/datagraph/jquery-jsonrpc
 jquery cookies plugin: https://github.com/carhartl/jquery-cookie/blob/master/jquery.cookie.js
 html5widgets: html5Widgets.js EventHelpers.js html5.js modernizr.com/modernizr-1.5.min.js
     https://github.com/zoltan-dulac/html5Widgets
+jquery tokeninput & tokeninput.css for search autocomplete: https://github.com/loopj/jquery-tokeninput
+    Patch aplied in jquery.tokeninput.js on line-185 to enable the placeholder  
+    <     var input_box = $("<input type=\"text\"  autocomplete=\"off\">")
+    ---After Patch
+    >     var input_box = $("<input type=\"text\"  autocomplete=\"off\" placeholder=\"search...\">")
+    
