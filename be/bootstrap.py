@@ -57,6 +57,7 @@ def start(conf):
     provider.tr_start(env.context)
     setup_stores()
     provider.tr_complete(env.context)
-    env.pg_provider = provider
+    provider.tr_start(env.context) # This is to make sure other db transactions in same thread works. Such as Test cases.
+    # env.pg_provider = provider # Can we remove this?
 
 #start(conf='conf_dev')

@@ -12,6 +12,7 @@ class PGProvider(persistence.DBProvider):
     def tr_complete(self, context):
         cur = context.pgcursor
         cur.connection.commit()
+        cur.close()
         pool.putconn(cur.connection)
 
     def tr_abort(self, context):

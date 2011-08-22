@@ -35,11 +35,6 @@ class MemberCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Re enter Password : ', FOR='re_password')
-        field.input = tf.INPUT(type='password', id='re_password')
-        fields.append(field)
-
-        field = tf.DIV()
         field.label = tf.LABEL('Language : ', FOR='language')
         field.input = tf.SELECT(id='language', name='language')
         for language in data_lists.languages:

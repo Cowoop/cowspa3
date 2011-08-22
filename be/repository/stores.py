@@ -216,7 +216,7 @@ class Plan(PGStore):
 
 class Subscription(PGStore):
     create_sql = """
-    subscriber_id INTEGER NOT NULL UNIQUE,
+    subscriber_id INTEGER NOT NULL,
     plan_id INTEGER NOT NULL,
     plan_name TEXT,
     starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,

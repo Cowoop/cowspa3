@@ -15,7 +15,7 @@ class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
 
 members_opt = [
-    tf.INPUT(type="search", Class='navlink-opt-item', placeholder='Search..'),
+    tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
     tf.A("New", href='/member/new', Class='navlink-opt-item'),
     tf.A("Export", href="/member/export", Class='navlink-opt-item')]
 
