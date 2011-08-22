@@ -8,7 +8,7 @@ ctxpath = '%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
     current_tab = 'Home'
-    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
+    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
 class CSAnonPage(CSPage):
