@@ -8,7 +8,7 @@ $('#login-btn').click(function () {
     function success(resp) {
         console.log(resp);
         $('#login-msg').html("<big>☑</big> Login is successful.");
-        window.location = "/dashboard"
+        window.location = "/en/default/dashboard"
         };
     function error() {
         $('#login-msg').html("<big>Authentication Error. Try again</big>");
