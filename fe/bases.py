@@ -4,16 +4,16 @@ import sphc.more
 tf = sphc.TagFactory()
 
 html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelpers.js', '/js/html5Widgets.js']
+ctxpath = '%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
     current_tab = 'Home'
-    css_links = ['/css/emastic-type.css', '/css/common.css', '/css/grid.css', '/css/token-input.css']
-    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js']
+    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/common.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
 class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
-
+    css_links = ['/themes/default/css/main.css']
 members_opt = [
     tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
     tf.A("New", href='/member/new', Class='navlink-opt-item'),
@@ -33,6 +33,7 @@ invoicing_opt = None
 
 class CSAuthedPage(CSPage):
     top_links = [('Account', '/account'), ('Theme', '#themes'), ('Logout', '/logout')]
+    css_links = [ '/themes/%(theme)s/css/main.css']
     nav_links = [
         ('Dashboard', '#/dashboard', None),
         ('Profile', '#/profile', None),
