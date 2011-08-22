@@ -7,7 +7,6 @@ html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelper
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    current_tab = 'Home'
     jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
@@ -33,6 +32,7 @@ booking_opt = [
 invoicing_opt = None
 
 class CSAuthedPage(CSPage):
+    current_tab = 'Dashboard'
     top_links = [('Account', ctxpath + '/account'), ('Theme', '#themes'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css']
     nav_links = [

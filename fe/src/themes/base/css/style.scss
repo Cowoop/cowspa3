@@ -32,11 +32,13 @@ nav ul li { display: inline; margin: 0.0em; list-style: none; padding: 0.35em; t
 nav ul li a { text-decoration:none; color: WHITE;}
 .navlink-current { text-decoration:none; color: #560005; background: WHITE; padding: 0.1em;
     border-radius:4px; -moz-border-radius:4px; }
-.navlink-opts { float: right; color: WHITE; text-decoration:none; display: inline; margin: 0.3em; }
+.navlink-opts { font:normal 1.1em $nav-font-face; float: right; color: WHITE; text-decoration:none; display: inline; margin: 0.2em; }
 .navlink-opt { padding: 0.5em; background: #560005; display: block; font-size: 1.1em;
     border-radius:4px; -moz-border-radius:4px; font:2em; }
-.navlink-opt a { text-decoration: none; color: WHITE; }
-.navlink-opt-item { padding-left: 1em; padding-right: 1em; }
+.navlink-opt a { text-decoration: none; }
+.navlink-opt-item { padding-left: 1em; padding-right: 1em; color: WHITE; }
+.navlink-opt-item-current { text-decoration:none; color: #560005; background: WHITE; padding: 0.3em;
+    border-radius:4px; -moz-border-radius:4px; }
 #main { border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0.5em;  background: WHITE; margin-bottom: 1em; text-align: center; -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5);}
 
 .topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: absolute; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
