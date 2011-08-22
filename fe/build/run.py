@@ -25,7 +25,7 @@ roles = ['host']
 themeroot = 'fe/src/themes'
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
-scsscompile_cmd = "/var/lib/gems/1.8/gems/sass-3.1.7/bin/scss %(infile)s %(outfile)s"
+scsscompile_cmd = "/var/lib/gems/1.8/gems/sass-3.1.7/bin/scss %(infile)s %(outfile)s -I `pwd`"
 
 def themedict(themedir):
     manifest_path = pathjoin(themeroot, themedir, 'manifest')
