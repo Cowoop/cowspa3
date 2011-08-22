@@ -64,10 +64,11 @@ class PageBuilder(BuilderBase):
             for elem in path_data:
                 d.update(elem)
             path = pathjoin(pubroot, (self.path % d))
+            print("Building page: %s" % path)
             page = self.page()
             page_data = d
+            page_data['rroot'] = os.path.sep.join('..' for p in self.path.split(os.path.sep))
             page.write(path, page_data)
-            print("Built page: %s" % path)
 
 class JSBuilder(BuilderBase):
     """
