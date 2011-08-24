@@ -14,7 +14,7 @@ class ResourceCreate(BasePage):
         fields = []
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Name', For='name')
+        field.label = tf.LABEL(content = 'Name : ', For='name')
         field.input = tf.INPUT(type='text', id='name', name='name')
         fields.append(field)
 
