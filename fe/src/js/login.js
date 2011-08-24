@@ -1,4 +1,4 @@
-$('#login-btn').click(function () {
+function login() {
     $('#login-msg').html("Logging in...");
     var inputs = $('#login_form').serializeArray();
     var params = {}
@@ -14,4 +14,16 @@ $('#login-btn').click(function () {
         $('#login-msg').html("<big>Authentication Error. Try again</big>");
         };
     jsonrpc('login', params, success, error);
-    });
+};
+
+$('#login-btn').click(login);
+
+function enterKey(evt) {
+    var evt = (evt) ? evt : event
+    var charCode = (evt.which) ? evt.which : evt.keyCode
+    if (charCode == 13) {
+      login();
+    };
+}; 
+
+document.body.onkeypress = enterKey;
