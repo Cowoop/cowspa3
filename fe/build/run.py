@@ -84,6 +84,7 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(resourcelib.ResourceCreate, prefix + 'resource/create'),
          PageBuilder(pagelib.SuperuserCreate, 'setup'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
+         PageBuilder(memberlib.MemberProfile, prefix + 'profile'),
         ]
 
 def copydirs(srcs, dst, verbose=False):

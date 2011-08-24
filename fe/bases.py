@@ -41,17 +41,26 @@ booking_opt = [
 
 invoicing_opt = None
 
+profile_opt = [
+    tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),
+    tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
+    tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact')
+    ]
+    
+resources_opt = [
+    tf.A("Create", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
+    
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/account'), ('Theme', '#themes'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', None),
-        ('Profile', '#profile', None),
+        ('Profile', '#profile', profile_opt),
         ('Members', '#', members_opt),
         ('Bookings', '#', booking_opt),
         ('Invoicing', '#', invoicing_opt),
         ('Places', '#', None),
-        ('Resources', '#', None),
+        ('Resources', '#', resources_opt),
         ('Reports', '#', None),
         ]
     current_nav = '/Dashboard'
