@@ -9,18 +9,28 @@ ctxpath = '/%(lang)s/%(theme)s'
 class CSPage(sphc.more.HTML5Page):
     jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
+    def bottombar(self):
+        bar = tf.DIV(Class='bottombar')
+        links = []
+        for label, link in self.bottom_links[:-1]:
+            links.append(tf.A(label, href=link))
+            links.append(' | ')
+        last_link = self.bottom_links[-1]
+        links.append(tf.A(last_link[0], href=last_link[1]))
+        bar.links = links
+        return bar
 
 class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
     css_links = ['/themes/default/css/main.css']
 
 members_opt = [
-    tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
+    #tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
     tf.A("New", href=ctxpath + '/member/new', Class='navlink-opt-item'),
     tf.A("Export", href=ctxpath + "/member/export", Class='navlink-opt-item')]
 
 booking_opt = [
-    tf.INPUT(type="search", Class='navlink-opt-item', placeholder='Search..'),
+    #tf.INPUT(type="search", Class='navlink-opt-item', placeholder='Search..'),
     tf.A("New", href=ctxpath + '/bookings/new', Class='navlink-opt-item'),
     tf.A("My Bookings", href=ctxpath + '/bookings/mine', Class='navlink-opt-item'),
     tf.A("Calendar", href=ctxpath + '/bookings/calendar', Class='navlink-opt-item'),
@@ -32,11 +42,10 @@ booking_opt = [
 invoicing_opt = None
 
 class CSAuthedPage(CSPage):
-    current_tab = 'Dashboard'
     top_links = [('Account', ctxpath + '/account'), ('Theme', '#themes'), ('Logout', '/logout')]
-    css_links = [ '/themes/%(theme)s/css/main.css']
-    nav_links = [
-        ('Dashboard', '#dashboard', None),
+    css_links = [ '/themes/%(theme)s/css/main.css' ]
+    nav_menu = [
+        ('Dashboard', ctxpath + '/dashboard', None),
         ('Profile', '#profile', None),
         ('Members', '#', members_opt),
         ('Bookings', '#', booking_opt),
@@ -45,6 +54,8 @@ class CSAuthedPage(CSPage):
         ('Resources', '#', None),
         ('Reports', '#', None),
         ]
+    current_nav = '/Dashboard'
+
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
         product_name = tf.DIV('c o w s p a', Class='logo')
@@ -58,13 +69,3 @@ class CSAuthedPage(CSPage):
         topbar.logo = product_name
         topbar.links = links
         return topbar
-    def bottombar(self):
-        bar = tf.DIV(Class='bottombar')
-        links = []
-        for label, link in self.bottom_links[:-1]:
-            links.append(tf.A(label, href=link))
-            links.append(' | ')
-        last_link = self.bottom_links[-1]
-        links.append(tf.A(last_link[0], href=last_link[1]))
-        bar.links = links
-        return bar

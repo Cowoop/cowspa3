@@ -27,7 +27,17 @@ function init_autocomplete() {
             } 
     });
 };
+
+function init_nav() {
+    $('nav h2').click( function () {
+        $('nav div.nav-opt').removeClass('open');
+        $(this).next().addClass('open').slideDown('slow');
+        $('nav div.nav-opt:not(.open)').slideUp('fast');
+    } );
+};
+
   
 $(document).ready(function() {
     init_autocomplete();
+    init_nav();
 });    
