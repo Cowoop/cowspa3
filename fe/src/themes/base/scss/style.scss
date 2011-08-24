@@ -1,6 +1,7 @@
+@import "http://fonts.googleapis.com/css?family=Droid+Serif";
 * {color: #560005;} /* #222 is good too */
 html { margin: 0; padding: 0; background: #f1f1f1; background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);}
-body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 2em; }
+body { font-family: 'Myriad Pro', 'Droid Serif', 'Georgia', serif; font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 2em; }
 a { text-shadow: 1px 0px 2px white; }
 form {text-align: center; }
 form input { height: 1.5em; background: #f1f1f1; }
@@ -38,6 +39,7 @@ nav {
     display: none;
     margin-left: 2em;
 }
+.nav-opt-current { display: block; }
 .nav-opt a {
     text-decoration: none; 
     display: block;
@@ -46,6 +48,7 @@ nav h2 {cursor: pointer;
     font-family: "Sans-serif", Tahoma;
     font-weight: normal;
 }
+.nav-current:before { content: "→";}
 nav h2 a {
     text-decoration: none; 
     color: inherit;
