@@ -1,4 +1,5 @@
 import sphc
+import sphc.more
 import fe.bases
 
 tf = sphc.TagFactory()
@@ -7,15 +8,20 @@ BasePage = fe.bases.CSAuthedPage
 class LoginPage(fe.bases.CSAnonPage):
     title = "Cowspa | Login"
     def main(self):
-        container = tf.DIV()
+        container = tf.DIV(Class="login-mainx")
         username = tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username")
         password = tf.INPUT(type="PASSWORD", id='password', name="password", placeholder="Password")
         submit = tf.BUTTON("Log In", id='login-btn', type='button')
+        formbox = tf.DIV(Class="login-form-box")
         form = tf.FORM(id = "login_form")
         form.fields = [username, password, submit]
-        container.form = form
+        container.formbox = formbox
+        container.formbox.form = form
         container.msg = tf.SPAN(id="login-msg")
         container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript", language="javascript")
+        container.imgbox = tf.DIV(Class="login-img")
+        container.imgbox.img = tf.IMG(src="/images/cow.png", width="50%%", height="50%%", align="left")
+        container.clear = sphc.more.clear()
         return container
 
 class InvoicingPage(BasePage):
