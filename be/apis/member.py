@@ -91,8 +91,8 @@ class MemberResource:
 
     def details(self, member_id):
         member_ref = member_store.ref(member_id)
-        return dict(profile=memberprofile_store.get_by(member=member_id),
-            contact=contact_store.get_by(owner=member_ref))
+        return dict(profile=profile_store.get_by(dict(member=member_id))[0],
+            contact=contact_store.get_by(dict(id=member_id))[0])
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
