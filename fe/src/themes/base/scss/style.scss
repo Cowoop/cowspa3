@@ -42,13 +42,14 @@ nav {
 .nav-opt-current { display: block; }
 .nav-opt a {
     text-decoration: none; 
-    display: block;
+    display: inline;
 }
 nav h2 {cursor: pointer;
     font-family: "Sans-serif", Tahoma;
     font-weight: normal;
 }
 .nav-current:before { content: "→";}
+.nav-opt-item-current:before { content: "→";}
 nav h2 a {
     text-decoration: none; 
     color: inherit;

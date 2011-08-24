@@ -7,7 +7,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class MemberCreate(BasePage):
-    current_tab = 'Members'
+    current_nav = 'Members'
     title = 'New Member'
     def  main(self):
         container = tf.DIV()
@@ -68,7 +68,7 @@ class MemberCreate(BasePage):
         return container
 
 class MemberProfile(BasePage):
-    current_tab = 'profile'
+    current_nav = 'Profile'
     title = 'Profile'
     def  main(self):
         

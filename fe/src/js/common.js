@@ -29,11 +29,27 @@ function init_autocomplete() {
 };
 
 function init_nav() {
+    function set_current_opt () {
+        $('.nav-opt-item a').each( function () {
+            if ($(this).attr('href') == (window.location.pathname + window.location.hash)) {
+                $(this).parent().addClass('nav-opt-item-current');
+            };
+        });
+    };
     $('nav h2').click( function () {
         $('nav div.nav-opt').removeClass('open');
+        $('nav h2').removeClass('nav-current');
         $(this).next().addClass('open').slideDown('slow');
         $('nav div.nav-opt:not(.open)').slideUp('fast');
-    } );
+        $(this).addClass('nav-current');
+        $('.nav-opt-item').removeClass('nav-opt-item-current');
+        set_current_opt();
+    });
+    $('nav div.nav-opt a').click( function () {
+        $('.nav-opt-item').removeClass('nav-opt-item-current');
+        $(this).parent().addClass('nav-opt-item-current');
+    });
+    set_current_opt();
 };
 
   

@@ -32,7 +32,7 @@ class InvoicingPage(BasePage):
         return tf.H1("Invoicing")
 
 class Dashboard(BasePage):
-    current_tab = 'dashboard'
+    current_nav = 'Dashboard'
     title = 'Host Dashboard'
 
     def main(self):
