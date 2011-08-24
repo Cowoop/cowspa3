@@ -2,15 +2,16 @@
 html { margin: 0; padding: 0; background: #f1f1f1; background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);}
 body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 2em; }
 a { text-shadow: 1px 0px 2px white; }
-input { height: 1.5em; background: #f1f1f1; }
-input[required] { color: black; background: black; margin: 2em; }
+form {text-align: center; }
+form input { height: 1.5em; background: #f1f1f1; }
+form input[required] { color: black; background: black;}
 select { padding: 0.2em; background: #f1f1f1; }
 button {
     margin: 0.5em;
     padding: 0.1em;
     padding-left: 0.6em;
     padding-right: 0.6em;
-    font-size: 1.3em;
+    font-size: 1.1em;
     color: white;
     background: #560005;
     border: 1px solid #f1f1f1;
@@ -24,22 +25,36 @@ button:hover {
     font-weight: bold;
     color: #560005;
 }
-nav { display: block; color:GRAY; float: right; padding: 0.2em; }
-nav a { text-decoration: none; text-shadow: none;}
-nav a:hover { text-decoration: none; }
-nav ul { display: block; float: right; background: #560005; color: WHITE; list-style: none; font:bold 1.3em $nav-font-face; margin: 0.1em; border-radius:7px; -moz-border-radius:7px; padding: 0.3em; }
-nav ul li { display: inline; margin: 0.0em; list-style: none; padding: 0.35em; text-decoration:none; }
-nav ul li a { text-decoration:none; color: WHITE;}
-.navlink-current { text-decoration:none; color: #560005; background: WHITE; padding: 0.1em;
-    border-radius:4px; -moz-border-radius:4px; }
-.navlink-opts { font:normal 1.1em $nav-font-face; float: right; color: WHITE; text-decoration:none; display: inline; margin: 0.2em; }
-.navlink-opt { padding: 0.5em; background: #560005; display: block; font-size: 1.1em;
-    border-radius:4px; -moz-border-radius:4px; font:2em; }
-.navlink-opt a { text-decoration: none; }
-.navlink-opt-item { padding-left: 1em; padding-right: 1em; color: WHITE; }
-.navlink-opt-item-current { text-decoration:none; color: #560005; background: WHITE; padding: 0.3em;
-    border-radius:4px; -moz-border-radius:4px; }
-#main { border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0.5em;  background: WHITE; margin-bottom: 1em; text-align: center; -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5);}
+nav {
+    width: 20%;
+    float: left;
+    //background: gray;
+    border: 1px solid #560005;
+    padding: 0.5em;
+    display: block;
+}
+.nav-opt {
+    font-family: "Monospace";
+    display: none;
+    margin-left: 2em;
+}
+.nav-opt a {
+    text-decoration: none; 
+    display: block;
+}
+nav h2 {cursor: pointer;
+    font-family: "Sans-serif", Tahoma;
+    font-weight: normal;
+}
+nav h2 a {
+    text-decoration: none; 
+    color: inherit;
+}
+nav h2 a:active {background: gray;}
+
+#container {padding: 1em; overflow: hidden;}
+// .ui-accordion { display: table-cell; width: 20%; margin: 1em;}
+#main { border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0.5em;  background: WHITE; margin-bottom: 1em; text-align: center; -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5); width: 70%; height: 100%; float: left;}
 
 .topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: absolute; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
 .topbar a {text-decoration: none; color: WHITE; padding: 1em;}
@@ -47,3 +62,6 @@ nav ul li a { text-decoration:none; color: WHITE;}
 
 .bottombar {text-align: center; width: 100%; background: #560005; color: WHITE; position: fixed; bottom: 0; left: 0; right: 0; font-size: 0.8em;  -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
 .bottombar a {text-decoration: none; color: WHITE; padding: 1em;}
+.login-main {background-image:url('/images/cow.png'); }
+.login-form-box { float: right; width: 40%; height:100%; padding: 2em; }
+.login-img {float: left; width:70%; height: 70%;}
