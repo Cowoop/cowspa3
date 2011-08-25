@@ -4,7 +4,8 @@ superuser tasks
 
     sudo bash
     apt-get install libevent-dev python-dev git postgresql python-psycopg2 python-virtualenv
-    # gem install compass # for dev setups only
+    gem install compass # for dev setups only
+    gem install compass-susy-plugin # for dev setups only
     su - postgres
     createuser -S -d -R -P <login-user>
     ^d # back as superuser 
