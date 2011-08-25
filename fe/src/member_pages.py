@@ -117,7 +117,7 @@ class MemberProfile(BasePage):
         
         fields = get_static_fields(field_list, web_links, fields)
         
-        form  = tf.FORM(Class='profile-forms', id="social_view_form", title="Social Me", style="display:none")
+        form  = tf.FORM(Class='profile-forms', id="social_view_form", style="display:none")
         for field in fields:
             field.line = tf.BR()
             form.content = field
