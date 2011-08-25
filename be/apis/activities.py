@@ -1,4 +1,5 @@
 import itertools
+import datetime
 import be.repository.access as dbaccess
 
 activity_store = dbaccess.stores.activity_store
@@ -39,7 +40,7 @@ def add(category, name, actor, data, created):
 def delete(activities):
     return activity_store.remove_many(activities)
 
-def find_activities_by_categories(category_list, from_date, to_date):
+def find_activities_by_categories(category_list, from_date, to_date, limit=30):
 
     activities = dbaccess.list_activities_by_categories(category_list, from_date, to_date)
     msg_list = []
@@ -47,15 +48,15 @@ def find_activities_by_categories(category_list, from_date, to_date):
         msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
 
-def find_activities_by_names(names, from_date, to_date):
+def find_activities_by_names(names, from_date, to_date, limit=30):
 
-    activities = dbaccess.list_activities_by_names(names, from_date, to_date)
+    activities = dbaccess.list_activities_by_names(names, from_date, to_date, limit)
     msg_list = []
     for act in activities:
         msg_list.append(categories[act['category']][act['name']] % act['data'])
     return msg_list
  
-def find_role_activities(from_date, to_date):
+def find_role_activities(from_date, to_date, limit=10):
     
     names = []
     roles = env.context.roles
@@ -67,5 +68,11 @@ def find_role_activities(from_date, to_date):
             else:
                  for activity in categories[category]:
                     names.append(activity)
-    return find_activities_by_names(list(set(names)), from_date, to_date)
+    return find_activities_by_names(list(set(names)), from_date, to_date, limit)
+    
+def get_current_activities():
+    
+    from_date = datetime.datetime(2011,01,01,00,00,00) 
+    to_date = datetime.datetime.now()
+    return find_role_activities(from_date, to_date, 10)
     

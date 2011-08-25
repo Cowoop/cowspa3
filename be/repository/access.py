@@ -71,14 +71,14 @@ class Resource(object):
         return resource_store.get_many(dep_ids, self.info_fields)
 
 
-def list_activities_by_categories(categories, from_date, to_date):
-    clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s'
-    clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date)
+def list_activities_by_categories(categories, from_date, to_date, limit):
+    clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
+    clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date, limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
-def list_activities_by_names(names, from_date, to_date):
-    clause = '(name IN %(names)s) AND created >= %(from_date)s AND created <= %(to_date)s'
-    clause_values = dict(names=tuple(names), from_date=from_date, to_date=to_date)
+def list_activities_by_names(names, from_date, to_date, limit):
+    clause = '(name IN %(names)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
+    clause_values = dict(names=tuple(names), from_date=from_date, to_date=to_date ,limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
 def ref2name(ref):
