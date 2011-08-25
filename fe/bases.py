@@ -78,3 +78,9 @@ class CSAuthedPage(CSPage):
         topbar.logo = product_name
         topbar.links = links
         return topbar
+        
+    def logobar(self):
+        logobar = tf.DIV(Class='logobar')
+        logobar.div = tf.DIV(Class='searchbox')
+        logobar.div.input = tf.INPUT(id="search", type="text")
+        return logobar
