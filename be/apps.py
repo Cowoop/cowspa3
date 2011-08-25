@@ -24,6 +24,7 @@ class CowspaApp(applib.Application):
 
 cowspa = CowspaApp()
 cowspa.connect(userlib.login)
+cowspa.connect(userlib.logout)
 cowspa.connect(memberlib.member_collection.new, "member.new")
 cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
 cowspa.connect(planlib.plan_collection.new, "plan.new")

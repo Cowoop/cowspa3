@@ -24,6 +24,11 @@ class LoginPage(fe.bases.CSAnonPage):
         container.clear = sphc.more.clear()
         return container
 
+class LogoutPage(fe.bases.CSAnonPage):
+    title = "Cowspa | Logout"
+    def main(self):
+        return tf.SCRIPT(open("fe/src/js/logout.js").read(), escape=False, type="text/javascript", language="javascript")
+        
 class InvoicingPage(BasePage):
     current_tab = 'invoicing'
     title = 'Invoicing'
@@ -36,7 +41,11 @@ class Dashboard(BasePage):
     title = 'Host Dashboard'
 
     def main(self):
-        return tf.H2("Welcome")
+        container = tf.DIV()
+        container.h2 = tf.H2("Welcome")
+        container.ul = tf.UL(id="activities", name="activities")
+        container.script = tf.SCRIPT(open("fe/src/js/dashboard.js").read(), escape=False, type="text/javascript", language="javascript")
+        return container
 
 class SuperuserCreate(fe.bases.CSAnonPage):
     current_tab = 'create'
