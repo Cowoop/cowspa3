@@ -25,7 +25,21 @@ roles = ['host']
 themeroot = 'fe/src/themes'
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
-scsscompile_cmd = "/var/lib/gems/1.8/gems/sass-3.1.7/bin/scss %(infile)s %(outfile)s -I `pwd`"
+compass_bin = "/var/lib/gems/1.8/gems/compass-0.11.5/bin/compass"
+
+def exec_cmd(cmd, fail_on_err=True):
+    print("Executing :" + cmd)
+    ret = os.system(cmd)
+    if fail_on_err and not ret == 0:
+        sys.exit("Command failed: %s" % cmd)
+    return ret
+
+def compile_scss(prjdir):
+    opts = "-q -r susy -u susy --relative-assets --sass-dir scss --css-dir css" % locals()
+    project_cmd = compass_bin + " create %(prjdir)s %(opts)s" % locals()
+    exec_cmd(project_cmd)
+    compile_cmd = compass_bin + " compile %(prjdir)s" % locals()
+    exec_cmd(compile_cmd)
 
 def themedict(themedir):
     manifest_path = pathjoin(themeroot, themedir, 'manifest')
@@ -113,8 +127,15 @@ def build_themes():
     """
     theme dir (built) goes to <pub>/themes/<theme-name>
     """
+    copydirs(themeroot, pubroot)
     base_themedir = pathjoin(themeroot, 'base')
     for themedir in themedirs:
+        # cp -r fe/src/themes pub
+        # cp -r contrib/css/* pub/themes/default/scss/
+        # cp -r themes/base/scss pub/themes/default/scss/base
+        # cp pub/themes/default/scss/base/main.scss pub/themes/default/scss/
+        # compass create . --sass-dir themes/default/scss --css-dir themes/default/css
+        # rm pub/themes/default/scss
         src_themedir = pathjoin(themeroot, themedir)
         dst_themedir = pathjoin(pubroot, 'themes', themedir)
         # 1. copy images
@@ -125,15 +146,14 @@ def build_themes():
         if os.path.exists(src_imagedir) and os.listdir(src_imagedir):
             copydirs(src_imagedir + '/*', dst_imagedir)
         # 2. compile style
-        infile = pathjoin(src_themedir, 'css', 'main.scss')
-        outfile = pathjoin(dst_themedir, 'css', 'main.css')
-        styledir = os.path.dirname(outfile)
-        open(infile, 'w').write(open(pathjoin(base_themedir, 'css', 'main.scss')).read())
-        if not os.path.exists(styledir):
-            os.makedirs(styledir)
-        cmd = scsscompile_cmd % dict(infile=infile, outfile=outfile)
-        os.system(cmd)
-        os.remove(infile)
+        src_scssdir = pathjoin(src_themedir, 'css')
+        dst_scssdir = pathjoin(dst_themedir, 'scss')
+        dst_cssdir = pathjoin(dst_themedir, 'css')
+        copydirs(themeroot, pubroot)
+        copydirs(pathjoin(contribroot, 'css'), pathjoin(dst_scssdir, 'contrib'))
+        copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
+        copydirs(pathjoin(dst_scssdir, 'base', 'main.scss'), dst_scssdir)
+        compile_scss(dst_themedir)
 
 def build_scripts():
     """
