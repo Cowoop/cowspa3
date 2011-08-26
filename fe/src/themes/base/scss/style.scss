@@ -60,7 +60,7 @@ nav h2 a:active {background: gray;}
 // .ui-accordion { display: table-cell; width: 20%; margin: 1em;}
 #main { border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0.5em;  background: WHITE; margin-bottom: 1em; text-align: center; -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5); width: 70%; height: 100%; float: left;}
 
-.topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: absolute; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
+.topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: fixed; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
 .topbar a {text-decoration: none; color: WHITE; padding: 1em;}
 .topbar .logo {float: left; display: inline; color: WHITE;}
 
