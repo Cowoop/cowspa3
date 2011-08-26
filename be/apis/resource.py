@@ -2,6 +2,7 @@ import datetime
 import collections
 import be.repository.access as dbaccess
 import commonlib.shared.constants as constants
+import be.apis.activities as activitylib
 
 resource_store = dbaccess.stores.resource_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
@@ -13,6 +14,9 @@ class ResourceCollection:
         data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type, time_based=time_based, quantity_unit=quantity_unit)
         res_id = resource_store.add(**data)
 
+        data = dict(name=name, owner=owner, user_id=env.context.user_id)
+        activity_id = activitylib.add('ResourceManagement', 'ResourceCreated', env.context.user_id, data, created)
+            
         return res_id
 
     def list(self, owner):
@@ -42,6 +46,9 @@ class ResourceResource:
         """
         mod_data = dict((k,v) for k,v in mod_data.items() if k in self.set_attributes)
         resource_store.update(res_id, **mod_data)
+        
+        data = dict(user_id=env.context.user_id, res_id=res_id, attrs=', '.join(attr for attr in mod_data))
+        activity_id = activitylib.add('ResourceManagement', 'ResourceUpdated', env.context.user_id, data, created)
 
     def get(self, res_id, attrname):
         if not attrname in self.get_attributes: return

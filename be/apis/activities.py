@@ -23,11 +23,15 @@ categories = Categories(
         ),
     Security = dict(
         PasswordChanged = 'Password changed by %(name)s.'
+        ),
+    ResourceManagement = dict(
+        ResourceCreated = 'New resource %(name)s created by %(user_id)s',
+        ResourceUpdated = '%(res_id) resource updated by %(user_id)s'
         )
     )
 
 role_activities = dict(
-    admin = dict( MemberManagement = ['MemberUpdated'], Security = []),
+    admin = dict( MemberManagement = ['MemberUpdated'], Security = [], ResourceManagement = ['ResourceCreated']),
     member = dict( MemberManagement = ['MemberUpdated', 'MemberCreated'], Security = ['PasswordChanged'])
     )
 
