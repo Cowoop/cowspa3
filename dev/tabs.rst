@@ -1,13 +1,17 @@
-- Dashboard
+- Dashboard *
 
-- Profile
+- Profile *
+    - About me *
+    - Account *
+    - Contact *
+    - Social Me *
+    - Preferences
 
 - Members
-    - Search
-    - New
+    - New *
     - Export
 
-- Bookings *
+- Bookings #2
     - New
     - My Bookings
     - Calender
@@ -16,25 +20,23 @@
     - Search
     - Export
 
-- Invoicing
+- Invoicing #1
     - Search
-    - Recent
-    - Add usages
+    - Recent ?
+    - Add Usages
     - Uninvoiced usages
     - New
     - Generation
     - Export
 
 - Places
-    - Administration
-        - Profile
-        - Contact
-        - Taxes
-    - Plans
-
-- Resources
     - New
-    - Manage
-    - Pricing
+    - About
+    - Contact
+    - Preferences
+    - Taxes
+    - Plans
+    - Resources #2
+    - Pricing #2
 
-- Reports *
+- Reports #2
