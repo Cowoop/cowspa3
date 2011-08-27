@@ -1,38 +1,149 @@
+@import "compass/reset";
+@import "compass/css3";
+@import "compass/utilities/color";
+@import "base";
+
 @import "http://fonts.googleapis.com/css?family=Droid+Serif";
-* {color: #560005;} /* #222 is good too */
-html { margin: 0; padding: 0; background: #f1f1f1; background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, #f1f1f1 0%, #f1f1f1 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);}
-body { font-family: 'Myriad Pro', 'Droid Serif', 'Georgia', serif; font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 2em; }
-a { text-shadow: 1px 0px 2px white; }
-form {text-align: center; }
-form input { height: 1.5em; background: #f1f1f1; }
-form input[required] { color: black; background: black;}
-select { padding: 0.2em; background: #f1f1f1; }
-button {
+
+@mixin divsizing {
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+}
+
+* {color: $main-color; font-family:  sans-serif;} /* #222 is good too */
+div { @include divsizing; }
+
+html { margin: 0; padding: 0; background: $page-background; background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);}
+body { font-family: 'Myriad Pro', 'Droid Serif', 'Georgia', sans-serif; font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 2em; }
+
+.topbar {
+    text-align: right; 
+    width: 100%; 
+    background: $main-color;
+    color: $other-text-color;
+    position: fixed;
+    opacity: 1;
+    top: 0; left: 0; right: 0;
+    font-size: 0.8em;
+}
+.container {
+    @include container;
+    // @include susy-grid-background;
+    // padding: 1em; 
+    // overflow: hidden;
+    margin-top: 3em;
+    @include divsizing;
+}
+
+nav {
+    @include columns(3);
+    @include alpha;
+    padding: 0.5em;
+    border: 1px solid $main-color;
+    @include divsizing;
+}
+
+div[role="main"] {   
+    @include columns(9);
+    @include omega;
+    @include divsizing;
+    .content {
+        padding: 1em;
+        border: 1px solid $main-color;
+        background: lighten($page-background, 1%);
+        margin-bottom: 1em;
+        text-align: center;
+        @include box-shadow(0 0 6px rgba(0,0,0,0.5));
+    }
+    .searchbox {
+        text-align: right;
+        @include divsizing;
+        .search-label { 
+            @include columns(4, 9);
+            @include divsizing;
+        }
+        .search-input {
+            @include columns(5, 9);
+            @include omega; 
+            @include divsizing;
+            margin-right: 0; // even with divsizing columns overflows
+        }
+    }
+}
+
+
+a { text-shadow: 1px 0px 2px $other-text-color;
+    font-family:  sans-serif;
+}
+
+form input { 
+    text-align: left;
+    font-size: 1.1em;
+    height: 1.5em;
+    background: darken($page-background, 5%);
+    border: 1px solid lighten($main-color, 10%);
+    // margin-right: 1em;
+}
+
+form {
+    text-align: left;
+    line-height: 2.5em;
+    input label select {
+        // margin-bottom: 0.5em;
+        // height: 2em;
+        @include columns(4, 9);
+    }
+}
+
+form label {
+    @include columns(2, 9);
+    @include prefix(1);
+    font-family:  sans-serif;
+    font-size: 0.9em;
+    // width: 9em;
+    // display: inline-block;
+    text-align: right;
+    // margin-right: 1em;
+}
+form input[required] { 
+    color: red; 
+    background: darken($page-background, 10%);
+    border: 1px solid darken($main-color, 10%);
+}
+form select { 
+    padding: 0.2em;
+    background: $page-background;
+    padding: 0.2em;
+    font-size: 1.1em;
+    display: inline-block;
+    height: 1.7em;
+    border: 1px solid lighten($main-color, 10%);
+}
+option {
+    padding: 0.2em;
     margin: 0.5em;
-    padding: 0.1em;
+}
+form button {
+    padding: 0em;
     padding-left: 0.6em;
     padding-right: 0.6em;
-    font-size: 1.1em;
-    color: white;
-    background: #560005;
-    border: 1px solid #f1f1f1;
-    -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    font-size: 1em;
+    color: $other-text-color;
+    background: $main-color;
+    border: 1px solid $page-background;
+    @include box-shadow(0 0 6px rgba(0,0,0,0.5));
+}
+.submit-btns {
+    text-align: center;
 }
 button:hover {
-    background: #f1f1f1;
-    border: 1px solid #560005;
-    background: white;
+    background: $page-background;
+    border: 1px solid $main-color;
+    background: $other-text-color;
     text-shadow: 1px 1px 0px gray;
     font-weight: bold;
-    color: #560005;
-}
-nav {
-    width: 20%;
-    float: left;
-    //background: gray;
-    border: 1px solid #560005;
-    padding: 0.5em;
-    display: block;
+    color: $main-color;
 }
 .nav-opt {
     font-family: "Monospace";
@@ -56,16 +167,12 @@ nav h2 a {
 }
 nav h2 a:active {background: gray;}
 
-#container {padding: 1em; overflow: hidden;}
-// .ui-accordion { display: table-cell; width: 20%; margin: 1em;}
-#main { border-radius:8px; -moz-border-radius:8px; font:2em; padding: 1em; margin: 0.5em;  background: WHITE; margin-bottom: 1em; text-align: center; -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.5); box-shadow: 0 0 6px rgba(0,0,0,0.5); width: 70%; height: 100%; float: left;}
+.topbar a {text-decoration: none; color: $other-text-color; padding: 1em;}
+.topbar .logo {float: left; display: inline; color: $other-text-color;}
 
-.topbar {text-align: right; width: 100%; background: #560005; color: WHITE; position: fixed; opacity: 1; top: 0; left: 0; right: 0; font-size: 0.8em;}
-.topbar a {text-decoration: none; color: WHITE; padding: 1em;}
-.topbar .logo {float: left; display: inline; color: WHITE;}
+.bottombar {text-align: center; width: 100%; background: $main-color; color: $other-text-color; position: fixed; bottom: 0; left: 0; right: 0; -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
+.bottombar a {text-decoration: none; color: $other-text-color; padding: 1em;}
 
-.bottombar {text-align: center; width: 100%; background: #560005; color: WHITE; position: fixed; bottom: 0; left: 0; right: 0; font-size: 0.8em;  -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
-.bottombar a {text-decoration: none; color: WHITE; padding: 1em;}
 .login-main {background-image:url('/images/cow.png'); }
 .login-form-box { float: right; width: 40%; height:100%; padding: 2em; }
 .login-img {float: left; width:70%; height: 70%;}
