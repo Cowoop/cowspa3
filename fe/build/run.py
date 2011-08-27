@@ -167,7 +167,6 @@ def build_all():
     for page in pages:
         page.build()
 
-
 def main():
     if not os.path.exists(pubroot):
         os.makedirs(pubroot)
