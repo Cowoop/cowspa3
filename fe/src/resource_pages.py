@@ -8,7 +8,7 @@ BasePage = fe.bases.CSAuthedPage
 class ResourceCreate(BasePage):
     current_tab = 'create'
     title = 'New Resource'
-    def  main(self):
+    def content(self):
         container = tf.DIV()
 
         fields = []

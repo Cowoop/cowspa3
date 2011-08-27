@@ -2,17 +2,16 @@ $(document).ready(function() {
     var result;
     
     var hash = window.location.hash;
-    if(hash == "#contact")
-        $("#contact_view_form").show();
-    else if(hash == "#social")
-        $("#social_view_form").show();
+    if(hash == "#account")
+        $("#account_edit_form").show();
     else
-        $("#about_view_form").show();
+        $(hash+"_view_form").show();
         
     function success(response) {
         bind_values(response['result']['profile'], "about");
         bind_values(response['result']['profile'], "social");
         bind_values(response['result']['contact'], "contact");
+        bind_values(response['result']['account'], "account");
         result = response;
         };
     function error() {
@@ -26,6 +25,10 @@ $(document).ready(function() {
         });
     $('#about_view_form #edit-link').click(function(){
         edit("about");
+        });
+    $('#account_edit_form #save-btn').click(function(){
+        var params = { 'member_id' : $.cookie('user_id')};
+        result['result']['profile'] = save("account", "member.update", params);
         });
     $('#social_edit_form #save-btn').click(function(){
         var params = { 'member_id' : $.cookie('user_id')};
@@ -45,6 +48,14 @@ $(document).ready(function() {
     $("#navlink-aboutme").click(function(){
         $('.profile-forms').each( function () {
             if ($(this).attr('id') == "about_view_form") 
+                $(this).show();
+            else
+                $(this).hide();
+            });
+        });
+    $("#navlink-account").click(function(){
+        $('.profile-forms').each( function () {
+            if ($(this).attr('id') == "account_edit_form") 
                 $(this).show();
             else
                 $(this).hide();

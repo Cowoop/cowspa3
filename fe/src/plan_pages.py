@@ -7,7 +7,7 @@ BasePage = fe.bases.CSAuthedPage
 class PlanCreate(BasePage):
     current_tab = 'create'
     title = 'New Plan'
-    def  main(self):
+    def content(self):
         container = tf.DIV()
 
         fields = []

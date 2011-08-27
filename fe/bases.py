@@ -43,15 +43,19 @@ invoicing_opt = None
 
 profile_opt = [
     tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),
+    tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
     tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
     tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact')
     ]
     
 resources_opt = [
-    tf.A("Create", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
-    
+    tf.A("New", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
+
+places_opt = [
+    tf.A("New", href=ctxpath + '/bizplace/create', Class='navlink-opt-item')]
+        
 class CSAuthedPage(CSPage):
-    top_links = [('Account', ctxpath + '/account'), ('Theme', '#themes'), ('Logout', '/logout')]
+    top_links = [('Account', ctxpath + '/profile#account'), ('Theme', '#themes'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', None),
@@ -59,7 +63,7 @@ class CSAuthedPage(CSPage):
         ('Members', '#', members_opt),
         ('Bookings', '#', booking_opt),
         ('Invoicing', '#', invoicing_opt),
-        ('Places', '#', None),
+        ('Places', '#', places_opt),
         ('Resources', '#', resources_opt),
         ('Reports', '#', None),
         ]
@@ -79,8 +83,8 @@ class CSAuthedPage(CSPage):
         topbar.links = links
         return topbar
         
-    def logobar(self):
-        logobar = tf.DIV(Class='logobar')
-        logobar.div = tf.DIV(Class='searchbox')
-        logobar.div.input = tf.INPUT(id="search", type="text")
-        return logobar
+    def searchbox(self):
+        searchbox = tf.DIV(Class='searchbox')
+        searchbox.div = tf.DIV(Class='search')
+        searchbox.div.input = tf.INPUT(id="search", type="text")
+        return searchbox

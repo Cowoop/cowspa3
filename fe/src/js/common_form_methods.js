@@ -43,7 +43,8 @@ function save(form_name, event, params){
         });
     } 
     jsonrpc(event, params, success, error);
-    $("#"+form_name+"_edit_form").hide();
+    if(form_name != "account")
+        $("#"+form_name+"_edit_form").hide();
     $("#"+form_name+"_view_form").show();
     return params
 };

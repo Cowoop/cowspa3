@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import sphc
 import fe.bases
 import pycountry
@@ -9,7 +11,7 @@ BasePage = fe.bases.CSAuthedPage
 class MemberCreate(BasePage):
     current_nav = 'Members'
     title = 'New Member'
-    def  main(self):
+    def content(self):
         container = tf.DIV()
 
         fields = []
@@ -70,7 +72,7 @@ class MemberCreate(BasePage):
 class MemberProfile(BasePage):
     current_nav = 'Profile'
     title = 'Profile'
-    def  main(self):
+    def content(self):
         
         container = tf.DIV()
         #                                                 About me Form       
@@ -100,6 +102,29 @@ class MemberProfile(BasePage):
         fields.append(field)
         
         form  = tf.FORM(Class='profile-forms', id="about_edit_form", style="display:none")
+        for field in fields:
+            field.line = tf.BR()
+            form.content = field
+        
+        container.form = form
+        
+        #                                       Account
+        fields = []
+        field = tf.DIV()
+        field.label = tf.LABEL('User Name : ', FOR='username')
+        field.input = tf.INPUT(type='text', id='username', name='username')
+        fields.append(field)
+
+        field = tf.DIV()
+        field.label = tf.LABEL('Password : ', FOR='password')
+        field.input = tf.INPUT(type='password', id='password', name='password', placeholder="••••••••")
+        fields.append(field)
+        
+        field = tf.DIV()
+        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        fields.append(field)
+        
+        form  = tf.FORM(Class='profile-forms', id="account_edit_form", style="display:none")
         for field in fields:
             field.line = tf.BR()
             form.content = field
@@ -199,7 +224,7 @@ def get_editable_fields(field_list, input_type_text, input_type_list, input_type
             if attr in ['Twitter', 'Facebook', 'Linkedin']:
                 field.input = tf.INPUT(type='text', id=attr.lower()+"-label", name=attr.lower()+"-label", placeholder="Label")
                 field.input = tf.INPUT(type='text', id=attr.lower()+"-url", name=attr.lower()+"-url", placeholder="URL")
-            else:
+            else:    
                 field.input = tf.INPUT(type='text', id=attr.lower(), name=attr.lower())
         elif attr in input_type_textarea:
             field.input = tf.TEXTAREA(id=attr.lower(), name=attr.lower(), rows=2, cols=25)
