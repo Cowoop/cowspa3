@@ -82,9 +82,19 @@ class CSAuthedPage(CSPage):
         topbar.logo = product_name
         topbar.links = links
         return topbar
-        
-    def searchbox(self):
-        searchbox = tf.DIV(Class='searchbox')
-        searchbox.div = tf.DIV(Class='search')
-        searchbox.div.input = tf.INPUT(id="search", type="text")
-        return searchbox
+
+    def main(self):
+        main = tf.DIV()
+        main.searchbox = tf.DIV(Class="searchbox")
+        main.searchbox.content = self.search()
+        main.clear = sphc.more.clear()
+        main.contentbox = tf.DIV(Class="content")
+        main.contentbox.content = self.content()
+        return main
+
+    def search(self):
+        content = tf.DIV()
+        content.label = tf.LABEL("Member search ..", Class="search-label", For="search")
+        content.input = tf.INPUT(id="xsearch", Class="search-input", type="text")
+        return content
+
