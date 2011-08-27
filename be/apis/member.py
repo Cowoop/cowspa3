@@ -78,7 +78,11 @@ class MemberResource:
     def update(self, member_id, **mod_data):
         if 'state' in mod_data:
             mod_data['state'] = commonlib.shared.states.member.to_flags(mod_data['state'])
-        member_store.update(member_id, **mod_data)
+        if 'username' in mod_data or 'password' in mod_data:
+            mod_data['password'] = helpers.encrypt(mod_data['password'])
+            user_store.update(member_id, **mod_data)
+        else:
+            member_store.update(member_id, **mod_data)
 
         data = dict(user_id=member_id, attrs=', '.join(attr for attr in mod_data))
         created = datetime.datetime.now()
@@ -92,7 +96,8 @@ class MemberResource:
     def details(self, member_id):
         member_ref = member_store.ref(member_id)
         return dict(profile=profile_store.get_by(dict(member=member_id))[0],
-            contact=contact_store.get_by(dict(id=member_id))[0])
+            contact=contact_store.get_by(dict(id=member_id))[0],
+            account=dict(username=user_store.get(member_id, ['username']), password=""))
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
