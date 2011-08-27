@@ -18,11 +18,6 @@ except:
     import threading
     localprov = threading
 
-def setdefaultencoding():
-    import sys
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-
 def setup_env(conf):
     class env: pass
     try:
@@ -51,6 +46,7 @@ def setup_pg_provider():
     return provider
 
 def start(conf):
+    commonlib.helpers.setdefaultencoding()
     env = setup_env(conf)
     env.__cs_debug__ = conf != 'conf_prod'
     provider = setup_pg_provider()

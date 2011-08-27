@@ -41,4 +41,7 @@ class Constants(object):
     def rev(self, n):
         return self.nt._fields[n]
 
-
+def setdefaultencoding():
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
