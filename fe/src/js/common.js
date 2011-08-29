@@ -12,19 +12,19 @@ function jsonrpc(apiname, params, success, error) {
 };
 
 function init_autocomplete() {
-    $('input#search').tokenInput("/search_members",{ 
-        animateDropdown:false, 
-        resultsFormatter: function(item){ 
+    $('input#search').autoSuggest("/search_members", {
+        selectedItemProp: "name",
+        selectedValuesProp: "id", 
+        searchObjProps: "name, email, id",
+        minChars: 1,
+        selectionLimit: 1, 
+        startText: "Enter name or email or id",
+        formatList: function(item){ 
             return ("<li>"+"<div class='display_name'>"+item.name+" (ID:"+ item.id+")</div><div class='email'>"+item.email+"</div></div></li>");
         },
-        searchDelay: 500,
-        tokenLimit: 1,
-        placeholder: 'search...',
-        hintText: 'Enter Name or Email or ID',
-        onAdd: function () {
-                alert($('input#search').tokenInput("get")[0]['id']);
-                $('input#search').tokenInput("clear");
-            } 
+        resultClick: function (data) {
+            alert(data);
+        } 
     });
 };
 

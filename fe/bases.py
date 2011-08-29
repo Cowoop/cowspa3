@@ -7,7 +7,7 @@ html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelper
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = html5widget_libs + ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js'] # loading jq locally may be we should consider do that only when remote fails
+    jslibs = html5widget_libs + ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/common.js', '/js/jquery.autoSuggest.js'] # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
     def bottombar(self):
         bar = tf.DIV(Class='bottombar')
