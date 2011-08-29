@@ -169,7 +169,7 @@ def search_member(keys, options, limit):
     elif len(keys) == 2:
         clause += '((lower(first_name) = %(key1)s AND lower(last_name) like %(key2)s) OR (lower(first_name) like %(key2)s AND lower(last_name) = %(key1)s))'
         values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
-    query  += ' WHERE '+clause+' AND id != %(subscriber_id)s LIMIT %(limit)s'  
+    query  += ' WHERE '+clause+' LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)

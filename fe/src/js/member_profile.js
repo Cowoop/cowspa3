@@ -12,6 +12,7 @@ $(document).ready(function() {
         bind_values(response['result']['profile'], "social");
         bind_values(response['result']['contact'], "contact");
         bind_values(response['result']['account'], "account");
+        bind_values(response['result']['preferences'], "preferences");
         var display_name = response['result']['profile']['first_name'] + ' ' + response['result']['profile']['last_name'];
         $('.data-display_name').text(display_name);
         result = response;
@@ -46,6 +47,13 @@ $(document).ready(function() {
     $("#contact_view_form #edit-btn").click(function(){
         edit("contact");
         });
+    $("#preferences_edit_form #save-btn").click(function(){
+        var params = { 'member_id' : $.cookie('user_id')};
+        result['result']['preferences'] = save("preferences", "member.update", params);
+        });
+    $("#preferences_view_form #edit-btn").click(function(){
+        edit("preferences");
+        });
     
     $("#navlink-aboutme").click(function(){
         $('.profile-forms').each( function () {
@@ -79,7 +87,15 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
-        
+    $("#navlink-preferences").click(function(){
+        $('.profile-forms').each( function () {
+            if ($(this).attr('id') == "preferences_view_form") 
+                $(this).show();
+            else
+                $(this).hide();
+            });
+        });
+    
     $('#about_edit_form #cancel-btn').click(function(){
         $("#about_edit_form").hide();
         bind_values(result['result']['profile'], "about");
@@ -94,5 +110,10 @@ $(document).ready(function() {
         $("#social_edit_form").hide();
         bind_values(result['result']['profile'], "social");
         $("#social_view_form").show();
+        });
+    $("#preferences_edit_form #cancel-btn").click(function(){
+        $("#preferences_edit_form").hide();
+        bind_values(result['result']['preferences'], "preferences");
+        $("#preferences_view_form").show();
         });
 });

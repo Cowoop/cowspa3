@@ -200,6 +200,37 @@ class MemberProfile(BasePage):
             form.content = field
 
         container.form = form
+        
+        #                                                Preferences Form
+        field_list = ['Theme', 'Language']
+
+        fields = []
+
+        field = tf.DIV(align="right")
+        field.a = tf.A("Edit", id='edit-btn', href="#preferences")
+        fields.append(field)
+
+        fields = get_static_fields(field_list, [], fields)
+
+        form  = tf.FORM(Class='profile-forms', id="preferences_view_form", style="display:none")
+        for field in fields:
+            form.content = field
+
+        container.form = form
+
+        input_type_list = {'Theme': data_lists.themes, 'Language': data_lists.languages}
+        fields = get_editable_fields(field_list, [], input_type_list, [], [])
+
+        field = tf.DIV()
+        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
+        fields.append(field)
+
+        form  = tf.FORM(Class='profile-forsms', id="preferences_edit_form", style="display:none")
+        for field in fields:
+            form.content = field
+
+        container.form = form
 
         container.script = tf.SCRIPT(open("fe/src/js/member_profile.js").read(), escape=False, type="text/javascript", language="javascript")
         container.script = tf.SCRIPT(open("fe/src/js/common_form_methods.js").read(), escape=False, type="text/javascript", language="javascript")
