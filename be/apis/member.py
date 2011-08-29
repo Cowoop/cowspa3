@@ -81,6 +81,8 @@ class MemberResource:
         if 'username' in mod_data or 'password' in mod_data:
             mod_data['password'] = helpers.encrypt(mod_data['password'])
             user_store.update(member_id, **mod_data)
+        elif 'theme' in mod_data or 'language' in mod_data:
+            memberpref_store.update_by(dict(member=member_id), **mod_data)
         else:
             member_store.update(member_id, **mod_data)
 
@@ -97,7 +99,9 @@ class MemberResource:
         member_ref = member_store.ref(member_id)
         return dict(profile=profile_store.get_by(dict(member=member_id))[0],
             contact=contact_store.get_by(dict(id=member_id))[0],
-            account=dict(username=user_store.get(member_id, ['username']), password=""))
+            account=dict(username=user_store.get(member_id, ['username']), password=""),
+            preferences=memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
+            )
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
