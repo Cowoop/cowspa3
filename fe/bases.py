@@ -7,7 +7,7 @@ html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelper
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = html5widget_libs + sphc.more.HTML5Page.jslibs + ['/js/json2.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js']
+    jslibs = html5widget_libs + ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/jquery.tokeninput.js', '/js/common.js'] # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
     def bottombar(self):
         bar = tf.DIV(Class='bottombar')
@@ -93,8 +93,12 @@ class CSAuthedPage(CSPage):
         return main
 
     def search(self):
-        content = tf.DIV()
-        content.label = tf.LABEL("Member search ..", Class="search-label", For="search")
-        content.input = tf.INPUT(id="xsearch", Class="search-input", type="text")
+        content = tf.TABLE(Class="searchbox")
+        content.row = tf.TR()
+        cell = tf.TD()
+        cell.data = tf.INPUT(id="search", Class="search-input", type="text")
+        content.row.cell = cell
+        cell = tf.TD()
+        cell.data = tf.LABEL("Member Search", Class="search-label", For="search")
+        content.row.cell = cell
         return content
-
