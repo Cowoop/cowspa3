@@ -4,11 +4,11 @@ $.jsonRPC.setup({
 });
 
 function jsonrpc(apiname, params, success, error) {
-    console.log($.jsonRPC.request(apiname, {
+    $.jsonRPC.request(apiname, {
         params: params,
         success: success,
         error: error
-    }))
+    });
 };
 
 function init_autocomplete() {
