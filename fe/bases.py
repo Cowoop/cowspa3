@@ -93,12 +93,11 @@ class CSAuthedPage(CSPage):
         return main
 
     def search(self):
-        content = tf.TABLE(Class="searchbox")
-        content.row = tf.TR()
-        cell = tf.TD()
+        row = tf.DIV(Class="searchbox")
+        cell = tf.DIV()
+        cell.data = tf.SPAN("Member Search", Class="search-label", For="search")
+        row.cell = cell
+        cell = tf.DIV()
         cell.data = tf.INPUT(id="search", Class="search-input", type="text")
-        content.row.cell = cell
-        cell = tf.TD()
-        cell.data = tf.LABEL("Member Search", Class="search-label", For="search")
-        content.row.cell = cell
-        return content
+        row.cell = cell
+        return row

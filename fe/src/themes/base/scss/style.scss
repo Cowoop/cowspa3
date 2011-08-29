@@ -47,27 +47,34 @@ div[role="main"] {
     @include omega;
     @include divsizing;
     .content {
-        padding: 1em;
+        @include columns(9,9);
+        @include omega;
+        @include divsizing;
+        @include pad(0.3, 0.3);
         border: 1px solid $main-color;
         background: lighten($page-background, 1%);
         margin-bottom: 1em;
-        text-align: center;
+        // text-align: center;
         @include box-shadow(0 0 6px rgba(0,0,0,0.5));
     }
     .searchbox {
         text-align: right;
-        @include full();
+        @include full;
         @include divsizing;
         .search-label { 
-            //@include columns(4, 9);
+            @include columns(4, 9);
             padding-left: 1em;
         }
         .search-input {
-            //@include columns(5, 9);
-            // @include omega;
+            @include columns(5, 9);
+            @include omega;
+            height: 1.1em;
         }
     }
 }
+
+.as-results { margin-left:20em; }
+li.as-result-item.active { background: $main-color;} 
 
 .field-container {
     @include columns(9);
@@ -78,7 +85,7 @@ div[role="main"] {
         @include divsizing;
     }
     .field-value {
-        @include columns(4, 9);
+        @include columns(5, 9);
         @include omega;
         @include divsizing;
     }
@@ -89,60 +96,76 @@ a { text-shadow: 1px 0px 2px $other-text-color;
     font-family:  sans-serif;
 }
 
-form input { 
-    text-align: left;
+
+ul.as-selections {
     font-size: 1.1em;
     height: 1.5em;
     background: darken($page-background, 5%);
     border: 1px solid lighten($main-color, 10%);
+    padding: 0;
+    input {
+        font-size: 1.1em;
+        height: 1.5em;
+        background: darken($page-background, 5%);
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    li {
+        .as-original {
+            width: 100%;
+            height: 100%;
+            input {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .search-input-as-input {
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 form {
-    text-align: left;
     line-height: 2.5em;
-    input select {
-        @include columns(4, 9);
-    }
     label {
         @include columns(2, 9);
         font-family:  sans-serif;
         font-size: 0.9em;
         text-align: right;
     }
+    input { 
+        text-align: left;
+        font-size: 1.1em;
+        height: 1.5em;
+        background: darken($page-background, 5%);
+        border: 1px solid lighten($main-color, 10%);
+        @include divsizing;
+    }
+    .input-section {
+        @include divsizing;
+    }
+    select { 
+        padding: 0.2em;
+        background: $page-background;
+        padding: 0.2em;
+        font-size: 1.1em;
+        display: inline-block;
+        height: 1.7em;
+        border: 1px solid lighten($main-color, 10%);
 }
 
-form#social_edit_form {
-    label {
-    @include columns(2, 9);
-    }
-    // input {
-    //     @include columns(4, 9);
-    // }
-    // select {
-    //     @include columns(4, 9);
-    // }
-    .input-section {
-        @include columns(7, 9);
-        padding: 0.3em;
-        @include omega;
-        @include divsizing;
-        margin-right: 0; // even with divsizing columns overflows
-    }
+}
+
+form#social_edit_form input {
+    font-size: 1.1em;
 }
 
 form input[required] { 
     color: red; 
     background: darken($page-background, 10%);
     border: 1px solid darken($main-color, 10%);
-}
-form select { 
-    padding: 0.2em;
-    background: $page-background;
-    padding: 0.2em;
-    font-size: 1.1em;
-    display: inline-block;
-    height: 1.7em;
-    border: 1px solid lighten($main-color, 10%);
 }
 option {
     padding: 0.2em;
@@ -209,4 +232,6 @@ nav h2 a:active {background: gray;}
     text-align: left;
     font-family: 'Museo Sans',"museosans-web",'serif';
     padding: 0.5em;
+    @include full;
+    @include pad(0.5);
 }

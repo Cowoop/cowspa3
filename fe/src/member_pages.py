@@ -157,7 +157,7 @@ class MemberProfile(BasePage):
         input_type_text = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
         fields = get_editable_fields(field_list, input_type_text, {}, [], [])
 
-        field = tf.DIV()
+        field = tf.DIV(Class="input_section")
         field.button = tf.BUTTON("Save", id='save-btn', type='button')
         field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         fields.append(field)
@@ -190,7 +190,7 @@ class MemberProfile(BasePage):
         input_type_textarea = ['Address']
         fields = get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, [])
 
-        field = tf.DIV()
+        field = tf.DIV(Class="input_section")
         field.button = tf.BUTTON("Save", id='save-btn', type='button')
         field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         fields.append(field)
@@ -223,21 +223,21 @@ def get_editable_fields(field_list, input_type_text, input_type_list, input_type
     for attr in field_list:
         field = tf.DIV()
         field.label = tf.LABEL(' '.join(attr.split('_')), FOR=attr.lower())
+        field.input_section = tf.DIV(Class='input-section')
         if attr in input_type_text:
             if attr in ['Twitter', 'Facebook', 'Linkedin']:
                 placeholder = 'Eg. My ' + attr
-                field.input_section = tf.DIV(Class='input-section')
                 inputs = [
                     tf.INPUT(type='text', id=attr.lower()+"-label", name=attr.lower()+"-label", placeholder=placeholder),
                     tf.INPUT(type='text', id=attr.lower()+"-url", name=attr.lower()+"-url", placeholder="URL") ]
                 field.input_section.inputs = inputs
             else:
-                field.input = tf.INPUT(type='text', id=attr.lower(), name=attr.lower())
+                field.input_section.input = tf.INPUT(type='text', id=attr.lower(), name=attr.lower())
         elif attr in input_type_textarea:
-            field.input = tf.TEXTAREA(id=attr.lower(), name=attr.lower(), rows=2, cols=25)
+            field.input_section.input = tf.TEXTAREA(id=attr.lower(), name=attr.lower(), rows=2, cols=25)
         elif attr in input_type_list:
-            field.input = tf.SELECT(id=attr.lower(), name=attr.lower())
+            field.input_section.input = tf.SELECT(id=attr.lower(), name=attr.lower())
             for ob in input_type_list[attr]:
-                    field.input.option = tf.OPTION(ob, value=ob)
+                    field.input_section.input.option = tf.OPTION(ob, value=ob)
         fields.append(field)
     return fields

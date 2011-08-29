@@ -19,9 +19,10 @@ function init_autocomplete() {
         minChars: 1,
         selectionLimit: 1, 
         startText: "Enter name or email or id",
+        /*
         formatList: function(item){ 
             return ("<li>"+"<div class='display_name'>"+item.name+" (ID:"+ item.id+")</div><div class='email'>"+item.email+"</div></div></li>");
-        },
+        },*/
         resultClick: function (data) {
             alert(data);
         } 
