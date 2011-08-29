@@ -88,7 +88,7 @@ class CSAuthedPage(CSPage):
         main = tf.DIV()
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
-        main.clear = sphc.more.clear()
+        #main.clear = sphc.more.clear()
         main.contentbox = tf.DIV(Class="content")
         main.contentbox.content = self.content()
         return main

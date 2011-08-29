@@ -81,12 +81,14 @@ li.as-result-item.active { background: $main-color;}
     text-align: left;
 
     .field-name {
-        @include columns(4, 9);
+        text-align: right;
+        @include columns(3, 9);
         @include divsizing;
     }
     .field-value {
+        font-weight: bold;
         @include columns(5, 9);
-        @include omega;
+        // @include omega;
         @include divsizing;
     }
 }
