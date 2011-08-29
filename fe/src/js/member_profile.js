@@ -12,6 +12,8 @@ $(document).ready(function() {
         bind_values(response['result']['profile'], "social");
         bind_values(response['result']['contact'], "contact");
         bind_values(response['result']['account'], "account");
+        var display_name = response['result']['profile']['first_name'] + ' ' + response['result']['profile']['last_name'];
+        $('.data-display_name').text(display_name);
         result = response;
         };
     function error() {
