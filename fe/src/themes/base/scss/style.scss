@@ -30,8 +30,6 @@ body { font-family: 'Myriad Pro', 'Droid Serif', 'Georgia', sans-serif; font-siz
 .container {
     @include container;
     // @include susy-grid-background;
-    // padding: 1em; 
-    // overflow: hidden;
     margin-top: 3em;
     @include divsizing;
 }
@@ -58,17 +56,31 @@ div[role="main"] {
     }
     .searchbox {
         text-align: right;
+        @include full();
         @include divsizing;
         .search-label { 
-            @include columns(4, 9);
-            @include divsizing;
+            //@include columns(4, 9);
+            padding-left: 1em;
         }
         .search-input {
-            @include columns(5, 9);
-            @include omega; 
-            @include divsizing;
-            margin-right: 0; // even with divsizing columns overflows
+            //@include columns(5, 9);
+            // @include omega;
         }
+    }
+}
+
+.field-container {
+    @include columns(9);
+    text-align: left;
+
+    .field-name {
+        @include columns(4, 9);
+        @include divsizing;
+    }
+    .field-value {
+        @include columns(4, 9);
+        @include omega;
+        @include divsizing;
     }
 }
 
@@ -83,29 +95,41 @@ form input {
     height: 1.5em;
     background: darken($page-background, 5%);
     border: 1px solid lighten($main-color, 10%);
-    // margin-right: 1em;
 }
 
 form {
     text-align: left;
     line-height: 2.5em;
-    input label select {
-        // margin-bottom: 0.5em;
-        // height: 2em;
+    input select {
         @include columns(4, 9);
+    }
+    label {
+        @include columns(2, 9);
+        font-family:  sans-serif;
+        font-size: 0.9em;
+        text-align: right;
     }
 }
 
-form label {
+form#social_edit_form {
+    label {
     @include columns(2, 9);
-    @include prefix(1);
-    font-family:  sans-serif;
-    font-size: 0.9em;
-    // width: 9em;
-    // display: inline-block;
-    text-align: right;
-    // margin-right: 1em;
+    }
+    // input {
+    //     @include columns(4, 9);
+    // }
+    // select {
+    //     @include columns(4, 9);
+    // }
+    .input-section {
+        @include columns(7, 9);
+        padding: 0.3em;
+        @include omega;
+        @include divsizing;
+        margin-right: 0; // even with divsizing columns overflows
+    }
 }
+
 form input[required] { 
     color: red; 
     background: darken($page-background, 10%);
@@ -176,3 +200,13 @@ nav h2 a:active {background: gray;}
 .login-main {background-image:url('/images/cow.png'); }
 .login-form-box { float: right; width: 40%; height:100%; padding: 2em; }
 .login-img {float: left; width:70%; height: 70%;}
+
+.edit-link-box {
+    text-align: right;
+}
+.section-title {
+    font-size: 2.2em;
+    text-align: left;
+    font-family: 'Museo Sans',"museosans-web",'serif';
+    padding: 0.5em;
+}
