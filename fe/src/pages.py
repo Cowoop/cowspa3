@@ -7,9 +7,8 @@ BasePage = fe.bases.CSAuthedPage
 
 class LoginPage(fe.bases.CSAnonPage):
     title = "Cowspa | Login"
-    def content(self):
+    def main(self):
         container = tf.DIV(Class="login-mainx")
-        container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript", language="javascript")
         username = tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username")
         password = tf.INPUT(type="PASSWORD", id='password', name="password", placeholder="Password")
         submit = tf.BUTTON("Log In", id='login-btn', type='button')
@@ -19,7 +18,8 @@ class LoginPage(fe.bases.CSAnonPage):
         container.formbox = formbox
         container.formbox.form = form
         container.msg = tf.SPAN(id="login-msg")
-        
+        container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript")
+
         container.imgbox = tf.DIV(Class="login-img")
         container.imgbox.img = tf.IMG(src="/images/cow.png", width="50%%", height="50%%", align="left")
         container.clear = sphc.more.clear()
@@ -29,7 +29,7 @@ class LogoutPage(fe.bases.CSAnonPage):
     title = "Cowspa | Logout"
     def content(self):
         return tf.SCRIPT(open("fe/src/js/logout.js").read(), escape=False, type="text/javascript", language="javascript")
-        
+
 class InvoicingPage(BasePage):
     current_tab = 'invoicing'
     title = 'Invoicing'
