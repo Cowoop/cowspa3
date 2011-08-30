@@ -67,3 +67,5 @@ def create_superuser(username, password, email, first_name):
     rolelib.assign(user_id, ['admin'])
     return user_id
     
+def get_user_preferences():
+    return dbaccess.stores.memberpref_store.get_by(dict(member=env.context.user_id), ['theme', 'language'])[0]

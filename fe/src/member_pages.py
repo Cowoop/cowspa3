@@ -3,7 +3,6 @@
 import sphc
 import sphc.more
 import fe.bases
-import pycountry
 import commonlib.shared.static_data as data_lists
 
 tf = sphc.TagFactory()
@@ -47,8 +46,8 @@ class MemberCreate(BasePage):
         field = tf.DIV()
         field.label = tf.LABEL('Country', FOR='country')
         field.input = tf.SELECT(id='country', name='country')
-        for country in list(pycountry.countries):
-            field.input.option = tf.OPTION(country.name.encode("utf-8"), value=country.name.encode("utf-8"))
+        for country in data_lists.countries:
+            field.input.option = tf.OPTION(country, value=country)
         fields.append(field)
 
         field = tf.DIV()
@@ -186,7 +185,7 @@ class MemberProfile(BasePage):
         container.form = form
 
         input_type_text = ['City', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
-        input_type_list = {'Country': [ country.name.encode("utf-8") for country in list(pycountry.countries)]}
+        input_type_list = {'Country': data_lists.countries}
         input_type_textarea = ['Address']
         fields = get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, [])
 
