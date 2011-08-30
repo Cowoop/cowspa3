@@ -6,9 +6,8 @@ function login() {
         params[inputs[i].name] = inputs[i].value;
         }
     function success(resp) {
-        // console.log(resp);
         $('#login-msg').html("<big>☑</big> Login is successful.");
-        window.location = "/en/default/dashboard"
+        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme']+"/dashboard";
         };
     function error() {
         $('#login-msg').html("<big>Authentication Error. Try again</big>");

@@ -4,6 +4,7 @@ import be.repository.access as dbaccess
 import bases.app
 import commonlib.helpers as helpers
 import be.apis.activities as activitylib
+import commonlib.shared.static_data as data_lists
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -12,7 +13,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None):
+    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
 
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -25,7 +26,7 @@ class MemberCollection:
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
 
-        data = dict(member=user_id, language=language)
+        data = dict(member=user_id, language=language, theme=theme)
         memberpref_store.add(**data)
 
         #owner = member_store.ref(user_id)
@@ -82,6 +83,8 @@ class MemberResource:
             mod_data['password'] = helpers.encrypt(mod_data['password'])
             user_store.update(member_id, **mod_data)
         elif 'theme' in mod_data or 'language' in mod_data:
+            if 'language' in mod_data:
+                mod_data['language'] = data_lists.language_map_rev[mod_data['language']]
             memberpref_store.update_by(dict(member=member_id), **mod_data)
         else:
             member_store.update(member_id, **mod_data)
@@ -97,11 +100,12 @@ class MemberResource:
 
     def details(self, member_id):
         member_ref = member_store.ref(member_id)
-        return dict(profile=profile_store.get_by(dict(member=member_id))[0],
-            contact=contact_store.get_by(dict(id=member_id))[0],
-            account=dict(username=user_store.get(member_id, ['username']), password=""),
-            preferences=memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
-            )
+        profile = profile_store.get_by(dict(member=member_id))[0]
+        contact = contact_store.get_by(dict(id=member_id))[0]
+        account = dict(username=user_store.get(member_id, ['username']), password="")
+        preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
+        preferences['language'] = data_lists.language_map[preferences['language']]
+        return dict(profile=profile, contact=contact, account=account, preferences=preferences)
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return

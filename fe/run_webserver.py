@@ -44,6 +44,9 @@ def api_dispatch():
     cowspa.tr_complete()
     if params['method'] == 'login' and 'result' in data:
         auth_token = data['result']
+        cowspa.tr_start()
+        data['result'] = userlib.get_user_preferences()
+        cowspa.tr_complete()
         resp = jsonify(data)
         resp.set_cookie('authcookie',value=auth_token)
         resp.set_cookie('user_id',value=env.context.user_id)
@@ -62,7 +65,7 @@ def static(path):
     return file(fspath).read(), 200, {'Content-Type': content_type +'; charset=utf-8'}
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',debug=True) # Threaded
+    #app.run('0.0.0.0',debug=True) # Threaded
     from gevent.wsgi import WSGIServer
 
     http_server = WSGIServer(('', 5000), app)
