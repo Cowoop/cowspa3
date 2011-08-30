@@ -14,7 +14,7 @@ $(document).ready(function() {
         bind_values(response['result']['account'], "account");
         bind_values(response['result']['preferences'], "preferences");
         var display_name = response['result']['profile']['first_name'] + ' ' + response['result']['profile']['last_name'];
-        $('.data-display_name').text(display_name);
+        $('.content .content-title').text(display_name);
         result = response;
         };
     function error() {
@@ -37,21 +37,21 @@ $(document).ready(function() {
         var params = { 'member_id' : $.cookie('user_id')};
         result['result']['profile'] = save("social", "member.update", params);
         });
-    $('#social_view_form #edit-btn').click(function(){
+    $('#social_view_form #edit-link').click(function(){
         edit("social");
         })
     $("#contact_edit_form #save-btn").click(function(){
         var params = { 'member_id' : $.cookie('user_id')};
         result['result']['contact'] = save("contact", "member.update", params);
         });
-    $("#contact_view_form #edit-btn").click(function(){
+    $("#contact_view_form #edit-link").click(function(){
         edit("contact");
         });
     $("#preferences_edit_form #save-btn").click(function(){
         var params = { 'member_id' : $.cookie('user_id')};
         result['result']['preferences'] = save("preferences", "member.update", params);
         });
-    $("#preferences_view_form #edit-btn").click(function(){
+    $("#preferences_view_form #edit-link").click(function(){
         edit("preferences");
         });
     

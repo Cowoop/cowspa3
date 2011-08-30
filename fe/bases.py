@@ -48,13 +48,13 @@ profile_opt = [
     tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact'),
     tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences')
     ]
-    
+
 resources_opt = [
     tf.A("New", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
 
 places_opt = [
     tf.A("New", href=ctxpath + '/bizplace/create', Class='navlink-opt-item')]
-        
+
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/profile#account'), ('Theme', '#themes'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css' ]
@@ -69,6 +69,7 @@ class CSAuthedPage(CSPage):
         ('Reports', '#', None),
         ]
     current_nav = '/Dashboard'
+    content_title = ''
 
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
@@ -88,8 +89,8 @@ class CSAuthedPage(CSPage):
         main = tf.DIV()
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
-        #main.clear = sphc.more.clear()
         main.contentbox = tf.DIV(Class="content")
+        main.contentbox.title = tf.H1(self.content_title or self.title, Class="content-title")
         main.contentbox.content = self.content()
         return main
 

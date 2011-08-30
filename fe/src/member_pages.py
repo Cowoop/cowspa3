@@ -9,6 +9,14 @@ import commonlib.shared.static_data as data_lists
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
+def make_buttons():
+    container = tf.DIV()
+    buttons = tf.DIV(Class="buttons")
+    buttons.button = tf.BUTTON("Save", id='save-btn', type='button')
+    buttons.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
+    container.buttons = buttons
+    return container
+
 class MemberCreate(BasePage):
     current_nav = 'Members'
     title = 'New Member'
@@ -72,11 +80,11 @@ class MemberCreate(BasePage):
 class MemberProfile(BasePage):
     current_nav = 'Profile'
     title = 'Profile'
+    content_title = ''
 
     def content(self):
 
         container = tf.DIV()
-        container.title = tf.H1(Class="section-title data-display_name")
         #                                                 About me Form       
         edit = tf.DIV(Class="edit-link-box")
         edit.link = tf.A("Edit", id='edit-link', href='#about')
@@ -91,7 +99,6 @@ class MemberProfile(BasePage):
             field.label = tf.DIV(label, Class="field-name")
             field.value = tf.DIV(id=name, Class="field-value")
             fields.append(field)
-        fields.append(sphc.more.clear())
 
         view = tf.DIV(Class='profile-forms', id="about_view_form", style="display:none")
         view.fields= fields
@@ -104,10 +111,7 @@ class MemberProfile(BasePage):
         input_type_textarea = ['Short_Description','Long_Description']
         fields = get_editable_fields(field_list, input_type_text, {}, input_type_textarea, [])
 
-        field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
-        field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
-        fields.append(field)
+        fields.append(make_buttons())
 
         form  = tf.FORM(Class='profile-forms', id="about_edit_form", style="display:none")
         for field in fields:
@@ -142,9 +146,9 @@ class MemberProfile(BasePage):
         fields = []
         web_links = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
 
-        field = tf.DIV(align="right")
-        field.a = tf.A("Edit", id='edit-btn', href='#social')
-        fields.append(field)
+        edit = tf.DIV(Class="edit-link-box")
+        edit.link = tf.A("Edit", id='edit-link', href='#social')
+        fields = [edit]
 
         fields = get_static_fields(field_list, web_links, fields)
 
@@ -157,10 +161,7 @@ class MemberProfile(BasePage):
         input_type_text = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
         fields = get_editable_fields(field_list, input_type_text, {}, [], [])
 
-        field = tf.DIV(Class="input_section")
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
-        field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
-        fields.append(field)
+        fields.append(make_buttons())
 
         form  = tf.FORM(Class='profile-forms', id="social_edit_form", style="display:none")
         for field in fields:
@@ -171,11 +172,9 @@ class MemberProfile(BasePage):
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
 
-        fields = []
-
-        field = tf.DIV(align="right")
-        field.a = tf.A("Edit", id='edit-btn', href="#contact")
-        fields.append(field)
+        edit = tf.DIV(Class="edit-link-box")
+        edit.link = tf.A("Edit", id='edit-link', href='#contact')
+        fields = [edit]
 
         fields = get_static_fields(field_list, [], fields)
 
@@ -190,25 +189,21 @@ class MemberProfile(BasePage):
         input_type_textarea = ['Address']
         fields = get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, [])
 
-        field = tf.DIV(Class="input_section")
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
-        field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
-        fields.append(field)
+        fields.append(make_buttons)
 
         form  = tf.FORM(Class='profile-forms', id="contact_edit_form", style="display:none")
         for field in fields:
             form.content = field
 
         container.form = form
-        
+
         #                                                Preferences Form
         field_list = ['Theme', 'Language']
 
-        fields = []
+        edit = tf.DIV(Class="edit-link-box")
+        edit.link = tf.A("Edit", id='edit-link', href='#preferences')
 
-        field = tf.DIV(align="right")
-        field.a = tf.A("Edit", id='edit-btn', href="#preferences")
-        fields.append(field)
+        fields = [edit]
 
         fields = get_static_fields(field_list, [], fields)
 
@@ -221,10 +216,7 @@ class MemberProfile(BasePage):
         input_type_list = {'Theme': data_lists.themes, 'Language': data_lists.languages}
         fields = get_editable_fields(field_list, [], input_type_list, [], [])
 
-        field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
-        field.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
-        fields.append(field)
+        fields.append(make_buttons())
 
         form  = tf.FORM(Class='profile-forsms', id="preferences_edit_form", style="display:none")
         for field in fields:
@@ -244,7 +236,7 @@ def get_static_fields(field_list, web_links, fields):
         if attr in web_links:
             field.a = tf.A(id=attr.lower(), name=attr.lower(), href="")
         else:
-            field.a = tf.LABEL(id=attr.lower(), name=attr.lower(), Class="field-value")
+            field.a = tf.DIV(id=attr.lower(), name=attr.lower(), Class="field-value")
         fields.append(field)
     fields.append(sphc.more.clear())
     return fields
