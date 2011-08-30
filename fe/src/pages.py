@@ -27,7 +27,7 @@ class LoginPage(fe.bases.CSAnonPage):
 
 class LogoutPage(fe.bases.CSAnonPage):
     title = "Cowspa | Logout"
-    def content(self):
+    def main(self):
         return tf.SCRIPT(open("fe/src/js/logout.js").read(), escape=False, type="text/javascript", language="javascript")
 
 class InvoicingPage(BasePage):
@@ -51,7 +51,7 @@ class Dashboard(BasePage):
 class SuperuserCreate(fe.bases.CSAnonPage):
     current_tab = 'create'
     title = 'New Super User'
-    def content(self):
+    def main(self):
         container = tf.DIV()
 
         fields = []
