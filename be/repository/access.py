@@ -116,6 +116,7 @@ def find_bizplace_plans(bizplace_id, fields):
     return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
     
 def list_bizplaces():
+    bizplace_info_fields.append("id")
     return bizplace_store.get_all(bizplace_info_fields)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name'], at_time=None):

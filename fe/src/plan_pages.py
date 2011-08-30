@@ -18,12 +18,6 @@ class PlanCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Bizplace ID : ', FOR='bizplace_id')
-        field.input = tf.SELECT(id='bizplace_id', name='bizplace_id')
-        field.input.option = tf.OPTION("1", value="1")
-        fields.append(field)
-
-        field = tf.DIV()
         field.label = tf.LABEL(content = 'Description : ', FOR="description")
         field.input = tf.TEXTAREA(id='description', name='description', rows=2, cols=25)
         fields.append(field)

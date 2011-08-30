@@ -60,5 +60,13 @@ function init_nav() {
 $(document).ready(function() {
     init_autocomplete();
     init_nav();
+    function success(resp){
+        for(bizplace in resp['result'])
+            $("#bizplaces").append("<option value="+resp['result'][bizplace]['id']+">"+resp['result'][bizplace]['name']+"</option>");
+    }
+    function error(){
+    }
+    params = {};
+    jsonrpc('bizplace.list', params, success, error);
 });    
 

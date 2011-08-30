@@ -53,7 +53,9 @@ resources_opt = [
     tf.A("New", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
 
 places_opt = [
-    tf.A("New", href=ctxpath + '/bizplace/create', Class='navlink-opt-item')]
+    tf.A("New", href=ctxpath + '/bizplace/create', Class='navlink-opt-item'),
+    tf.A("Plans", href=ctxpath + '/bizplace/plans', Class='navlink-opt-item')
+    ]
 
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/profile#account'), ('Theme', '#themes'), ('Logout', '/logout')]
@@ -82,6 +84,7 @@ class CSAuthedPage(CSPage):
         links.append(tf.A(last_link[0], href=last_link[1]))
 
         topbar.logo = product_name
+        topbar.bizplaces = tf.SELECT(id="bizplaces", name="bizplaces")
         topbar.links = links
         return topbar
 
