@@ -55,7 +55,7 @@ def find_memberships(member_id):
 def biz_info(biz_id):
     return biz_store.get(biz_id, ['name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email'])
 
-bizplace_info_fields = ['name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email']
+bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email']
 
 def bizplace_info(bizplace_id):
     return bizplace_store.get(bizplace_id, bizplace_info_fields)
@@ -116,7 +116,6 @@ def find_bizplace_plans(bizplace_id, fields):
     return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
     
 def list_bizplaces():
-    bizplace_info_fields.append("id")
     return bizplace_store.get_all(bizplace_info_fields)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name'], at_time=None):
@@ -155,7 +154,6 @@ def search_member(keys, options, limit):
     fields = ['id', 'display_name']
     query = 'SELECT member.id, member.display_name as name, member.email FROM member'
     clause = ""
-    ids = env.context.user_id;
     if 'admin' not in env.context.roles or options['mybizplace']:
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 

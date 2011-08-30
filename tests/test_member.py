@@ -48,13 +48,12 @@ def test_create_10k_members():
         data['username'] = test_data.member['username'] + str(i)
         test_create_member(data)
         env.context.pgcursor.connection.commit()
-test_create_10k_members.disabled = True
 
 def test_info():
     m_id = 1
     info = memberlib.member_resource.info(m_id)
     assert info.id == m_id and test_data.member['first_name'] in info.display_name
-    
+
 def test_search():
     result = memberlib.member_collection.search("pet")
     assert len(result) == 2
