@@ -12,12 +12,16 @@ $(document).ready(function() {
         bind_values(response['result']['contact'], "contact");
         bind_values(response['result']['account'], "account");
         bind_values(response['result']['preferences'], "preferences");
-        var display_name = response['result']['profile']['first_name'] + ' ' + response['result']['profile']['last_name'];
-        $('.content .content-title').text(display_name);
+        var first_name = response['result']['profile']['first_name'] || '';
+        var last_name = response['result']['profile']['last_name'] || '';
+        if (first_name || last_name) {
+            var display_name = first_name + ' ' + last_name;
+            $('.content .content-title').text(display_name);
+        };
         result = response;
-        };
+    };
     function error() {
-        };
+    };
     if(window.location.search)
     {
         profile_id = (window.location.search).substring(4);
