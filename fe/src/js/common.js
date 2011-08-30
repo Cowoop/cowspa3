@@ -17,14 +17,17 @@ function init_autocomplete() {
         selectedValuesProp: "id", 
         searchObjProps: "name, email, id",
         minChars: 1,
-        selectionLimit: 1, 
+        selectionLimit: 0, 
         startText: "Enter name or email or id",
         /*
         formatList: function(item){ 
             return ("<li>"+"<div class='display_name'>"+item.name+" (ID:"+ item.id+")</div><div class='email'>"+item.email+"</div></div></li>");
         },*/
         resultClick: function (data) {
-            alert(data);
+            id = data['attributes']['id'];
+            path = $("#navlink-aboutme").attr('href');
+            path = path.substring(0,path.indexOf("profile"))
+            window.location = path+"profile?id="+id+"#about";
         } 
     });
 };
@@ -58,3 +61,4 @@ $(document).ready(function() {
     init_autocomplete();
     init_nav();
 });    
+

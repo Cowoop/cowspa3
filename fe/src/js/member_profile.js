@@ -6,7 +6,6 @@ $(document).ready(function() {
         $("#account_edit_form").show();
     else
         $(hash+"_view_form").show();
-        
     function success(response) {
         bind_values(response['result']['profile'], "about");
         bind_values(response['result']['profile'], "social");
@@ -19,36 +18,50 @@ $(document).ready(function() {
         };
     function error() {
         };
-    params = {'member_id': $.cookie('user_id')};
+    if(window.location.search)
+    {
+        profile_id = (window.location.search).substring(4);
+        path = window.location.pathname+window.location.search;
+        $("#navlink-aboutme").attr('href', path+"#about");
+        $("#navlink-account").attr('href', path+"#account");
+        $("#navlink-social").attr('href', path+"#social");
+        $("#navlink-contact").attr('href', path+"#contact");
+        $("#navlink-preferences").attr('href', path+"#preferences");
+        $("#navlink-aboutme").text("About");
+        $("#navlink-social").text("Social");
+    }
+    else
+        profile_id = $.cookie('user_id');
+    params = {'member_id': profile_id};
     jsonrpc('member.profile', params, success, error);
     
     $('#about_edit_form #save-btn').click(function(){
-        var params = { 'member_id' : $.cookie('user_id')};
+        var params = { 'member_id' : profile_id};
         result['result']['profile'] = save("about", "member.update", params);
         });
     $('#about_view_form #edit-link').click(function(){
         edit("about");
         });
     $('#account_edit_form #save-btn').click(function(){
-        var params = { 'member_id' : $.cookie('user_id')};
+        var params = { 'member_id' : profile_id};
         result['result']['profile'] = save("account", "member.update", params);
         });
     $('#social_edit_form #save-btn').click(function(){
-        var params = { 'member_id' : $.cookie('user_id')};
+        var params = { 'member_id' : profile_id};
         result['result']['profile'] = save("social", "member.update", params);
         });
     $('#social_view_form #edit-link').click(function(){
         edit("social");
         })
     $("#contact_edit_form #save-btn").click(function(){
-        var params = { 'member_id' : $.cookie('user_id')};
+        var params = { 'member_id' : profile_id};
         result['result']['contact'] = save("contact", "member.update", params);
         });
     $("#contact_view_form #edit-link").click(function(){
         edit("contact");
         });
     $("#preferences_edit_form #save-btn").click(function(){
-        var params = { 'member_id' : $.cookie('user_id')};
+        var params = { 'member_id' : profile_id};
         result['result']['preferences'] = save("preferences", "member.update", params);
         });
     $("#preferences_view_form #edit-link").click(function(){

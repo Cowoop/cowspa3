@@ -217,7 +217,7 @@ class MemberProfile(BasePage):
 
         fields.append(make_buttons())
 
-        form  = tf.FORM(Class='profile-forsms', id="preferences_edit_form", style="display:none")
+        form  = tf.FORM(Class='profile-forms', id="preferences_edit_form", style="display:none")
         for field in fields:
             form.content = field
 
