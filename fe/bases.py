@@ -78,7 +78,7 @@ class CSAuthedPage(CSPage):
         product_name = tf.DIV('c o w s p a', Class='logo')
         links = []
         for label, link in self.top_links[:-1]:
-            links.append(tf.A(label, href=link))
+            links.append(tf.A(label, href=link, id=label.lower()))
             links.append(' | ')
         last_link = self.top_links[-1]
         links.append(tf.A(last_link[0], href=last_link[1]))

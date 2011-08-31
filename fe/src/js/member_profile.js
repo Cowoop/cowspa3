@@ -112,6 +112,14 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
+    $(".topbar #account").click(function(){
+        $('.profile-forms').each( function () {
+            if ($(this).attr('id') == "account_edit_form") 
+                $(this).show();
+            else
+                $(this).hide();
+            });
+        });
     
     $('#about_edit_form #cancel-btn').click(function(){
         $("#about_edit_form").hide();
