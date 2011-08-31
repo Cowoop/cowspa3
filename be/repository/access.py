@@ -93,6 +93,7 @@ def ref2o(ref):
     return store.get(int(oid))
 
 ref2id = lambda ref: int(ref.split(':')[1])
+ref2ctx = lambda ref: ref.split(':')[0].lower()
 
 def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password

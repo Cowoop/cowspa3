@@ -67,12 +67,13 @@ $(document).ready(function() {
         {
             $("#bizplaces").show();
             for(bizplace in resp['result'])
-                $("#bizplaces").append("<option value="+resp['result'][bizplace]['id']+">"+resp['result'][bizplace]['name']+"</option>");
+                $("#bizplaces").append("<option value="+resp['result'][bizplace]['bizplace_id']+">"+resp['result'][bizplace]['bizplace_name']+"</option>");
         }
     }
     function error(){
     }
-    params = {};
-    jsonrpc('bizplace.list', params, success, error);
+    params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
+    if(params['user_id'])
+        jsonrpc('users.bizplace.list', params, success, error);
 });    
 

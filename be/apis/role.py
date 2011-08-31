@@ -10,7 +10,7 @@ userrole_store = dbaccess.stores.userrole_store
 userpermission_store = dbaccess.stores.userpermission_store
 
 split_context = lambda s: ('', s) if not dbaccess.ctxsep in s else s.split(dbaccess.ctxsep)
-add_context = lambda ctx, s: ctx or 'global' + dbaccess.ctxsep + s
+add_context = lambda ctx, s: (ctx or 'global') + dbaccess.ctxsep + s
 
 def role_permissions(roles):
     all_perms = []
@@ -58,11 +58,23 @@ def revoke(user_id, roles, context=None):
         dbaccess.remove_user_permissions(user_id, perms_to_remove)
     return True
 
-def get_roles(user_id, role_filter=[])
+def get_roles(user_id, role_filter=[]):
     """
     role_filter: eg. ['host', 'director']
     returns [{ctx_id: 1, ctx_name: '<name>', roles: ['<role1>', '<role2>']}, ...]
     """
+    d = collections.defaultdict(list)
+    ctx_name_map = {}
+    for row in userrole_store.get_by(crit=dict(user_id=user_id), fields=['role'], hashrows=False):
+        ctx_rolename = row[0]
+        if dbaccess.ctxsep in ctx_rolename:
+            ref, rolename = ctx_rolename.split(dbaccess.ctxsep)
+            if rolename in role_filter:
+                if ref in ctx_name_map:
+                    ctx_name_map[ref].append(rolename)
+                else:
+                    ctx_name_map[ref] = [rolename]
+    return [{dbaccess.ref2ctx(ref)+'_id':dbaccess.ref2id(ref),dbaccess.ref2ctx(ref)+'_name':dbaccess.ref2name(ref),'roles':ctx_name_map[ref]} for ref in ctx_name_map]
 
 def get_user_roles(user_id):
     """

@@ -1,5 +1,6 @@
 import datetime
 import be.repository.access as dbaccess
+import be.apis.role as rolelib
 
 biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -10,7 +11,8 @@ class BizplaceCollection:
         data = dict(biz=biz_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
         bizplace_id = bizplace_store.add(**data)
         bizplace_ref = bizplace_store.ref(bizplace_id)
-
+        
+        rolelib.assign(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_ref)
         return bizplace_id
 
     def list(self):
@@ -18,7 +20,6 @@ class BizplaceCollection:
         returns list of bizplace info dicts
         """
         return dbaccess.list_bizplaces()
-
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """

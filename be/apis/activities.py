@@ -31,7 +31,7 @@ categories = Categories(
     )
 
 role_activities = dict(
-    admin = dict( MemberManagement = ['MemberUpdated'], Security = [], ResourceManagement = ['ResourceCreated']),
+    admin = dict( MemberManagement = ['MemberCreated', 'MemberUpdated', 'MemberDeleted'], Security = [], ResourceManagement = ['ResourceCreated']),
     member = dict( MemberManagement = ['MemberUpdated', 'MemberCreated'], Security = ['PasswordChanged'])
     )
 
@@ -66,10 +66,10 @@ def find_role_activities(from_date, to_date, limit=10):
     roles = env.context.roles
     for role in roles:
         for category in categories:
-            if role_activities[role][category]:
+            if role in role_activities and role_activities[role][category]:
                  for activity in role_activities[role][category]:
                     names.append(activity)
-            else:
+            elif role in role_activities:
                  for activity in categories[category]:
                     names.append(activity)
     return find_activities_by_names(list(set(names)), from_date, to_date, limit)

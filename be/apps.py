@@ -4,6 +4,7 @@ import be.apis.user as userlib
 import be.apis.member as memberlib
 import be.apis.bizplace as bizplacelib
 import be.apis.plan as planlib
+import be.apis.role as rolelib
 import be.apis.resource as resourcelib
 import be.repository.pgdb as pgdb
 import jsonrpc2
@@ -36,4 +37,5 @@ cowspa.connect(memberlib.member_resource.details, "member.profile")
 cowspa.connect(memberlib.member_resource.update, "member.update")
 cowspa.connect(activitylib.get_current_activities, "current.activities")
 cowspa.connect(bizplacelib.bizplace_collection.list, "bizplace.list")
+cowspa.connect(rolelib.get_roles, "users.bizplace.list")
 cowspa.startup()
