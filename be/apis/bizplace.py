@@ -5,9 +5,9 @@ biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
 
 class BizplaceCollection:
-    def new(self, biz_id, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None):
+    def new(self, biz_id, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None, currency=None):
         created = datetime.datetime.now()
-        data = dict(biz=biz_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile)
+        data = dict(biz=biz_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
         bizplace_id = bizplace_store.add(**data)
         bizplace_ref = bizplace_store.ref(bizplace_id)
 

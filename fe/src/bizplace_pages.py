@@ -1,6 +1,6 @@
 import sphc
 import fe.bases
-import pycountry
+import commonlib.shared.static_data as data_lists
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
@@ -13,14 +13,14 @@ class BizplaceCreate(BasePage):
 
         fields = []
 
-        field = tf.INPUT(type='hidden', id='biz', name='biz', value=1)
+        field = tf.INPUT(type='hidden', id='biz_id', name='biz_id', value=1)
         fields.append(field)
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Name', For="name")
         field.input = tf.INPUT(type='text', id='name', name='name')
-        fields.append(field)
-
+        fields.append(field)       
+        
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Address', FOR="address")
         field.input = tf.INPUT(type='text', id='address', name='address')
@@ -34,8 +34,8 @@ class BizplaceCreate(BasePage):
         field = tf.DIV()
         field.label = tf.LABEL('Country', FOR='country')
         field.input = tf.SELECT(id='country', name='country')
-        for country in list(pycountry.countries):
-            field.input.option = tf.OPTION(country.name.encode("utf-8"), value=country.name.encode("utf-8"))
+        for country in list(data_lists.countries):
+            field.input.option = tf.OPTION(country, value=country)
         fields.append(field)
 
         field = tf.DIV()
@@ -49,7 +49,14 @@ class BizplaceCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn')
+        field.label = tf.LABEL('Currency', FOR='currency')
+        field.input = tf.SELECT(id='currency', name='currency')
+        for currency in data_lists.currencies:
+            field.input.option = tf.OPTION(currency.name+" ("+currency.letter+")", value=currency.letter)
+        fields.append(field) 
+        
+        field = tf.DIV()
+        field.button = tf.BUTTON("Save", id='save-btn', type="button")
         fields.append(field)
 
         form  = tf.FORM(id="createbizplace_form")

@@ -185,7 +185,8 @@ class BizPlace(PGStore):
     tz TEXT,
     holidays smallint[],
     default_plan INTEGER,
-    taxes BYTEA
+    taxes BYTEA,
+    currency TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
     pickle_cols = ['taxes']

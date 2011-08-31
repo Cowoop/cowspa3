@@ -84,7 +84,7 @@ class CSAuthedPage(CSPage):
         links.append(tf.A(last_link[0], href=last_link[1]))
 
         topbar.logo = product_name
-        topbar.bizplaces = tf.SELECT(id="bizplaces", name="bizplaces")
+        topbar.bizplaces = tf.SELECT(id="bizplaces", name="bizplaces", style="display:none")
         topbar.links = links
         return topbar
 
