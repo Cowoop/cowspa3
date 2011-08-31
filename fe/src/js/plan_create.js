@@ -10,5 +10,6 @@ $('#save-btn').click(function () {
     function error() {
         $('#CreatePlan-msg').html("<big>Error in Plan Creation. Try again</big>");
         };
+    params['bizplace_id'] = $("#bizplaces").val();
     jsonrpc('plan.new', params, success, error);
     });
