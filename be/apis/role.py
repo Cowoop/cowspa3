@@ -10,15 +10,14 @@ userrole_store = dbaccess.stores.userrole_store
 userpermission_store = dbaccess.stores.userpermission_store
 
 split_context = lambda s: ('', s) if not dbaccess.ctxsep in s else s.split(dbaccess.ctxsep)
-add_context = lambda ctx, s: ctx + dbaccess.ctxsep + s
+add_context = lambda ctx, s: ctx or 'global' + dbaccess.ctxsep + s
 
 def role_permissions(roles):
     all_perms = []
     for role in roles:
         ctx, role = split_context(role)
         perms = [p.name for p in roledefs.all_roles[role].permissions]
-        if ctx:
-            perms = [add_context(ctx, p) for p in perms]
+        perms = [add_context(ctx, p) for p in perms]
         all_perms.extend(perms)
     return set(all_perms)
 
@@ -26,8 +25,7 @@ def assign(user_id, roles, context=None):
     if not set(roles).issubset(roledefs.all_roles.keys()):
         raise Exception("Unknown role(s)")
     new_roles = roles
-    if context:
-        new_roles = [add_context(context, role) for role in roles]
+    new_roles = [add_context(context, role) for role in roles]
     existing_roles = (row[0] for row in userrole_store.get_by(crit=dict(user_id=user_id), fields=['role'], hashrows=False))
     roles_to_add = set(new_roles).difference(existing_roles)
     if roles_to_add:
@@ -35,8 +33,7 @@ def assign(user_id, roles, context=None):
 
     # now assign permissions
     perms = role_permissions(roles)
-    if context:
-        perms = [add_context(context, p) for p in perms]
+    perms = [add_context(context, p) for p in perms]
     existing_perms = (row[0] for row in userpermission_store.get_by(crit=dict(user_id=user_id), fields=['permission'],
         hashrows=False))
     perms_to_add = set(perms).difference(existing_perms)
@@ -46,8 +43,7 @@ def assign(user_id, roles, context=None):
 
 def revoke(user_id, roles, context=None):
     roles = roles
-    if context:
-        roles = [add_context(context, role) for role in roles]
+    roles = [add_context(context, role) for role in roles]
     dbaccess.remove_user_roles(user_id, roles)
     # now revoke permissions
     existing_roles = [row[0] for row in userrole_store.get_by(crit=dict(user_id=user_id), fields=['role'], hashrows=False)]
@@ -62,9 +58,16 @@ def revoke(user_id, roles, context=None):
         dbaccess.remove_user_permissions(user_id, perms_to_remove)
     return True
 
+def get_roles(user_id, role_filter=[])
+    """
+    role_filter: eg. ['host', 'director']
+    returns [{ctx_id: 1, ctx_name: '<name>', roles: ['<role1>', '<role2>']}, ...]
+    """
+
 def get_user_roles(user_id):
     """
     returns {'Hub Timbaktu': ['Host', 'Director']})
+    []
     """
     d = collections.defaultdict(list)
     ctx_name_map = {}
