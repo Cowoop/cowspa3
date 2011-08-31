@@ -6,6 +6,9 @@ $('#save-btn').click(function () {
     };
     function success() {
         $('#CreateSuper-msg').html("<big>☑</big> Super User Created successfully.");
+        setTimeout(function(){
+            window.location = "/login";
+        }, 1500);
     };
     function error() {
         $('#CreateSuper-msg').html("<big>Error in Super User Creation. Try again</big>");
