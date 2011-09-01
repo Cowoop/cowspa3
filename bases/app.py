@@ -1,3 +1,5 @@
+import sys
+import traceback
 import functools
 
 class APIExecutor(object):
@@ -14,7 +16,11 @@ class APIExecutor(object):
         self.f = f
 
     def __call__(self, *args, **kw):
-        return self.f(*args, **kw)
+        try:
+            return self.f(*args, **kw)
+        except Exception as err:
+            traceback.print_exc(file=sys.stdout)
+            raise
 
 class Application(object):
     mapper = None
