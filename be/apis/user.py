@@ -54,6 +54,10 @@ def set_context(session_id):
     env.context.user_id = session_lookup(session_id)
     roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['role'], False)
     env.context.roles = [role[0] for role in roles]
+    try:
+        env.context.display_name = member_store.get(env.context.user_id, fields=['display_name'])
+    except:
+        env.context.display_name = user_store.get(env.context.user_id, fields=['username'])
 
 def logout(token):
     try:
@@ -66,6 +70,6 @@ def create_superuser(username, password, email, first_name):
     user_id = memberlib.member_collection.new(username, password, email, first_name)
     rolelib.assign(user_id, ['admin'])
     return user_id
-    
+
 def get_user_preferences():
     return dbaccess.stores.memberpref_store.get_by(dict(member=env.context.user_id), ['theme', 'language'])[0]
