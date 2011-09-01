@@ -304,3 +304,10 @@ class Activity(PGStore):
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
     pickle_cols = ['data']
+
+class ActivityAccess(PGStore):
+    create_sql = """
+    a_id INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    """
