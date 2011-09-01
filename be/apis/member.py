@@ -13,7 +13,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
+    def new(self, username, password, email, first_name, state=None, language='English', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
 
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -26,7 +26,7 @@ class MemberCollection:
         user_id = user_store.add(**data)
         member_ref = member_store.ref(user_id)
 
-        data = dict(member=user_id, language=language, theme=theme)
+        data = dict(member=user_id, language=data_lists.language_map_rev[language], theme=theme)
         memberpref_store.add(**data)
 
         #owner = member_store.ref(user_id)
@@ -57,7 +57,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': True}, limit=5):
+    def search(self, q, options={'mybizplace': False}, limit=5):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
