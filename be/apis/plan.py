@@ -19,6 +19,12 @@ class PlanCollection:
         Deletes a plan. Only if there are no subscribers.
         """
 
+    def list(self, bizplace_id):
+        """
+        returns list of plans which are at bizplace_id
+        """
+        return plan_store.get_by(crit=dict(bizplace=bizplace_id), fields=['id', 'name', 'description'])
+
 class PlanResource:
 
     def info(self, plan_id):
@@ -54,8 +60,15 @@ class PlanResource:
     def new_subscriber(self, plan_id, starts, subscriber_id):
         """
         """
+        mm, dd, yyyy = (int(x) for x in starts.split('/'))
+        starts=datetime.date(yyyy, mm, dd)
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
+        old_plan = dbaccess.get_member_plan(subscriber_id, bizplace.id, starts, False)
+        if old_plan:
+            ends = starts - datetime.timedelta(1)
+            subscription_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=plan_id, starts=old_plan.starts), \
+                mod_data=dict(ends=ends))
         subscription_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
             bizplace_name=bizplace.name, plan_name=plan.name)
         # find old subscription
@@ -79,12 +92,5 @@ class PlanResource:
     def change_subscription(self, subscriber_id, current_plan_id, new_plan_id, change_date):
         """
         """
-
-    def list_by_bizplace(self, bizplace_id):
-        """
-        returns list of plans which are at bizplace_id
-        """
-        return plan_store.get_by(crit=dict(bizplace=bizplace_id), fields=['id', 'name', 'description'])
-        
 plan_collection = PlanCollection()
 plan_resource = PlanResource()
