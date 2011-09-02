@@ -188,7 +188,7 @@ class MemberProfile(BasePage):
         input_type_textarea = ['Address']
         fields = get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, [])
 
-        fields.append(make_buttons)
+        fields.append(make_buttons())
 
         form  = tf.FORM(Class='profile-forms', id="contact_edit_form", style="display:none")
         for field in fields:
@@ -208,7 +208,7 @@ class MemberProfile(BasePage):
 
         form  = tf.FORM(Class='profile-forms', id="preferences_view_form", style="display:none")
         for field in fields:
-            form.content = field
+            form.field = field
 
         container.form = form
 
@@ -219,7 +219,7 @@ class MemberProfile(BasePage):
 
         form  = tf.FORM(Class='profile-forms', id="preferences_edit_form", style="display:none")
         for field in fields:
-            form.content = field
+            form.field = field
 
         container.form = form
 
