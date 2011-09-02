@@ -80,5 +80,11 @@ class PlanResource:
         """
         """
 
+    def list_by_bizplace(self, bizplace_id):
+        """
+        returns list of plans which are at bizplace_id
+        """
+        return plan_store.get_by(crit=dict(bizplace=bizplace_id), fields=['id', 'name', 'description'])
+        
 plan_collection = PlanCollection()
 plan_resource = PlanResource()
