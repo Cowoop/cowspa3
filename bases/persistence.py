@@ -155,7 +155,10 @@ class PGStore(BaseStore):
                 print(cursor.mogrify(q, values))
             cursor.execute(q, values)
         except psycopg2.ProgrammingError:
-            print(cursor.mogrify(q, values))
+            try:
+                print(cursor.mogrify(q, values))
+            except:
+                print("damn, can't even mogrify: [%s], [%s]" % (q, values))
             raise
         if cursor.description:
             cols = tuple(r[0] for r in cursor.description)
@@ -325,7 +328,7 @@ class PGStore(BaseStore):
         """
         crit_keys = crit.keys()
         values = [crit[k] for k in crit_keys]
-        condition = ', '.join(('%s = %%s' % k for k in crit_keys))
+        condition = ' AND '.join(('%s = %%s' % k for k in crit_keys))
         cols = mod_data.keys()
         cols_to_pickle = set(cols).intersection(self.pickle_cols)
         cols_str = ', '.join('%s=%%s' % k for k in mod_data.keys())
