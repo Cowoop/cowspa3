@@ -6,10 +6,20 @@ BasePage = fe.bases.CSAuthedPage
 
 class PlanCreate(BasePage):
     current_tab = 'create'
-    title = 'New Plan'
+    title = 'Plans'
     def content(self):
         container = tf.DIV()
+        
+        new_plan = tf.BUTTON("New Plan", id="new-plan", type='button')
+        container.button = new_plan
+        
+        plans = tf.DIV(id="plan_list")
+        plans.left = tf.DIV(id="left")
+        plans.right = tf.DIV(id="right")
+        
+        container.plans = plans
 
+        #                                   New PLAN
         fields = []
 
         field = tf.DIV()
@@ -23,15 +33,16 @@ class PlanCreate(BasePage):
         fields.append(field)
         
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        field.save = tf.BUTTON("Save", id='save-btn', type='button')
+        field.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="createplan_form")
+        form  = tf.FORM(id="createplan_form", style="display:none")
         for field in fields:
             field.line = tf.BR()
             form.content = field
-    
+        form.msg = tf.SPAN(id="CreatePlan-msg")
+        
         container.form = form
-        container.msg = tf.SPAN(id="CreatePlan-msg")
         container.script = tf.SCRIPT(open("fe/src/js/plan_create.js").read(), escape=False, type="text/javascript", language="javascript")
         return container

@@ -11,7 +11,7 @@ Javascript
     <     var input_box = $("<input type=\"text\"  autocomplete=\"off\">")
     ---After Patch
     >     var input_box = $("<input type=\"text\"  autocomplete=\"off\" placeholder=\"search...\">")
-    
+- jquery.tmpl https://github.com/jquery/jquery-tmpl
 
 Images
 ======

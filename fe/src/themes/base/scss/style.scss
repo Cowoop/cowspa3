@@ -51,6 +51,10 @@ nav {
     @include divsizing;
 }
 
+.plan-box {
+    border: 1px solid $main-color;
+}
+
 div[role="main"] {   
     @include columns(9);
     @include omega;

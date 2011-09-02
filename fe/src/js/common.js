@@ -55,11 +55,7 @@ function init_nav() {
     });
     set_current_opt();
 };
-
-  
-$(document).ready(function() {
-    init_autocomplete();
-    init_nav();
+//******************************Load List of Bizplaces**************************************************
     function success(resp){
         if(resp['result'].length == 0)
             $("#bizplaces").hide();
@@ -74,6 +70,11 @@ $(document).ready(function() {
     }
     params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
     if(params['user_id'])
-        jsonrpc('users.bizplace.list', params, success, error);
+        jsonrpc('users.bizplace.list', params, success, error);  
+//**********************************End******************************************************************
+  
+$(document).ready(function() {
+    init_autocomplete();
+    init_nav();
 });    
 
