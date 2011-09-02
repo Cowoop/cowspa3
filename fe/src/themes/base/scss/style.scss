@@ -51,8 +51,19 @@ nav {
     @include divsizing;
 }
 
-.plan-box {
-    border: 1px solid $main-color;
+button#new-plan {float: right; margin-top: 0.5em;}
+
+#plan_list {
+    padding: 1em;
+    .plan-box {
+        padding: 0.5em;
+        margin: 1em;
+        border: 1px solid $main-color;
+        .plan-title {
+            font-size: 110%;
+            font-weight: bold;
+            }
+    }
 }
 
 div[role="main"] {   
@@ -206,7 +217,8 @@ option {
     padding: 0.2em;
     margin: 0.5em;
 }
-form button {
+
+button {
     padding: 0em;
     padding-left: 0.6em;
     padding-right: 0.6em;
