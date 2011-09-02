@@ -86,7 +86,7 @@ def list_activities_by_roles(roles, limit=20):
     clause = 'role IN %(roles)s ORDER BY created DESC LIMIT %(limit)s'
     clause_values = dict(roles=tuple(roles), limit=limit)
     a_ids = (row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
-    return activity_store.get_many(a_ids)
+    return activity_store.get_many(a_ids) if a_ids else []
 
 def ref2name(ref):
     oname, oid = ref.split(':')
@@ -157,6 +157,15 @@ def get_member_plan(member_id, bizplace_id, date):
         return plan_ids[0][0]
     else:
         return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
+
+def get_member_plans(member_id, bizplace_ids=[], date=None):
+    if not date:
+        date = datetime.datetime.now()
+    clause = 'subscriber_id = %(subscriber_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
+    if bizplace_ids:
+        clause += ' AND bizplace_id IN %(bizplace_ids)s'
+    values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
+    return subscription_store.get_by_clause(clause, values)
 
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
