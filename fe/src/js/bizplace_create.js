@@ -5,10 +5,10 @@ $('#save-btn').click(function () {
         params[inputs[i].name] = inputs[i].value;
         }
     function success() {
-        $('#CreateBizplace-msg').html("<big>☑</big> Bizplace Created successful.");
+        $('#CreateBizplace-msg').html("<big>☑</big> Place Created successful.");
         };
     function error() {
-        $('#CreateBizplace-msg').html("<big>Error in Bizplace Creation. Try again</big>");
+        $('#CreateBizplace-msg').html("<big>Error in Place Creation. Try again</big>");
         };
     jsonrpc('bizplace.new', params, success, error);
     });

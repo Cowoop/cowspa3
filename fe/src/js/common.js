@@ -64,14 +64,24 @@ function init_nav() {
             $("#bizplaces").show();
             for(bizplace in resp['result'])
                 $("#bizplaces").append("<option value="+resp['result'][bizplace]['bizplace_id']+">"+resp['result'][bizplace]['bizplace_name']+"</option>");
+            if($.cookie("bizplace"))
+                jQuery("#bizplaces option[value='"+$.cookie("bizplace")+"']").attr('selected', 'selected');
+            else
+                $.cookie("bizplace", $("#bizplaces").find('option:selected').val());
         }
+        $('#bizplaces').change(function(){
+	        var val = $("#bizplaces").find('option:selected').val();
+	        $.cookie("bizplace", val);
+	        window.location.reload();
+	    });
     }
     function error(){
     }
     params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
     if(params['user_id'])
-        jsonrpc('users.bizplace.list', params, success, error);  
-//**********************************End******************************************************************
+        jsonrpc('users.bizplace.list', params, success, error); 
+     
+//******************************************End**********************************************************
   
 $(document).ready(function() {
     init_autocomplete();
