@@ -1,5 +1,5 @@
 import datetime
-import commonlib.shared.states
+import commonlib.shared.constants
 import be.repository.access as dbaccess
 import bases.app
 import commonlib.helpers as helpers
@@ -18,9 +18,9 @@ class MemberCollection:
         if not display_name: display_name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
         if state is None:
-            state = commonlib.shared.states.member.enabled
+            state = commonlib.shared.constants.member.enabled
         else:
-            state = commonlib.shared.states.member.to_flags(state)
+            state = commonlib.shared.constants.member.to_flags(state)
 
         data = dict(username=username, password=helpers.encrypt(password), state=state) # TODO config salt
         user_id = user_store.add(**data)
@@ -57,7 +57,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': False}, limit=5):
+    def search(self, q, options={'mybizplace': True}, limit=5):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -78,7 +78,7 @@ class MemberResource:
 
     def update(self, member_id, **mod_data):
         if 'state' in mod_data:
-            mod_data['state'] = commonlib.shared.states.member.to_flags(mod_data['state'])
+            mod_data['state'] = commonlib.shared.constants.member.to_flags(mod_data['state'])
         if 'username' in mod_data or 'password' in mod_data:
             mod_data['password'] = helpers.encrypt(mod_data['password'])
             user_store.update(member_id, **mod_data)
@@ -95,7 +95,7 @@ class MemberResource:
 
     def info(self, member_id):
         info = member_store.get(member_id, ['id', 'state', 'display_name'])
-        info['state'] = commonlib.shared.states.member.to_dict(info['state'])
+        info['state'] = commonlib.shared.constants.member.to_dict(info['state'])
         return info
 
     def details(self, member_id):
@@ -110,7 +110,7 @@ class MemberResource:
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
         if attrname == 'state':
-            return commonlib.shared.states.member.to_dict(member_store.get(member_id, fields=['state']))
+            return commonlib.shared.constants.member.to_dict(member_store.get(member_id, fields=['state']))
         return member_store.get(member_id, fields=[attrname])
 
     def set(self, member_id, attrname, v):
