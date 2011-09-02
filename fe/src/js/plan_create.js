@@ -26,7 +26,7 @@ $("#cancel-btn").click(function (){
 $(document).ready(function() {
     var params = {}
     function success(resp) {
-        var markup = "<div class='plan-box'><b>${name}</b> </br>${description}</div>";
+        var markup = "<div class='plan-box'><div class='plan-title'>${name}</div> ${description}</div>";
         $.template( "planTemplate", markup );
         no_plans = resp['result'].length;
         $.tmpl( "planTemplate", resp['result'].slice(0,no_plans/2)).appendTo( "#plan_list #left" );
