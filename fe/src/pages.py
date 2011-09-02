@@ -43,7 +43,6 @@ class Dashboard(BasePage):
 
     def content(self):
         container = tf.DIV()
-        container.h2 = tf.H2("Welcome")
         container.ul = tf.UL(id="activities", name="activities")
         container.script = tf.SCRIPT(open("fe/src/js/dashboard.js").read(), escape=False, type="text/javascript", language="javascript")
         return container

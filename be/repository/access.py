@@ -31,6 +31,7 @@ usage_store = stores_mod.Usage()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
+activityaccess_store = stores_mod.ActivityAccess()
 
 class RStore(object): pass
 
@@ -71,15 +72,21 @@ class Resource(object):
         return resource_store.get_many(dep_ids, self.info_fields)
 
 
-def list_activities_by_categories(categories, from_date, to_date, limit):
+def list_activities_by_categories(categories, from_date, to_date, limit=20):
     clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
     clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date, limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
-def list_activities_by_names(names, from_date, to_date, limit):
+def list_activities_by_names(names, from_date, to_date, limit=20):
     clause = '(name IN %(names)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
     clause_values = dict(names=tuple(names), from_date=from_date, to_date=to_date ,limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
+
+def list_activities_by_roles(roles, limit=20):
+    clause = 'role IN %(roles)s ORDER BY created DESC LIMIT %(limit)s'
+    clause_values = dict(roles=tuple(roles), limit=limit)
+    a_ids = (row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
+    return activity_store.get_many(a_ids)
 
 def ref2name(ref):
     oname, oid = ref.split(':')
@@ -155,7 +162,7 @@ def search_member(keys, options, limit):
     fields = ['id', 'display_name']
     query = 'SELECT member.id, member.display_name as name, member.email FROM member'
     clause = ""
-    if 'admin' not in env.context.roles or options['mybizplace']:
+    if 'global::admin' not in env.context.roles or options['mybizplace']:
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
     if len(keys) == 1:

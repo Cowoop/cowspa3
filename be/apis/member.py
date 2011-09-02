@@ -36,8 +36,8 @@ class MemberCollection:
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
 
-        data = dict(name=first_name, location=country, user_id=user_id)
-        activity_id = activitylib.add('MemberManagement', 'MemberCreated', user_id, data, created)
+        data = dict(name=display_name, id=user_id)
+        activity_id = activitylib.add('member_management', 'member_created', data, created)
 
         return user_id
 
@@ -57,7 +57,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': True}, limit=5):
+    def search(self, q, options={'mybizplace': False}, limit=5):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -89,9 +89,9 @@ class MemberResource:
         else:
             member_store.update(member_id, **mod_data)
 
-        data = dict(user_id=member_id, attrs=', '.join(attr for attr in mod_data))
-        created = datetime.datetime.now()
-        activity_id = activitylib.add('MemberManagement', 'MemberUpdated', member_id, data, created)
+        display_name = member_store.get(member_id, fields=['display_name'])
+        data = dict(id=member_id, name=display_name, attrs=', '.join(attr for attr in mod_data))
+        activity_id = activitylib.add('member_management', 'member_updated', data)
 
     def info(self, member_id):
         info = member_store.get(member_id, ['id', 'state', 'display_name'])
