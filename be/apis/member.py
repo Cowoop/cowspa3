@@ -105,7 +105,11 @@ class MemberResource:
         account = dict(username=user_store.get(member_id, ['username']), password="")
         preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
         preferences['language'] = data_lists.language_map[preferences['language']]
-        return dict(profile=profile, contact=contact, account=account, preferences=preferences)
+        memberships = dbaccess.get_member_current_subscriptions(member_id)
+        for ms in memberships:
+            ms['starts'] = ms['starts'].strftime('%b %d, %Y')
+            ms['ends'] = str(ms['ends'])
+        return dict(profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return

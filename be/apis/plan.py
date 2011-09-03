@@ -64,11 +64,10 @@ class PlanResource:
         starts=datetime.date(yyyy, mm, dd)
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
-        old_plan = dbaccess.get_member_plan(subscriber_id, bizplace.id, starts, False)
-        if old_plan:
+        old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
+        if old_sub:
             ends = starts - datetime.timedelta(1)
-            subscription_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=plan_id, starts=old_plan.starts), \
-                mod_data=dict(ends=ends))
+            subscription_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=old_sub.plan_id, starts=old_sub.starts), ends=ends)
         subscription_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
             bizplace_name=bizplace.name, plan_name=plan.name)
         # find old subscription
