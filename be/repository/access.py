@@ -149,19 +149,25 @@ def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_ty
 
     return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
 
-def get_member_plan(member_id, bizplace_id, date):
+def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'subscriber_id = %(subscriber_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
     plan_ids = subscription_store.get_by_clause(clause, values, fields=['plan_id'], hashrows=False)
     if plan_ids:
         return plan_ids[0][0]
-    else:
+    elif default:
         return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
 
-def get_member_plans(member_id, bizplace_ids=[], date=None):
-    if not date:
-        date = datetime.datetime.now()
-    clause = 'subscriber_id = %(subscriber_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
+def get_member_subscription(member_id, bizplace_id, date):
+    clause = 'subscriber_id = %(subscriber_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
+    values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
+    subscriptions = subscription_store.get_by_clause(clause, values)
+    if subscriptions:
+        return subscriptions[0]
+
+def get_member_current_subscriptions(member_id, bizplace_ids=[]):
+    date = datetime.datetime.now()
+    clause = '(subscriber_id = %(subscriber_id)s) AND (starts <= %(date)s) AND (ends IS NULL)'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
