@@ -168,6 +168,40 @@ class MemberProfile(BasePage):
 
         container.form = form
 
+        ######### Memberships ###################
+
+        tariff_info = tf.DIV(id="memberships_view_form", Class="profile-forms hidden")
+        tariff_edit = tf.DIV(id="tariff-edit")
+
+        edit = tf.DIV(Class="edit-link-box")
+        edit.link = tf.A("Edit", id='edit-link', href='#tariff')
+        fields = [edit]
+
+        header = tf.TR()
+        header.th = tf.TH("")
+        header.th = tf.TH("Place")
+        header.th = tf.TH("Tariff")
+        header.th = tf.TH("Since")
+
+        tariff_row = sphc.more.jq_tmpl("tariff-row")
+        tariff_row.tr = tf.TR()
+        tariff_row.tr.td = tf.TD("")
+        tariff_row.tr.td = tf.TD("${bizplace_name}")
+        tariff_row.tr.td = tf.TD("${plan_name}")
+        tariff_row.tr.td = tf.TD("${starts}", Class="date")
+
+        tariff_box = tf.TABLE(id="tafiff-info", cellspacing="1em")
+        tariff_box.caption = tf.CAPTION("Current tariff(s)")
+        tariff_box.header = header
+
+        tariff_info.tariff_box = tariff_box
+
+        container.tariff_tmpl = tariff_row
+        container.info = tariff_info
+        container.edit = tariff_edit
+
+        #container.memberships = ms_container
+
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
 

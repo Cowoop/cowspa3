@@ -18,6 +18,7 @@ $(document).ready(function() {
             var display_name = first_name + ' ' + last_name;
             $('.content .content-title').text(display_name);
         };
+        $('#tariff-row').tmpl(response.result.memberships).appendTo('#tafiff-info');
         result = response;
     };
     function error() {
@@ -26,11 +27,9 @@ $(document).ready(function() {
     {
         profile_id = (window.location.search).substring(4);
         path = window.location.pathname+window.location.search;
-        $("#navlink-aboutme").attr('href', path+"#about");
-        $("#navlink-account").attr('href', path+"#account");
-        $("#navlink-social").attr('href', path+"#social");
-        $("#navlink-contact").attr('href', path+"#contact");
-        $("#navlink-preferences").attr('href', path+"#preferences");
+        $(".navlink-opt-item").each(function () {
+            $(this).attr('href', path + '#' + $(this).attr('href').split('#')[1]);
+        });
         $("#navlink-aboutme").text("About");
         $("#navlink-social").text("Social");
     }
@@ -104,6 +103,10 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
+    $("#navlink-memberships").click( function() {
+        $('.profile-forms').hide();
+        $('.profile-forms#memberships_view_form').show();
+    });
     $("#navlink-preferences").click(function(){
         $('.profile-forms').each( function () {
             if ($(this).attr('id') == "preferences_view_form") 
@@ -120,7 +123,6 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
-    
     $('#about_edit_form #cancel-btn').click(function(){
         $("#about_edit_form").hide();
         bind_values(result['result']['profile'], "about");

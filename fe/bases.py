@@ -43,9 +43,10 @@ invoicing_opt = None
 
 profile_opt = [
     tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),
-    tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
-    tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
+    tf.A("Memberships", href=ctxpath + '/profile#memberships', Class='navlink-opt-item', id='navlink-memberships'),
     tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact'),
+    tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
+    tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
     tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences')
     ]
 
@@ -72,6 +73,7 @@ class CSAuthedPage(CSPage):
         ]
     current_nav = '/Dashboard'
     content_title = ''
+    content_subtitle = ''
 
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
