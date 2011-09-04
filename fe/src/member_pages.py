@@ -170,37 +170,43 @@ class MemberProfile(BasePage):
 
         ######### Memberships ###################
 
-        tariff_info = tf.DIV(id="memberships_view_form", Class="profile-forms hidden")
-        tariff_edit = tf.DIV(id="tariff-edit")
+        tariff_box = tf.DIV(id="memberships_view_form", Class="profile-forms hidden")
 
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#tariff')
-        fields = [edit]
+        new = tf.DIV(Class="right-action")
+        new.button = tf.BUTTON("New")
 
         header = tf.TR()
-        header.th = tf.TH("")
         header.th = tf.TH("Place")
         header.th = tf.TH("Tariff")
         header.th = tf.TH("Since")
+        header.th = tf.TH("Till")
+        header.th = tf.TH("Actions")
 
         tariff_row = sphc.more.jq_tmpl("tariff-row")
         tariff_row.tr = tf.TR()
-        tariff_row.tr.td = tf.TD("")
         tariff_row.tr.td = tf.TD("${bizplace_name}")
         tariff_row.tr.td = tf.TD("${plan_name}")
         tariff_row.tr.td = tf.TD("${starts}", Class="date")
+        tariff_row.tr.td = tf.TD("${ends}", Class="date")
+        cell = tf.TD()
+        cell.a = tf.A("Change", href="#change-sub", Class="change-sub", id="change_sub-${sub_id}")
+        cell.c = tf.C(" | ")
+        cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-x cancel-sub", id="cancel_sub-${sub_id}")
+        tariff_row.tr.td = cell
 
-        tariff_box = tf.TABLE(id="tafiff-info", cellspacing="1em")
-        tariff_box.caption = tf.CAPTION("Current tariff(s)")
-        tariff_box.header = header
+        tariff_load_history = tf.DIV()
+        tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#history')
 
-        tariff_info.tariff_box = tariff_box
+        tariff_info = tf.TABLE(id="tafiff-info", cellspacing="1em")
+        tariff_info.caption = tf.CAPTION("Manage Tariffs")
+        tariff_info.header = header
 
-        container.tariff_tmpl = tariff_row
-        container.info = tariff_info
-        container.edit = tariff_edit
+        tariff_box.new = new
+        tariff_box.tmpl = tariff_row
+        tariff_box.info = tariff_info
+        tariff_box.history = tariff_load_history
 
-        #container.memberships = ms_container
+        container.tariff_box = tariff_box
 
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']

@@ -173,6 +173,15 @@ def get_member_current_subscriptions(member_id, bizplace_ids=[]):
     values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
     return subscription_store.get_by_clause(clause, values)
 
+def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
+    if not since:
+        since = datetime.datetime.now() - datetime.timedelta(365)
+    clause = '(subscriber_id = %(subscriber_id)s) AND ((ends >= %(since)s) OR (ends IS NULL))'
+    if bizplace_ids:
+        clause += ' AND bizplace_id IN %(bizplace_ids)s'
+    values = dict(subscriber_id=member_id, since=since, bizplace_ids=bizplace_ids)
+    return subscription_store.get_by_clause(clause, values)
+
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
     query = 'SELECT member.id, member.display_name as name, member.email FROM member'

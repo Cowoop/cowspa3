@@ -67,6 +67,8 @@ class PlanResource:
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
         if old_sub:
             ends = starts - datetime.timedelta(1)
+            if ends <= old_sub.starts.date():
+                raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
             subscription_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=old_sub.plan_id, starts=old_sub.starts), ends=ends)
         subscription_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
             bizplace_name=bizplace.name, plan_name=plan.name)
