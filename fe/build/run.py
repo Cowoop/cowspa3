@@ -8,7 +8,9 @@ sys.path.append('.')
 import sphc
 import commonlib.helpers
 import fe
+import fe.src.pages
 import fe.src.pages as pagelib
+import fe.src.pages.invoicing
 import fe.src.member_pages as memberlib
 import fe.src.bizplace_pages as bizplacelib
 import fe.src.plan_pages as planlib
@@ -99,6 +101,7 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(pagelib.SuperuserCreate, 'setup'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
          PageBuilder(memberlib.MemberProfile, prefix + 'profile'),
+         PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),
          PageBuilder(pagelib.LogoutPage, 'logout'),
         ]
 

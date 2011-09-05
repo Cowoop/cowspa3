@@ -3,11 +3,12 @@ import sphc.more
 
 tf = sphc.TagFactory()
 
-html5widget_libs = ['/js/modernizr-1.5.min.js', '/js/html5.js', '/js/EventHelpers.js', '/js/html5Widgets.js']
+webshims = ["/js/webshims/extras/mousepress.js", "/js/webshims/extras/modernizr-custom.js", "/js/webshims/extras/loaders/sssl.js", "/js/webshims/polyfiller.js"]
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = html5widget_libs + ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jquery.jsonrpc.js', '/js/knockout-1.2.1.js', '/js/jquery.cookie.js', '/js/common.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js'] # loading jq locally may be we should consider do that only when remote fails
+    jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js'] + webshims + ['/js/common.js']
+    # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
     def bottombar(self):
         bar = tf.DIV(Class='bottombar')
@@ -39,7 +40,13 @@ booking_opt = [
     tf.A("Export", href=ctxpath + "/bookings/export", Class='navlink-opt-item'),
     ]
 
-invoicing_opt = None
+invoicing_opt = [
+    tf.A("New", href=ctxpath+'/invoicing/new', Class='navlink-opt-item'),
+    tf.A("Add usages", href=ctxpath+'/invoicing/addusages', Class='navlink-opt-item'),
+    tf.A("Add usages", href=ctxpath+'/invoicing/uninvoiced', Class='navlink-opt-item'),
+    tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto', Class='navlink-opt-item'),
+    tf.A("Export", hre=ctxpath+'/invoicing/export', Class='navlink-opt-item')
+]
 
 profile_opt = [
     tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),

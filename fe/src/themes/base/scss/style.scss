@@ -226,7 +226,7 @@ form#social_edit_form input {
 form input[required] { 
     color: red; 
     background: darken($page-background, 10%);
-    border: 1px solid darken($main-color, 10%);
+    border: 1.5px solid $imp-color;
 }
 
 option {

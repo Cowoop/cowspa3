@@ -10,7 +10,7 @@ class LoginPage(fe.bases.CSAnonPage):
     def main(self):
         container = tf.DIV(Class="login-mainx")
         username = tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username")
-        password = tf.INPUT(type="PASSWORD", id='password', name="password", placeholder="Password")
+        password = tf.INPUT(type="password", id='password', name="password", placeholder="Password")
         submit = tf.BUTTON("Log In", id='login-btn', type='button')
         formbox = tf.DIV(Class="login-form-box")
         form = tf.FORM(id = "login_form")
@@ -57,7 +57,7 @@ class SuperuserCreate(fe.bases.CSAnonPage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'First Name : ', For="first_name")
-        field.input = tf.INPUT('required', type='text', id='first_name', name='first_name')
+        field.input = tf.INPUT(None, nv_attrs=('required',), type='text', id='first_name', name='first_name')
         fields.append(field)
 
         field = tf.DIV()

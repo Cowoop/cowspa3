@@ -1,3 +1,11 @@
+$.webshims.setOptions('forms', {
+    overrideMessages: true
+});
+
+//load all polyfill features
+//or load only a specific feature with $.webshims.polyfill('feature-name');
+$.webshims.polyfill();
+
 $.jsonRPC.setup({
     endPoint: '/app',
     namespace: ''

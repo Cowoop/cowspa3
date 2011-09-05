@@ -131,6 +131,11 @@ class MemberProfile(BasePage):
         fields.append(field)
 
         field = tf.DIV()
+        field.label = tf.LABEL('User Name', FOR='username')
+        field.date = tf.INPUT(type='date', id='date-x', name='date-x')
+        fields.append(field)
+
+        field = tf.DIV()
         field.button = tf.BUTTON("Save", id='save-btn', type='button')
         fields.append(field)
 
