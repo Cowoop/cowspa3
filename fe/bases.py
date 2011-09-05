@@ -43,7 +43,7 @@ booking_opt = [
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoicing/new', Class='navlink-opt-item'),
     tf.A("Add usages", href=ctxpath+'/invoicing/addusages', Class='navlink-opt-item'),
-    tf.A("Add usages", href=ctxpath+'/invoicing/uninvoiced', Class='navlink-opt-item'),
+    tf.A("Uninvoiced usages", href=ctxpath+'/invoicing/uninvoiced', Class='navlink-opt-item'),
     tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto', Class='navlink-opt-item'),
     tf.A("Export", hre=ctxpath+'/invoicing/export', Class='navlink-opt-item')
 ]
