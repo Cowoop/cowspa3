@@ -5,7 +5,7 @@ $('#save-btn').click(function () {
         params[inputs[i].name] = inputs[i].value;
     }
     function success() {
-        $('#CreatePlan-msg').html("<big>☑</big> Tarrif Created successfully.");
+        $('#CreatePlan-msg').html("<big>☑</big> Tariff Created successfully.");
         setTimeout(function(){
             window.location.reload();
         }, 1000);

@@ -66,7 +66,7 @@ places_opt = [
     ]
 
 class CSAuthedPage(CSPage):
-    top_links = [('Account', ctxpath + '/profile#account'), ('Theme', '#themes'), ('Logout', '/logout')]
+    top_links = [('Account', ctxpath + '/profile#account'), ('Theme', ctxpath + '/profile#preferences'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', None),

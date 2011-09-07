@@ -156,19 +156,20 @@ $(document).ready(function() {
                 "Save": function() { 
                     var params = {}
                     function success(resp) {
+                        $(this).dialog("close"); 
+                        window.location.reload();
                     };
-                    function error() {
-                    };
+                    function error() {};
                     params['subscriber_id'] = $.cookie('user_id');
                     params['plan_id'] = $("#next-tariff-form #tariff").val();
                     params['starts'] = $("#next-tariff-form #start").val();
                     jsonrpc('next.tariff', params, success, error);
-                    $(this).dialog("close"); 
-                    }, 
+        
+                }, 
                 "Cancel": function() { 
                     $(this).dialog("close"); 
-                    }
-                } 
+                }
+            } 
         });
     });
    
@@ -176,8 +177,7 @@ $(document).ready(function() {
     function success1(resp) {     
         $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
         };
-    function error1() {
-        };
+    function error1(){};
     params['bizplace_id'] = $("#bizplaces").val();
     jsonrpc('bizplace_plans.list', params, success1, error1);
     

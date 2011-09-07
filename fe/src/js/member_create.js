@@ -5,7 +5,7 @@ $('#save-btn').click(function () {
         params[inputs[i].name] = inputs[i].value;
         }
     function success() {
-        $('#CreateMember-msg').html("<big>☑</big> Member Created successful.");
+        $('#CreateMember-msg').html("<big>☑</big> Member Created successfully.");
         }
     function error() {
         $('#CreateMember-msg').html("<big>Error in Member Creation. Try again</big>");
