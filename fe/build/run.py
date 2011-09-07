@@ -158,6 +158,9 @@ def build_themes():
         copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
         copydirs(pathjoin(dst_scssdir, 'base', 'main.scss'), dst_scssdir)
         compile_scss(dst_themedir)
+        # 3. copy jquery-ui images
+        src_jqui_imagedir = pathjoin(contribroot, 'js', 'jquery-ui', 'images')
+        copydirs(src_jqui_imagedir, dst_cssdir)
 
 def build_scripts():
     """
