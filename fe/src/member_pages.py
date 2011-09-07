@@ -178,7 +178,7 @@ class MemberProfile(BasePage):
         tariff_box = tf.DIV(id="memberships_view_form", Class="profile-forms hidden")
 
         new = tf.DIV(Class="right-action")
-        new.button = tf.BUTTON("New")
+        new.button = tf.BUTTON("Next Tariff", id="next_tariff-btn", name="next_tarrif-btn", type="button")
 
         header = tf.TR()
         header.th = tf.TH("Place")
@@ -202,7 +202,7 @@ class MemberProfile(BasePage):
         tariff_load_history = tf.DIV()
         tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#history')
 
-        tariff_info = tf.TABLE(id="tafiff-info", cellspacing="1em")
+        tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em")
         tariff_info.caption = tf.CAPTION("Manage Tariffs")
         tariff_info.header = header
 
@@ -212,6 +212,17 @@ class MemberProfile(BasePage):
         tariff_box.history = tariff_load_history
 
         container.tariff_box = tariff_box
+        
+        tariff_list_row = sphc.more.jq_tmpl("tariff-options")
+        tariff_list_row.option = tf.option("${name}", value="${id}")
+        
+        next_tariff_form = sphc.more.VForm(id='next-tariff-form')
+        next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
+        next_tariff_form.add_field("Start", tf.INPUT(name='start', id='start', nv_attrs=('required')))
+        next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
+        next_tariff_section.form = next_tariff_form.build()
+        next_tariff_section.tmpl = tariff_list_row
+        container.next_tarrif = next_tariff_section
 
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']

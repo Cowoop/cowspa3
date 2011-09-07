@@ -18,7 +18,7 @@ $(document).ready(function() {
             var display_name = first_name + ' ' + last_name;
             $('.content .content-title').text(display_name);
         };
-        $('#tariff-row').tmpl(response.result.memberships).appendTo('#tafiff-info');
+        $('#tariff-row').tmpl(response.result.memberships).appendTo('#tariff-info');
         result = response;
     };
     function error() {
@@ -143,4 +143,44 @@ $(document).ready(function() {
         bind_values(result['result']['preferences'], "preferences");
         $("#preferences_view_form").show();
         });
+//*********************Next Teriff**********************************
+     
+    $('#next-tariff-form #start').datepicker({
+        dateFormat: 'dd.mm.yy',
+    });
+    $('#next_tariff-btn').click(function() {
+        $('#next-tariff-form').dialog({ 
+            title: "Next Tariff", 
+            width: 500, 
+            buttons: {
+                "Save": function() { 
+                    var params = {}
+                    function success(resp) {
+                    };
+                    function error() {
+                    };
+                    params['subscriber_id'] = $.cookie('user_id');
+                    params['plan_id'] = $("#next-tariff-form #tariff").val();
+                    params['starts'] = $("#next-tariff-form #start").val();
+                    jsonrpc('next.tariff', params, success, error);
+                    $(this).dialog("close"); 
+                    }, 
+                "Cancel": function() { 
+                    $(this).dialog("close"); 
+                    }
+                } 
+        });
+    });
+   
+    var params = {}
+    function success1(resp) {     
+        $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
+        };
+    function error1() {
+        };
+    params['bizplace_id'] = $("#bizplaces").val();
+    jsonrpc('bizplace_plans.list', params, success1, error1);
+    
+    
+//*******************End Modal Window**************************
 });

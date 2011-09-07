@@ -5,13 +5,13 @@ $('#save-btn').click(function () {
         params[inputs[i].name] = inputs[i].value;
     }
     function success() {
-        $('#CreatePlan-msg').html("<big>☑</big> Plan Created successful.");
+        $('#CreatePlan-msg').html("<big>☑</big> Tarrif Created successfully.");
         setTimeout(function(){
             window.location.reload();
         }, 1000);
     };
     function error() {
-        $('#CreatePlan-msg').html("<big>Error in Plan Creation. Try again</big>");
+        $('#CreatePlan-msg').html("<big>Error in Tariff Creation. Try again</big>");
     };
     params['bizplace_id'] = $("#bizplaces").val();
     jsonrpc('plan.new', params, success, error);

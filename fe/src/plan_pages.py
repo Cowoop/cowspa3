@@ -5,12 +5,12 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class PlanCreate(BasePage):
-    current_tab = 'create'
-    title = 'Plans'
+    current_tab = 'new'
+    title = 'Tariffs'
     def content(self):
         container = tf.DIV()
         
-        new_plan = tf.BUTTON("New Plan", id="new-plan", type='button')
+        new_plan = tf.BUTTON("New Tariff", id="new-plan", type='button')
         container.button = new_plan
         
         plans = tf.DIV(id="plan_list")

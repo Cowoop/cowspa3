@@ -58,11 +58,11 @@ profile_opt = [
     ]
 
 resources_opt = [
-    tf.A("New", href=ctxpath + '/resource/create', Class='navlink-opt-item')]
+    tf.A("New", href=ctxpath + '/resource/new', Class='navlink-opt-item')]
 
 places_opt = [
-    tf.A("New", href=ctxpath + '/bizplace/create', Class='navlink-opt-item'),
-    tf.A("Plans", href=ctxpath + '/bizplace/plans', Class='navlink-opt-item')
+    tf.A("New", href=ctxpath + '/bizplace/new', Class='navlink-opt-item'),
+    tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item')
     ]
 
 class CSAuthedPage(CSPage):
