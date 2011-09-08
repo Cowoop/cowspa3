@@ -33,7 +33,7 @@ def search_members():
         return jsonify(data)
 
 @app.route('/search_invoices', methods=['GET', 'POST'])
-def search_members():
+def search_invoices():
     auth_token = request.cookies.get('authcookie')
     cowspa.tr_start()
     if auth_token:
@@ -45,7 +45,7 @@ def search_members():
         return simplejson.dumps(data['result'])
     else:
         return jsonify(data)
-        
+
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
     params = request.json
