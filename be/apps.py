@@ -10,6 +10,7 @@ import be.repository.pgdb as pgdb
 import jsonrpc2
 import be.wrappers as wrapperlib
 import be.apis.activities as activitylib
+import be.apis.invoice as invoicelib
 
 pg_provider = pgdb.PGProvider()
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -41,4 +42,5 @@ cowspa.connect(rolelib.get_roles, "users.bizplace.list")
 cowspa.connect(planlib.plan_collection.list, "bizplace_plans.list")
 cowspa.connect(planlib.plan_resource.new_subscriber, "next.tariff")
 cowspa.connect(memberlib.member_resource.get_teriff_history, "teriff.history")
+cowspa.connect(invoicelib.invoice_collection.search, "invoice.search")
 cowspa.startup()

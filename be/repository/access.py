@@ -235,3 +235,26 @@ def remove_user_permissions(user_id, permissions):
     clause = 'user_id = %(user_id)s AND permission IN %(permissions)s'
     userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))
     
+def search_invoice(keys, options, limit):
+    fields = ['id', 'member']
+    query = 'SELECT invoice.id, invoice.member FROM invoice, member'
+    clause = ""
+    if 'global::admin' not in env.context.roles or options['mybizplace']:
+        query += ', subscription'
+        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND' 
+    if len(keys) == 1:
+        try:
+            keys[0] = int(keys[0])
+            clause += ' invoice.id = %(key)s'
+        except:
+            keys[0] = keys[0].lower() + "%"
+            clause += ' (lower(member.first_name) LIKE %(key)s OR lower(member.last_name) LIKE %(key)s)'
+        values = dict(key=keys[0], limit=limit)
+    elif len(keys) == 2:
+        clause += '((lower(member.first_name) = %(key1)s AND lower(member.last_name) like %(key2)s) OR (lower(member.first_name) like %(key2)s AND lower(member.last_name) = %(key1)s))'
+        values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
+    query  += ' WHERE '+clause+' AND member.id=invoice.member LIMIT %(limit)s'  
+    values['subscriber_id'] =  env.context.user_id
+    
+    return member_store.query_exec(query, values)
+    

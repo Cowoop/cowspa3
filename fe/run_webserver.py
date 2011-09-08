@@ -32,6 +32,20 @@ def search_members():
     else:
         return jsonify(data)
 
+@app.route('/search_invoices', methods=['GET', 'POST'])
+def search_members():
+    auth_token = request.cookies.get('authcookie')
+    cowspa.tr_start()
+    if auth_token:
+        userlib.set_context(auth_token)
+    params = {"jsonrpc": "2.0", "method": "invoice.search", "params": {'q':request.args['q']}, "id": 1}
+    data = cowspa.mapper(params)
+    cowspa.tr_complete()
+    if 'result' in data:
+        return simplejson.dumps(data['result'])
+    else:
+        return jsonify(data)
+        
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
     params = request.json

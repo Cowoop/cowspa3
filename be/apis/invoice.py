@@ -38,6 +38,15 @@ class InvoiceCollection:
             return usage_store.update_many(tuple(usages), **mod_data)
 
         return False
+        
+    def search(self, q, options={'mybizplace': False}, limit=5):
+        """
+        q: id OR first name or last name or both of invoicee.
+        limit: number of results to return
+        return -> list of tuples containing invoice id and member id
+        """
+        keys = q.split()
+        return dbaccess.search_invoice(keys, options, limit)
 
 
 class InvoiceResource:
