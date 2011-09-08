@@ -165,6 +165,14 @@ def get_member_subscription(member_id, bizplace_id, date):
     if subscriptions:
         return subscriptions[0]
 
+def get_member_teriff_history(member_id, bizplace_ids=[]):
+    date = datetime.datetime.now()
+    clause = '(subscriber_id = %(subscriber_id)s) AND (ends <= %(date)s)'
+    if bizplace_ids:
+        clause += ' AND bizplace_id IN %(bizplace_ids)s'
+    values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
+    return subscription_store.get_by_clause(clause, values)
+
 def get_member_current_subscriptions(member_id, bizplace_ids=[]):
     date = datetime.datetime.now()
     clause = '(subscriber_id = %(subscriber_id)s) AND (starts <= %(date)s) AND (ends IS NULL)'
@@ -226,3 +234,4 @@ def remove_user_roles(user_id, roles):
 def remove_user_permissions(user_id, permissions):
     clause = 'user_id = %(user_id)s AND permission IN %(permissions)s'
     userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))
+    

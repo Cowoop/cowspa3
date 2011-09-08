@@ -199,8 +199,16 @@ class MemberProfile(BasePage):
         cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-x cancel-sub", id="cancel_sub-${sub_id}")
         tariff_row.tr.td = cell
 
+        tariff_history_row = sphc.more.jq_tmpl("tariff-history-row")
+        tariff_history_row.tr = tf.TR()
+        tariff_history_row.tr.td = tf.TD("${bizplace_name}")
+        tariff_history_row.tr.td = tf.TD("${plan_name}")
+        tariff_history_row.tr.td = tf.TD("${starts}", Class="date")
+        tariff_history_row.tr.td = tf.TD("${ends}", Class="date")
+        tariff_history_row.tr.td = tf.TD("✓")        
+        
         tariff_load_history = tf.DIV()
-        tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#history')
+        tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#memberships')
 
         tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em")
         tariff_info.caption = tf.CAPTION("Manage Tariffs")
@@ -208,6 +216,7 @@ class MemberProfile(BasePage):
 
         tariff_box.new = new
         tariff_box.tmpl = tariff_row
+        tariff_box.history_tmpl = tariff_history_row
         tariff_box.info = tariff_info
         tariff_box.history = tariff_load_history
 

@@ -121,5 +121,12 @@ class MemberResource:
         if not attrname in self.set_attributes: return
         self.update(member_id, **{attrname: v})
 
+    def get_teriff_history(self, member_id):
+        memberships = dbaccess.get_member_teriff_history(member_id)
+        for ms in memberships[::-1]:
+            ms['starts'] = ms['starts'].strftime('%b %d, %Y')
+            ms['ends'] =  ms['ends'].strftime('%b %d, %Y') if ms['ends'] else '-'
+        return memberships
+        
 member_resource = MemberResource()
 member_collection = MemberCollection()

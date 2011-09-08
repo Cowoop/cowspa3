@@ -183,4 +183,17 @@ $(document).ready(function() {
     
     
 //*******************End Modal Window**************************
+
+//***********************Teriff History**************************************
+$('#load-tariff-history').click(function(){
+   var params = {}
+    function success2(response) {     
+        $('#tariff-history-row').tmpl(response.result).appendTo('#tariff-info');
+        $('#load-tariff-history').hide();
+        };
+    function error2(){};
+    params['member_id'] = $.cookie('user_id');
+    jsonrpc('teriff.history', params, success2, error2); 
+});
+//************************End Teriff History*********************************
 });
