@@ -51,7 +51,7 @@ class ResourceCreate(BasePage):
         field.button = tf.BUTTON("Save", id='save-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="createresource_form")
+        form  = tf.FORM(Class='profile-forms', id="createresource_form")
         for field in fields:
             field.line = tf.BR()
             form.content = field

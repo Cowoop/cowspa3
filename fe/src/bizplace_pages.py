@@ -59,7 +59,7 @@ class BizplaceCreate(BasePage):
         field.button = tf.BUTTON("Save", id='save-btn', type="button")
         fields.append(field)
 
-        form  = tf.FORM(id="createbizplace_form")
+        form  = tf.FORM(Class='profile-forms', id="createbizplace_form")
         for field in fields:
             form.content = field
 

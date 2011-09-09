@@ -122,6 +122,14 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
+    $(".topbar #theme").click(function(){
+        $('.profile-forms').each( function () {
+            if ($(this).attr('id') == "preferences_view_form") 
+                $(this).show();
+            else
+                $(this).hide();
+            });
+        });
     $(".topbar #account").click(function(){
         $('.profile-forms').each( function () {
             if ($(this).attr('id') == "account_edit_form") 

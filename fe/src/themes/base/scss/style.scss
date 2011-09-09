@@ -210,8 +210,7 @@ textarea {
     @include divsizing;
 }
 
-label { width: 30em; }
-form {
+form.profile-forms {
     line-height: 2.5em;
     label {
         @include columns(2, 11);

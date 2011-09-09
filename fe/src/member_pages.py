@@ -67,7 +67,7 @@ class MemberCreate(BasePage):
         field.button = tf.BUTTON("Create", id='save-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="createmember_form")
+        form  = tf.FORM(Class='profile-forms', id="createmember_form")
         for field in fields:
             form.content = field
 

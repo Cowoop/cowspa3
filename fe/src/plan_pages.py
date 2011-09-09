@@ -37,7 +37,7 @@ class PlanCreate(BasePage):
         field.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="createplan_form", style="display:none")
+        form  = tf.FORM(Class='profile-forms', id="createplan_form", style="display:none")
         for field in fields:
             field.line = tf.BR()
             form.content = field
