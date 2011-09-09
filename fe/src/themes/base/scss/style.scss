@@ -71,6 +71,7 @@ nav {
     @include alpha;
     padding: 0.5em;
     border: 1px solid $main-color;
+    line-height: 2em;
     @include divsizing;
 }
 
@@ -276,9 +277,12 @@ button:hover {
     background: $page-background;
     border: 1px solid $main-color;
     background: $other-text-color;
-    text-shadow: 1px 1px 0px gray;
-    font-weight: bold;
     color: $main-color;
+}
+button[disabled], button[disabled]:hover {
+    color: lighten($other-text-color, 20%);
+    background: lighten($main-color, 20%);
+    border: 1px solid lighten($page-background, 20%);
 }
 .nav-opt {
     font-family: "Monospace";
@@ -327,22 +331,21 @@ nav h2 a:active {background: gray;}
 .content .content-subtitle {
     font-style: italic;
 }
-table { margin: 0 0 0.7em; }
-th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
-caption {font-size: 120%; border-bottom: 1px solid; }
-tr {
-    border-bottom: 1px solid lighten($main-color, 20%);
-    &:nth-child(odd) { background-color: darken($page-background, 10%); }
+table.stripped {
+    margin: 0 0 0.7em;
+    th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
+    caption {font-size: 120%; border-bottom: 1px solid; }
+    tr {
+        border-bottom: 1px solid lighten($main-color, 20%);
+        &:nth-child(odd) { background-color: darken($page-background, 10%); }
+    }
+    th, td {
+        padding: 0 0.3em 0 0.3em;
+        text-align: center;
+        &:nth-child(odd) { background-color: $page-background; }
+    }
 }
-table td, table th { padding: 0 0.3em 0 0.3em; }
-th, td {
-    text-align: center;
-    &:nth-child(odd) { background-color: $page-background; }
-}
-th, td {
-    text-align: center;
-    &:nth-child(odd) { background-color: $page-background; }
-}
+
 .date {font-style: italic;}
 
 .cancel-x {
@@ -413,12 +416,15 @@ form.vform {
         input {
             border: none;
             border-bottom: 1px solid $main-color; 
+            background: none;
         }
         textarea { 
             width: 90%;
             border-bottom: 1px solid $main-color; 
             border-right: 1px solid $main-color; 
+            background: none;
         }
+        input:hover { background: $page-background; }
         #invoicee-info { 
             font-family: "Monospace";
             margin-top: 0.3em;
@@ -434,4 +440,5 @@ form.vform {
     #action-status { font-size: 90%; font-style: italic; }
 }
 
-#ui-datepicker-div, .hidden { display: none; visibility: none } // ugly hack
+.status-success:before { font-size: 120%; content: "☑";}
+#ui-datepicker-div, .hidden { display: none; visibility: none; } // ugly hack

@@ -205,7 +205,7 @@ class MemberProfile(BasePage):
         tariff_load_history = tf.DIV()
         tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#memberships')
 
-        tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em")
+        tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em", Class="stripped")
         tariff_info.caption = tf.CAPTION("Manage Tariffs")
         tariff_info.header = header
 
