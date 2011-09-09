@@ -6,6 +6,8 @@
 @import "compass/utilities/color";
 @import "base";
 
+$total-cols: 14;
+
 @mixin divsizing {
     box-sizing:border-box;
     -moz-box-sizing:border-box;
@@ -29,6 +31,11 @@ body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; b
     font-family: sans-serif;
 }
 
+h2 { font-size: 120%; }
+h3 { font-weight: bold; }
+
+.note { font-style: italic; font-size: 90%; }
+
 html select { 
     padding: 0.2em;
     background: lighten($main-color, 5%);
@@ -40,8 +47,6 @@ html select {
 a { text-shadow: 1px 0px 2px $other-text-color;
     font-family:  sans-serif;
 }
-
-.hidden { display: none; visibility: none }
 
 .topbar {
     text-align: right; 
@@ -57,6 +62,7 @@ a { text-shadow: 1px 0px 2px $other-text-color;
     @include container;
     // @include susy-grid-background;
     margin-top: 3em;
+    // width: 68em;
     @include divsizing;
 }
 
@@ -84,11 +90,11 @@ button#new-plan {float: right; margin-top: 0.5em;}
 }
 
 div[role="main"] {   
-    @include columns(9);
+    @include columns(11);
     @include omega;
     @include divsizing;
     .content {
-        @include columns(9,9);
+        @include columns(11,11);
         @include omega;
         @include divsizing;
         @include pad(0.3, 0.3);
@@ -104,8 +110,8 @@ div[role="main"] {
         @include full;
         @include divsizing;
         .search-label { 
-            @include columns(4, 9);
-            padding-left: 1em;
+            @include columns(4, 11);
+            padding-bottom: 1em;
         }
         .search-input {
             //@include columns(5, 9);
@@ -122,17 +128,17 @@ li.as-result-item.active { background: $main-color;}
 input, textarea, select, .uneditable-input { color: $main-color; font-size: 90%; }
 
 .field-container {
-    @include columns(9);
+    @include columns(11);
     text-align: left;
 
     .field-name {
         text-align: right;
-        @include columns(3, 9);
+        @include columns(3, 11);
         @include divsizing;
     }
     .field-value {
         font-weight: bold;
-        @include columns(5, 9);
+        @include columns(5, 11);
         // @include omega;
         @include divsizing;
     }
@@ -187,20 +193,29 @@ ul.as-selections {
 }
 ul.as-selections li.as-original { width: 100%; height: 100%; overflow: hidden; margin: 0; }
 
-#content form {
+input { 
+    text-align: left;
+    font-size: 1.1em;
+    height: 1.5em;
+    background: darken($page-background, 5%);
+    border: 1px solid lighten($main-color, 10%);
+    @include divsizing;
+}
+
+textarea { 
+    text-align: left;
+    font-size: 1.1em;
+    background: darken($page-background, 5%);
+    border: 1px solid lighten($main-color, 10%);
+    @include divsizing;
+}
+
+form.profile-forms {
     line-height: 2.5em;
     label {
-        @include columns(2, 9);
+        @include columns(2, 11);
         font-size: 0.9em;
         text-align: right;
-    }
-    input { 
-        text-align: left;
-        font-size: 1.1em;
-        height: 1.5em;
-        background: darken($page-background, 5%);
-        border: 1px solid lighten($main-color, 10%);
-        @include divsizing;
     }
     .input-section {
         @include divsizing;
@@ -247,6 +262,13 @@ button {
     border: 1px solid $page-background;
     @include box-shadow(0 0 6px rgba(0,0,0,0.5));
 }
+
+.big-button {
+    @extend button;
+    font-size: 1.2em;
+    margin: 1em;
+}
+
 .submit-btns {
     text-align: center;
 }
@@ -305,6 +327,7 @@ nav h2 a:active {background: gray;}
 .content .content-subtitle {
     font-style: italic;
 }
+table { margin: 0 0 0.7em; }
 th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
 caption {font-size: 120%; border-bottom: 1px solid; }
 tr {
@@ -337,7 +360,7 @@ form.vform {
     }
     .vform-field {
         border-bottom: 1px solid darken($page-background, 30%);
-        margin-bottom: 0.2em;
+        padding-bottom: 0.2em;
     }
     .vform-field .vform-input {
         height: 120%;
@@ -347,4 +370,68 @@ form.vform {
         font-style: italic;
         display: block;
     }
+    .buttons {
+        text-align: center;
+    }
 }
+
+#invoice-form-container {
+    @include columns(11, 11);
+    // @include omega;
+    border: 1px solid $main-color;
+    margin-top: 1em; 
+    #header {
+        @include columns(11, 11);
+        letter-spacing: 1em;
+        background: $main-color;
+        color: $other-text-color;
+        text-align: center;
+    }
+    #invoice-content {
+        margin-top: 0.3em;
+        @include columns(11, 11);
+        @include divsizing;
+        @include pad(0.2, 0.2);
+        @include omega;
+        #col1 { 
+            @include columns(5, 11);
+            @include divsizing;
+            div { width: 100%; }
+            input {width: 90%;}
+        }
+        #col2 {
+            @include columns(6, 11);
+            @include omega;
+            @include divsizing;
+            margin: 0; // hack
+            div { width: 100%; }
+            input {width: 100%;}
+            td {text-align: right;}
+            tr {border: none;}
+        }
+        .invoice-form-notice { @include full; }
+        input {
+            border: none;
+            border-bottom: 1px solid $main-color; 
+        }
+        textarea { 
+            width: 90%;
+            border-bottom: 1px solid $main-color; 
+            border-right: 1px solid $main-color; 
+        }
+        #invoicee-info { 
+            font-family: "Monospace";
+            margin-top: 0.3em;
+            border: 1px solid $main-color; 
+        }
+    }
+}
+
+.invoice-buttons {
+    text-align: center;
+    margin: 1em;
+    border-top: 1px solid $main-color;
+    #action-status { font-size: 90%; font-style: italic; }
+}
+
+#ui-datepicker-div, .hidden { display: none; visibility: none } // ugly hack
