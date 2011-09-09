@@ -111,6 +111,9 @@ class MemberResource:
             ms['ends'] =  ms['ends'].strftime('%b %d, %Y') if ms['ends'] else '-'
         return dict(profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
+    def contact(self, member_id):
+        return contact_store.get_by(dict(id=member_id))[0]
+
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
         if attrname == 'state':
