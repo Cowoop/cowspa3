@@ -72,7 +72,12 @@ $(document).ready(function() {
         });
     $("#preferences_edit_form #save-btn").click(function(){
         var params = { 'member_id' : profile_id};
+        var prev_theme = "/"+result['result']['preferences']['theme'].toLowerCase()+"/";
         result['result']['preferences'] = save("preferences", "member.update", params);
+        var new_theme = "/"+result['result']['preferences']['theme'].toLowerCase()+"/";
+        var location = window.location.toString();
+        if(prev_theme != new_theme)
+            window.location = location.replace(prev_theme, new_theme);
         });
     $("#preferences_view_form #edit-link").click(function(){
         edit("preferences");
