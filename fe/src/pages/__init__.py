@@ -79,7 +79,7 @@ class SuperuserCreate(fe.bases.CSAnonPage):
         field.button = tf.BUTTON("Create", id='save-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(id="createsuper_form")
+        form  = tf.FORM(id="createsuper_form", Class="profile-forms")
         for field in fields:
             field.line = tf.BR()
             form.content = field
