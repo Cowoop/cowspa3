@@ -28,7 +28,8 @@ $(document).ready(function() {
         profile_id = (window.location.search).substring(4);
         path = window.location.pathname+window.location.search;
         $(".navlink-opt-item").each(function () {
-            $(this).attr('href', path + '#' + $(this).attr('href').split('#')[1]);
+            if($(this).attr('href'))
+                $(this).attr('href', path + '#' + $(this).attr('href').split('#')[1]);
         });
         $("#navlink-aboutme").text("About");
         $("#navlink-social").text("Social");

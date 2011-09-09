@@ -217,6 +217,7 @@ class Plan(PGStore):
 
 class Subscription(PGStore):
     create_sql = """
+    id SERIAL NOT NULL UNIQUE,
     subscriber_id INTEGER NOT NULL,
     plan_id INTEGER NOT NULL,
     plan_name TEXT,
