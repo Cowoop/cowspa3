@@ -27,10 +27,16 @@ $(document).ready(function() {
     {
         profile_id = (window.location.search).substring(4);
         path = window.location.pathname+window.location.search;
-        $(".navlink-opt-item").each(function () {
+        submenu = ['navlink-aboutme', 'navlink-memberships', 'navlink-account', 'navlink-contact', 'navlink-social', 'navlink-preferences'];
+        for(sub in submenu)
+        {
+            if($("#"+submenu[sub]).attr('href'))
+                $("#"+submenu[sub]).attr('href', path + '#' + $("#"+submenu[sub]).attr('href').split('#')[1]);
+        }
+        /*$(".nav-opt-item").each(function () {
             if($(this).attr('href'))
                 $(this).attr('href', path + '#' + $(this).attr('href').split('#')[1]);
-        });
+        });*/
         $("#navlink-aboutme").text("About");
         $("#navlink-social").text("Social");
     }
