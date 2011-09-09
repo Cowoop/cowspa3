@@ -24,10 +24,13 @@ def search_members():
     cowspa.tr_start()
     if auth_token:
         userlib.set_context(auth_token)
-    params = {"jsonrpc": "2.0", "method": "member.search", "params": {'q':request.args['q']}, "id": 1}
+    q = request.args.get('q') or request.args.get('term')
+    params = {"jsonrpc": "2.0", "method": "member.search", "params": {'q':q}, "id": 1}
     data = cowspa.mapper(params)
     cowspa.tr_complete()
     if 'result' in data:
+        for item in data['result']:
+            item['label'] = item['name']
         return simplejson.dumps(data['result'])
     else:
         return jsonify(data)
@@ -38,7 +41,8 @@ def search_invoices():
     cowspa.tr_start()
     if auth_token:
         userlib.set_context(auth_token)
-    params = {"jsonrpc": "2.0", "method": "invoice.search", "params": {'q':request.args['q']}, "id": 1}
+    q = request.args.get('q') or request.args.get('term')
+    params = {"jsonrpc": "2.0", "method": "invoice.search", "params": {'q': q}, "id": 1}
     data = cowspa.mapper(params)
     cowspa.tr_complete()
     if 'result' in data:
