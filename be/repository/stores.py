@@ -265,6 +265,7 @@ class Usage(PGStore):
     id SERIAL NOT NULL UNIQUE,
     resource_id INTEGER,
     resource_name TEXT,
+    rate REAL,
     quantity REAL,
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),

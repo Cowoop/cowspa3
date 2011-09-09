@@ -5,12 +5,11 @@ usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 
-    def add(self, resource_name, calculated_cost, cost, tax_dict, member, start_time, invoice=None, resource_id=None, end_time=None):
-
+    def new(self, resource_name, rate, quantity, calculated_cost, member, start_time, cost=None, tax_dict={}, invoice=None, resource_id=None, end_time=None):
+        if not cost: cost = calculated_cost
         created = datetime.datetime.now()
-        if not end_time:
-            end_time = start_time
-        data = dict(resource_id=resource_id, resource_name=resource_name, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
+        if not end_time: end_time = start_time
+        data = dict(resource_id=resource_id, resource_name=resource_name, rate=rate, quantity=quantity, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
         usage_id = usage_store.add(**data)
         return usage_id
 

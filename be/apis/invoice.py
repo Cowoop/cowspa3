@@ -1,5 +1,7 @@
 import datetime
+import decimal
 import be.repository.access as dbaccess
+import be.apis.usage as usagelib
 import operator
 
 invoice_store = dbaccess.stores.invoice_store
@@ -8,19 +10,19 @@ member_store = dbaccess.stores.member_store
 
 class InvoiceCollection:
 
-    def new(self, member, usages, state=0, number=None, sent=None, invoicee_details=None, cost=None, tax_dict=None):
-        """
-        """
-        usage_periods = usage_store.get_many(usages, ['start_time', 'end_time'])
-        start_time = min(usage_periods, key=operator.itemgetter('start_time'))['start_time']
-        end_time = max(usage_periods, key=operator.itemgetter('end_time'))['end_time']
+    def new(self, issuer, member, po_number, new_usages, start_date, end_date, state=0):
+        usage_ids = []
+        for usage in new_usages:
+            usage['member'] = member
+            usage_ids.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
-        data = dict(member=member, usages=usages, number=number, sent=sent, invoicee_details=invoicee_details, cost=cost, tax_dict=tax_dict, start_time=start_time, end_time=end_time, state=state, created=created)
+        cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
+        data = dict(member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
-        usage_store.update_many(usages, **mod_data)
+        usage_store.update_many(usage_ids, **mod_data)
 
         return invoice_id
 
@@ -38,7 +40,7 @@ class InvoiceCollection:
             return usage_store.update_many(tuple(usages), **mod_data)
 
         return False
-        
+
     def search(self, q, options={'mybizplace': False}, limit=5):
         """
         q: id OR first name or last name or both of invoicee.
