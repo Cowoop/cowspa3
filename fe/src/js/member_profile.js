@@ -35,7 +35,7 @@ $(document).ready(function() {
     }
     else
         profile_id = $.cookie('user_id');
-    params = {'member_id': profile_id};
+    var params = {'member_id': profile_id};
     jsonrpc('member.profile', params, success, error);
     
     $('#about_edit_form #save-btn').click(function(){
