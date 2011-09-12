@@ -59,7 +59,7 @@ else
         echo "   [${txtgrn}oke${txtrst}]  : download"
     else
         echo "   downloading"
-        # curl -# -C - -o $download "http://wkhtmltopdf.googlecode.com/files/"$wkhtmltopdf_filename"-static-i386.tar.bz2"
+        curl -# -C - -o $download "http://wkhtmltopdf.googlecode.com/files/"$wkhtmltopdf_filename"-static-i386.tar.bz2"
     fi
     
     # Extracing
@@ -96,7 +96,7 @@ else
         echo "   [${txtgrn}oke${txtrst}]  : download"
     else
         echo "   downloading"
-        # curl -# -C - -o $download "http://wkhtmltopdf.googlecode.com/files/"$libwkhtmltox_filename"-i386.tar.bz2"
+        curl -# -C - -o $download "http://wkhtmltopdf.googlecode.com/files/"$libwkhtmltox_filename"-i386.tar.bz2"
     fi
     
     # Extracing
@@ -123,7 +123,7 @@ fi
 # Updating libs for linux
 export LD_LIBRARY_PATH=lib:$LD_LIBRARY_PATH
 
-ldconfig
+sudo ldconfig
 
 # Installing py-wkhtmltox
 # Download
