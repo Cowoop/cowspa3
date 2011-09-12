@@ -2,12 +2,21 @@ import datetime
 import decimal
 import be.repository.access as dbaccess
 import be.apis.usage as usagelib
+import be.templates.invoice
 import operator
-import be.apis.activities as activitylib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
+
+def create_invoice_pdf(invoice_id):
+    invoice = invoice_store.get(invoice_id)
+    usages = usage_store.get_many(invoice.usages)
+    data = (invoice=invoice, usages=usages)
+    html = be.templates.invoice.template(data)
+    pdf = commonlib.helpers.html2pdf()
+    return pdf
+
 
 class InvoiceCollection:
 
@@ -24,10 +33,9 @@ class InvoiceCollection:
 
         mod_data = dict(invoice=invoice_id)
         usage_store.update_many(usage_ids, **mod_data)
-        
+
         data = dict(name=member_store.get(member, ['display_name']))
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
-        
         return invoice_id
 
     def delete(self, invoice_id):
