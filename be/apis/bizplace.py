@@ -1,6 +1,7 @@
 import datetime
 import be.repository.access as dbaccess
 import be.apis.role as rolelib
+import be.apis.activities as activitylib
 
 biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -13,6 +14,10 @@ class BizplaceCollection:
         bizplace_ref = bizplace_store.ref(bizplace_id)
         
         rolelib.assign(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_ref)
+        
+        data = dict(name=name, id=bizplace_id)
+        activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)
+        
         return bizplace_id
 
     def list(self):
@@ -46,6 +51,11 @@ class BizplaceResource:
 
     def update(self, bizplace_id, **mod_data):
         bizplace_store.update(bizplace_id, **mod_data)
+        
+        bizplace_name = bizplace_store.get(bizplace_id, fields=['name'])
+        data = dict(id=bizplace_id, name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
+        activity_id = activitylib.add('bizplace_management', 'bizplace_updated', data)
+
 
     def get(self, bizplace_id, attrname):
         if not attrname in self.get_attributes: return

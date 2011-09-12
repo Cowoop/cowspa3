@@ -1,5 +1,6 @@
 import datetime
 import be.repository.access as dbaccess
+import be.apis.activities as activitylib
 
 biz_store = dbaccess.biz_store
 bizplace_store = dbaccess.bizplace_store
@@ -12,6 +13,9 @@ class PlanCollection:
         created = datetime.datetime.now()
         data = dict(name=name, bizplace=bizplace_id, description=description, created=created)
         plan_id = plan_store.add(**data)
+        
+        data = dict(name=name, id=plan_id, bizplace=bizplace_store.get(bizplace_id, ['name']))
+        activity_id = activitylib.add('plan_management', 'plan_created', data, created)
         return plan_id
 
     def delete(self, plan_id):

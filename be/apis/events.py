@@ -73,6 +73,49 @@ class ResourceCreated(BaseEvent):
     category = "resource_management"
     msg_tmpl = "New resource %(name)s created by %(actor_name)s"
 
+class BizplaceCreated(BaseEvent):
+    name = "bizplace_created"
+    category = "bizplace_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + " New place <a href='./bizplace/profile?id=%(id)s#about'>%(name)s</a> created by %(actor_name)s."
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+
+class BizplaceUpdated(BaseEvent):
+    name = "bizplace_updated"
+    category = "bizplace_management"
+    def _msg_tmpl(self):
+        if self.actor == self.data['id']:
+            tmpl = "You have updated %(name)s place's profile."
+        else:
+            tmpl = "%(actor_name)s has updated %(name)s place's profile."
+        return tmpl
+    def _access(self):
+        if self.actor  == self.data['id']:
+            access = [member_store.ref(self.actor)]
+        else:
+            access = [member_store.ref(self.actor), member_store.ref(self.data['id'])]
+        return access
+
+class PlanCreated(BaseEvent):
+    name = "plan_created"
+    category = "plan_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + " New tariff %(name)s created by %(actor_name)s in %(bizplace)s."
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+
+class InvoiceCreated(BaseEvent):
+    name = "invoice_created"
+    category = "invoice_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + " Invoice issued for %(name)s by %(actor_name)s."
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+        
 class Categories(dict):
     """
     subclassing dict to guarantee uniqueness of event name
@@ -85,7 +128,7 @@ class Categories(dict):
         self[event.category][event.name] = event
     def eventnames_for_role(self, roles):
         return tuple(itertools.chain(*(tuple(role_categories[role].values()) for role in roles)))
-
+        
 all_events = [o for o in globals().values() if inspect.isclass(o) and issubclass(o, BaseEvent)]
 categories = Categories()
 
@@ -96,10 +139,12 @@ for event in all_events:
 role_categories = dict(
     admin = dict(
         member_management = ['member_created', 'member_updated'],
+        bizplace_management = ['bizplace_created', 'bizplace_updated'],
         security = [],
         resource_management = ['resource_created'] ),
     host = dict(
         member_management = ['member_created', 'member_updated'],
+        bizplace_management = ['bizplace_created'],
         security = [],
         resource_management = ['resource_created'] ),
     member = dict(
