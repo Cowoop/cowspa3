@@ -1,5 +1,7 @@
+import os
 import collections
 import base64, random, hashlib
+import wkhtmltox
 
 random_key_gen = None
 
@@ -45,3 +47,12 @@ def setdefaultencoding():
     import sys
     reload(sys)
     sys.setdefaultencoding('utf-8')
+
+def html2pdf(html, pdf_path):
+    html_path = '/tmp/%s.html' % os.path.basename(pdf_path)
+    open(html_path, 'w').write(html)
+    pdf = wkhtmltox.Pdf()
+    pdf.set_global_setting('out', 'one.pdf')
+    pdf.add_page({'page': html_path})
+    pdf.convert()
+    return True

@@ -24,7 +24,7 @@ class New(BasePage):
 
     def content(self):
         container = tf.DIV(id='invoice-form-container')
-        container.header = tf.DIV("INVOICE", id="header")
+        container.header = tf.DIV("INVOICE", id="invoice-header")
         content = tf.DIV(id='invoice-content')
         container.content = content
 

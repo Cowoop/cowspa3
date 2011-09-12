@@ -14,12 +14,17 @@ $total-cols: 14;
     -webkit-box-sizing:border-box;
 }
 
+@mixin reverse-colors {
+    color: $other-text-color;
+    background: $main-color;
+}
+
 * {
     color: $main-color; 
     font-family: sans-serif;
 } /* #222 is good too */
 
-div { @include divsizing; }
+* { @include divsizing; }
 
 html { 
     margin: 0; padding: 0;
@@ -27,9 +32,11 @@ html {
     background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);
 }
 
-body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 1.8em; 
-    font-family: sans-serif;
-}
+// body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 1.8em; 
+//    font-family: sans-serif;
+// }
+
+body { line-height: 140%; font-family: sans-serif;}
 
 h2 { font-size: 120%; }
 h3 { font-weight: bold; }
@@ -51,8 +58,7 @@ a { text-shadow: 1px 0px 2px $other-text-color;
 .topbar {
     text-align: right; 
     width: 100%; 
-    background: $main-color;
-    color: $other-text-color;
+    @include reverse-colors;
     position: fixed;
     opacity: 1;
     top: 0; left: 0; right: 0;
@@ -62,7 +68,7 @@ a { text-shadow: 1px 0px 2px $other-text-color;
     @include container;
     // @include susy-grid-background;
     margin-top: 3em;
-    // width: 68em;
+    width: 73em;
     @include divsizing;
 }
 
@@ -383,11 +389,10 @@ form.vform {
     // @include omega;
     border: 1px solid $main-color;
     margin-top: 1em; 
-    #header {
+    #invoice-header {
         @include columns(11, 11);
         letter-spacing: 1em;
-        background: $main-color;
-        color: $other-text-color;
+        @include reverse-colors;
         text-align: center;
     }
     #invoice-content {
@@ -409,8 +414,12 @@ form.vform {
             margin: 0; // hack
             div { width: 100%; }
             input {width: 100%;}
-            td {text-align: right;}
+            td {
+                text-align: right;
+                padding: 0.2em 0.3em;
+                }
             tr {border: none;}
+            padding: 0.5em;
         }
         .invoice-form-notice { @include full; }
         input {
