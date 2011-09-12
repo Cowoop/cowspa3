@@ -7,7 +7,7 @@ function login() {
         }
     function success(resp) {
         $('#login-msg').html("<big>☑</big> Login is successful.");
-        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme']+"/dashboard";
+        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme'].toLowerCase()+"/dashboard";
         };
     function error() {
         $('#login-msg').html("<big>Authentication Error. Try again</big>");
