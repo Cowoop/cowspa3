@@ -16,6 +16,8 @@ import fe.src.bizplace_pages as bizplacelib
 import fe.src.plan_pages as planlib
 import fe.src.resource_pages as resourcelib
 
+option_no_themes = '--nothemes' in sys.argv
+
 pathjoin = os.path.join
 
 pubroot = 'pub'
@@ -40,7 +42,7 @@ def compile_scss(prjdir):
     opts = "-q -r susy -u susy --relative-assets --sass-dir scss --css-dir css" % locals()
     project_cmd = compass_bin + " create %(prjdir)s %(opts)s" % locals()
     exec_cmd(project_cmd)
-    compile_cmd = compass_bin + " compile %(prjdir)s" % locals()
+    compile_cmd = compass_bin + " compile %(prjdir)s -s compressed" % locals()
     exec_cmd(compile_cmd)
 
 def themedict(themedir):
@@ -177,7 +179,7 @@ def main():
     if not os.path.exists(pubroot):
         os.makedirs(pubroot)
     copy_contribs()
-    build_themes()
+    if not option_no_themes: build_themes()
     build_scripts()
     build_all()
 

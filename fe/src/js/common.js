@@ -1,3 +1,7 @@
+// Globals
+current_bizplace = $.cookie("bizplace");
+//
+
 $.webshims.setOptions('forms', {
     overrideMessages: true
 });
@@ -60,30 +64,35 @@ function init_nav() {
     set_current_opt();
 };
 //******************************Load List of Bizplaces**************************************************
-    function success(resp){
-        if(resp['result'].length == 0)
-            $("#bizplaces").hide();
+
+function success(resp){
+    if(resp['result'].length == 0) {
+        $("#bizplaces").hide();
+    }
+    else
+    {
+        $("#bizplaces").show();
+        for(bizplace in resp['result'])
+            $("#bizplaces").append("<option value="+resp['result'][bizplace]['bizplace_id']+">"+resp['result'][bizplace]['bizplace_name']+"</option>");
+        if(current_bizplace)
+            jQuery("#bizplaces option[value='" + current_bizplace + "']").attr('selected', 'selected');
         else
-        {
-            $("#bizplaces").show();
-            for(bizplace in resp['result'])
-                $("#bizplaces").append("<option value="+resp['result'][bizplace]['bizplace_id']+">"+resp['result'][bizplace]['bizplace_name']+"</option>");
-            if($.cookie("bizplace"))
-                jQuery("#bizplaces option[value='"+$.cookie("bizplace")+"']").attr('selected', 'selected');
-            else
-                $.cookie("bizplace", $("#bizplaces").find('option:selected').val());
-        }
-        $('#bizplaces').change(function(){
-	        var val = $("#bizplaces").find('option:selected').val();
-	        $.cookie("bizplace", val);
-	        window.location.reload();
-	    });
+            current_bizplace = $("#bizplaces").find('option:selected').val();
+            $.cookie("bizplace", current_bizplace);
     }
-    function error(){
-    }
-    params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
-    if(params['user_id'])
-        jsonrpc('users.bizplace.list', params, success, error); 
+    $('#bizplaces').change(function() {
+        var val = $("#bizplaces").find('option:selected').val();
+        $.cookie("bizplace", val);
+        window.location.reload();
+    });
+}
+
+function error(){
+}
+params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
+if(params['user_id'])
+    jsonrpc('users.bizplace.list', params, success, error); 
+
      
 //******************************************End**********************************************************
   
