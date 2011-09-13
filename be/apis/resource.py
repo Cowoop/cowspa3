@@ -14,8 +14,8 @@ class ResourceCollection:
         data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type, time_based=time_based, quantity_unit=quantity_unit)
         res_id = resource_store.add(**data)
 
-        data = dict(name=name, owner=owner, user_id=env.context.user_id)
-        activity_id = activitylib.add('ResourceManagement', 'ResourceCreated', env.context.user_id, data, created)
+        #data = dict(name=name, bizplace=dbaccess.bizplace_store.get(owner, ['name']), user_id=env.context.user_id)
+        #activity_id = activitylib.add('resource_management', 'resource_created', data, created)
             
         return res_id
 

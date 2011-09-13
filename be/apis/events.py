@@ -78,7 +78,7 @@ class BizplaceCreated(BaseEvent):
     category = "bizplace_management"
     def _msg_tmpl(self):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
-        return created_date + " New place <a href='./bizplace/profile?id=%(id)s#about'>%(name)s</a> created by %(actor_name)s."
+        return created_date + " New place %(name)s created by %(actor_name)s."
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
 
@@ -103,7 +103,7 @@ class PlanCreated(BaseEvent):
     category = "plan_management"
     def _msg_tmpl(self):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
-        return created_date + " New tariff %(name)s created by %(actor_name)s in %(bizplace)s."
+        return created_date + " New tariff %(name)s created by %(actor_name)s for %(bizplace)s."
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
 
