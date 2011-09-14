@@ -4,6 +4,7 @@ import be.repository.access as dbaccess
 import be.apis.usage as usagelib
 import be.templates.invoice
 import operator
+import os
 import commonlib.helpers
 import be.apis.activities as activitylib
 
@@ -12,15 +13,15 @@ usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
 bizplace_store = dbaccess.stores.bizplace_store
 
-def create_invoice_pdf(invoice_id, member_id, issuer):
+def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
     usages = usage_store.get_many(invoice.usages)
-    bizplace = bizplace_store.get(issuer)
-    member = member_store.get(member_id)
+    bizplace = bizplace_store.get(dbaccess.ref2id(invoice.issuer))
+    member = member_store.get(invoice.member)
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member) 
     html = be.templates.invoice.template(data)
-    html_path = '%s%s.html' % ("be/repository/invoices/", invoice_id)
-    pdf_path = '%s%s.pdf' % ("be/repository/invoices/", invoice_id)
+    html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
+    pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
     open(html_path, 'w').write(html)
     pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return pdf
@@ -28,7 +29,7 @@ def create_invoice_pdf(invoice_id, member_id, issuer):
 
 class InvoiceCollection:
 
-    def new(self, issuer, member, po_number, new_usages, start_date, end_date, state=0):
+    def new(self, issuer, member, po_number, new_usages, start_date, end_date, notice, state=0):
         usage_ids = []
         for usage in new_usages:
             usage['member'] = member
@@ -36,7 +37,7 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
-        data = dict(issuer=bizplace_store.ref(issuer), member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created)
+        data = dict(issuer=bizplace_store.ref(issuer), member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
@@ -45,7 +46,7 @@ class InvoiceCollection:
         data = dict(name=member_store.get(member, ['display_name']), issuer=bizplace_store.get(issuer, ['name']))
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
         
-        create_invoice_pdf(invoice_id, member, issuer)
+        create_invoice_pdf(invoice_id)
         
         return invoice_id
 
@@ -93,9 +94,12 @@ class InvoiceResource:
     def send(self, invoice_id):
         """
         """
-        member = invoice_store.get(invoice_id, ['member'])
+        invoice = invoice_store.get(invoice_id, ['member', 'issuer'])
+        member = invoice['member']
+        issuer_email = bizplace_store.get(dbaccess.ref2id(invoice['issuer']), ['email'])
         email = member_store.get(member, ['email'])
-        env.mailer.send(email, subject='Invoice Details', rich='<b>See the attached Pdf.</b>', plain='', cc=[], bcc=[], attachment='')
+        attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
+        env.mailer.send(email, subject='Invoice Details', rich='<b>See the attached Pdf.</b>', plain='', cc=[issuer_email], bcc=[], attachment=attachment)
 
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()

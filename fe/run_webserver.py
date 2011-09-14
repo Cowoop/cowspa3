@@ -52,7 +52,7 @@ def search_invoices():
 
 @app.route('/invoices/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoices(oid, format):
-    path = "be/repository/invoices/%s.%s" % (oid, format)
+    path = "be/repository/invoices/invoice_%s.%s" % (oid, format)
     if format == "pdf":
         content_type = "application/pdf"
     else:

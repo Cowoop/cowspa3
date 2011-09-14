@@ -59,7 +59,7 @@ $('#invoice-save').click( function () {
         delete o.unit;
         new_usages.push(o)
     });
-    var params = {issuer: current_bizplace, member: inv_member_id, po_number: $('#po_number').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
+    var params = {issuer: current_bizplace, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
     jsonrpc('invoice.new', params, on_create_invoice, on_create_invoice_failure);
 });
 $('#invoice-view').click(function () {
@@ -68,4 +68,14 @@ $('#invoice-view').click(function () {
         width: 500,
         height: 500
     });
+});
+$('#invoice-send').click(function () {
+    function on_send_invoice() {
+        $('#inv-action-status').text('Invoice sent successfully');
+    };
+    function on_send_invoice_failure() {
+        $('#inv-action-status').text('failed to send invoice');
+    };
+    var params = {invoice_id : inv_id};
+    jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);
 });

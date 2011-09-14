@@ -294,7 +294,9 @@ class Invoice(PGStore):
     tax_dict bytea,
     start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    state INTEGER default 0 NOT NULL
+    state INTEGER default 0 NOT NULL,
+    notice TEXT,
+    po_number TEXT
     """
     pickle_cols = ['invoicee_details', 'tax_dict']
 

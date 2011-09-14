@@ -25,6 +25,8 @@ def template(data):
     doc.body.top.invoice.date = tf.DIV("Date "+data.invoice.created.strftime('%d %b %Y'))
     doc.body.top.invoice.period = tf.DIV("Period "+data.invoice.start_time.strftime('%d %b %Y')+" to "+data.invoice.end_time.strftime('%d %b %Y'))
     
+    doc.body.notice = tf.DIV(data.invoice.notice)
+    
     usage_summary = tf.DIV()
     usages = tf.TABLE(id='usages_summary')
     usages.caption = tf.CAPTION("Usage Summary")

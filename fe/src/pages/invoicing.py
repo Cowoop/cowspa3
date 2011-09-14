@@ -63,7 +63,7 @@ class New(BasePage):
 
         content.notice = tf.DIV(Class="invoice-form-notice")
         content.notice.label = tf.DIV("Optional: Notice/Annoucement (only for this invoice)", Class="note")
-        content.notice.text = tf.TEXTAREA(name="message", placeholder="")
+        content.notice.text = tf.TEXTAREA(name="notice", id="notice", placeholder="")
 
         usages = tf.TABLE(id='usages', Class="stripped")
         usages.caption = tf.CAPTION("Usages")
