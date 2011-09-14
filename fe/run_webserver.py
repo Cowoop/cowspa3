@@ -92,7 +92,7 @@ def static(path):
     return file(fspath).read(), 200, {'Content-Type': content_type +'; charset=utf-8'}
 
 if __name__ == '__main__':
-    #app.run('0.0.0.0',debug=True) # Threaded
+    app.run('0.0.0.0',debug=True) # Threaded
     from gevent.wsgi import WSGIServer
 
     http_server = WSGIServer(('', 5000), app)
