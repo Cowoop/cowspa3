@@ -44,8 +44,9 @@ function on_create_invoice(response) {
     $('#inv-action-status').text('Invoice creation successful');
     $('#inv-action-status').attr('class', 'status-success');
     $('#invoice-save').attr("disabled", true);
-    $('#invoice-pdf').removeAttr("disabled");
+    $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
+    $('#view_invoice_window #invoice-iframe').attr('src', '/invoices/'+inv_id+'/html');
 };
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
@@ -60,4 +61,11 @@ $('#invoice-save').click( function () {
     });
     var params = {issuer: current_bizplace, member: inv_member_id, po_number: $('#po_number').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
     jsonrpc('invoice.new', params, on_create_invoice, on_create_invoice_failure);
+});
+$('#invoice-view').click(function () {
+    $('#view_invoice_window').dialog({ 
+        title: "Invoice", 
+        width: 500,
+        height: 500
+    });
 });

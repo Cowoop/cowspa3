@@ -4,17 +4,25 @@ import be.repository.access as dbaccess
 import be.apis.usage as usagelib
 import be.templates.invoice
 import operator
+import commonlib.helpers
+import be.apis.activities as activitylib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
+bizplace_store = dbaccess.stores.bizplace_store
 
-def create_invoice_pdf(invoice_id):
+def create_invoice_pdf(invoice_id, member_id, issuer):
     invoice = invoice_store.get(invoice_id)
     usages = usage_store.get_many(invoice.usages)
-    data = (invoice=invoice, usages=usages)
+    bizplace = bizplace_store.get(issuer)
+    member = member_store.get(member_id)
+    data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member) 
     html = be.templates.invoice.template(data)
-    pdf = commonlib.helpers.html2pdf()
+    html_path = '%s%s.html' % ("be/repository/invoices/", invoice_id)
+    pdf_path = '%s%s.pdf' % ("be/repository/invoices/", invoice_id)
+    open(html_path, 'w').write(html)
+    pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return pdf
 
 
@@ -28,14 +36,17 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
-        data = dict(member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created)
+        data = dict(issuer=bizplace_store.ref(issuer), member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
         usage_store.update_many(usage_ids, **mod_data)
 
-        data = dict(name=member_store.get(member, ['display_name']))
+        data = dict(name=member_store.get(member, ['display_name']), issuer=bizplace_store.get(issuer, ['name']))
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
+        
+        create_invoice_pdf(invoice_id, member, issuer)
+        
         return invoice_id
 
     def delete(self, invoice_id):

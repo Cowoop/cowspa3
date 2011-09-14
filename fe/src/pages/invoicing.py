@@ -42,14 +42,14 @@ class New(BasePage):
         tr = tf.TR()
         cell1 = tf.TD("Start date")
         cell2 = tf.TD()
-        cell2.input = tf.INPUT(id="inv-end_date", type="date")
+        cell2.input = tf.INPUT(id="inv-start_date", type="date")
         tr.cells = [cell1, cell2]
         info.tr = tr
 
         tr = tf.TR()
         cell1 = tf.TD("End date")
         cell2 = tf.TD()
-        cell2.input = tf.INPUT(id="inv-start_date", type="date")
+        cell2.input = tf.INPUT(id="inv-end_date", type="date")
         tr.cells = [cell1, cell2]
         info.tr = tr
 
@@ -100,11 +100,15 @@ class New(BasePage):
         invoice_buttons = tf.DIV(Class="invoice-buttons")
         invoice_buttons.status = tf.DIV("Invoice is not saved yet.", id="inv-action-status")
         invoice_buttons.buttons = [ tf.BUTTON("Save", Class="big-button", id="invoice-save"), '→',
-            tf.BUTTON("View (PDF)", Class="big-button", disabled="disabled", id="invoice-pdf"), '→',
+            tf.BUTTON("View", Class="big-button", disabled="disabled", id="invoice-view"), '→',
             tf.BUTTON("Send", Class="big-button", disabled="disabled", id="invoice-send")]
 
+        view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
+        view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="http://www.google.com", width="500", height="500")
+        
         content.new = tf.BUTTON("Add usage", id="new-usage-button")
         content.buttons = invoice_buttons
+        content.view_invoice_dialog = view_invoice_dialog 
         content.script = tf.SCRIPT(open("fe/src/js/new_invoice.js").read(), escape=False)
 
         return container

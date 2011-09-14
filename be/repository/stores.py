@@ -186,7 +186,8 @@ class BizPlace(PGStore):
     holidays smallint[],
     default_plan INTEGER,
     taxes BYTEA,
-    currency TEXT
+    currency TEXT,
+    bank_details TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
     pickle_cols = ['taxes']
@@ -284,6 +285,7 @@ class Invoice(PGStore):
     id SERIAL NOT NULL UNIQUE,
     number INTEGER UNIQUE,
     member INTEGER,
+    issuer TEXT,
     usages INTEGER[],
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     sent TIMESTAMP WITHOUT TIME ZONE,

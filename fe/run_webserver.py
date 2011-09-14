@@ -50,6 +50,15 @@ def search_invoices():
     else:
         return jsonify(data)
 
+@app.route('/invoices/<oid>/<format>', methods=['GET', 'POST'])
+def get_invoices(oid, format):
+    path = "be/repository/invoices/%s.%s" % (oid, format)
+    if format == "pdf":
+        content_type = "application/pdf"
+    else:
+        content_type = "text/html"
+    return file(path).read(), 200, {'Content-Type': content_type +'; charset=utf-8', 'Content-Disposition': 'filename=invoice_'+oid}
+
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
     params = request.json
