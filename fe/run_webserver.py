@@ -89,10 +89,10 @@ def static(path):
         content_type = "text/" + path.split('.')[-1]
     else:
         content_type = "text/html"
-    return file(fspath).read(), 200, {'Content-Type': content_type +'; charset=utf-8'}
+    return file(fspath).read(), 200, {'Content-Type': content_type +'; charset=utf-8', "Cache-Control": "max-age=31536000"}
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',debug=True) # Threaded
+    app.run('0.0.0.0',debug=False) # Threaded
     from gevent.wsgi import WSGIServer
 
     http_server = WSGIServer(('', 5000), app)
