@@ -6,6 +6,7 @@ greenlet
 gevent
 jsonrpc2
 correct_pycountry
+sphc
 turbomail
 # cssutils
 # cssprefixer is not installable atm by package name
