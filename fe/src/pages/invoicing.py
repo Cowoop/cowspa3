@@ -84,7 +84,7 @@ class New(BasePage):
 
         content.usage_tmpl = usage_tmpl
 
-        add_usage_form = sphc.more.VForm(id='new-usage-form', action='#')
+        add_usage_form = sphc.more.Form(id='new-usage-form', action='#', classes=['vform'])
         add_usage_form.add_field("Resource Name", tf.INPUT(name='resource_name', id='resource_name', nv_attrs=('required',), placeholder="Resource name"))
         add_usage_form.add_field("Rate", tf.INPUT(name='rate', id='rate', nv_attrs=('required',), placeholder="eg. 12.00"), "Do not include currency")
         add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")

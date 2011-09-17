@@ -5,8 +5,6 @@
 @import "compass/css3";
 @import "compass/utilities/color";
 @import "base";
-@import "base/constants";
-@import "constants";
 
 $total-cols: 14;
 
@@ -19,6 +17,10 @@ $total-cols: 14;
 @mixin reverse-colors {
     color: $other-text-color;
     background: $main-color;
+}
+
+@mixin light-box-shadow {
+    @include single-box-shadow($main-color);
 }
 
 * {
@@ -261,7 +263,7 @@ option {
     margin: 0.5em;
 }
 
-button {
+button, input[type="button"] {
     padding: 0em;
     padding-left: 0.6em;
     padding-right: 0.6em;
@@ -320,13 +322,23 @@ nav h2 a:active {background: gray;}
 .bottombar {text-align: center; width: 100%; background: $main-color; color: $other-text-color; position: fixed; bottom: 0; left: 0; right: 0; -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
 .bottombar a {text-decoration: none; color: $other-text-color; padding: 1em;}
 
-.login-main {background-image:url('/images/cow.png'); }
-.login-form-box { float: right; width: 40%; height:100%; padding: 2em; }
-.login-img {float: left; width:70%; height: 70%;}
-
-.edit-link-box {
-    text-align: right;
+.login-form-box { 
+    float: right;
+    padding: 2em; 
+    //border: 1px solid $main-color;
+    @include light-box-shadow;    
+    // opacity: 0.8; 
+    margin: 10% 10% 20% 40%;
+    padding: 2em;
+    position: absolute;
+    background-color: $main-color;
+    label { color: $other-text-color; } 
+    z-index: 1;
 }
+.login-img {opacity: 0.2;}
+
+.edit-link-box { text-align: right; }
+
 .content .content-title {
     font-size: 2.2em;
     text-align: left;
@@ -335,9 +347,7 @@ nav h2 a:active {background: gray;}
     margin-bottom: 0.3em;
     @include full;
     border-bottom: 1px solid;
-}
-.content .content-subtitle {
-    font-style: italic;
+    .content-subtitle { font-style: italic; }
 }
 table.stripped {
     margin: 0 0 0.7em;
@@ -346,11 +356,12 @@ table.stripped {
     tr {
         border-bottom: 1px solid lighten($main-color, 20%);
         &:nth-child(odd) { background-color: darken($page-background, 10%); }
+        &:hover { background-color: darken($page-background, 10%);  }
     }
     th, td {
         padding: 0 0.3em 0 0.3em;
-        text-align: center;
-        &:nth-child(odd) { background-color: $page-background; }
+        text-align: left;
+        // &:nth-child(odd) { background-color: $page-background; }
     }
 }
 
@@ -364,24 +375,24 @@ table.stripped {
 .right-action {float: right; position: static;}
 
 form.vform {
-    width: 70em;
     label {
         font-size: 110%;
         display: block;
     }
-    .vform-field {
-        border-bottom: 1px solid darken($page-background, 30%);
-        padding-bottom: 0.2em;
+    .field {
+        //border-bottom: 1px solid darken($page-background, 30%);
+        padding-bottom: 0.3em;
     }
-    .vform-field .vform-input {
+    .field .field-input {
         height: 120%;
         display: block;
     }
-    .vform-inp-help {
+    .field-help {
         font-style: italic;
         display: block;
     }
     .buttons {
+        margin-top: 1em;
         text-align: center;
     }
 }

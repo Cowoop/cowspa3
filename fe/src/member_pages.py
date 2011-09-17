@@ -220,7 +220,7 @@ class MemberProfile(BasePage):
         tariff_list_row = sphc.more.jq_tmpl("tariff-options")
         tariff_list_row.option = tf.option("${name}", value="${id}")
         
-        next_tariff_form = sphc.more.VForm(id='next-tariff-form')
+        next_tariff_form = sphc.more.Form(id='next-tariff-form', classes=['vform'])
         next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
         next_tariff_form.add_field("Start", tf.INPUT(name='start', id='start', nv_attrs=('required')))
         next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
