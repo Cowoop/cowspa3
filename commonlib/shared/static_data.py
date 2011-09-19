@@ -10,16 +10,17 @@ languages = [dict(label='English',name=language_map['English']), dict(label='Ger
 countries = [dict(label=country.name ,name=country.numeric) for country in list(pycountry.countries)]
 
 currencies = [dict(name=currency.letter ,label=currency.name) for currency in list(pycountry.currencies)]
-    
-pathjoin = os.path.join
+
 themeroot = 'fe/src/themes'
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
+
 def themedict(themedir):
-    manifest_path = pathjoin(themeroot, themedir, 'manifest')
+    manifest_path = os.path.join(themeroot, themedir, 'manifest')
     if not os.path.isfile(manifest_path):
         raise Exception("File does not exist (or not a file): %s" % manifest_path)
     manifest = {}
     execfile(manifest_path, {}, manifest)
     return dict(name = os.path.basename(themedir), label = manifest['name'])
+
 themes = [themedict(path) for path in themedirs]
