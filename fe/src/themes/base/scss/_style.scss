@@ -47,13 +47,23 @@ h3 { font-weight: bold; }
 
 .note { font-style: italic; font-size: 90%; }
 
-html select { 
+select { 
     padding: 0.2em;
-    background: lighten($main-color, 5%);
-    color: $other-text-color;
+    color: $main-color;
+    background: $page-background;
+    font-size: 1.1em;
     display: inline-block;
-    border: 1px solid lighten($main-color, 15%);
+    height: 1.7em;
+    border: 1px solid lighten($main-color, 10%);
 }
+option {
+    color: $main-color;
+    background-color: $page-background;
+    padding: 0.2em;
+    margin: 0.5em;
+}
+
+
 
 a { text-shadow: 1px 0px 2px $other-text-color;
     font-family:  sans-serif;
@@ -236,15 +246,6 @@ form.profile-forms {
         @include pad(2, 0);
         border-top: 1px solid lighten($main-color, 10%);
     }
-    select { 
-        padding: 0.2em;
-        color: $main-color;
-        background: $page-background;
-        font-size: 1.1em;
-        display: inline-block;
-        height: 1.7em;
-        border: 1px solid lighten($main-color, 10%);
-    }
 }
 
 form#social_edit_form input {
@@ -255,12 +256,6 @@ form input[required] {
     // color: red; 
     background: darken($page-background, 10%);
     border: 1.5px solid $imp-color;
-}
-
-option {
-    color: $other-text-color;
-    padding: 0.2em;
-    margin: 0.5em;
 }
 
 button, input[type="button"] {
@@ -333,7 +328,8 @@ nav h2 a:active {background: gray;}
     position: absolute;
     background-color: $main-color;
     label { color: $other-text-color; } 
-    z-index: 1;
+    z-index: 100;
+    .action-status { color: $other-text-color;}
 }
 .login-img {opacity: 0.2;}
 
@@ -463,4 +459,5 @@ form.vform {
 }
 
 .status-success:before { font-size: 120%; content: "☑";}
+.status-fail { color: $imp-color; }
 #ui-datepicker-div, .hidden { display: none; visibility: none; } // ugly hack

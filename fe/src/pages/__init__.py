@@ -10,7 +10,7 @@ class LoginPage(fe.bases.CSAnonPage):
     def main(self):
         container = tf.DIV(id="login-container")
         formbox = tf.DIV(Class='login-form-box')
-        form = sphc.more.Form(classes=['vform'])
+        form = sphc.more.Form(id="login-form", classes=['vform'])
         form.add_field('Username', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username"))
         form.add_field('Password', tf.INPUT(type="password", id='password', name="password", placeholder="Password"))
         form.add_buttons(tf.BUTTON("Log In", id='login-btn', type='button'))

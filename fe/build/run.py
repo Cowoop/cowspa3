@@ -42,7 +42,7 @@ def compile_scss(prjdir):
     opts = "-q -r susy -u susy --relative-assets --sass-dir scss --css-dir css" % locals()
     project_cmd = compass_bin + " create %(prjdir)s %(opts)s" % locals()
     exec_cmd(project_cmd)
-    compile_cmd = compass_bin + " compile %(prjdir)s -e production --force" % locals()
+    compile_cmd = compass_bin + " compile %(prjdir)s -e production --force " % locals()
     exec_cmd(compile_cmd)
 
 def themedict(themedir):
