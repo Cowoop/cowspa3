@@ -22,7 +22,7 @@ class ResourceCreate(BasePage):
         field.label = tf.LABEL('Type : ', FOR='type')
         field.input = tf.SELECT(id='type', name='type')
         for type in types.resource_types:
-            field.input.option = tf.OPTION(type, value = type)
+            field.input.option = tf.OPTION(type['label'], value = ['name'])
             
         fields.append(field)
 

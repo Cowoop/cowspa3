@@ -1,7 +1,12 @@
 function bind_values(values, form_name){
     for( var key in values)
     {
-        if(['twitter', 'facebook', 'linkedin'].indexOf(key) != -1)
+        if($("#"+form_name+"_edit_form #"+key)[0]!=undefined && $("#"+form_name+"_edit_form #"+key)[0].tagName == "SELECT")
+        {
+            $("#"+form_name+"_view_form #"+key).text( $("#"+form_name+"_edit_form #"+key+" option[value='" + values[key] + "']").text()); 
+            $("#"+form_name+"_edit_form #"+key+" option[value='" + values[key] + "']").attr('selected', 'selected');
+        }
+        else if(['twitter', 'facebook', 'linkedin'].indexOf(key) != -1)
         {
             if(values[key])
             {

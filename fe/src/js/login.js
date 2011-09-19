@@ -8,7 +8,7 @@ function login() {
         }
     function success(resp) {
         action_status.text("Login is successful.").attr('class', 'status-success');
-        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme'].toLowerCase()+"/dashboard";
+        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme']+"/dashboard";
         };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');

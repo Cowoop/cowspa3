@@ -7,6 +7,7 @@ sys.path.append('.')
 
 import sphc
 import commonlib.helpers
+commonlib.helpers.setdefaultencoding()
 import fe
 import fe.src.pages
 import fe.src.pages as pagelib
@@ -15,6 +16,7 @@ import fe.src.member_pages as memberlib
 import fe.src.bizplace_pages as bizplacelib
 import fe.src.plan_pages as planlib
 import fe.src.resource_pages as resourcelib
+import commonlib.shared.static_data as static_data
 
 option_no_themes = '--nothemes' in sys.argv
 
@@ -45,15 +47,7 @@ def compile_scss(prjdir):
     compile_cmd = compass_bin + " compile %(prjdir)s -e production --force " % locals()
     exec_cmd(compile_cmd)
 
-def themedict(themedir):
-    manifest_path = pathjoin(themeroot, themedir, 'manifest')
-    if not os.path.isfile(manifest_path):
-        raise Exception("File does not exist (or not a file): %s" % manifest_path)
-    manifest = {}
-    execfile(manifest_path, {}, manifest)
-    return dict(name = os.path.basename(themedir), label = manifest['name'])
-
-themes = [themedict(path) for path in themedirs]
+themes = static_data.themes
 theme_map = dict((theme['name'], theme) for theme in themes)
 theme_codes = themedirs
 languages = [dict(label=label, name=code) for label, code in [ ('English', 'en'), ('German', 'de') ]]

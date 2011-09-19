@@ -35,7 +35,7 @@ class BizplaceCreate(BasePage):
         field.label = tf.LABEL('Country', FOR='country')
         field.input = tf.SELECT(id='country', name='country')
         for country in list(data_lists.countries):
-            field.input.option = tf.OPTION(country, value=country)
+            field.input.option = tf.OPTION(country['label'], value=country['name'])
         fields.append(field)
 
         field = tf.DIV()
@@ -52,7 +52,7 @@ class BizplaceCreate(BasePage):
         field.label = tf.LABEL('Currency', FOR='currency')
         field.input = tf.SELECT(id='currency', name='currency')
         for currency in data_lists.currencies:
-            field.input.option = tf.OPTION(currency.name+" ("+currency.letter+")", value=currency.letter)
+            field.input.option = tf.OPTION(currency['label']+" ("+currency['name']+")", value=currency['name'])
         fields.append(field) 
         
         field = tf.DIV()

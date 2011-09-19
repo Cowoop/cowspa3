@@ -48,14 +48,14 @@ class MemberCreate(BasePage):
         field.label = tf.LABEL('Language', FOR='language')
         field.input = tf.SELECT(id='language', name='language')
         for language in data_lists.languages:
-            field.input.option = tf.OPTION(language, value=language)
+            field.input.option = tf.OPTION(language['label'], value=language['name'])
         fields.append(field)
 
         field = tf.DIV()
         field.label = tf.LABEL('Country', FOR='country')
         field.input = tf.SELECT(id='country', name='country')
         for country in data_lists.countries:
-            field.input.option = tf.OPTION(country, value=country)
+            field.input.option = tf.OPTION(country['label'], value=country['name'])
         fields.append(field)
 
         field = tf.DIV()
@@ -320,6 +320,6 @@ def get_editable_fields(field_list, input_type_text, input_type_list, input_type
         elif attr in input_type_list:
             field.input_section.input = tf.SELECT(id=attr.lower(), name=attr.lower())
             for ob in input_type_list[attr]:
-                    field.input_section.input.option = tf.OPTION(ob, value=ob)
+                field.input_section.input.option = tf.OPTION(ob['label'], value=ob['name'])
         fields.append(field)
     return fields
