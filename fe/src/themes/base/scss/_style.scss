@@ -393,6 +393,30 @@ form.vform {
     }
 }
 
+form.hform {
+    label {
+        font-size: 110%;
+        display: inline-block;
+        text-align: right;
+    }
+    .field {
+        //border-bottom: 1px solid darken($page-background, 30%);
+        padding-bottom: 0.3em;
+    }
+    .field .field-input {
+        height: 120%;
+        display: inline-block;
+    }
+    .field-help {
+        font-style: italic;
+        display: block;
+    }
+    .buttons {
+        margin-top: 1em;
+        text-align: center;
+    }
+}
+
 #invoice-form-container {
     @include columns(11, 11);
     // @include omega;
