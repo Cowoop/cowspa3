@@ -15,6 +15,8 @@ class states(Constants):
             state_flag = state_flag | (( 2 ** getattr(self, state) * int(state_dict[state])))
         return state_flag
 
+class user(states): pass
+
 class member(states): pass
 
 class resource_relations(Constants):

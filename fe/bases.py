@@ -66,6 +66,18 @@ places_opt = [
     tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item')
     ]
 
+new_nav = [ ('Dashboard', ctxpath + '/dashboard', None) ]
+member_nav = new_nav + [
+    ('Profile', '#profile', profile_opt),
+    ('Members', '#', members_opt),
+    ('Bookings', '#', booking_opt),
+    ('Invoicing', '#', invoicing_opt), ]
+host_nav = member_nav + [
+    ('Places', '#', places_opt),
+    ('Resources', '#', resources_opt),
+    ('Reports', '#', None), ]
+
+
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/profile#account'), ('Theme', ctxpath + '/profile#preferences'), ('Logout', '/logout')]
     css_links = [ '/themes/%(theme)s/css/main.css' ]

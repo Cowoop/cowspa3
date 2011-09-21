@@ -14,7 +14,7 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def test_create_superuser():
-    user_id = userlib.create_superuser(**test_data.super_user)
+    user_id = userlib.create_system_account()
     assert rolelib.get_user_roles(user_id)['global'] == ["Admin"]
 
 def test_assign_role():

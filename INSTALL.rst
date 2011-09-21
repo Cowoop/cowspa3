@@ -11,6 +11,7 @@ superuser tasks
     ^d # back as superuser 
     ^d # back as initial user
     createdb <db-name>
+    wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
     
 
 Development env setup

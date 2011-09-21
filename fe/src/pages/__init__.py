@@ -46,44 +46,6 @@ class Dashboard(BasePage):
         container.script = tf.SCRIPT(open("fe/src/js/dashboard.js").read(), escape=False, type="text/javascript", language="javascript")
         return container
 
-class SuperuserCreate(fe.bases.CSAnonPage):
-    current_tab = 'create'
-    title = 'New Super User'
-    def main(self):
-        container = tf.DIV()
-
-        fields = []
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'First Name : ', For="first_name")
-        field.input = tf.INPUT(None, nv_attrs=('required',), type='text', id='first_name', name='first_name')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Username : ', FOR="username")
-        field.input = tf.INPUT(type='text', id='username', name='username')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Password : ', FOR="password")
-        field.input = tf.INPUT(type='password', id='password', name='password')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Email : ', FOR='email')
-        field.input = tf.INPUT(type='email', id='email', name='email')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.button = tf.BUTTON("Create", id='save-btn', type='button')
-        fields.append(field)
-
-        form  = tf.FORM(id="createsuper_form", Class="profile-forms")
-        for field in fields:
-            field.line = tf.BR()
-            form.content = field
-
-        container.form = form
-        container.msg = tf.SPAN(id="CreateSuper-msg")
-        container.script = tf.SCRIPT(open("fe/src/js/super_create.js").read(), escape=False, type="text/javascript", language="javascript")
-        return container
+class GettingStarted(BasePage):
+    current_nav = 'Dashboard'
+    title = ''

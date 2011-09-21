@@ -8,6 +8,7 @@ sys.path.append('.')
 import sphc
 import commonlib.helpers
 commonlib.helpers.setdefaultencoding()
+
 import fe
 import fe.src.pages
 import fe.src.pages as pagelib
@@ -94,7 +95,6 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(bizplacelib.BizplaceCreate, prefix + 'bizplace/new'),
          PageBuilder(planlib.PlanCreate, prefix + 'bizplace/tariffs'),
          PageBuilder(resourcelib.ResourceCreate, prefix + 'resource/new'),
-         PageBuilder(pagelib.SuperuserCreate, 'setup'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
          PageBuilder(memberlib.MemberProfile, prefix + 'profile'),
          PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),

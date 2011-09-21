@@ -3,11 +3,13 @@ import commonlib
 import be.repository.access as dbaccess
 import be.errors as errors
 import commonlib.helpers as helpers
-import be.apis.member as memberlib
 import be.apis.role as rolelib
 
 user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
+
+def encrypt(phrase):
+    return commonlib.helpers.encrypt(phrase, env.config.random_str)
 
 def authenticate(username, password):
     """
@@ -17,7 +19,7 @@ def authenticate(username, password):
         passphrase = dbaccess.get_passphrase_by_username(username)
     except IndexError, err:
         return False
-    encrypted = helpers.encrypt(password)
+    encrypted = encrypt(password)
     return encrypted == passphrase
 
 def create_session(user_id):
@@ -66,8 +68,16 @@ def logout(token):
     except Exception, err:
         print err
 
-def create_superuser(username, password, email, first_name):
-    user_id = memberlib.member_collection.new(username, password, email, first_name)
+def new(username, password, state=None):
+    if state is None:
+        state = commonlib.shared.constants.member.enabled
+    data = dict(username=username, password=encrypt(password), state=state)
+    return user_store.add(**data)
+
+def create_system_account():
+    username = env.config.system_username
+    password = commonlib.helpers.random_key_gen()
+    user_id = new(username, password)
     rolelib.assign(user_id, ['admin'])
     return user_id
 

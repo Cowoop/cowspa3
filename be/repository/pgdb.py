@@ -5,6 +5,9 @@ import bases.persistence as persistence
 pool = None
 
 class PGProvider(persistence.DBProvider):
+    def __init__(self, threaded=False):
+        self.threaded = threaded
+
     def tr_start(self, context):
         conn = pool.getconn()
         context.pgcursor = conn.cursor()
@@ -21,7 +24,10 @@ class PGProvider(persistence.DBProvider):
 
     def startup(self):
         global pool
-        pool = psycopg2.pool.SimpleConnectionPool(5, 5, env.config.pg_uri)
+        if self.threaded:
+            pool = psycopg2.pool.PersistentConnectionPool(5, 5, env.config.pg_uri)
+        else:
+            pool = psycopg2.pool.SimpleConnectionPool(5, 5, env.config.pg_uri)
 
     def shutdown(self):
         pool.close_all()

@@ -12,5 +12,7 @@ config = {
         'mail.smtp.debug': False,
         'mail.utf8qp.on': True
         },
-    'http_baseurl': 'http://127.0.0.1:5000'
+    'http_baseurl': 'http://127.0.0.1:5000',
+    'system_username': 'system',
+    'threaded': False,
 }

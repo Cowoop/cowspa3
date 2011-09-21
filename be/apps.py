@@ -1,5 +1,6 @@
 import bases.app as applib
 import be.apis
+import be.apis.system as systemlib
 import be.apis.user as userlib
 import be.apis.member as memberlib
 import be.apis.bizplace as bizplacelib
@@ -13,7 +14,7 @@ import be.apis.activities as activitylib
 import be.apis.invoice as invoicelib
 import be.apis.invoicepref as invoicepreflib
 
-pg_provider = pgdb.PGProvider()
+pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
 pg_tr_complete = lambda: pg_provider.tr_complete(env.context)
 
@@ -27,13 +28,13 @@ class CowspaApp(applib.Application):
     on_tr_complete = [pg_tr_complete]
 
 cowspa = CowspaApp()
+cowspa.connect(systemlib.setup)
 cowspa.connect(userlib.login)
 cowspa.connect(userlib.logout)
 cowspa.connect(memberlib.member_collection.new, "member.new")
 cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
 cowspa.connect(planlib.plan_collection.new, "plan.new")
 cowspa.connect(resourcelib.resource_collection.new, "resource.new")
-cowspa.connect(userlib.create_superuser, "member.create_admin")
 cowspa.connect(memberlib.member_collection.search, "member.search")
 cowspa.connect(memberlib.member_resource.details, "member.profile")
 cowspa.connect(memberlib.member_resource.contact, "member.contact")

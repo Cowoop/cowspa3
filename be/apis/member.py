@@ -4,6 +4,7 @@ import be.repository.access as dbaccess
 import bases.app
 import commonlib.helpers as helpers
 import be.apis.activities as activitylib
+import be.apis.user as userlib
 import commonlib.shared.static_data as data_lists
 
 user_store = dbaccess.stores.user_store
@@ -22,8 +23,7 @@ class MemberCollection:
         else:
             state = commonlib.shared.constants.member.to_flags(state)
 
-        data = dict(username=username, password=helpers.encrypt(password), state=state) # TODO config salt
-        user_id = user_store.add(**data)
+        user_id = userlib.new(username, password, state)
         member_ref = member_store.ref(user_id)
 
         data = dict(member=user_id, language=language, theme=theme)
@@ -79,7 +79,7 @@ class MemberResource:
     def update(self, member_id, **mod_data):
         if 'state' in mod_data:
             mod_data['state'] = commonlib.shared.constants.member.to_flags(mod_data['state'])
-        if 'username' in mod_data or 'password' in mod_data:
+        if 'username' in mod_data or 'password' in mod_data: # may be this should call userlib.update
             mod_data['password'] = helpers.encrypt(mod_data['password'])
             user_store.update(member_id, **mod_data)
         elif 'theme' in mod_data or 'language' in mod_data:

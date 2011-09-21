@@ -43,8 +43,6 @@ more_usages = [
     dict(resource_id=3, resource_name='RES3', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
     ]
     
-super_user  = dict(username = 'super', password = 'super', email = 'super@hub.com', first_name = 'Superman')
-
 invoice_preference_data = [ 
     dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune"),
     dict(email_text="See the attached pdf.\nThank you.", terms_and_conditions="Pay within 20days", due_date=20, bcc_email="india@hub.com", bank_details="State Bank of India,\nMumbai")

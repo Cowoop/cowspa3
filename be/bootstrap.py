@@ -2,7 +2,6 @@ try:
     import builtins
 except:
     import __builtin__ as builtins # Python 2.x compatibility
-
 import commonlib
 import commonlib.readconf as readconf
 import commonlib.helpers
@@ -11,12 +10,19 @@ import bases.persistence as persistence
 import be.repository.pgdb as pgdb
 import be.repository.access as dbaccess
 import conf_default
-try:
-    import gevent
-    import gevent.local as localprov
-except:
-    import threading
-    localprov = threading
+
+def setup_process_model(use_gevent=True):
+    if use_gevent:
+        import gevent
+        import gevent.monkey
+        import gevent.local as localprov
+        gevent.monkey.patch_all()
+        import psyco_gevent
+        psyco_gevent.make_psycopg_green()
+    else:
+        import threading
+        localprov = threading
+    return localprov
 
 def setup_env(conf):
     class env: pass
@@ -26,6 +32,8 @@ def setup_env(conf):
         print(err)
         conf_local = None
     env.config = readconf.parse_config(conf_default, conf_local)
+    use_gevent = not env.config.threaded
+    localprov = setup_process_model(use_gevent)
     commonlib.helpers.random_key_gen = commonlib.helpers.RandomKeyFactory(env.config.random_str)
     env.mailer = commonlib.messaging.email.Mailer(env.config.mail)
     env.mailer.start()
@@ -41,7 +49,7 @@ def setup_stores():
             store.setup()
 
 def setup_pg_provider():
-    provider = pgdb.PGProvider()
+    provider = pgdb.PGProvider(env.config.threaded)
     provider.startup()
     return provider
 
@@ -54,6 +62,5 @@ def start(conf):
     setup_stores()
     provider.tr_complete(env.context)
     provider.tr_start(env.context) # This is to make sure other db transactions in same thread works. Such as Test cases.
-    # env.pg_provider = provider # Can we remove this?
 
 #start(conf='conf_dev')
