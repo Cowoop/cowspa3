@@ -300,6 +300,17 @@ class Invoice(PGStore):
     """
     pickle_cols = ['invoicee_details', 'tax_dict']
 
+class InvoicePref(PGStore):
+    table_name = "invoice_pref"
+    create_sql = """
+    owner TEXT UNIQUE,
+    email_text TEXT,
+    terms_and_conditions TEXT,
+    due_date INTEGER,
+    bcc_email TEXT,
+    bank_details TEXT
+    """
+    
 class Activity(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
