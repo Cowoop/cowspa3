@@ -23,7 +23,7 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        return invoicepref_store.get_by(dict(owner=bizplace_store.ref(owner)), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details'])[0]
+        return invoicepref_store.get_by(dict(owner=bizplace_store.ref(owner)), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo'])[0]
         
     def get(self, owner, attrname):
         return invoicepref_store.get_by(dict(owner=bizplace_store.ref(owner)), fields=[attrname])[0][attrname]

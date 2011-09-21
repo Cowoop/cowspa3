@@ -308,7 +308,8 @@ class InvoicePref(PGStore):
     terms_and_conditions TEXT,
     due_date INTEGER,
     bcc_email TEXT,
-    bank_details TEXT
+    bank_details TEXT,
+    logo TEXT
     """
     
 class Activity(PGStore):
