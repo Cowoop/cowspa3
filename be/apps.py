@@ -11,6 +11,7 @@ import jsonrpc2
 import be.wrappers as wrapperlib
 import be.apis.activities as activitylib
 import be.apis.invoice as invoicelib
+import be.apis.invoicepref as invoicepreflib
 
 pg_provider = pgdb.PGProvider()
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -46,4 +47,6 @@ cowspa.connect(memberlib.member_resource.get_teriff_history, "teriff.history")
 cowspa.connect(invoicelib.invoice_collection.new, "invoice.new")
 cowspa.connect(invoicelib.invoice_collection.search, "invoice.search")
 cowspa.connect(invoicelib.invoice_resource.send, "invoice.send")
+cowspa.connect(invoicepreflib.invoicepref_resource.info, "invoicepref.info")
+cowspa.connect(invoicepreflib.invoicepref_resource.update, "invoicepref.update")
 cowspa.startup()

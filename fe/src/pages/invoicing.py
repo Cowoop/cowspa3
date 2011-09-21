@@ -112,3 +112,42 @@ class New(BasePage):
         content.script = tf.SCRIPT(open("fe/src/js/new_invoice.js").read(), escape=False)
 
         return container
+        
+class Preferences(BasePage):
+
+    title = "Invoice Preferences"
+    current_nav = 'Invoicing'
+    
+    def content(self):
+        container = tf.DIV()
+        
+        edit = tf.DIV(Class="edit-link-box")
+        edit.link = tf.A("Edit", id='edit-link', href='#edit')
+        container.edit = edit
+        
+        view_form = sphc.more.Form(id='preferences_view_form', action='#', classes=['hform'])
+        view_form.add_field("Logo", tf.IMG(name="logo", id="logo", alt="Logo is not available"))
+        view_form.add_field("Email Text", tf.LABEL(name="email_text", id="email_text"))
+        view_form.add_field("Terms And Conditions", tf.LABEL(name="terms_and_conditions", id="terms_and_conditions"))
+        view_form.add_field("Invoice Due Date ", tf.LABEL(name="due_date", id="due_date"))
+        view_form.add_field("Bcc Invoice", tf.LABEL(name="bcc_email", id="bcc_email"))
+        view_form.add_field("Bank Details", tf.LABEL(name="bank_details", id="bank_details"))
+        view_section = tf.DIV(id='view-section')
+        view_section.form = view_form.build()
+        container.view_form = view_section
+        
+        edit_form = sphc.more.Form(id='preferences_edit_form', action='/savelogo', classes=['hform'], Class='hidden', enctype='multipart/form-data')
+        edit_form.add_field("Logo", tf.INPUT(name="logo", id="logo", type="file", accept="image/*"))
+        edit_form.add_field("Email Text", tf.TEXTAREA(name="email_text", id="email_text"))
+        edit_form.add_field("Terms And Conditions", tf.TEXTAREA(name="terms_and_conditions", id="terms_and_conditions"))
+        edit_form.add_field("Invoice Due Date",tf.INPUT(name="due_date", id="due_date", type="text"), "Days after sending invoice")
+        edit_form.add_field("Bcc Invoice", tf.INPUT(name="bcc_email", id="bcc_email", type="email"), "Invoice will be Bcced to this Email id")
+        edit_form.add_field("Bank Details", tf.TEXTAREA(name="bank_details", id="bank_details"))
+        edit_form.add_buttons(tf.INPUT(type="button", value="Save", id='save-btn'), tf.INPUT(type="button", value="Cancel", id='cancel-btn'))
+        edit_section = tf.DIV(id='edit-section')
+        edit_section.form = edit_form.build()
+        container.edit_form = edit_section
+        
+        container.script = tf.SCRIPT(open("fe/src/js/invoice_preferences.js").read(), escape=False)
+        
+        return container
