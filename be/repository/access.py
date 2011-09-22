@@ -73,7 +73,7 @@ class Resource(object):
         return resource_store.get_many(dep_ids, self.info_fields)
 
 
-def list_activities_by_categories(categories, from_date, to_date, limit=20):
+def list_activities_by_categories(catesgories, from_date, to_date, limit=20):
     clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
     clause_values = dict(categories=tuple(categories), from_date=from_date, to_date=to_date, limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
@@ -201,13 +201,13 @@ def search_member(keys, options, limit):
     if len(keys) == 1:
         try:
             keys[0] = int(keys[0])
-            clause += 'id = %(key)s'
+            clause += 'Member.id = %(key)s'
         except:
             keys[0] = keys[0].lower() + "%"
-            clause += '(lower(first_name) LIKE %(key)s OR lower(last_name) LIKE %(key)s OR lower(email) LIKE %(key)s OR lower(organization) LIKE %(key)s)'
+            clause += '(lower(Member.first_name) LIKE %(key)s OR lower(Member.last_name) LIKE %(key)s OR lower(Member.email) LIKE %(key)s OR lower(Member.organization) LIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
     elif len(keys) == 2:
-        clause += '((lower(first_name) = %(key1)s AND lower(last_name) like %(key2)s) OR (lower(first_name) like %(key2)s AND lower(last_name) = %(key1)s))'
+        clause += '((lower(Member.first_name) = %(key1)s AND lower(Member.last_name) like %(key2)s) OR (lower(Member.first_name) like %(key2)s AND lower(Member.last_name) = %(key1)s))'
         values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
     query  += ' WHERE '+clause+' LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
