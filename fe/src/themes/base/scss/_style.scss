@@ -484,4 +484,5 @@ form.hform {
 
 .status-success:before { font-size: 120%; content: "☑";}
 .status-fail { color: $imp-color; }
+.invoice-logo { height: 10em; width: 10em;}
 #ui-datepicker-div, .hidden { display: none; visibility: none; } // ugly hack
