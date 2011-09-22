@@ -7,6 +7,7 @@ import operator
 import os
 import commonlib.helpers
 import be.apis.activities as activitylib
+import be.apis.invoicepref as invoicepreflib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
@@ -18,7 +19,8 @@ def create_invoice_pdf(invoice_id):
     usages = usage_store.get_many(invoice.usages)
     bizplace = bizplace_store.get(dbaccess.ref2id(invoice.issuer))
     member = member_store.get(invoice.member)
-    data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member) 
+    invoicepref = invoicepreflib.invoicepref_resource.info(dbaccess.ref2id(invoice.issuer))
+    data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member, invoicepref=invoicepref) 
     html = be.templates.invoice.template(data)
     html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
     pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
@@ -96,10 +98,12 @@ class InvoiceResource:
         """
         invoice = invoice_store.get(invoice_id, ['member', 'issuer'])
         member = invoice['member']
+        email_text = invoicepreflib.invoicepref_resource.get(dbaccess.ref2id(invoice['issuer']), 'email_text')
+        bcc_email = invoicepreflib.invoicepref_resource.get(dbaccess.ref2id(invoice['issuer']), 'bcc_email')
         issuer_email = bizplace_store.get(dbaccess.ref2id(invoice['issuer']), ['email'])
         email = member_store.get(member, ['email'])
         attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
-        env.mailer.send(email, subject='Invoice Details', rich='<b>See the attached Pdf.</b>', plain='', cc=[issuer_email], bcc=[], attachment=attachment)
+        env.mailer.send(email, subject='Invoice Details', rich=email_text, plain='', cc=[], bcc=[bcc_email], attachment=attachment)
 
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()
