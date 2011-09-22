@@ -2,6 +2,7 @@ import datetime
 import be.repository.access as dbaccess
 import be.apis.role as rolelib
 import be.apis.activities as activitylib
+import be.apis.invoicepref as invoicepreflib
 
 biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -14,6 +15,8 @@ class BizplaceCollection:
         bizplace_ref = bizplace_store.ref(bizplace_id)
         
         rolelib.assign(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_ref)
+        
+        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_ref))
         
         data = dict(name=name, id=bizplace_id)
         activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)

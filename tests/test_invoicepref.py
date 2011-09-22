@@ -8,10 +8,10 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def test_create_invoice_preferences():
-    assert invoicepreflib.invoicepref_collection.new(**dict(owner=1))
+    assert invoicepreflib.invoicepref_collection.new(**dict(owner=dbaccess.stores.bizplace_store.ref(1)))
     assert invoicepreflib.invoicepref_resource.get(1,'due_date') == 15
     
-    assert invoicepreflib.invoicepref_collection.new(**dict(owner=2))
+    assert invoicepreflib.invoicepref_collection.new(**dict(owner=dbaccess.stores.bizplace_store.ref(2)))
     assert invoicepreflib.invoicepref_resource.get(1,'bcc_email') == ""
     
     env.context.pgcursor.connection.commit()

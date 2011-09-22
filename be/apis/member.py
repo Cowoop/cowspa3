@@ -6,6 +6,7 @@ import commonlib.helpers as helpers
 import be.apis.activities as activitylib
 import be.apis.user as userlib
 import commonlib.shared.static_data as data_lists
+import be.apis.invoicepref as invoicepreflib
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -35,6 +36,8 @@ class MemberCollection:
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
+        
+        invoicepreflib.invoicepref_collection.new(**dict(owner=member_ref))
 
         data = dict(name=display_name, id=user_id)
         activity_id = activitylib.add('member_management', 'member_created', data, created)
