@@ -116,6 +116,15 @@ class InvoiceCreated(BaseEvent):
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
         
+class InvoiceprefUpdated(BaseEvent):
+    name = "invoicepref_updated"
+    category = "invoicepref_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + " Invoice Preferences %(attrs)s updated for Place %(name)s by %(actor_name)s."
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+        
 class Categories(dict):
     """
     subclassing dict to guarantee uniqueness of event name

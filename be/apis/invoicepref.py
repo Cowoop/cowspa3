@@ -20,6 +20,10 @@ class InvoiceprefResource:
 
     def update(self, owner, **mod_data):
         invoicepref_store.update_by(dict(owner=bizplace_store.ref(owner)), **mod_data)
+        
+        bizplace_name = bizplace_store.get(owner, fields=['name'])
+        data = dict(name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
+        activity_id = activitylib.add('invoicepref_management', 'invoicepref_updated', data)
         return True
 
     def info(self, owner):
