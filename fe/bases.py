@@ -24,6 +24,17 @@ class CSPage(sphc.more.HTML5Page):
 class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
     css_links = ['/themes/default/css/main.css']
+    def style(self):
+        # .polyfill-import hack below lets password field with a placeholder to have same width as other input fields
+        # which otherwise is smaller with webshims style.
+        return """
+        .container {
+            width: 90%;
+            text-align: left;
+        }
+        div[role="main"] { float: none;}
+        .polyfill-important .placeholder-box {width: 100% !important; }
+        """
 
 members_opt = [
     #tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),

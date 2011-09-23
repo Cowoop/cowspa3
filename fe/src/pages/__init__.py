@@ -8,16 +8,31 @@ BasePage = fe.bases.CSAuthedPage
 class LoginPage(fe.bases.CSAnonPage):
     title = "Cowspa | Login"
     def main(self):
-        container = tf.DIV(id="login-container")
-        formbox = tf.DIV(Class='login-form-box')
+        container = tf.DIV(id="login-main-container")
+        container.side_container = tf.DIV(id="login-side-container")
+
+        formbox = tf.DIV(Class='inverse-box')
         form = sphc.more.Form(id="login-form", classes=['vform'])
-        form.add_field('Username', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username"))
-        form.add_field('Password', tf.INPUT(type="password", id='password', name="password", placeholder="Password"))
+        form.add_field('', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username"))
+        form.add_field('', tf.INPUT(type="password", id='password', name="password", placeholder="Password"))
         form.add_buttons(tf.BUTTON("Log In", id='login-btn', type='button'))
         formbox.form = form.build()
-        formbox.form.msg = tf.SPAN(id="login-msg")
-        container.formbox = formbox
+
+        container.side_container.formbox = formbox
+        container.side_container.register_link = tf.DIV("Signing up is quick and easy", Class="inverse-box")
+        container.side_container.register_link.a = tf.BUTTON('Signup', href='#', id="signup-btn")
         container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript")
+
+        signup_box = tf.DIV(id='signup-box', Class="hidden inverse-box")
+        form = sphc.more.Form(id="signup-form", classes=['vform'])
+        form.add_field('First name', \
+            tf.INPUT(required=True, type="TEXT", name="first_name", placeholder="First Name", id="first_name"))
+        form.add_field('Last name', \
+            tf.INPUT(required=True, type="TEXT", name="last_name", placeholder="Last Name", id="last_name"))
+        form.add_field('Email', tf.INPUT(required=True, type="email", name="email", placeholder="Email Address", id="email"))
+        form.add_buttons(tf.BUTTON("Yes, I am ready!", id='register-btn', type='button'))
+        signup_box.form = form.build()
+        container.signup_box = signup_box
 
         container.imgbox = tf.DIV(Class="login-img")
         container.imgbox.img = tf.IMG(src="/images/cow.png")
