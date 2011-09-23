@@ -83,11 +83,13 @@ def list_activities_by_names(names, from_date, to_date, limit=20):
     clause_values = dict(names=tuple(names), from_date=from_date, to_date=to_date ,limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=None, hashrows=True)
 
-def list_activities_by_roles(roles, limit=20):
-    clause = 'role IN %(roles)s ORDER BY created DESC LIMIT %(limit)s'
+def list_activities_by_roles(roles, limit=15):
+    clause = 'role IN %(roles)s GROUP BY created, a_id ORDER BY created DESC LIMIT %(limit)s '
     clause_values = dict(roles=tuple(roles), limit=limit)
     a_ids = (row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
-    return activity_store.get_many(a_ids) if a_ids else []
+    clause = '(id IN %(a_ids)s) ORDER BY created DESC'
+    clause_values = dict(a_ids = tuple(a_ids))
+    return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True)
 
 def ref2name(ref):
     oname, oid = ref.split(':')
