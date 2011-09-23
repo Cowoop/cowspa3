@@ -1,6 +1,6 @@
 import sphc
 import fe.bases
-import commonlib.shared.static_data as data_lists
+import commonlib.shared.static as data_lists
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage

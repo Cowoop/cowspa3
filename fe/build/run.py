@@ -17,7 +17,7 @@ import fe.src.member_pages as memberlib
 import fe.src.bizplace_pages as bizplacelib
 import fe.src.plan_pages as planlib
 import fe.src.resource_pages as resourcelib
-import commonlib.shared.static_data as static_data
+import commonlib.shared.static as static
 
 option_no_themes = '--nothemes' in sys.argv
 
@@ -29,7 +29,7 @@ contribroot = 'fe/contrib'
 srcroot = 'fe/src'
 contribs = ['js', 'css', 'images']
 roles = ['host']
-themeroot = 'fe/src/themes'
+themeroot = static.themeroot
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
 compass_bin = "/var/lib/gems/1.8/gems/compass-0.11.5/bin/compass"
@@ -48,7 +48,7 @@ def compile_scss(prjdir):
     compile_cmd = compass_bin + " compile %(prjdir)s -e production --force " % locals()
     exec_cmd(compile_cmd)
 
-themes = static_data.themes
+themes = static.themes
 theme_map = dict((theme['name'], theme) for theme in themes)
 theme_codes = themedirs
 languages = [dict(label=label, name=code) for label, code in [ ('English', 'en'), ('German', 'de') ]]

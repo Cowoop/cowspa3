@@ -1,6 +1,6 @@
 import sphc
 import fe.bases
-import commonlib.shared.static_data as types
+import commonlib.shared.static as types
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
@@ -21,8 +21,8 @@ class ResourceCreate(BasePage):
         field = tf.DIV()
         field.label = tf.LABEL('Type : ', FOR='type')
         field.input = tf.SELECT(id='type', name='type')
-        for type in types.resource_types:
-            field.input.option = tf.OPTION(type['label'], value = ['name'])
+        for rtype in types.resource_types:
+            field.input.option = tf.OPTION(rtype['label'], value = ['name'])
             
         fields.append(field)
 
