@@ -18,6 +18,12 @@ function login() {
 
 $('#login-btn').click(login);
 
+function signup() {
+    $('#signup-box').dialog({ title: "Get ready", width: 500});
+};
+
+$('#signup-btn').click(signup);
+
 function enterKey(evt) {
     var evt = (evt) ? evt : event
     var charCode = (evt.which) ? evt.which : evt.keyCode

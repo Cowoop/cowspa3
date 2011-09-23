@@ -11,6 +11,9 @@ session_store = dbaccess.stores.session_store
 def encrypt(phrase):
     return commonlib.helpers.encrypt(phrase, env.config.random_str)
 
+def register(first_name, last_name, email):
+    return
+
 def authenticate(username, password):
     """
     Returns T if authentication is successful. Else False.
