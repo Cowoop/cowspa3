@@ -23,7 +23,7 @@ def search_members():
     auth_token = request.cookies.get('authcookie')
     cowspa.tr_start()
     if auth_token:
-        userlib.set_context(auth_token)
+        userlib.set_context_by_session(auth_token)
     q = request.args.get('q') or request.args.get('term')
     params = {"jsonrpc": "2.0", "method": "member.search", "params": {'q':q}, "id": 1}
     data = cowspa.mapper(params)
@@ -40,7 +40,7 @@ def search_invoices():
     auth_token = request.cookies.get('authcookie')
     cowspa.tr_start()
     if auth_token:
-        userlib.set_context(auth_token)
+        userlib.set_context_by_session(auth_token)
     q = request.args.get('q') or request.args.get('term')
     params = {"jsonrpc": "2.0", "method": "invoice.search", "params": {'q': q}, "id": 1}
     data = cowspa.mapper(params)
@@ -65,7 +65,7 @@ def api_dispatch():
     auth_token = request.cookies.get('authcookie')
     cowspa.tr_start()
     if auth_token:
-        userlib.set_context(auth_token)
+        userlib.set_context_by_session(auth_token)
     #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
     data = cowspa.mapper(params)
     cowspa.tr_complete()

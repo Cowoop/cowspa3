@@ -11,9 +11,6 @@ session_store = dbaccess.stores.session_store
 def encrypt(phrase):
     return commonlib.helpers.encrypt(phrase, env.config.random_str)
 
-def register(first_name, last_name, email):
-    return
-
 def authenticate(username, password):
     """
     Returns T if authentication is successful. Else False.
@@ -55,14 +52,21 @@ def login(username, password):
         return auth_token
     raise errors.ErrorWithHint('Authentication failed')
 
-def set_context(session_id):
-    env.context.user_id = session_lookup(session_id)
+def set_context(id_or_username):
+    if isinstance(id_or_username, basestring):
+        user = user_store.get_one_by(dict(username=id_or_username))
+    else:
+        user = user_store.get(id_or_username)
+    env.context.user_id = user.id
     roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['role'], False)
     env.context.roles = [role[0] for role in roles]
     try:
         env.context.display_name = member_store.get(env.context.user_id, fields=['display_name'])
     except:
-        env.context.display_name = user_store.get(env.context.user_id, fields=['username'])
+        env.context.display_name = user.username
+
+def set_context_by_session(session_id):
+    set_context(session_lookup(session_id))
 
 def logout(token):
     try:
