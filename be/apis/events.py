@@ -40,6 +40,15 @@ class MemberCreated(BaseEvent):
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
 
+class MemberInvited(BaseEvent):
+    name = "member_invited"
+    category = "member_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + ' %(actor_name)s has send membership invitaion to "%(first_name)s %(last_name)s"'
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+
 class MemberUpdated(BaseEvent):
     name = "member_updated"
     category = "member_management"

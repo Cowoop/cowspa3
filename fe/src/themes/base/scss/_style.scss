@@ -19,10 +19,6 @@ $total-cols: 14;
     background: $main-color;
 }
 
-@mixin light-box-shadow {
-    @include single-box-shadow($main-color);
-}
-
 * {
     color: $main-color; 
     font-family: sans-serif;
@@ -317,20 +313,33 @@ nav h2 a:active {background: gray;}
 .bottombar {text-align: center; width: 100%; background: $main-color; color: $other-text-color; position: fixed; bottom: 0; left: 0; right: 0; -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
 .bottombar a {text-decoration: none; color: $other-text-color; padding: 1em;}
 
-.login-form-box { 
-    float: right;
-    padding: 2em; 
-    //border: 1px solid $main-color;
-    @include light-box-shadow;    
-    // opacity: 0.8; 
-    margin: 10% 10% 20% 40%;
+.inverse-box {
     padding: 2em;
-    position: absolute;
+    font-size: 130%;
+    color: $other-text-color;
+    margin-top: 1em;
+    @include single-box-shadow($main-color);
     background-color: $main-color;
     label { color: $other-text-color; } 
-    z-index: 100;
     .action-status { color: $other-text-color;}
+    .placeholder-visible, .placeholder-invisible {color: $main-color;}
 }
+
+#login-side-container { 
+    float: right;
+    padding: 2em; 
+    padding-bottom: 0.5em;
+    //border: 1px solid $main-color;
+    opacity: 0.85; 
+    margin: 0 0 0 50%;
+    position: absolute;
+    z-index: 100;
+    .signup { 
+        color: $other-text-color;
+        font-size: 130%;
+    }
+}
+
 .login-img {opacity: 0.2;}
 
 .edit-link-box { text-align: right; }
@@ -374,6 +383,7 @@ form.vform {
     label {
         font-size: 110%;
         display: block;
+        line-height: 1.2em;
     }
     .field {
         //border-bottom: 1px solid darken($page-background, 30%);
@@ -382,6 +392,7 @@ form.vform {
     .field .field-input {
         height: 120%;
         display: block;
+        width: 90%;
     }
     .field-help {
         font-style: italic;
@@ -486,3 +497,9 @@ form.hform {
 .status-fail { color: $imp-color; }
 .invoice-logo { height: 10em; width: 10em;}
 #ui-datepicker-div, .hidden { display: none; visibility: none; } // ugly hack
+.ui-widget-content {
+    color: $other-text-color;
+    background-color: $main-color;
+    background: $main-color;
+    label { color: $other-text-color; }
+}

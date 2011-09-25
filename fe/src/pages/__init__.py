@@ -21,7 +21,6 @@ class LoginPage(fe.bases.CSAnonPage):
         container.side_container.formbox = formbox
         container.side_container.register_link = tf.DIV("Signing up is quick and easy", Class="inverse-box")
         container.side_container.register_link.a = tf.BUTTON('Signup', href='#', id="signup-btn")
-        container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript")
 
         signup_box = tf.DIV(id='signup-box', Class="hidden inverse-box")
         form = sphc.more.Form(id="signup-form", classes=['vform'])
@@ -37,6 +36,7 @@ class LoginPage(fe.bases.CSAnonPage):
         container.imgbox = tf.DIV(Class="login-img")
         container.imgbox.img = tf.IMG(src="/images/cow.png")
         #container.clear = sphc.more.clear()
+        container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript")
         return container
 
 class LogoutPage(fe.bases.CSAnonPage):

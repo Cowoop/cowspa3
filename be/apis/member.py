@@ -1,7 +1,6 @@
 import datetime
 import commonlib.shared.constants
 import be.repository.access as dbaccess
-import bases.app
 import commonlib.helpers as helpers
 import be.apis.activities as activitylib
 import be.apis.user as userlib

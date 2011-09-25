@@ -13,6 +13,7 @@ import be.wrappers as wrapperlib
 import be.apis.activities as activitylib
 import be.apis.invoice as invoicelib
 import be.apis.invoicepref as invoicepreflib
+import be.apis.registration as registrationlib
 
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -31,6 +32,7 @@ cowspa = CowspaApp()
 cowspa.connect(systemlib.setup)
 cowspa.connect(userlib.login)
 cowspa.connect(userlib.logout)
+cowspa.connect(registrationlib.new, "registration.new")
 cowspa.connect(memberlib.member_collection.new, "member.new")
 cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
 cowspa.connect(planlib.plan_collection.new, "plan.new")

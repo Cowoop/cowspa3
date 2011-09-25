@@ -22,6 +22,8 @@ even_more_members = [
     dict(username='lothar', password='secret', first_name='Lothar', last_name='', email='lothar@example.com'),
     ]
 
+member_to_register = dict(first_name='Bruce', last_name='Wayne', email='bat@example.com')
+
 invoice_data = dict(member=1, usages=[1,3])
 
 more_invoice_data = [
@@ -42,7 +44,7 @@ more_usages = [
     dict(resource_id=1, resource_name='RES1', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), member=1),
     dict(resource_id=3, resource_name='RES3', calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0), member=1),
     ]
-    
+
 invoice_preference_data = [ 
     dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune", logo=""),
     dict(email_text="See the attached pdf.\nThank you.", terms_and_conditions="Pay within 20days", due_date=20, bcc_email="india@hub.com", bank_details="State Bank of India,\nMumbai", logo="")
