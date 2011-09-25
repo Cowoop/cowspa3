@@ -13,13 +13,17 @@ class Mailer(object):
     def stop(self):
         interface.stop()
 
-    def send(self, to, subject='', rich='', plain='', cc=[], bcc=[], attachment=''):
+    def send(self, author, to, subject='', rich='', plain='', cc=[], bcc=[], attachment=''):
+        """
+        author: Sender. Tuple of strings like (<name>, <email>) or simply email address
+        to: tuple for string same as author
+        """
         if not rich and plain:
             msg = turbomail.Message(author, to, subject, cc=cc, bcc=bcc, plain=plain)
         else:
             if not plain:
                 plain = html2text.html2text(rich)
-            msg = turbomail.Message(self.config['mail.smtp.username'], to, subject, cc=cc, bcc=bcc, rich=rich, plain=plain)
+            msg = turbomail.Message(author, to, subject, cc=cc, bcc=bcc, rich=rich, plain=plain)
         if attachment:
             msg.attach(attachment)
         msg.send()
