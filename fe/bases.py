@@ -3,7 +3,8 @@ import sphc.more
 
 tf = sphc.TagFactory()
 
-webshims = ["/js/webshims/extras/mousepress.js", "/js/webshims/extras/modernizr-custom.js", "/js/webshims/extras/loaders/sssl.js", "/js/webshims/polyfiller.js"]
+webshims_base = '/js/webshims-1.8.1/'
+webshims = [webshims_base + "extras/mousepress.js", webshims_base + "/extras/modernizr-custom.js", webshims_base + "/extras/loaders/sssl.js", webshims_base + "/polyfiller.js"]
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
