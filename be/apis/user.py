@@ -48,7 +48,7 @@ def session_lookup(token):
 def login(username, password):
     if authenticate(username, password):
         auth_token = get_or_create_session(username)
-        set_context(auth_token)
+        set_context(username)
         return auth_token
     raise errors.ErrorWithHint('Authentication failed')
 
