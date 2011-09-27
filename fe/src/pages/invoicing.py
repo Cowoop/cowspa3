@@ -50,7 +50,8 @@ class New(BasePage):
         tr = tf.TR()
         cell1 = tf.TD("End date")
         cell2 = tf.TD()
-        cell2.input = tf.INPUT(id="inv-end_date")
+        cell2.input = tf.INPUT(type='hidden', id="inv-end_date")
+        cell2.input = tf.INPUT(id="inv-end_date-vis")
         tr.cells = [cell1, cell2]
         info.tr = tr
 

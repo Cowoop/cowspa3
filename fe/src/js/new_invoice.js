@@ -23,8 +23,10 @@ $('#inv-start_date-vis').datepicker( {
     altField: '#inv-start_date',
     dateFormat: 'M d, yy'
 });
-$('#inv-end_date').datepicker( {
-    dateFormat: 'yy-mm-dd'
+$('#inv-end_date-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#inv-end_date',
+    dateFormat: 'M d, yy'
 });
 $('#new-usage-form #start_time').datetimepicker({
     timeFormat: 'h:m',
@@ -50,7 +52,7 @@ $('#submit-usage').click( function () {
 function on_create_invoice(response) {
     inv_id = response.result;
     $('#inv-action-status').text('Invoice creation successful');
-    $('#inv-action-status').attr('class', 'status-success');
+    $('#inv-action-status').addClass('status-success');
     $('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
@@ -58,6 +60,7 @@ function on_create_invoice(response) {
 };
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
+    $('#inv-action-status').addClass('status-fail');
 };
 $('#invoice-save').click( function () {
     var new_usages = [];
@@ -84,6 +87,7 @@ $('#invoice-send').click(function () {
     };
     function on_send_invoice_failure() {
         $('#inv-action-status').text('failed to send invoice');
+        $('#inv-action-status').addClass('status-fail');
     };
     var params = {invoice_id : inv_id};
     jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);
