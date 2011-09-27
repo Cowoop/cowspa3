@@ -42,14 +42,15 @@ class New(BasePage):
         tr = tf.TR()
         cell1 = tf.TD("Start date")
         cell2 = tf.TD()
-        cell2.input = tf.INPUT(id="inv-start_date", type="date")
+        cell2.input = tf.INPUT(type='hidden', id="inv-start_date")
+        cell2.input = tf.INPUT(id="inv-start_date-vis")
         tr.cells = [cell1, cell2]
         info.tr = tr
 
         tr = tf.TR()
         cell1 = tf.TD("End date")
         cell2 = tf.TD()
-        cell2.input = tf.INPUT(id="inv-end_date", type="date")
+        cell2.input = tf.INPUT(id="inv-end_date")
         tr.cells = [cell1, cell2]
         info.tr = tr
 

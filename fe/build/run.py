@@ -166,6 +166,10 @@ def build_scripts():
     scripts = pathjoin(srcroot, 'js', '*')
     copydirs(scripts, pathjoin(pubroot, 'js'))
 
+def build_be_template_styles():
+    base_dir = 'be/templates'
+    compile_scss(base_dir)
+
 def build_all():
     for page in pages:
         page.build()
@@ -174,6 +178,7 @@ def main():
     if not os.path.exists(pubroot):
         os.makedirs(pubroot)
     copy_contribs()
+    build_be_template_styles()
     if not option_no_themes: build_themes()
     build_scripts()
     build_all()
