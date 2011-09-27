@@ -91,7 +91,8 @@ prefix = '%(lang)s/%(theme)s/'
 
 pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(memberlib.MemberCreate, prefix + 'member/new'),
-         PageBuilder(pagelib.LoginPage, 'login'),
+         PageBuilder(pagelib.Login, 'login'),
+         PageBuilder(pagelib.Activation, 'activate'),
          PageBuilder(bizplacelib.BizplaceCreate, prefix + 'bizplace/new'),
          PageBuilder(planlib.PlanCreate, prefix + 'bizplace/tariffs'),
          PageBuilder(resourcelib.ResourceCreate, prefix + 'resource/new'),

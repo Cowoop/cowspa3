@@ -26,10 +26,10 @@ class Template(sphc.more.HTML5Page):
 
         container.top.col1.sender = tf.DIV(id="issuer", Class="defs")
         container.top.col1.sender.title = tf.DIV(tf.H1(data.bizplace.name))
-        container.top.col1.sender.logo = tf.DIV(tf.IMG(src=data.invoicepref.logo), Class="invoice-logo")
+        if data.invoicepref.logo:
+            container.top.col1.sender.logo = tf.DIV(tf.IMG(src=data.invoicepref.logo), Class="invoice-logo")
 
         container.top.col1.receiver = tf.DIV(id="receiver")
-        #container.top.col1.receiver.name = tf.H3(data.member.display_name)
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
         container.top.col1.receiver.data.caption = tf.CAPTION(data.member.display_name)
         container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.invoice.member))])

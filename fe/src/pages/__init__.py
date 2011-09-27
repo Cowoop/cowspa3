@@ -5,7 +5,7 @@ import fe.bases
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
-class LoginPage(fe.bases.CSAnonPage):
+class Login(fe.bases.CSAnonPage):
     title = "Cowspa | Login"
     def main(self):
         container = tf.DIV(id="login-main-container")
@@ -37,6 +37,27 @@ class LoginPage(fe.bases.CSAnonPage):
         container.imgbox.img = tf.IMG(src="/images/cow.png")
         #container.clear = sphc.more.clear()
         container.script = tf.SCRIPT(open("fe/src/js/login.js").read(), escape=False, type="text/javascript")
+        return container
+
+class Activation(fe.bases.CSAnonPage):
+    title = "Cowspa | Activation"
+    def main(self):
+        container = tf.DIV(id="login-main-container")
+        container.side_container = tf.DIV(id="login-side-container")
+
+        formbox = tf.DIV(Class='inverse-box')
+        form = sphc.more.Form(id="login-form", classes=['vform'])
+        form.add_field('', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Choose a username"))
+        form.add_field('', tf.INPUT(type="password", id='password', name="password", placeholder="Choose a password"))
+        form.add_buttons(tf.BUTTON("Complete account activation", id='login-btn', type='button'))
+        formbox.form = form.build()
+
+        container.side_container.formbox = formbox
+
+        container.imgbox = tf.DIV(Class="login-img")
+        container.imgbox.img = tf.IMG(src="/images/cow.png")
+        #container.clear = sphc.more.clear()
+        container.script = tf.SCRIPT(open("fe/src/js/activate.js").read(), escape=False, type="text/javascript")
         return container
 
 class LogoutPage(fe.bases.CSAnonPage):
