@@ -193,6 +193,11 @@ def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
     values = dict(subscriber_id=member_id, since=since, bizplace_ids=bizplace_ids)
     return subscription_store.get_by_clause(clause, values)
 
+def list_invoices(issuer ,due_date):
+    query = "SELECT invoice.id, DATE(invoice.created) as created, DATE(invoice.created + INTERVAL %(due_date)s) AS due_date, invoice.cost, member.display_name FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC"
+    values = dict(issuer = issuer, due_date = str(due_date)+" days") 
+    return invoice_store.query_exec(query, values)
+    
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
     query = 'SELECT member.id, member.display_name as name, member.email FROM member'

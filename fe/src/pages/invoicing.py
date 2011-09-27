@@ -162,3 +162,14 @@ class Preferences(BasePage):
         container.script = tf.SCRIPT(open("fe/src/js/invoice_preferences.js").read(), escape=False)
         
         return container
+        
+class History(BasePage):
+
+    title = "Invoice History"
+    current_nav = 'Invoicing'
+    
+    def content(self):
+        container = tf.DIV()
+        container.table = tf.TABLE(id="history_table")
+        container.script = tf.SCRIPT(open("fe/src/js/invoice_history.js").read(), escape=False)
+        return container

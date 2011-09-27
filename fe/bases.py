@@ -8,7 +8,7 @@ webshims = [webshims_base + "extras/mousepress.js", webshims_base + "/extras/mod
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js'] + webshims + ['/js/common.js']
+    jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js'] + webshims + ['/js/common.js']
     # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
     def bottombar(self):
@@ -54,6 +54,7 @@ booking_opt = [
 
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoicing/new', Class='navlink-opt-item'),
+    tf.A("History", href=ctxpath+'/invoicing/history', Class='navlink-opt-item'),
     tf.A("Add usages", href=ctxpath+'/invoicing/addusages', Class='navlink-opt-item'),
     tf.A("Uninvoiced usages", href=ctxpath+'/invoicing/uninvoiced', Class='navlink-opt-item'),
     tf.A("Preferences", href=ctxpath+'/invoicing/preferences', Class='navlink-opt-item'),

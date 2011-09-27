@@ -99,7 +99,8 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(memberlib.MemberProfile, prefix + 'profile'),
          PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),
          PageBuilder(pagelib.LogoutPage, 'logout'),
-         PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoicing/preferences')
+         PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoicing/preferences'),
+         PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoicing/history')
         ]
 
 def copydirs(srcs, dst, verbose=False):
