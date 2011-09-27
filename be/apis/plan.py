@@ -64,7 +64,7 @@ class PlanResource:
     def new_subscriber(self, plan_id, starts, subscriber_id):
         """
         """
-        dd, mm, yyyy = (int(x) for x in starts.split('.'))
+        mm, dd, yyyy = (int(x) for x in starts.split('/'))
         starts=datetime.date(yyyy, mm, dd)
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
@@ -90,12 +90,21 @@ class PlanResource:
         return True
 
 
-    def remove_subscriber(self, plan_id, subscriber_id):
+    def remove_subscriber(self, subscription_id):
         """
         """
+        return subscription_store.remove(subscription_id)
 
-    def change_subscription(self, subscriber_id, current_plan_id, new_plan_id, change_date):
+    def change_subscription(self, subscription_id, **mod_data):
         """
         """
+        if 'starts' in mod_data:
+            mm, dd, yyyy = (int(x) for x in mod_data['starts'].split('/'))
+            mod_data['starts'] = datetime.date(yyyy, mm, dd)
+        if 'ends' in mod_data and mod_data['ends'] != "":
+            mm, dd, yyyy = (int(x) for x in mod_data['ends'].split('/'))
+            mod_data['ends'] = datetime.date(yyyy, mm, dd)
+        return subscription_store.update(subscription_id, **mod_data)
+        
 plan_collection = PlanCollection()
 plan_resource = PlanResource()

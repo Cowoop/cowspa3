@@ -183,24 +183,16 @@ class MemberProfile(BasePage):
         header.th = tf.TH("Actions")
 
         tariff_row = sphc.more.jq_tmpl("tariff-row")
-        tariff_row.tr = tf.TR()
-        tariff_row.tr.td = tf.TD("${bizplace_name}")
-        tariff_row.tr.td = tf.TD("${plan_name}")
-        tariff_row.tr.td = tf.TD("${starts}", Class="date")
-        tariff_row.tr.td = tf.TD("${ends}", Class="date")
+        tariff_row.tr = tf.TR(id="tariff_row-${id}")
+        tariff_row.tr.td = tf.TD("${bizplace_name}", id="bizplace_name")
+        tariff_row.tr.td = tf.TD("${plan_name}", id="plan_name")
+        tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
+        tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
         cell = tf.TD()
-        cell.a = tf.A("Change", href="#change-sub", Class="change-sub", id="change_sub-${sub_id}")
+        cell.a = tf.A("Change", href="#change-sub", Class="change-sub", id="change_sub-${id}")
         cell.c = tf.C(" | ")
-        cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-x cancel-sub", id="cancel_sub-${sub_id}")
+        cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-sub", id="cancel_sub-${id}")    
         tariff_row.tr.td = cell
-
-        tariff_history_row = sphc.more.jq_tmpl("tariff-history-row")
-        tariff_history_row.tr = tf.TR()
-        tariff_history_row.tr.td = tf.TD("${bizplace_name}")
-        tariff_history_row.tr.td = tf.TD("${plan_name}")
-        tariff_history_row.tr.td = tf.TD("${starts}", Class="date")
-        tariff_history_row.tr.td = tf.TD("${ends}", Class="date")
-        tariff_history_row.tr.td = tf.TD("✓")        
         
         tariff_load_history = tf.DIV()
         tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#memberships')
@@ -211,7 +203,6 @@ class MemberProfile(BasePage):
 
         tariff_box.new = new
         tariff_box.tmpl = tariff_row
-        tariff_box.history_tmpl = tariff_history_row
         tariff_box.info = tariff_info
         tariff_box.history = tariff_load_history
 
@@ -222,11 +213,22 @@ class MemberProfile(BasePage):
         
         next_tariff_form = sphc.more.Form(id='next-tariff-form', classes=['vform'])
         next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
-        next_tariff_form.add_field("Start", tf.INPUT(name='start', id='start', nv_attrs=('required')))
+        next_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start', nv_attrs=('required')))
         next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
         next_tariff_section.form = next_tariff_form.build()
         next_tariff_section.tmpl = tariff_list_row
+        next_tariff_section.form.msg = tf.SPAN(id="Next_Tariff-msg")
         container.next_tarrif = next_tariff_section
+        
+        change_tariff_form = sphc.more.Form(id='change-tariff-form', classes=['vform'])
+        change_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
+        change_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start'))
+        change_tariff_form.add_field("End", tf.INPUT(name='end', type="date", id='end'))
+        change_tariff_section = tf.DIV(id='change-tariff-section', Class='hidden')
+        change_tariff_section.form = change_tariff_form.build()
+        change_tariff_section.tmpl = tariff_list_row
+        change_tariff_section.form.msg = tf.SPAN(id="Change_Tariff-msg")
+        container.change_tarrif = change_tariff_section
 
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']

@@ -19,6 +19,7 @@ $(document).ready(function() {
             $('.content .content-title').text(display_name);
         };
         $('#tariff-row').tmpl(response.result.memberships).appendTo('#tariff-info');
+        bind_cancel_and_change_tariff();
         result = response;
     };
     function error() {
@@ -33,10 +34,6 @@ $(document).ready(function() {
             if($("#"+submenu[sub]).attr('href'))
                 $("#"+submenu[sub]).attr('href', path + '#' + $("#"+submenu[sub]).attr('href').split('#')[1]);
         }
-        /*$(".nav-opt-item").each(function () {
-            if($(this).attr('href'))
-                $(this).attr('href', path + '#' + $(this).attr('href').split('#')[1]);
-        });*/
         $("#navlink-aboutme").text("About");
         $("#navlink-social").text("Social");
     }
@@ -165,9 +162,6 @@ $(document).ready(function() {
         });
 //*********************Next Teriff**********************************
      
-    $('#next-tariff-form #start').datepicker({
-        dateFormat: 'dd.mm.yy',
-    });
     $('#next_tariff-btn').click(function() {
         $('#next-tariff-form').dialog({ 
             title: "Next Tariff", 
@@ -178,8 +172,11 @@ $(document).ready(function() {
                     function success(resp) {
                         $(this).dialog("close"); 
                         window.location.reload();
+                        $("#Next_Tariff-msg").html("");
                     };
-                    function error() {};
+                    function error() {
+                        $("#Next_Tariff-msg").html("<big>Error in Assigning Tariff. Try again</big>");
+                    };
                     params['subscriber_id'] = $.cookie('user_id');
                     params['plan_id'] = $("#next-tariff-form #tariff").val();
                     params['starts'] = $("#next-tariff-form #start").val();
@@ -188,6 +185,7 @@ $(document).ready(function() {
                 }, 
                 "Cancel": function() { 
                     $(this).dialog("close"); 
+                    $("#Next_Tariff-msg").html("");
                 }
             } 
         });
@@ -196,6 +194,7 @@ $(document).ready(function() {
     var params = {}
     function success1(resp) {     
         $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
+        $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
         };
     function error1(){};
     params['bizplace_id'] = $("#bizplaces").val();
@@ -208,8 +207,9 @@ $(document).ready(function() {
 $('#load-tariff-history').click(function(){
    var params = {}
     function success2(response) {     
-        $('#tariff-history-row').tmpl(response.result).appendTo('#tariff-info');
+        $('#tariff-row').tmpl(response.result).appendTo('#tariff-info');
         $('#load-tariff-history').hide();
+        bind_cancel_and_change_tariff();
         };
     function error2(){};
     params['member_id'] = $.cookie('user_id');
@@ -217,3 +217,58 @@ $('#load-tariff-history').click(function(){
 });
 //************************End Teriff History*********************************
 });
+//************************Cancel/Change Tariff**********************************
+function bind_cancel_and_change_tariff() {
+    $('.cancel-sub').click(function(){
+        var params = {'subscription_id': $(this).attr('id').split("-")[1]};
+        function success(response) {
+            $("#tariff_row-"+params['subscription_id']).hide();     
+        };
+        function error(){};
+        if(confirm("Do you want to remove?")){
+            jsonrpc('subscription.remove', params, success, error);
+        }
+    });
+    $('.change-sub').click(function(){
+        var subscription_id = $(this).attr('id').split("-")[1];
+        var date = new Date($("#tariff_row-"+subscription_id+" #starts").text());
+        date = $.datepicker.formatDate('mm/dd/yy', date);
+        $('#change-tariff-form #start').val(date);
+        if($("#tariff_row-"+subscription_id+" #ends").text()!="-"){
+            date = new Date($("#tariff_row-"+subscription_id+" #ends").text());
+            date = $.datepicker.formatDate('mm/dd/yy', date);
+            $('#change-tariff-form #end').val(date);
+        }
+        $("#change-tariff-form #tariff option:contains('" + $("#tariff_row-"+subscription_id+" #plan_name").text() + "')").attr('selected', 'selected');
+        $('#change-tariff-form').dialog({ 
+            title: "Change Tariff", 
+            width: 500, 
+            buttons: {
+                "Save": function() { 
+                    var params = {'subscription_id':subscription_id};
+                    params['plan_id'] = $("#change-tariff-form #tariff").val();
+                    params['plan_name'] = $("#change-tariff-form #tariff option[value='"+params['plan_id']+"']").text();
+                    params['starts'] = $('#change-tariff-form #start').val();
+                    if($('#change-tariff-form #end').val() != ""){
+                        params['ends'] = $('#change-tariff-form #end').val();
+                    }
+                    function success(resp) { 
+                        $("#tariff_row-"+subscription_id+" #start").text(params['starts']);
+                        $("#tariff_row-"+subscription_id+" #ends").text(params['ends']);
+                        $("#tariff_row-"+subscription_id+" #plan_name").text($("#change-tariff-form #tariff option[value='"+params['plan_id']+"']").text());
+                        $("#Change_Tariff-msg").html("");
+                        $('#change-tariff-form').dialog("close");
+                    };
+                    function error() {
+                        $("#Change_Tariff-msg").html("<big>Error in Changing Tariff. Try again</big>");
+                    };
+                    jsonrpc('subscription.change', params, success, error);
+                }, 
+                "Cancel": function() { 
+                    $(this).dialog("close"); 
+                    $("#Change_Tariff-msg").html("");
+                }
+            } 
+        });
+    });
+};   

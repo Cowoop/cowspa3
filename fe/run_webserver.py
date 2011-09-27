@@ -50,7 +50,7 @@ def search_invoices():
     else:
         return jsonify(data)
 
-@app.route('/invoices/<oid>/<format>', methods=['GET', 'POST'])
+@app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoices(oid, format):
     path = "be/repository/invoices/invoice_%s.%s" % (oid, format)
     if format == "pdf":
