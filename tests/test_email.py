@@ -15,4 +15,4 @@ def test_basic_send():
     </html>"""
     attachment = os.getcwd()+'/requirements.txt'
     mailer.start()
-    mailer.send(to, subject, rich=rich, attachment=attachment)
+    mailer.send(to, to, subject, rich=rich, attachment=attachment)
