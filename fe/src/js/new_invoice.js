@@ -46,7 +46,7 @@ function on_create_invoice(response) {
     $('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
-    $('#view_invoice_window #invoice-iframe').attr('src', '/invoices/'+inv_id+'/html');
+    $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+inv_id+'/html');
 };
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
