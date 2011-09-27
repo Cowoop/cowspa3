@@ -187,7 +187,7 @@ class BizPlace(PGStore):
     default_plan INTEGER,
     taxes BYTEA,
     currency TEXT,
-    bank_details TEXT
+    logo TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
     pickle_cols = ['taxes']

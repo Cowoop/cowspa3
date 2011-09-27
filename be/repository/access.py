@@ -177,8 +177,8 @@ def get_member_teriff_history(member_id, bizplace_ids=[]):
     return subscription_store.get_by_clause(clause, values)
 
 def get_member_current_subscriptions(member_id, bizplace_ids=[]):
-    date = datetime.datetime.now()
-    clause = '(subscriber_id = %(subscriber_id)s) AND (starts <= %(date)s) AND (ends IS NULL)'
+    date = datetime.datetime.now().date()
+    clause = '(subscriber_id = %(subscriber_id)s) AND (starts <= %(date)s) AND (ends IS NULL OR ends >= %(date)s)'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
