@@ -18,9 +18,17 @@ $('#invoicee-search').autocomplete({
     }
 });
 
+$('#inv-start_date-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#inv-start_date',
+    dateFormat: 'M d, yy'
+});
+$('#inv-end_date').datepicker( {
+    dateFormat: 'yy-mm-dd'
+});
 $('#new-usage-form #start_time').datetimepicker({
     timeFormat: 'h:m',
-    dateFormat: 'dd.mm.yy',
+    dateFormat: 'yymmdd',
 });
 $('#new-usage-form #end_time').datetimepicker({
     timeFormat: 'h:m',
@@ -46,7 +54,7 @@ function on_create_invoice(response) {
     $('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
-    $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+inv_id+'/html');
+    $('#view_invoice_window #invoice-iframe').attr('src', '/invoices/'+inv_id+'/html');
 };
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
@@ -70,6 +78,7 @@ $('#invoice-view').click(function () {
     });
 });
 $('#invoice-send').click(function () {
+    $('#inv-action-status').text('sending ...');
     function on_send_invoice() {
         $('#inv-action-status').text('Invoice sent successfully');
     };

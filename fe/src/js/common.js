@@ -100,4 +100,3 @@ $(document).ready(function() {
     init_autocomplete();
     init_nav();
 });    
-
