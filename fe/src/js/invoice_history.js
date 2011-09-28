@@ -7,7 +7,6 @@ function success(response) {
             { "sTitle": "MEMBER" },
             { "sTitle": "COST" },
             { "sTitle": "DATE" },
-            { "sTitle": "DUE DATE"},
             { "sTitle": "Link",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
