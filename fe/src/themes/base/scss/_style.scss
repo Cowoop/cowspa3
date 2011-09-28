@@ -1,7 +1,9 @@
+/* vi: set syntax=scss: */
 @import "compass/reset";
 @import "contrib/autoSuggest";
 @import "contrib/jquery-ui";
 @import "contrib/jquery-ui-timepicker-addon";
+@import "contrib/demo_table_jui.css";
 @import "compass/css3";
 @import "compass/utilities/color";
 @import "base";
@@ -493,10 +495,14 @@ form.hform {
     #action-status { font-size: 90%; font-style: italic; }
 }
 
+#history_table {
+    width: 100%;
+    td, th { padding: 0.3em; }
+}
 .status-success:before { font-size: 120%; content: "☑";}
 .status-fail { color: $imp-color; }
 .invoice-logo { height: 10em; width: 10em;}
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
 #signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
 #signup-box.ui-widget-content label{color:$other-text-color;}
-
+.ui-icon { display: inline-block; }

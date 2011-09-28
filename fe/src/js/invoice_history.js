@@ -2,6 +2,8 @@
 function success(response) {
     $('#history_table').dataTable({
         "aaData": response['result'],
+        "bJQueryUI": true,
+        "sPaginationType": "full_numbers",
         "aoColumns": [
             { "sTitle": "ID" },
             { "sTitle": "MEMBER" },

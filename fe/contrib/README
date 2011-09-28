@@ -6,6 +6,7 @@ Javascript
 - jquery cookies plugin: https://github.com/carhartl/jquery-cookie/blob/master/jquery.cookie.js
 - jquery.tmpl https://github.com/jquery/jquery-tmpl
 - jquery dataTable http://datatables.net/download/build/jquery.dataTables.min.js
+    - css http://datatables.net/release-datatables/media/css/demo_table_jui.css
 - git clone git://github.com/trentrichardson/jQuery-Timepicker-Addon.git
     cp css to ../css
 
