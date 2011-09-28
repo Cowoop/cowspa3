@@ -23,16 +23,23 @@ $('#inv-start_date-vis').datepicker( {
     altField: '#inv-start_date',
     dateFormat: 'M d, yy'
 });
-$('#inv-end_date-vis').datepicker( {
+$('#inv-end_date').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#inv-end_date',
     dateFormat: 'M d, yy'
 });
+
+// altFormat does not work with timepicker :-(
+// https://github.com/trentrichardson/jQuery-Timepicker-Addon/issues/94
+
 $('#new-usage-form #start_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'yy-mm-dd',
     timeFormat: 'h:m',
-    dateFormat: 'yymmdd',
 });
 $('#new-usage-form #end_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'yy-mm-dd',
     timeFormat: 'h:m',
 });
 $('#new-usage-button').click(function() {
@@ -56,7 +63,7 @@ function on_create_invoice(response) {
     $('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
-    $('#view_invoice_window #invoice-iframe').attr('src', '/invoices/'+inv_id+'/html');
+    $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+inv_id+'/html');
 };
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
