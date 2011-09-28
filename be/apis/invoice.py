@@ -76,11 +76,9 @@ class InvoiceCollection:
         keys = q.split()
         return dbaccess.search_invoice(keys, options, limit)
 
-    def list(self, issuer):
-        data = dict(issuer=bizplace_store.ref(issuer), due_date=invoicepreflib.invoicepref_resource.get(issuer, 'due_date'))
-        invoices = dbaccess.list_invoices(**data)
-        fields = ['id', 'display_name', 'cost', 'created', 'due_date', 'id']
-        return [[str(invoice[key]) for key in fields] for invoice in invoices] 
+    def list(self, issuer, limit=100):
+        data = dict(issuer=bizplace_store.ref(issuer), limit=limit)
+        return dbaccess.list_invoices(**data) 
 
 class InvoiceResource:
 
