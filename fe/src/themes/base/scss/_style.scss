@@ -23,7 +23,6 @@ $total-cols: 14;
 
 * {
     color: $main-color; 
-    font-family: sans-serif;
 } /* #222 is good too */
 
 * { @include divsizing; }
@@ -38,7 +37,11 @@ html {
 //    font-family: sans-serif;
 // }
 
-body { line-height: 140%; font-family: sans-serif;}
+body { 
+    line-height: 140%;
+    font-family: 'Ubuntu', 'Ubuntu Beta', UbuntuBeta, Ubuntu, 'Bitstream Vera Sans', 'DejaVu Sans', Tahoma, sans-serif;
+    font-size: 105%;
+}
 
 h2 { font-size: 120%; }
 h3 { font-weight: bold; }
@@ -64,7 +67,18 @@ option {
 
 
 a { text-shadow: 1px 0px 2px $other-text-color;
-    font-family:  sans-serif;
+    // font-family:  sans-serif;
+}
+
+fieldset {
+    padding: 0.5em;
+    border: 1px solid;
+    margin-top: 1em;
+}
+
+legend {
+    border:1px solid;
+    padding: 0 0.5em;
 }
 
 .topbar {
@@ -234,7 +248,7 @@ form.profile-forms {
     line-height: 2.5em;
     label {
         @include columns(2, 11);
-        font-size: 0.9em;
+        // font-size: 0.9em;
         text-align: right;
     }
     .input-section {
@@ -289,7 +303,6 @@ button[disabled], button[disabled]:hover {
     border: 1px solid lighten($page-background, 20%);
 }
 .nav-opt {
-    font-family: "Monospace";
     display: none;
     margin-left: 2em;
 }
@@ -299,7 +312,7 @@ button[disabled], button[disabled]:hover {
     display: inline;
 }
 nav h2 {cursor: pointer;
-    font-family: "Sans-serif", Tahoma;
+    // font-family: "Sans-serif", Tahoma;
     font-weight: normal;
 }
 .nav-current:before { content: "→";}
@@ -407,6 +420,38 @@ form.vform {
     }
 }
 
+form.simple-hform {
+    line-height: 2.5em;
+    label {
+        width: 25%;
+        text-align: right;
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 0.5em 0 0;
+    }
+    input[type="radio"]+label {
+        text-align: left;
+    }
+    input, textarea, select {
+        width: 60%;
+    }
+    input[type="button"] {
+        width: auto;
+    }
+    textarea {
+        height: 9em;
+    }
+    .field-help {
+        font-style: italic;
+        display: block;
+        margin-left: 25%;
+    }
+    .buttons {
+        width: 100%;
+        text-align: center;
+        border-top: 1px solid lighten($main-color, 10%);
+    }
+}
 form.hform {
     line-height: 2.5em;
     .field-label {
@@ -487,7 +532,7 @@ form.hform {
         #invoicee-info { 
             font-family: "Monospace";
             margin-top: 0.3em;
-            border: 1px solid $main-color; 
+            border: 1px dashed $main-color; 
         }
     }
 }

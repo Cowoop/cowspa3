@@ -94,7 +94,7 @@ host_nav = member_nav + [
 
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/profile#account'), ('Theme', ctxpath + '/profile#preferences'), ('Logout', '/logout')]
-    css_links = [ '/themes/%(theme)s/css/main.css' ]
+    css_links = [ 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic', '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', None),
         ('Profile', '#profile', profile_opt),

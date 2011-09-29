@@ -288,20 +288,23 @@ class MemberProfile(BasePage):
         ############################Billing Preferences############################
          
         billing_pref = tf.DIV(id="billing_preferences_section", Class="profile-forms hidden")
-        billing_pref_form = tf.form(id="billing_pref")
+        billing_pref_form = tf.form(id="billing_pref", Class="simple-hform")
         
-        billing_pref_form.radio = tf.DIV("Billing Mode")
-        billing_pref_form.radio.radio1 = tf.DIV(id="radio_field1")
-        billing_pref_form.radio.radio1.value = tf.INPUT(id="mode", name="mode", type="radio", value="0")
-        billing_pref_form.radio.radio1.label = tf.label("Self")
-        billing_pref_form.radio.radio2 = tf.DIV(id="radio_field2")
-        billing_pref_form.radio.radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
-        billing_pref_form.radio.radio2.label = tf.label("Bizness")
-        billing_pref_form.radio.radio3 = tf.DIV(id="radio_field3")
-        billing_pref_form.radio.radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
-        billing_pref_form.radio.radio3.label = tf.label("Another Member")
+        billing_pref_form.mode = tf.FIELDSET()
+        billing_pref_form.mode.legend = tf.LEGEND("Billing mode")
+        billing_pref_form.mode.radio1 = tf.DIV(id="radio_field1")
+        billing_pref_form.mode.radio1.value = tf.INPUT(id="mode", name="mode", type="radio", value="0")
+        billing_pref_form.mode.radio1.label = tf.label("Self")
+        billing_pref_form.mode.radio2 = tf.DIV(id="radio_field2")
+        billing_pref_form.mode.radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
+        billing_pref_form.mode.radio2.label = tf.label("Bizness")
+        billing_pref_form.mode.radio3 = tf.DIV(id="radio_field3")
+        billing_pref_form.mode.radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
+        billing_pref_form.mode.radio3.label = tf.label("Another Member")
         
-        billing_pref_form.details = tf.DIV("Billing Details")
+        billing_pref_form.details = tf.FIELDSET()
+        
+        billing_pref_form.details.legend = tf.LEGEND("Billing Details")
         
         billing_pref_form.details.self = tf.DIV(id="details_0", Class="hidden")
         billing_pref_form.details.self.radio1 = tf.DIV(id="self_radio_field1")
@@ -367,8 +370,8 @@ class MemberProfile(BasePage):
         billing_pref_form.details.member.value = tf.INPUT(id="member", type="text")
         
         billing_pref_form.buttons = tf.DIV(Class="buttons")
-        billing_pref_form.buttons.save = tf.INPUT(id="save-billingpref", type="button", value="Save")        
         billing_pref_form.msg = tf.SPAN(id="billing_pref-msg")
+        billing_pref_form.buttons.save = tf.INPUT(id="save-billingpref", type="button", value="Save")        
         
         billing_pref.form = billing_pref_form
               
