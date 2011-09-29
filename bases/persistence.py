@@ -334,9 +334,9 @@ class PGStore(BaseStore):
         cols_str = ', '.join('%s=%%s' % k for k in mod_data.keys())
         table_name = self.table_name
         q = 'UPDATE %(name)s SET %(cols)s WHERE %(condition)s' % dict(name=table_name, cols=cols_str, condition=condition)
-        values = [mod_data[k] for k in cols] + values
         for col in cols_to_pickle:
-            values[col] = PGBinary.to_pg(values[col])
+            mod_data[col] = PGBinary.to_pg(mod_data[col])
+        values = [mod_data[k] for k in cols] + values
         self.query_exec(q, values)
         return True
 
