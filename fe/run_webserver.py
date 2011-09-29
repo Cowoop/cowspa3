@@ -48,13 +48,15 @@ def api_dispatch():
     auth_token = request.cookies.get('authcookie')
     cowspa.tr_start()
     if auth_token:
-        userlib.set_context_by_session(auth_token)
+        try:
+            userlib.set_context_by_session(auth_token)
+        except:
+            cowspa.tr_abort()
+            cowspa.tr_start()
     #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
     data = cowspa.mapper(params)
-    cowspa.tr_complete()
     if params['method'] == 'login' and 'result' in data:
         auth_token = data['result']
-        cowspa.tr_start()
         data['result'] = userlib.get_user_preferences()
         cowspa.tr_complete()
         resp = jsonify(data)
@@ -62,10 +64,13 @@ def api_dispatch():
         resp.set_cookie('user_id',value=env.context.user_id)
         resp.set_cookie('roles',value=env.context.roles)
         return resp
+    cowspa.tr_complete()
     return jsonify(data)
 
+@app.route('/', methods=['GET'])
 @app.route('/<path:path>', methods=['GET'])
-def static(path):
+def static(path='login'):
+    print '====>', path
     fspath = os.path.join(static_root, path)
     filename = os.path.basename(path)
     if '.' in path:

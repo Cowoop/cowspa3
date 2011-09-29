@@ -56,3 +56,7 @@ class Application(object):
     def tr_complete(self):
         for f in self.on_tr_complete:
             f()
+
+    def tr_abort(self):
+        for f in self.on_tr_abort:
+            f()

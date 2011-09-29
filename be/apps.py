@@ -20,6 +20,7 @@ import be.apis.biz as bizlib
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
 pg_tr_complete = lambda: pg_provider.tr_complete(env.context)
+pg_tr_abort = lambda: pg_provider.tr_abort(env.context)
 
 class CSAPIExecutor(applib.APIExecutor):
     wrappers = [wrapperlib.pg_transaction]
@@ -29,6 +30,7 @@ class CowspaApp(applib.Application):
     APIExecutor = CSAPIExecutor
     on_tr_start = [pg_tr_start]
     on_tr_complete = [pg_tr_complete]
+    on_tr_abort = [pg_tr_abort]
 
 cowspa = CowspaApp()
 cowspa.connect(systemlib.setup)
