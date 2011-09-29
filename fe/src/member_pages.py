@@ -285,6 +285,95 @@ class MemberProfile(BasePage):
 
         container.form = form
 
+        ############################Billing Preferences############################
+         
+        billing_pref = tf.DIV(id="billing_preferences_section", Class="profile-forms hidden")
+        billing_pref_form = tf.form(id="billing_pref")
+        
+        billing_pref_form.radio = tf.DIV("Billing Mode")
+        billing_pref_form.radio.radio1 = tf.DIV(id="radio_field1")
+        billing_pref_form.radio.radio1.value = tf.INPUT(id="mode", name="mode", type="radio", value="0")
+        billing_pref_form.radio.radio1.label = tf.label("Self")
+        billing_pref_form.radio.radio2 = tf.DIV(id="radio_field2")
+        billing_pref_form.radio.radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
+        billing_pref_form.radio.radio2.label = tf.label("Bizness")
+        billing_pref_form.radio.radio3 = tf.DIV(id="radio_field3")
+        billing_pref_form.radio.radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
+        billing_pref_form.radio.radio3.label = tf.label("Another Member")
+        
+        billing_pref_form.details = tf.DIV("Billing Details")
+        
+        billing_pref_form.details.self = tf.DIV(id="details_0", Class="hidden")
+        billing_pref_form.details.self.radio1 = tf.DIV(id="self_radio_field1")
+        billing_pref_form.details.self.radio1.value = tf.INPUT(id="self_mode0", name="self_mode", type="radio", value="0")
+        billing_pref_form.details.self.radio1.label = tf.label("Use Profile Details")
+        billing_pref_form.details.self.radio2 = tf.DIV(id="self_radio_field2")
+        billing_pref_form.details.self.radio2.value = tf.INPUT(id="self_mode1", name="self_mode", type="radio", value="1")
+        billing_pref_form.details.self.radio2.label = tf.label("Use Details As Below")
+        billing_pref_form.details.self.form = tf.FORM(id="self_details-form")
+        billing_pref_form.details.self.form.name = tf.DIV()
+        billing_pref_form.details.self.form.name.label = tf.LABEL(content = 'Name', For="self_name")
+        billing_pref_form.details.self.form.name.input = tf.INPUT(type='text', id='self_name', name='self_name')        
+        billing_pref_form.details.self.form.address = tf.DIV()
+        billing_pref_form.details.self.form.address.label = tf.LABEL(content = 'Address', FOR="self_address")
+        billing_pref_form.details.self.form.address.input = tf.TEXTAREA(id='self_address', name='self_address')
+        billing_pref_form.details.self.form.city = tf.DIV()
+        billing_pref_form.details.self.form.city.label = tf.LABEL(content = 'City', FOR="self_city")
+        billing_pref_form.details.self.form.city.input = tf.INPUT(id='self_city', name='self_city', type="text")
+        billing_pref_form.details.self.form.country = tf.DIV()
+        billing_pref_form.details.self.form.country.label = tf.LABEL(content = 'Country', FOR="self_country")
+        billing_pref_form.details.self.form.country.input = tf.SELECT(id='self_country', name='self_country')
+        for country in data_lists.countries:
+                billing_pref_form.details.self.form.country.input.option = tf.OPTION(country['label'], value=country['name'])
+        billing_pref_form.details.self.form.phone = tf.DIV()
+        billing_pref_form.details.self.form.phone.label = tf.LABEL(content = 'Phone', FOR='self_phone')
+        billing_pref_form.details.self.form.phone.input = tf.INPUT(type='text', id='self_phone', name='self_phone')
+        billing_pref_form.details.self.form.email = tf.DIV()
+        billing_pref_form.details.self.form.email.label = tf.LABEL(content = 'Email', FOR='self_email')
+        billing_pref_form.details.self.form.email.input = tf.INPUT(type='email', id='self_email', name='self_email')
+        
+        billing_pref_form.details.bizness = tf.DIV(id="details_1", Class="hidden")
+        billing_pref_form.details.bizness.radio1 = tf.DIV(id="bizness_radio_field1")
+        billing_pref_form.details.bizness.radio1.value = tf.INPUT(id="bizness_mode0", name="bizness_mode", type="radio", value="0")
+        billing_pref_form.details.bizness.radio1.label = tf.label("Bill To Existing")
+        billing_pref_form.details.bizness.radio1.input = tf.INPUT(type="text", id="existing_biz")
+        billing_pref_form.details.bizness.radio2 = tf.DIV(id="bizness_radio_field2")
+        billing_pref_form.details.bizness.radio2.value = tf.INPUT(id="bizness_mode1", name="bizness_mode", type="radio", value="1")
+        billing_pref_form.details.bizness.radio2.label = tf.label("Add New Bizness")
+        billing_pref_form.details.bizness.form = tf.FORM(id="new_biz-form")
+        billing_pref_form.details.bizness.form.name = tf.DIV()
+        billing_pref_form.details.bizness.form.name.label = tf.LABEL(content = 'Bizness Name', For="biz_name")
+        billing_pref_form.details.bizness.form.name.input = tf.INPUT(type='text', id='biz_name', name='biz_name')        
+        billing_pref_form.details.bizness.form.address = tf.DIV()
+        billing_pref_form.details.bizness.form.address.label = tf.LABEL(content = 'Address', FOR="biz_address")
+        billing_pref_form.details.bizness.form.address.input = tf.TEXTAREA(id='biz_address', name='biz_address')
+        billing_pref_form.details.bizness.form.city = tf.DIV()
+        billing_pref_form.details.bizness.form.city.label = tf.LABEL(content = 'City', FOR="biz_city")
+        billing_pref_form.details.bizness.form.city.input = tf.INPUT(id='biz_city', name='biz_city', type="text")
+        billing_pref_form.details.bizness.form.country = tf.DIV()
+        billing_pref_form.details.bizness.form.country.label = tf.LABEL(content = 'Country', FOR="biz_country")
+        billing_pref_form.details.bizness.form.country.input = tf.SELECT(id='biz_country', name='biz_country')
+        for country in data_lists.countries:
+                billing_pref_form.details.bizness.form.country.input.option = tf.OPTION(country['label'], value=country['name'])
+        billing_pref_form.details.bizness.form.phone = tf.DIV()
+        billing_pref_form.details.bizness.form.phone.label = tf.LABEL(content = 'Phone', FOR='biz_phone')
+        billing_pref_form.details.bizness.form.phone.input = tf.INPUT(type='text', id='biz_phone', name='biz_phone')
+        billing_pref_form.details.bizness.form.email = tf.DIV()
+        billing_pref_form.details.bizness.form.email.label = tf.LABEL(content = 'Email', FOR='biz_email')
+        billing_pref_form.details.bizness.form.email.input = tf.INPUT(type='email', id='biz_email', name='biz_email')
+        
+        billing_pref_form.details.member = tf.DIV(id="details_2", Class="hidden")
+        billing_pref_form.details.member.label = tf.LABEL("Bill To Existing Member")
+        billing_pref_form.details.member.value = tf.INPUT(id="member", type="text")
+        
+        billing_pref_form.buttons = tf.DIV(Class="buttons")
+        billing_pref_form.buttons.save = tf.INPUT(id="save-billingpref", type="button", value="Save")        
+        billing_pref_form.msg = tf.SPAN(id="billing_pref-msg")
+        
+        billing_pref.form = billing_pref_form
+              
+        container.billing_pref = billing_pref
+    
         container.script = tf.SCRIPT(open("fe/src/js/member_profile.js").read(), escape=False, type="text/javascript", language="javascript")
         container.script = tf.SCRIPT(open("fe/src/js/common_form_methods.js").read(), escape=False, type="text/javascript", language="javascript")
         return container

@@ -4,6 +4,8 @@ $(document).ready(function() {
     var hash = window.location.hash;
     if(hash == "#account")
         $("#account_edit_form").show();
+    else if(hash == "#billingpreferences")
+        $("#billing_preferences_section").show();
     else
         $(hash+"_view_form").show();
     function success(response) {
@@ -28,7 +30,7 @@ $(document).ready(function() {
     {
         profile_id = (window.location.search).substring(4);
         path = window.location.pathname+window.location.search;
-        submenu = ['navlink-aboutme', 'navlink-memberships', 'navlink-account', 'navlink-contact', 'navlink-social', 'navlink-preferences'];
+        submenu = ['navlink-aboutme', 'navlink-memberships', 'navlink-account', 'navlink-contact', 'navlink-social', 'navlink-preferences', 'navlink-billingpreferences'];
         for(sub in submenu)
         {
             if($("#"+submenu[sub]).attr('href'))
@@ -124,6 +126,14 @@ $(document).ready(function() {
                 $(this).hide();
             });
         });
+    $("#navlink-billingpreferences").click(function(){
+        $('.profile-forms').each( function () {
+            if ($(this).attr('id') == "billing_preferences_section") 
+                $(this).show();
+            else
+                $(this).hide();
+            });
+        });
     $(".topbar #theme").click(function(){
         $('.profile-forms').each( function () {
             if ($(this).attr('id') == "preferences_view_form") 
@@ -160,7 +170,7 @@ $(document).ready(function() {
         bind_values(result['result']['preferences'], "preferences");
         $("#preferences_view_form").show();
         });
-//*********************Next Teriff**********************************
+//*********************Next Tariff**********************************
      
     $('#next_tariff-btn').click(function() {
         $('#next-tariff-form').dialog({ 
@@ -201,9 +211,9 @@ $(document).ready(function() {
     jsonrpc('bizplace_plans.list', params, success1, error1);
     
     
-//*******************End Modal Window**************************
+//*******************End Next Tariff**************************
 
-//***********************Teriff History**************************************
+//***********************Tariff History**************************************
 $('#load-tariff-history').click(function(){
    var params = {}
     function success2(response) {     
@@ -215,7 +225,7 @@ $('#load-tariff-history').click(function(){
     params['member_id'] = $.cookie('user_id');
     jsonrpc('teriff.history', params, success2, error2); 
 });
-//************************End Teriff History*********************************
+//************************End Tariff History*********************************
 });
 //************************Cancel/Change Tariff**********************************
 function bind_cancel_and_change_tariff() {
@@ -272,3 +282,138 @@ function bind_cancel_and_change_tariff() {
         });
     });
 };   
+//***********************End Cancel/Change Tariff*******************************
+
+//*************************Billing Preferences**********************************
+var mode, billto, details;
+$("#billing_pref #mode").click(function(){
+    $("#details_0").hide();
+    $("#details_1").hide();
+    $("#details_2").hide();
+    mode = $(this).val();
+    $("#details_"+mode).show();
+});
+$("#save-billingpref").click(function(){
+    var params = {'member': $.cookie('user_id'), 'mode': parseInt(mode)};
+    switch(parseInt(mode)){
+        case 0 : params['billto'] = null;
+                 if(parseInt($("input:radio[name='self_mode']:checked").val()) == 1){
+                    params['details'] = {
+                        "name" :$("#details_0 #self_name").val(),
+                        "address" :$("#details_0 #self_address").val(),
+                        "city" :$("#details_0 #self_city").val(),
+                        "country" :$("#details_0 #self_country").val(),
+                        "phone" :$("#details_0 #self_phone").val(),
+                        "email" :$("#details_0 #self_email").val()
+                        };
+                 }
+                 else{
+                    params['details'] = null;
+                 }
+                 break;
+        case 1 : if(parseInt($("input:radio[name='bizness_mode']:checked").val()) == 1){
+                    params['details'] = {
+                        "name" :$("#details_1 #biz_name").val(),
+                        "address" :$("#details_1 #biz_address").val(),
+                        "city" :$("#details_1 #biz_city").val(),
+                        "country" :$("#details_1 #biz_country").val(),
+                        "phone" :$("#details_1 #biz_phone").val(),
+                        "email" :$("#details_1 #biz_email").val()
+                        };
+                    params['billto'] = null;
+                 }
+                 else{
+                    params['details'] = null;
+                    params['billto'] = billto;
+                 }
+                 break;
+        case 2 : params['billto'] = billto;
+                 params['details'] = null;
+                 break;         
+    }
+    function on_save_billingpref_success(){
+        $("#billing_pref-msg").html("<big>☑</big> Billing Preferences Saved Successfully.");
+    };
+    function on_save_billingpref_error(){
+        $("#billing_pref-msg").html("<big>Error in saving Billing Preferences. Try again</big>");
+    };
+    jsonrpc('billingpref.update', params, on_save_billingpref_success, on_save_billingpref_error);
+});
+$("#self_mode0").click(function(){
+    $('#details_0 #self_name').attr('disabled', 'disabled');
+    $('#details_0 #self_address').attr('disabled', 'disabled');
+    $('#details_0 #self_city').attr('disabled', 'disabled');
+    $('#details_0 #self_country').attr('disabled', 'disabled');
+    $('#details_0 #self_phone').attr('disabled', 'disabled');
+    $('#details_0 #self_email').attr('disabled', 'disabled');
+});
+$("#self_mode1").click(function(){
+    $('#details_0 #self_name').removeAttr('disabled');
+    $('#details_0 #self_address').removeAttr('disabled');
+    $('#details_0 #self_country').removeAttr('disabled');
+    $('#details_0 #self_city').removeAttr('disabled');
+    $('#details_0 #self_phone').removeAttr('disabled');
+    $('#details_0 #self_email').removeAttr('disabled');
+});
+$("#bizness_mode0").click(function(){
+    $('#details_1 #biz_name').attr('disabled', 'disabled');
+    $('#details_1 #biz_address').attr('disabled', 'disabled');
+    $('#details_1 #biz_city').attr('disabled', 'disabled');
+    $('#details_1 #biz_country').attr('disabled', 'disabled');
+    $('#details_1 #biz_phone').attr('disabled', 'disabled');
+    $('#details_1 #biz_email').attr('disabled', 'disabled');
+    $('#details_1 #existing_biz').removeAttr('disabled');
+});
+$("#bizness_mode1").click(function(){
+    $('#details_1 #biz_name').removeAttr('disabled');
+    $('#details_1 #biz_address').removeAttr('disabled');
+    $('#details_1 #biz_country').removeAttr('disabled');
+    $('#details_1 #biz_city').removeAttr('disabled');
+    $('#details_1 #biz_phone').removeAttr('disabled');
+    $('#details_1 #biz_email').removeAttr('disabled');
+    $('#details_1 #existing_biz').attr('disabled', 'disabled');
+});
+function on_get_billingpref_success(resp){
+    mode = resp['result']['mode']; 
+    billto = resp['result']['billto'];
+    details = resp['result']['details'];
+    switch(mode){
+        case 0 : $('input:radio[name=mode][value=0]').click();
+                 if(details){
+                    $('input:radio[name=self_mode][value=1]').click();
+                    $('#details_0 #self_name').val(details['name']);
+                    $('#details_0 #self_address').val(details['address']);
+                    $('#details_0 #self_city').val(details['city']);
+                    $("#details_0 #self_country option[value='" + details['country'] + "']").attr('selected', 'selected');
+                    $('#details_0 #self_phone').val(details['phone']);
+                    $('#details_0 #self_email').val(details['email']);
+                 }
+                 else{
+                    $('input:radio[name=self_mode][value=0]').click();
+                 }
+                 break;
+        case 1 : $('input:radio[name=mode][value=1]').click();
+                 $('input:radio[name=bizness_mode][value=0]').click();
+                 break;
+        case 2 : $('input:radio[name=mode][value=2]').click();
+                 break;
+    }
+};
+function on_get_billingpref_error(){};
+var params = {'member': $.cookie('user_id')};
+jsonrpc('billingpref.info', params, on_get_billingpref_success, on_get_billingpref_error);
+//------------------------Existing Member Search--------------------------------
+$('#details_2 #member').autocomplete({
+    source: "/search/members", 
+    select: function (event, ui) {
+        billto = ui.item.id;
+    } 
+});
+//------------------------Existing Biznesses Search--------------------------------
+$('#details_1 #existing_biz').autocomplete({
+    source: "/search/biznesses", 
+    select: function (event, ui) {
+        billto = ui.item.id;
+    } 
+});
+//************************End of Billing Preferences****************************

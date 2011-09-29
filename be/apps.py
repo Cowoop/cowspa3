@@ -14,6 +14,8 @@ import be.apis.activities as activitylib
 import be.apis.invoice as invoicelib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.registration as registrationlib
+import be.apis.billingpref as billingpreflib
+import be.apis.biz as bizlib
 
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -38,7 +40,7 @@ cowspa.connect(memberlib.member_collection.new, "member.new")
 cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
 cowspa.connect(planlib.plan_collection.new, "plan.new")
 cowspa.connect(resourcelib.resource_collection.new, "resource.new")
-cowspa.connect(memberlib.member_collection.search, "member.search")
+cowspa.connect(memberlib.member_collection.search, "members.search")
 cowspa.connect(memberlib.member_resource.details, "member.profile")
 cowspa.connect(memberlib.member_resource.contact, "member.contact")
 cowspa.connect(memberlib.member_resource.update, "member.update")
@@ -49,11 +51,14 @@ cowspa.connect(planlib.plan_collection.list, "bizplace_plans.list")
 cowspa.connect(planlib.plan_resource.new_subscriber, "next.tariff")
 cowspa.connect(memberlib.member_resource.get_teriff_history, "teriff.history")
 cowspa.connect(invoicelib.invoice_collection.new, "invoice.new")
-cowspa.connect(invoicelib.invoice_collection.search, "invoice.search")
+cowspa.connect(invoicelib.invoice_collection.search, "invoices.search")
 cowspa.connect(invoicelib.invoice_resource.send, "invoice.send")
 cowspa.connect(invoicelib.invoice_collection.list, "invoice.history")
 cowspa.connect(invoicepreflib.invoicepref_resource.info, "invoicepref.info")
 cowspa.connect(invoicepreflib.invoicepref_resource.update, "invoicepref.update")
 cowspa.connect(planlib.plan_resource.remove_subscriber, "subscription.remove")
 cowspa.connect(planlib.plan_resource.change_subscription, "subscription.change")
+cowspa.connect(billingpreflib.billingpref_resource.info, "billingpref.info")
+cowspa.connect(billingpreflib.billingpref_resource.update, "billingpref.update")
+cowspa.connect(bizlib.biz_collection.search, "biznesses.search")
 cowspa.startup()

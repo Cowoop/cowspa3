@@ -6,6 +6,7 @@ import be.apis.activities as activitylib
 import be.apis.user as userlib
 import commonlib.shared.static_data as data_lists
 import be.apis.invoicepref as invoicepreflib
+import be.apis.billingpref as billingpreflib
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -37,6 +38,8 @@ class MemberCollection:
         #searchlib.add(search_d)
         
         invoicepreflib.invoicepref_collection.new(**dict(owner=member_ref))
+        
+        billingpreflib.billingpref_collection.new(**dict(member=user_id))
 
         data = dict(name=display_name, id=user_id)
         activity_id = activitylib.add('member_management', 'member_created', data, created)

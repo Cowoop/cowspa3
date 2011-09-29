@@ -47,21 +47,21 @@ class MemberPref(PGStore):
     language TEXT DEFAULT 'en'
     """
 
-class BillingPref(PGStore):
-    table_name = "billing_pref"
-    create_sql = """
-    owner TEXT NOT NULL,
-    name TEXT NOT NULL,
-    address TEXT,
-    city TEXT,
-    country TEXT,
-    pincode TEXT,
-    phone TEXT,
-    mobile TEXT,
-    fax TEXT,
-    email TEXT,
-    company_no TEXT
-    """
+#class BillingPref(PGStore):
+#    table_name = "billing_pref"
+#    create_sql = """
+#    owner TEXT NOT NULL,
+#    name TEXT NOT NULL,
+#    address TEXT,
+#    city TEXT,
+#    country TEXT,
+#    pincode TEXT,
+#    phone TEXT,
+#    mobile TEXT,
+#    fax TEXT,
+#    email TEXT,
+#    company_no TEXT
+#    """
 
 class MemberServices(PGStore):
     table_name = "member_service"
@@ -329,3 +329,13 @@ class ActivityAccess(PGStore):
     role TEXT NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
+
+class BillingPref(PGStore):
+    table_name = "billing_pref"
+    create_sql = """
+    member INTEGER NOT NULL UNIQUE,
+    mode INTEGER NOT NULL,
+    billto INTEGER,
+    details BYTEA
+    """
+    pickle_cols = ['details']

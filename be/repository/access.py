@@ -33,6 +33,7 @@ pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
 activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
+billingpref_store = stores_mod.BillingPref()
 
 class RStore(object): pass
 
@@ -200,7 +201,7 @@ def list_invoices(issuer ,limit):
     
 def search_member(keys, options, limit):
     fields = ['id', 'display_name']
-    query = 'SELECT member.id, member.display_name as name, member.email FROM member'
+    query = 'SELECT member.id, member.display_name as name, member.display_name as label, member.email FROM member'
     clause = ""
     if 'global::admin' not in env.context.roles or options['mybizplace']:
         query += ', subscription'
@@ -220,6 +221,18 @@ def search_member(keys, options, limit):
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
+
+def search_biz(key, limit):
+    fields = ['id', 'name']
+    query = 'SELECT id, name, email, name as label FROM biz WHERE '
+    try:
+        key = int(key)
+        clause = 'id = %(key)s'
+    except:
+        key = key.lower() + "%"
+        clause = 'lower(name) LIKE %(key)s OR lower(email) LIKE %(key)s LIMIT %(limit)s'
+    values =  dict(key=key, limit=limit)
+    return biz_store.query_exec(query+clause, values)
 
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'

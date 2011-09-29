@@ -68,7 +68,8 @@ profile_opt = [
     tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact'),
     tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
     tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
-    tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences')
+    tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences'),
+    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', Class='navlink-opt-item', id='navlink-billingpreferences')
     ]
 
 resources_opt = [

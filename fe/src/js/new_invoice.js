@@ -3,7 +3,7 @@ var inv_id = null;
 var inv_member_id = null;
 
 $('#invoicee-search').autocomplete({
-    source: "/search_members",
+    source: "/search/members",
     select: function(event, ui) {
         var params = {member_id: ui.item.id};
         function success (response) {
