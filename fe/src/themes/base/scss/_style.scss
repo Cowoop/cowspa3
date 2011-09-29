@@ -157,6 +157,7 @@ input, textarea, select, .uneditable-input { color: $main-color; font-size: 90%;
     }
     .field-value {
         font-weight: bold;
+        white-space: pre-wrap;
         @include columns(5, 11);
         // @include omega;
         @include divsizing;
@@ -388,7 +389,6 @@ form.vform {
         line-height: 1.2em;
     }
     .field {
-        //border-bottom: 1px solid darken($page-background, 30%);
         padding-bottom: 0.3em;
     }
     .field .field-input {
@@ -401,32 +401,36 @@ form.vform {
         display: block;
     }
     .buttons {
+        border-top: 1px solid lighten($main-color, 10%);
         margin-top: 1em;
         text-align: center;
     }
 }
 
 form.hform {
-    label {
-        font-size: 110%;
-        display: inline-block;
+    line-height: 2.5em;
+    .field-label {
+        width: 25%;
         text-align: right;
-    }
-    .field {
-        //border-bottom: 1px solid darken($page-background, 30%);
-        padding-bottom: 0.3em;
-    }
-    .field .field-input {
-        height: 120%;
         display: inline-block;
+        vertical-align: top;
+        padding: 0 0.5em 0 0;
+    }
+    .field-input {
+        width: 60%;
+    }
+    textarea {
+        height: 9em;
     }
     .field-help {
         font-style: italic;
         display: block;
+        margin-left: 25%;
     }
     .buttons {
-        margin-top: 1em;
-        text-align: center;
+        @include divsizing;
+        @include pad(2, 0);
+        border-top: 1px solid lighten($main-color, 10%);
     }
 }
 

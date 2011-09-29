@@ -148,12 +148,12 @@ class Preferences(BasePage):
         view_section.bank_details.value = tf.DIV(id="data-bank_details", Class="field-value")
         container.view_form = view_section
         
-        edit_form = sphc.more.Form(id='preferences_edit_form', action='/savelogo', classes=['hform'], enctype='multipart/form-data')
+        edit_form = sphc.more.Form(id='preferences_edit_form', classes=['hform'], enctype='multipart/form-data')
         edit_form.add_field("Logo", tf.INPUT(name="logo", id="logo", type="file", accept="image/*"))
         edit_form.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="email_text"))
         edit_form.add_field("Terms And Conditions", tf.TEXTAREA(Class="changed-data", name="terms_and_conditions", id="terms_and_conditions"))
         edit_form.add_field("Invoice Due Date",tf.INPUT(Class="changed-data", name="due_date", id="due_date", type="number"), "Days after sending invoice")
-        edit_form.add_field("Bcc Invoice", tf.INPUT(Class="changed-data", name="bcc_email", id="bcc_email", type="email"), "Invoice will be Bcced to this Email id")
+        edit_form.add_field("Bcc Invoice", tf.INPUT(Class="changed-data", name="bcc_email", id="bcc_email", type="email"), "Invoices will be Bcced to this Email id")
         edit_form.add_field("Bank Details", tf.TEXTAREA(Class="changed-data", name="bank_details", id="bank_details"))
         edit_form.add_buttons(tf.INPUT(type="button", value="Save", id='save-btn'), tf.INPUT(type="button", value="Cancel", id='cancel-btn'))
         edit_section = tf.DIV(id='edit-section', Class='hidden')
