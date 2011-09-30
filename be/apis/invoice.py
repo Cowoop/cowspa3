@@ -45,7 +45,7 @@ class InvoiceCollection:
         mod_data = dict(invoice=invoice_id)
         usage_store.update_many(usage_ids, **mod_data)
 
-        data = dict(name=member_store.get(member, ['display_name']), issuer=bizplace_store.get(issuer, ['name']))
+        data = dict(name=member_store.get(member, ['display_name']), issuer=bizplace_store.get(issuer, ['name']), invoice_id=invoice_id, member_id=member)
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
         
         create_invoice_pdf(invoice_id)

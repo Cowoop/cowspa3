@@ -24,6 +24,10 @@ class BillingprefResource:
             mod_data['billto'] = bizlib.biz_collection.new(**mod_data['details'])
             mod_data['details'] = None
         billingpref_store.update_by(dict(member=member), **mod_data)
+        
+        data = dict(name=member_store.get(member, ['display_name']), member_id=member)
+        activity_id = activitylib.add('billingpref_management', 'billingpref_updated', data)
+        
         return True
    
     def get_billing_preferences_details(self, member):

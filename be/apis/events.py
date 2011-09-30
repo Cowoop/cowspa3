@@ -121,7 +121,7 @@ class InvoiceCreated(BaseEvent):
     category = "invoice_management"
     def _msg_tmpl(self):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
-        return created_date + " Invoice issued for %(name)s by %(actor_name)s."
+        return created_date + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./profile?id=%(member_id)s#about'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
         
@@ -131,6 +131,15 @@ class InvoiceprefUpdated(BaseEvent):
     def _msg_tmpl(self):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " Invoice Preferences %(attrs)s updated for Place %(name)s by %(actor_name)s."
+    def _access(self):
+        return ['global::admin', member_store.ref(self.actor)]
+        
+class BillingprefUpdated(BaseEvent):
+    name = "billingpref_updated"
+    category = "billingpref_management"
+    def _msg_tmpl(self):
+        created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + " Billing Preferences updated for <a href='./profile?id=%(member_id)s#about'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return ['global::admin', member_store.ref(self.actor)]
         
