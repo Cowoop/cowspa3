@@ -4,7 +4,7 @@ import be.repository.access as dbaccess
 import commonlib.helpers as helpers
 import be.apis.activities as activitylib
 import be.apis.user as userlib
-import commonlib.shared.static_data as data_lists
+import commonlib.shared.static as data_lists
 import be.apis.invoicepref as invoicepreflib
 import be.apis.billingpref as billingpreflib
 
