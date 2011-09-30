@@ -435,7 +435,7 @@ form.simple-hform {
     input, textarea, select {
         width: 60%;
     }
-    input[type="button"] {
+    input[type="button"], input[type="radio"] {
         width: auto;
     }
     textarea {
