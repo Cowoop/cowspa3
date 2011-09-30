@@ -39,7 +39,7 @@ function enterKey(evt) {
     var evt = (evt) ? evt : event
     var charCode = (evt.which) ? evt.which : evt.keyCode
     if (charCode == 13) {
-      login();
+      activate();
     };
 }; 
 
