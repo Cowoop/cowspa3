@@ -23,7 +23,7 @@ class BizplaceCreate(BasePage):
         
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Address', FOR="address")
-        field.input = tf.INPUT(type='text', id='address', name='address')
+        field.input = tf.TEXTAREA(id='address', name='address')
         fields.append(field)
 
         field = tf.DIV()
