@@ -391,11 +391,15 @@ function on_get_billingpref_success(resp){
                  else{
                     $('input:radio[name=self_mode][value=0]').click();
                  }
+                 $('input:radio[name=bizness_mode][value=0]').click();
                  break;
         case 1 : $('input:radio[name=mode][value=1]').click();
                  $('input:radio[name=bizness_mode][value=0]').click();
+                 $('input:radio[name=self_mode][value=0]').click();
                  break;
         case 2 : $('input:radio[name=mode][value=2]').click();
+                 $('input:radio[name=self_mode][value=0]').click();
+                 $('input:radio[name=bizness_mode][value=0]').click();
                  break;
     }
 };
@@ -411,7 +415,7 @@ $('#details_2 #member').autocomplete({
 });
 //------------------------Existing Biznesses Search--------------------------------
 $('#details_1 #existing_biz').autocomplete({
-    source: "/search/biznesses", 
+    source: "/search/businesses", 
     select: function (event, ui) {
         billto = ui.item.id;
     } 
