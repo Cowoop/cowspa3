@@ -22,8 +22,6 @@ class PGProvider(persistence.DBProvider):
     def tr_abort(self, context):
         cur = context.pgcursor
         cur.execute('abort')
-        cur.close()
-        pool.putconn(cur.connection)
 
     def startup(self):
         global pool

@@ -79,7 +79,7 @@ function success(resp){
         else
             current_bizplace = $("#bizplaces").find('option:selected').val();
             $.cookie("bizplace", current_bizplace);
-    }
+    };
     $('#bizplaces').change(function() {
         var val = $("#bizplaces").find('option:selected').val();
         $.cookie("bizplace", val);
@@ -90,9 +90,9 @@ function success(resp){
 function error(){
 }
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
-if(params['user_id'])
+if(params['user_id']) {
     jsonrpc('users.bizplace.list', params, success, error); 
-
+};
      
 //******************************************End**********************************************************
   
