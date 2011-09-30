@@ -201,14 +201,14 @@ $(document).ready(function() {
         });
     });
    
-    var params = {}
+    var params1 = {}
     function success1(resp) {     
         $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
         $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
         };
     function error1(){};
-    params['bizplace_id'] = $("#bizplaces").val();
-    jsonrpc('bizplace_plans.list', params, success1, error1);
+    params1['bizplace_id'] = $("#bizplaces").val();
+    jsonrpc('bizplace_plans.list', params1, success1, error1);
     
     
 //*******************End Next Tariff**************************
