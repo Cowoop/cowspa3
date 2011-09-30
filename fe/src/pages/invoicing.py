@@ -106,7 +106,7 @@ class New(BasePage):
             tf.BUTTON("Send", Class="big-button", disabled="disabled", id="invoice-send")]
 
         view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
-        view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="http://www.google.com", width="500", height="500")
+        view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         
         content.new = tf.BUTTON("Add usage", id="new-usage-button")
         content.buttons = invoice_buttons
@@ -173,5 +173,7 @@ class History(BasePage):
     def content(self):
         container = tf.DIV()
         container.table = tf.TABLE(id="history_table")
+        container.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
+        container.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         container.script = tf.SCRIPT(open("fe/src/js/invoice_history.js").read(), escape=False)
         return container

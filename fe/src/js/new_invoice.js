@@ -23,7 +23,7 @@ $('#inv-start_date-vis').datepicker( {
     altField: '#inv-start_date',
     dateFormat: 'M d, yy'
 });
-$('#inv-end_date').datepicker( {
+$('#inv-end_date-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#inv-end_date',
     dateFormat: 'M d, yy'
@@ -83,8 +83,8 @@ $('#invoice-save').click( function () {
 $('#invoice-view').click(function () {
     $('#view_invoice_window').dialog({ 
         title: "Invoice", 
-        width: 500,
-        height: 500
+        width: 800,
+        height: 600
     });
 });
 $('#invoice-send').click(function () {

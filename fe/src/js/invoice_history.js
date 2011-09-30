@@ -12,14 +12,23 @@ function success(response) {
             { "sTitle": "Link",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
-                    return "<A href='/invoice/"+sReturn+"/html'>View</A>";
+                    return "<A id='"+sReturn+"' href='#' class='invoice-view'>View</A>";
                     }
             }
         ]
     });
+    //****************************View Invoice**********************************
+    $('.invoice-view').click(function () {
+        $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+$(this).attr('id')+'/html');
+        $('#view_invoice_window').dialog({ 
+            title: "Invoice", 
+            width: 800,
+            height: 600
+         });
+    });
+    //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
 function error(){};
 var params = { 'issuer' : current_bizplace};
 jsonrpc('invoice.history', params, success, error);
-//xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx
