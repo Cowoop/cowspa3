@@ -223,16 +223,15 @@ def search_member(keys, options, limit):
     return member_store.query_exec(query, values)
 
 def search_biz(key, limit):
-    fields = ['id', 'name']
-    query = 'SELECT id, name, email, name as label FROM biz WHERE '
+    fields = ['id', 'name', 'name as label']
     try:
         key = int(key)
         clause = 'id = %(key)s'
     except:
         key = key.lower() + "%"
         clause = 'lower(name) LIKE %(key)s OR lower(email) LIKE %(key)s LIMIT %(limit)s'
-    values =  dict(key=key, limit=limit)
-    return biz_store.query_exec(query+clause, values)
+    clause_values =  dict(key=key, limit=limit)
+    return biz_store.get_by_clause(clause, clause_values, fields)
 
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
