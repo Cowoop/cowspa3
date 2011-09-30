@@ -203,7 +203,7 @@ def search_member(keys, options, limit):
     fields = ['id', 'display_name']
     query = 'SELECT member.id, member.display_name as name, member.display_name as label, member.email FROM member'
     clause = ""
-    if 'global::admin' not in env.context.roles or options['mybizplace']:
+    if 'global::admin' not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
     if len(keys) == 1:
