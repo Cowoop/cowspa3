@@ -294,7 +294,7 @@ $("#billing_pref #mode").click(function(){
     $("#details_"+mode).show();
 });
 $("#save-billingpref").click(function(){
-    var params = {'member': $.cookie('user_id'), 'mode': parseInt(mode)};
+    var params = {'member': window.location.search ? (window.location.search).substring(4) : $.cookie('user_id'), 'mode': parseInt(mode)};
     switch(parseInt(mode)){
         case 0 : params['billto'] = null;
                  if(parseInt($("input:radio[name='self_mode']:checked").val()) == 1){
@@ -404,7 +404,7 @@ function on_get_billingpref_success(resp){
     }
 };
 function on_get_billingpref_error(){};
-var params = {'member': $.cookie('user_id')};
+var params = {'member': window.location.search ? (window.location.search).substring(4) : $.cookie('user_id')};
 jsonrpc('billingpref.info', params, on_get_billingpref_success, on_get_billingpref_error);
 //------------------------Existing Member Search--------------------------------
 $('#details_2 #member').autocomplete({
