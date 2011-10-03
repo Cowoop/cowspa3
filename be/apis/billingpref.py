@@ -7,9 +7,10 @@ import commonlib.helpers
 member_store = dbaccess.stores.member_store
 biz_store = dbaccess.stores.biz_store
 billingpref_store = dbaccess.stores.billingpref_store
+modes = commonlib.helpers.odict(**{'self':0, 'custom':1, 'another':2, 'business':3})
 
 class BillingprefCollection:
-    def new(self, member, mode=0, billto=None, details=None):
+    def new(self, member, mode=modes.self, billto=None, details=None):
 
         data = dict(member=member, mode=mode, billto=billto, details=details)
         billingpref_store.add(**data)
@@ -20,9 +21,9 @@ class BillingprefResource:
 
     def update(self, member, **mod_data):
         
-        if mod_data['mode'] == 1 and not mod_data['billto']:
-            mod_data['billto'] = bizlib.biz_collection.new(**mod_data['details'])
-            mod_data['details'] = None
+        if mod_data['mode'] == modes.business and not mod_data['billto']:
+            mod_data['billto'] = bizlib.biz_collection.new(**mod_data['biz_details'])
+            del mod_data['biz_details']
         billingpref_store.update_by(dict(member=member), **mod_data)
         
         data = dict(name=member_store.get(member, ['display_name']), member_id=member)
@@ -30,27 +31,26 @@ class BillingprefResource:
         
         return True
    
-    def get_billing_preferences_details(self, member):
+    def get_details(self, member):
         
-        modes = commonlib.helpers.odict(**{'self':0, 'bizness':1, 'another':2})
-        details = None
         billto = member
-        mode = modes.another
         while True:
+            preferences = self.info(billto)
+            billto = preferences['billto'] if preferences['mode'] != modes.self else billto
+            details = preferences['details'] if billto != member or preferences['mode'] != modes.another else None
+            mode = preferences['mode'] if billto != member or preferences['mode'] != modes.another else modes.self
             if mode == modes.self:
-                if not details:
-                    details = member_store.get(member,['display_name', 'phone', 'email'])
-                    details['name'] = details['display_name']
-                    del details['display_name'] 
-                break                
-            elif mode == modes.bizness:
-                details = biz_store.get(biz,['name', 'phone', 'email'])
+                details = member_store.get(billto, ['display_name', 'address', 'city', 'country', 'phone', 'email'])
+                details['name'] = details['display_name']
+                del details['display_name']
+                break
+            elif mode == modes.custom:
                 break
             elif mode == modes.another:
-                preferences = self.get(billto) 
-            mode = preferences['mode'] if billto != member else modes.self
-            billto = preferences['billto']
-            details = preferences['details'] 
+                continue
+            elif mode == modes.business:
+                details = biz_store.get(billto, ['name', 'address', 'city', 'country', 'phone', 'email'])
+                break
         return details
         
     def info(self, member):
