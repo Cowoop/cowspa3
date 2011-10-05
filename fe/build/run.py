@@ -104,7 +104,8 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoicing/history')
         ]
 
-def copydirs(srcs, dst, verbose=False):
+def copydirs(srcs, dst, verbose=False, overwrite=True):
+    src = srcs
     if isinstance(srcs, basestring):
         srcs = [srcs]
     else:
@@ -116,11 +117,27 @@ def copydirs(srcs, dst, verbose=False):
     dstdir = os.path.dirname(dst)
     if dstdir and not os.path.exists(dstdir):
         os.makedirs(dstdir)
-    srcs = ' '.join(srcs)
-    cmd = "/bin/cp -r%s %s %s" % (v, srcs, dst)
-    print "Executing ", cmd
-    if os.system(cmd) != 0:
-        raise Exception("Copying failed: %s" % cmd)
+    if overwrite:
+        srcs = ' '.join(srcs)
+        cmd = "/bin/cp -r%s %s %s" % (v, srcs, dst)
+        print "Executing ", cmd
+        if os.system(cmd) != 0:
+            raise Exception("Copying failed: %s" % cmd)
+    else:
+        for root, dirs, files in os.walk(src):
+            folder_path = os.path.join(dst, os.path.relpath(root, src))
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+            for each_file in files:
+                dst_file = os.path.join(folder_path, each_file)
+                src_file = os.path.join(root, each_file)
+                if not os.path.isfile(dst_file) or os.stat(src_file).st_mtime > os.stat(dst_file).st_mtime:
+                    if os.path.isfile(dst_file): os.remove(dst_file)
+                    cmd = "/bin/cp -r%s %s %s" % (v, src_file, dst_file)
+                    print "---Executing ", cmd
+                    if os.system(cmd) != 0:
+                        raise Exception("Copying failed: %s" % cmd)
+        
 
 def copy_contribs():
     contribdirs = (pathjoin(contribroot, name) for name in contribs)
@@ -130,8 +147,16 @@ def build_themes():
     """
     theme dir (built) goes to <pub>/themes/<theme-name>
     """
-    copydirs(themeroot, pubroot)
+    copydirs(themeroot, pubroot, overwrite=False)
     base_themedir = pathjoin(themeroot, 'base')
+    src_scssdir = pathjoin(base_themedir, 'scss')
+    dst_scssdir = pathjoin(pubroot, 'themes/base/scss')
+    compile_style = False
+    for each_file in os.listdir(src_scssdir):
+        if not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_scssdir, each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime:
+            compile_style = True
+            break
+    
     for themedir in themedirs:
         # cp -r fe/src/themes pub
         # cp -r contrib/css/* pub/themes/default/scss/
@@ -152,11 +177,12 @@ def build_themes():
         src_scssdir = pathjoin(src_themedir, 'css')
         dst_scssdir = pathjoin(dst_themedir, 'scss')
         dst_cssdir = pathjoin(dst_themedir, 'css')
-        copydirs(themeroot, pubroot)
-        copydirs(pathjoin(contribroot, 'css'), pathjoin(dst_scssdir, 'contrib'))
-        copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
-        copydirs(pathjoin(dst_scssdir, 'base', 'main.scss'), dst_scssdir)
-        compile_scss(dst_themedir)
+        if compile_style:
+            copydirs(themeroot, pubroot)
+            copydirs(pathjoin(contribroot, 'css'), pathjoin(dst_scssdir, 'contrib'))
+            copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
+            copydirs(pathjoin(dst_scssdir, 'base', 'main.scss'), dst_scssdir)
+            compile_scss(dst_themedir)
         # 3. copy jquery-ui images
         src_jqui_imagedir = pathjoin(contribroot, 'js', 'jquery-ui', 'images')
         copydirs(src_jqui_imagedir, dst_cssdir)
