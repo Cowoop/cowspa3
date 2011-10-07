@@ -34,6 +34,7 @@ activity_store = stores_mod.Activity()
 activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 billingpref_store = stores_mod.BillingPref()
+oidgen_store = stores_mod.OidGen()
 
 class RStore(object): pass
 
@@ -277,4 +278,14 @@ def search_invoice(keys, options, limit):
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
+    
+class OidGenerator(object):
+    
+    @staticmethod
+    def next(otype):
+        return oidgen_store.add(**dict(type=otype))
+    
+    @staticmethod
+    def get_otype(oid):
+        return oidgen_store.get(oid, fields=['type'])
     

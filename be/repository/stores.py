@@ -339,3 +339,11 @@ class BillingPref(PGStore):
     details BYTEA
     """
     pickle_cols = ['details']
+    
+class OidGen(PGStore):
+    create_sql = """
+    id SERIAL NOT NULL UNIQUE,
+    type TEXT NOT NULL,
+    PRIMARY KEY(id, type)
+    """
+
