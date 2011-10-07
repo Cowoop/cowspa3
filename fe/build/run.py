@@ -2,7 +2,6 @@ import os
 import sys
 import itertools
 import glob
-import shutil
 
 sys.path.append('.')
 
@@ -120,10 +119,8 @@ def copydirs(srcs, dst, verbose=False, overwrite=True):
         os.makedirs(dstdir)
     if overwrite:
         srcs = ' '.join(srcs)
-        cmd = "/bin/cp -r%s %s %s" % (v, srcs, dst)
-        print "Executing ", cmd
-        if os.system(cmd) != 0:
-            raise Exception("Copying failed: %s" % cmd)
+        cmd = "/usr/bin/rsync -r %s --exclude='.git'  %s %s" % (v, srcs, dst)
+        exec_cmd(cmd)
     else:
         for root, dirs, files in os.walk(src):
             folder_path = os.path.join(dst, os.path.relpath(root, src))
@@ -133,11 +130,8 @@ def copydirs(srcs, dst, verbose=False, overwrite=True):
                 dst_file = os.path.join(folder_path, each_file)
                 src_file = os.path.join(root, each_file)
                 if not os.path.isfile(dst_file) or os.stat(src_file).st_mtime > os.stat(dst_file).st_mtime:
-                    if os.path.isfile(dst_file): os.remove(dst_file)
-                    try:
-                        shutil.copyfile(src_file, dst_file)
-                    except:
-                        raise Exception("Copying failed: %s-->%s" % (src_file, dst_file))
+                    cmd = "/bin/cp --remove-destination %s %s" % (src_file, dst_file)
+                    exec_cmd(cmd)
 
 def copy_contribs():
     contribdirs = (pathjoin(contribroot, name) for name in contribs)
@@ -153,7 +147,7 @@ def build_themes():
     dst_scssdir = pathjoin(pubroot, 'themes/base/scss')
     change_in_base = False
     for each_file in os.listdir(src_scssdir):
-        if not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_scssdir, each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime:
+        if each_file.endswith(".scss") and (not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_scssdir, each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime):
             change_in_base = True
             break
     
@@ -184,8 +178,8 @@ def build_themes():
                 break
         if change_in_base or change_in_theme:
             copydirs(themeroot, pubroot)
-            copydirs(pathjoin(contribroot, 'css'), pathjoin(dst_scssdir, 'contrib'))
-            copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
+            copydirs(pathjoin(contribroot, 'css/'), pathjoin(dst_scssdir, 'contrib'))
+            copydirs(pathjoin(base_themedir, 'scss/'), pathjoin(dst_scssdir, 'base'))
             copydirs(pathjoin(dst_scssdir, 'base', 'main.scss'), dst_scssdir)
             compile_scss(dst_themedir)
         # 3. copy jquery-ui images
@@ -219,7 +213,8 @@ def build_be_template_styles():
             changes_in_template = True
             break
     if changes_in_template:
-        if os.path.isdir(dst_dir): shutil.rmtree(dst_dir)
+        cmd = "/bin/rm -rf %s" % (dst_dir)
+        exec_cmd(cmd)
         compile_scss(base_dir)
 
 def build_all():
