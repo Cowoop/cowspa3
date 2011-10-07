@@ -2,6 +2,7 @@ import os
 import sys
 import itertools
 import glob
+import shutil
 
 sys.path.append('.')
 
@@ -133,11 +134,10 @@ def copydirs(srcs, dst, verbose=False, overwrite=True):
                 src_file = os.path.join(root, each_file)
                 if not os.path.isfile(dst_file) or os.stat(src_file).st_mtime > os.stat(dst_file).st_mtime:
                     if os.path.isfile(dst_file): os.remove(dst_file)
-                    cmd = "/bin/cp -r%s %s %s" % (v, src_file, dst_file)
-                    print "---Executing ", cmd
-                    if os.system(cmd) != 0:
-                        raise Exception("Copying failed: %s" % cmd)
-        
+                    try:
+                        shutil.copyfile(src_file, dst_file)
+                    except:
+                        raise Exception("Copying failed: %s-->%s" % (src_file, dst_file))
 
 def copy_contribs():
     contribdirs = (pathjoin(contribroot, name) for name in contribs)
@@ -151,10 +151,10 @@ def build_themes():
     base_themedir = pathjoin(themeroot, 'base')
     src_scssdir = pathjoin(base_themedir, 'scss')
     dst_scssdir = pathjoin(pubroot, 'themes/base/scss')
-    compile_style = False
+    change_in_base = False
     for each_file in os.listdir(src_scssdir):
         if not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_scssdir, each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime:
-            compile_style = True
+            change_in_base = True
             break
     
     for themedir in themedirs:
@@ -177,7 +177,12 @@ def build_themes():
         src_scssdir = pathjoin(src_themedir, 'css')
         dst_scssdir = pathjoin(dst_themedir, 'scss')
         dst_cssdir = pathjoin(dst_themedir, 'css')
-        if compile_style:
+        change_in_theme = False
+        for each_file in os.listdir(pathjoin(src_themedir, 'scss')):
+            if not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_themedir, 'scss', each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime:
+                change_in_theme = True
+                break
+        if change_in_base or change_in_theme:
             copydirs(themeroot, pubroot)
             copydirs(pathjoin(contribroot, 'css'), pathjoin(dst_scssdir, 'contrib'))
             copydirs(pathjoin(base_themedir, 'scss'), pathjoin(dst_scssdir, 'base'))
@@ -201,7 +206,21 @@ def copy_favicon():
 
 def build_be_template_styles():
     base_dir = 'be/templates'
-    compile_scss(base_dir)
+    src_dir = pathjoin(base_dir, 'scss')
+    dst_dir = pathjoin(base_dir, 'css')
+    changes_in_template = False
+    for each_file in os.listdir(src_dir):
+        if not os.path.isdir(dst_dir):
+            changes_in_template = True
+            break
+        elif each_file.startswith('_'):
+            continue
+        elif not os.path.isfile(pathjoin(dst_dir, each_file.split('.')[0]+'.css')) or os.stat(pathjoin(src_dir, each_file)).st_mtime > os.stat(pathjoin(dst_dir, each_file.split('.')[0]+'.css')).st_mtime:
+            changes_in_template = True
+            break
+    if changes_in_template:
+        if os.path.isdir(dst_dir): shutil.rmtree(dst_dir)
+        compile_scss(base_dir)
 
 def build_all():
     for page in pages:
