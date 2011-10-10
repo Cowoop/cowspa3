@@ -243,7 +243,7 @@ def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?
     bizplace_ref = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     bizplace_id = ref2id(bizplace_ref)
-    plan_id = get_member_plan(member_id, bizplace_id, usage_time)
+    plan_id = get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
         return pricing[0].amount

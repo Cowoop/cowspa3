@@ -48,7 +48,8 @@ class ResourceResource:
         resource_store.update(res_id, **mod_data)
         
         data = dict(user_id=env.context.user_id, res_id=res_id, attrs=', '.join(attr for attr in mod_data))
-        activity_id = activitylib.add('ResourceManagement', 'ResourceUpdated', env.context.user_id, data, created)
+        # TODO: Add relevant event in events.py and uncomment below line
+        #activity_id = activitylib.add('ResourceManagement', 'ResourceUpdated', env.context.user_id, data)
 
     def get(self, res_id, attrname):
         if not attrname in self.get_attributes: return

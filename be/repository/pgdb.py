@@ -10,7 +10,7 @@ class PGProvider(persistence.DBProvider):
 
     def tr_start(self, context):
         conn = pool.getconn()
-        print '======= DB connections [', len(pool._used), ']=================='
+        # print '======= DB connections [', len(pool._used), ']=================='
         context.pgcursor = conn.cursor()
 
     def tr_complete(self, context):
@@ -18,10 +18,12 @@ class PGProvider(persistence.DBProvider):
         cur.connection.commit()
         cur.close()
         pool.putconn(cur.connection)
+        # print '======= tr_complete DB connections [', len(pool._used), ']=================='
 
     def tr_abort(self, context):
         cur = context.pgcursor
         cur.execute('abort')
+        # print '======= tr_abort DB connections [', len(pool._used), ']=================='
 
     def startup(self):
         global pool

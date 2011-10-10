@@ -64,8 +64,6 @@ class PlanResource:
     def new_subscriber(self, plan_id, starts, subscriber_id):
         """
         """
-        mm, dd, yyyy = (int(x) for x in starts.split('/'))
-        starts=datetime.date(yyyy, mm, dd)
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)

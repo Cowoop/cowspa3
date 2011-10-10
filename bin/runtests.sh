@@ -1,6 +1,7 @@
 #!/bin/bash
-nosetests -vx  --pdb-failures --pdb \
-tests/test_schemas.py:test_create \
+nosetests -v  --pdb-failures --pdb \
+tests/test_schemas.py \
+tests/test_system.py \
 tests/test_bizplace.py \
 tests/test_member.py \
 tests/test_user.py \
