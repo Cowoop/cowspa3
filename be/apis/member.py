@@ -25,19 +25,18 @@ class MemberCollection:
             state = commonlib.shared.constants.member.to_flags(state)
 
         user_id = userlib.new(username, password, state)
-        member_ref = member_store.ref(user_id)
 
         data = dict(member=user_id, language=language, theme=theme)
         memberpref_store.add(**data)
 
-        #owner = member_store.ref(user_id)
+        #owner = user_id
         data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
         member_store.add(**data)
 
         search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
         
-        invoicepreflib.invoicepref_collection.new(**dict(owner=member_ref))
+        invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
         
         billingpreflib.billingpref_collection.new(**dict(member=user_id))
 
@@ -47,8 +46,7 @@ class MemberCollection:
         return user_id
 
     def delete(self, member_id):
-        member_ref = member_store.ref(member_id)
-        contact_store.remove_by(owner=member_ref)
+        contact_store.remove_by(owner=member_id)
         member_store.remove(member_id)
         raise NotImplemented
 
@@ -102,7 +100,6 @@ class MemberResource:
         return info
 
     def details(self, member_id):
-        member_ref = member_store.ref(member_id)
         profile = profile_store.get_by(dict(member=member_id))[0]
         contact = contact_store.get_by(dict(id=member_id))[0]
         account = dict(username=user_store.get(member_id, ['username']), password="")

@@ -314,6 +314,7 @@ $("#bizness_mode1").click(function(){
 $('#billing_preferences_view_section #edit-link').click(function(){
     $('#billing_preferences_view_section').hide();
     $('#billing_preferences_edit_section').show();
+    $("#billing_pref-msg").html("");
 });
 $('#billing_preferences_edit_section #cancel-billingpref').click(function(){
     $('#billing_preferences_edit_section').hide();
@@ -356,7 +357,7 @@ $("#save-billingpref").click(function(){
         $("#billing_pref-msg").html("<big>☑</big> Billing Preferences Saved Successfully.");
         get_billing_pref_details();
         $('#billing_preferences_edit_section').hide();
-        $('#billing_preferences_view_section').show();    
+        $('#billing_preferences_view_section').show();
     };
     function on_save_billingpref_error(){
         $("#billing_pref-msg").html("<big>Error in saving Billing Preferences. Try again</big>");

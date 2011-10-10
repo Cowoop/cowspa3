@@ -106,9 +106,6 @@ class PGStore(BaseStore):
             self.table_name = self.__class__.__name__.lower()
         self.load_schema()
 
-    def ref(self, oid):
-        return self.__class__.__name__ + ':' + str(oid)
-
     def load_schema(self):
         cursor = self.cursor_getter()
         q = "select 1 from information_schema.tables where table_name = %s"

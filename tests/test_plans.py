@@ -13,7 +13,7 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def test_add_plan():
-    test_data.plan_data['bizplace_id'] = 1
+    test_data.plan_data['bizplace_id'] = 4
     plan_id = planlib.plan_collection.new(**test_data.plan_data)
     env.context.pgcursor.connection.commit()
     test_data.plan_id = plan_id
@@ -29,10 +29,10 @@ def test_find_bizplace_plans():
     data.update(test_data.more_plan_data)
     for i in range(4):
         data['name'] = test_data.more_plan_data['name'] + str(i)
-        data['bizplace_id'] = 1
+        data['bizplace_id'] = 4
         planlib.plan_collection.new(**data)
         env.context.pgcursor.connection.commit()
-    plans = bizplacelib.bizplace_resource.plans(1)
+    plans = bizplacelib.bizplace_resource.plans(4)
     assert len(plans) == 5
 
 def test_subscribers():

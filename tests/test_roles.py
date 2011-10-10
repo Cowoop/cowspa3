@@ -6,7 +6,7 @@ import be.apis.user as userlib
 from nose.tools import nottest
 
 # dependencies member
-role_data = dict(context = 'BizPlace:1', roles = ['director', 'host'], user_id = 1)
+role_data = dict(context = 4, roles = ['director', 'host'], user_id = 1)
 role_map = dict(director='Director', host='Host')
 
 def setup():
