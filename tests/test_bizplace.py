@@ -9,6 +9,7 @@ import be.apis.member as memberlib
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
+    commontest.setup_system_context()
 
 def test_add_biz():
     biz_id = bizlib.biz_collection.new(**test_data.biz)

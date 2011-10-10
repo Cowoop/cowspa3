@@ -9,6 +9,7 @@ rr = constants.resource_relations
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
+    commontest.setup_system_context()
 
 def test_create():
     res_id = resourcelib.resource_collection.new(**test_data.resource_data)

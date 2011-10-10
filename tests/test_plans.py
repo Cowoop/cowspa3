@@ -21,7 +21,7 @@ def test_add_plan():
 
 def test_add_subscribers():
     starts = datetime.datetime(2011, 1, 1, 0, 0, 1)
-    planlib.plan_resource.new_subscribers(1, starts, [1, 2, 3])
+    planlib.plan_resource.new_subscribers(1, starts, test_data.more_member_ids)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():
@@ -37,7 +37,7 @@ def test_find_bizplace_plans():
 
 def test_subscribers():
     subscribers = planlib.plan_resource.subscribers(1)
-    assert len(subscribers) == 3
+    assert len(subscribers) == len(test_data.more_member_ids)
 
 def test_plan_info():
     planlib.plan_resource.info(1)

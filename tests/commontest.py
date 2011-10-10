@@ -9,6 +9,7 @@ import psycopg2.extras
 import psycopg2.pool
 import conf_test
 import be.bootstrap
+import be.apis.user
 
 sys.path.append('.')
 
@@ -27,6 +28,9 @@ def setup_test_simple_env():
 
 def setup_test_env():
     be.bootstrap.start('conf_test')
+
+def setup_system_context():
+    be.apis.user.set_context(env.config.system_username)
 
 def destroy_test_env():
     import be.repository.stores as storeslib

@@ -11,7 +11,9 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def test_add_usage():
-    usage_id = usagelib.usage_collection.add(**test_data.usage)
+    data = test_data.usage
+    data['member'] = test_data.member_id
+    usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert usage_id == 1
 
@@ -25,7 +27,8 @@ def test_update_usage():
 
 def test_add_more_usage():
     for data in test_data.more_usages:
-        usage_id = usagelib.usage_collection.add(**data)
+        data['member'] = test_data.member_id
+        usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
 
 def test_find_by():

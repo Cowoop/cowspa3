@@ -13,10 +13,6 @@ def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
 
-def test_create_superuser():
-    user_id = userlib.create_system_account()
-    assert rolelib.get_user_roles(user_id)['global'] == ["Admin"]
-
 def test_assign_role():
     rolelib.assign(**role_data)
     roles_dict = rolelib.get_user_roles(role_data['user_id'])
