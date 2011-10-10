@@ -1,15 +1,15 @@
 - Dashboard
 
-- Profile # All
-    - About me
-    - Account
-    - Contact
-    - Social Me
-    - Preferences
-    - Memberships
+- My Profile # All
+    | About me | Account | Billing | Contact | Social Me | Preferences | Memberships
 
 - Members # Host, Director, Admin
-    - New *
+    - New
+    - Memberships (here | Reports?)
+    - Manage Profile
+        | _Name_
+        | About | Account | Billing | Contact | Social Me | Preferences | Memberships
+    - Announce
     - Export
 
 - Bookings # Host, Member
@@ -21,28 +21,24 @@
     - Search
     - Export
 
-- Resources # 
+- Resources # All
     - New
     - Manage
     - Archive
 
 - Invoicing # Host, Member
-    - Recent ?
-    - Add Usages
-    - Uninvoiced usages
     - New
-    - Generation
+    - Received
+    - Sent
+    - Auto-Generate
+    - Settings
     - Export
 
-- Places # Host
+- Location # Host, Director
     - New # All with help
-    - About # Host, Director
-    - Contact # Host, Director
-    - Staff # Host (RO), Director
-    - Preferences # Host, Director
-    - Taxes # Host, Director 
-    - Plan # Host, Directors
-    - Resources # Host, Directors
-    - Pricing # Host, Directors
+    - Profile # Host, Director
+        | About | Billing | Social | Contact | Preferences | Taxes # Host, Directors
+    - Tarrifs
+    - People
 
 - Reports # Host, Director
