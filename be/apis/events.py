@@ -38,7 +38,7 @@ class MemberCreated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " New member <a href='./profile?id=%(id)s#about'>%(name)s</a> created by %(actor_name)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
 
 class MemberInvited(BaseEvent):
     name = "member_invited"
@@ -47,7 +47,7 @@ class MemberInvited(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + ' %(actor_name)s has send membership invitaion to "%(first_name)s %(last_name)s"'
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
 
 class MemberUpdated(BaseEvent):
     name = "member_updated"
@@ -60,9 +60,9 @@ class MemberUpdated(BaseEvent):
         return tmpl
     def _access(self):
         if self.actor  == self.data['id']:
-            access = [member_store.ref(self.actor)]
+            access = [self.actor]
         else:
-            access = [member_store.ref(self.actor), member_store.ref(self.data['id'])]
+            access = [self.actor, self.data['id']]
         return access
 
 class MemberDeleted(BaseEvent):
@@ -89,7 +89,7 @@ class BizplaceCreated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " New place %(name)s created by %(actor_name)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
 
 class BizplaceUpdated(BaseEvent):
     name = "bizplace_updated"
@@ -102,9 +102,9 @@ class BizplaceUpdated(BaseEvent):
         return tmpl
     def _access(self):
         if self.actor  == self.data['id']:
-            access = [member_store.ref(self.actor)]
+            access = [self.actor]
         else:
-            access = [member_store.ref(self.actor), member_store.ref(self.data['id'])]
+            access = [self.actor, self.data['id']]
         return access
 
 class PlanCreated(BaseEvent):
@@ -114,7 +114,7 @@ class PlanCreated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " New tariff %(name)s created by %(actor_name)s for %(bizplace)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
 
 class InvoiceCreated(BaseEvent):
     name = "invoice_created"
@@ -123,7 +123,7 @@ class InvoiceCreated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./profile?id=%(member_id)s#about'>%(name)s</a> by %(actor_name)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
         
 class InvoiceprefUpdated(BaseEvent):
     name = "invoicepref_updated"
@@ -132,7 +132,7 @@ class InvoiceprefUpdated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " Invoice Preferences %(attrs)s updated for Place %(name)s by %(actor_name)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
         
 class BillingprefUpdated(BaseEvent):
     name = "billingpref_updated"
@@ -141,7 +141,7 @@ class BillingprefUpdated(BaseEvent):
         created_date = "<c class='date'>%s</c>" % self.data['created'].strftime('%b %-d, %Y')
         return created_date + " Billing Preferences updated for <a href='./profile?id=%(member_id)s#about'>%(name)s</a> by %(actor_name)s."
     def _access(self):
-        return ['global::admin', member_store.ref(self.actor)]
+        return ['global::admin', self.actor]
         
 class Categories(dict):
     """

@@ -19,7 +19,7 @@ class InvoiceprefCollection:
 class InvoiceprefResource:
 
     def update(self, owner, **mod_data):
-        invoicepref_store.update_by(dict(owner=bizplace_store.ref(owner)), **mod_data)
+        invoicepref_store.update_by(dict(owner=owner), **mod_data)
         
         bizplace_name = bizplace_store.get(owner, fields=['name'])
         data = dict(name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
@@ -27,10 +27,10 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        return invoicepref_store.get_by(dict(owner=bizplace_store.ref(owner)), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo'])[0]
+        return invoicepref_store.get_by(dict(owner=owner), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo'])[0]
         
     def get(self, owner, attrname):
-        return invoicepref_store.get_by(dict(owner=bizplace_store.ref(owner)), fields=[attrname])[0][attrname]
+        return invoicepref_store.get_by(dict(owner=owner), fields=[attrname])[0][attrname]
 
     def set(self, owner, attrname, v):
         self.update(owner, **{attrname: v})

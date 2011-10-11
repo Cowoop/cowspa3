@@ -10,7 +10,7 @@ def test_oid_generation():
     oid = dbaccess.OidGenerator.next("Member")
     assert isinstance(oid, (long, int))
     assert dbaccess.OidGenerator.get_otype(oid) == "Member"
-    env.context.pgcursor.connection.commit()
+    #env.context.pgcursor.connection.commit()
     
 def test_more():
     otypes = ["Biz", "Bizplace", "Member"]
@@ -18,4 +18,4 @@ def test_more():
         oid = dbaccess.OidGenerator.next(otype)
         assert isinstance(oid, (long, int))
         assert dbaccess.OidGenerator.get_otype(oid) == otype
-    env.context.pgcursor.connection.commit()
+    #env.context.pgcursor.connection.commit()

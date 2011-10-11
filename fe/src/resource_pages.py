@@ -23,9 +23,13 @@ class ResourceCreate(BasePage):
         field.input = tf.SELECT(id='type', name='type')
         for rtype in types.resource_types:
             field.input.option = tf.OPTION(rtype['label'], value = ['name'])
-            
         fields.append(field)
-
+        
+        field = tf.DIV()
+        field.label = tf.LABEL(content = 'Picture : ', FOR="picture")
+        field.input = tf.INPUT(name="picture", id="picture", type="file", accept="image/*")
+        fields.append(field)
+    
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Short Description : ', FOR="short_description")
         field.input = tf.TEXTAREA( id='short_description', name='short_description', rows=2, cols=25)

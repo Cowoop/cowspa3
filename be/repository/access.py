@@ -4,8 +4,7 @@ import psycopg2
 import be.repository.stores as stores_mod
 import bases.persistence
 
-refsep = ':'
-ctxsep = '::'
+ctxsep = ':'
 
 PGBinary = bases.persistence.PGBinary
 
@@ -40,7 +39,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('ref', 'setup', 'add', 'add_many', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_all', 'update', 'update_many', 'update_by', 'count'):
+    for attr in ('setup', 'add', 'add_many', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_all', 'update', 'update_many', 'update_by', 'count'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
@@ -93,19 +92,14 @@ def list_activities_by_roles(roles, limit=15):
     clause_values = dict(a_ids = tuple(a_ids))
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True)
 
-def ref2name(ref):
-    oname, oid = ref.split(':')
-    store = stores_by_type[oname]
+def oid2name(oid):
+    store = stores_by_type[OidGenerator.get_otype(oid)]
     attr = 'name' if 'name' in store.schema else 'display_name'
-    return store.get(int(oid), [attr], hashrows=False)
+    return store.get(oid, [attr], hashrows=False)
 
-def ref2o(ref):
-    oname, oid = ref.split(':')
-    store = stores_by_type[oname]
+def oid2o(oid):
+    store = stores_by_type[OidGenerator.get_otype]
     return store.get(int(oid))
-
-ref2id = lambda ref: int(ref.split(':')[1])
-ref2ctx = lambda ref: ref.split(':')[0].lower()
 
 def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password
@@ -241,8 +235,7 @@ def get_resource_pricing(plan_id, resource_id, usage_time):
 
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?
-    bizplace_ref = resource_store.get(resource_id, fields=['owner'], hashrows=False)
-    bizplace_id = ref2id(bizplace_ref)
+    bizplace_id = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     plan_id = get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:

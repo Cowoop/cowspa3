@@ -1,5 +1,5 @@
 import datetime
-import commonlib
+import commonlib.shared.constants
 import be.repository.access as dbaccess
 import be.errors as errors
 import commonlib.helpers as helpers
@@ -78,8 +78,10 @@ def logout(token):
 def new(username, password, state=None):
     if state is None:
         state = commonlib.shared.constants.member.enabled
-    data = dict(username=username, password=encrypt(password), state=state)
-    return user_store.add(**data)
+    user_id = dbaccess.OidGenerator.next("Member")
+    data = dict(id=user_id, username=username, password=encrypt(password), state=state)
+    user_store.add(**data)
+    return user_id
 
 def create_system_account():
     username = env.config.system_username

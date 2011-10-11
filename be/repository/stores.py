@@ -17,7 +17,7 @@ class PGStore(PGStore):
 class User(PGStore):
     table_name = "account"
     create_sql = """
-    id SERIAL NOT NULL UNIQUE,
+    id INTEGER NOT NULL UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     state INTEGER default 1 NOT NULL
@@ -164,7 +164,7 @@ class BizplaceProfile(PGStore):
 #
 class Biz(PGStore):
     create_sql = """
-    id SERIAL NOT NULL UNIQUE,
+    id INTEGER NOT NULL UNIQUE,
     name TEXT NOT NULL,
     state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -175,7 +175,7 @@ class Biz(PGStore):
 
 class BizPlace(PGStore):
     create_sql = """
-    id SERIAL NOT NULL UNIQUE,
+    id INTEGER NOT NULL UNIQUE,
     biz INTEGER,
     name TEXT NOT NULL,
     state INTEGER default 1 NOT NULL,
@@ -235,11 +235,12 @@ class Resource(PGStore):
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     type TEXT,
     state INTEGER default 1 NOT NULL,
-    owner TEXT NOT NULL,
+    owner INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     time_based BOOLEAN DEFAULT True,
-    quantity_unit TEXT
+    quantity_unit TEXT,
+    picture TEXT
     """
 
 class ResourceRelation(PGStore):
@@ -303,7 +304,7 @@ class Invoice(PGStore):
 class InvoicePref(PGStore):
     table_name = "invoice_pref"
     create_sql = """
-    owner TEXT UNIQUE,
+    owner INTEGER UNIQUE,
     email_text TEXT,
     terms_and_conditions TEXT,
     due_date INTEGER,

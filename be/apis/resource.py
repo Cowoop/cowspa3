@@ -9,9 +9,9 @@ resourcerelation_store = dbaccess.stores.resourcerelation_store
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner=1, long_description=None, time_based=False, quantity_unit=None):
+    def new(self, name, short_description, type, owner, long_description=None, time_based=False, quantity_unit=None, picture=None):
         created = datetime.datetime.now()
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type, time_based=time_based, quantity_unit=quantity_unit)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type, time_based=time_based, quantity_unit=quantity_unit, picture=picture)
         res_id = resource_store.add(**data)
 
         #data = dict(name=name, bizplace=dbaccess.bizplace_store.get(owner, ['name']), user_id=env.context.user_id)
@@ -38,7 +38,7 @@ class ResourceResource:
         info = resource_store.get(res_id, info_attributes)
         # TODO change owner ref to name
         info['owner_id'] = info['owner']
-        info['owner_name'] = dbaccess.ref2name(info['owner'])
+        info['owner_name'] = dbaccess.oid2name(info['owner'])
         return info
 
     def update(self, res_id, **mod_data):

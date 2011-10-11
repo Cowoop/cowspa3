@@ -18,9 +18,9 @@ invoicepref_store = dbaccess.stores.invoicepref_store
 def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
     usages = usage_store.get_many(invoice.usages)
-    bizplace = bizplace_store.get(dbaccess.ref2id(invoice.issuer))
+    bizplace = bizplace_store.get(invoice.issuer)
     member = member_store.get(invoice.member)
-    invoicepref = invoicepreflib.invoicepref_resource.info(dbaccess.ref2id(invoice.issuer))
+    invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member, invoicepref=invoicepref)
     html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
     pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
@@ -39,7 +39,7 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
-        data = dict(issuer=bizplace_store.ref(issuer), member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        data = dict(issuer=issuer, member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
@@ -77,7 +77,7 @@ class InvoiceCollection:
         return dbaccess.search_invoice(keys, options, limit)
 
     def list(self, issuer, limit=100):
-        data = dict(issuer=bizplace_store.ref(issuer), limit=limit)
+        data = dict(issuer=issuer, limit=limit)
         return dbaccess.list_invoices(**data) 
 
 class InvoiceResource:
@@ -102,7 +102,7 @@ class InvoiceResource:
         invoice = invoice_store.get(invoice_id, ['member', 'issuer'])
         member_id = invoice['member']
         invoicing_pref = invoicepref_store.get_by(dict(owner=invoice.issuer))[0]
-        issuer = bizplace_store.get(dbaccess.ref2id(invoice['issuer']))
+        issuer = bizplace_store.get(invoice['issuer'])
         email = member_store.get(member_id, ['email'])
         subject = issuer.name + ' | Invoice'
         attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'

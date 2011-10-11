@@ -23,7 +23,7 @@ def _add_plan(data):
 
 def test_add_default_plan():
     plan_data = test_data.default_plan_data
-    plan_data['bizplace_id'] = 1
+    plan_data['bizplace_id'] = 4
     plan_id =_add_plan(plan_data)
     test_data.default_plan_id = plan_id
     assert test_data.plan_id != plan_id

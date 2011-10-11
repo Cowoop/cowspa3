@@ -10,7 +10,7 @@ userrole_store = dbaccess.stores.userrole_store
 userpermission_store = dbaccess.stores.userpermission_store
 
 split_context = lambda s: ('', s) if not dbaccess.ctxsep in s else s.split(dbaccess.ctxsep)
-add_context = lambda ctx, s: (ctx or 'global') + dbaccess.ctxsep + s
+add_context = lambda ctx, s: s if not ctx else (str(ctx) + dbaccess.ctxsep + s)
 
 def role_permissions(roles):
     all_perms = []
@@ -33,7 +33,7 @@ def assign(user_id, roles, context=None):
 
     # now assign permissions
     perms = role_permissions(roles)
-    perms = [add_context(context, p) for p in perms]
+    perms = [add_context(str(context), p) for p in perms]
     existing_perms = (row[0] for row in userpermission_store.get_by(crit=dict(user_id=user_id), fields=['permission'],
         hashrows=False))
     perms_to_add = set(perms).difference(existing_perms)
@@ -68,13 +68,13 @@ def get_roles(user_id, role_filter=[]):
     for row in userrole_store.get_by(crit=dict(user_id=user_id), fields=['role'], hashrows=False):
         ctx_rolename = row[0]
         if dbaccess.ctxsep in ctx_rolename:
-            ref, rolename = ctx_rolename.split(dbaccess.ctxsep)
+            oid, rolename = ctx_rolename.split(dbaccess.ctxsep)
             if rolename in role_filter:
-                if ref in ctx_name_map:
-                    ctx_name_map[ref].append(rolename)
+                if oid in ctx_name_map:
+                    ctx_name_map[oid].append(rolename)
                 else:
-                    ctx_name_map[ref] = [rolename]
-    return [{dbaccess.ref2ctx(ref)+'_id':dbaccess.ref2id(ref),dbaccess.ref2ctx(ref)+'_name':dbaccess.ref2name(ref),'roles':ctx_name_map[ref]} for ref in ctx_name_map]
+                    ctx_name_map[oid] = [rolename]
+    return [{dbaccess.OidGenerator.get_otype(oid)+'_id':oid,dbaccess.OidGenerator.get_otype(oid)+'_name':dbaccess.oid2name(oid),'roles':ctx_name_map[oid]} for oid in ctx_name_map]
 
 def get_user_roles(user_id):
     """
@@ -87,12 +87,12 @@ def get_user_roles(user_id):
         # or shall we use sql group by?
         ctx_rolename = row[0]
         if dbaccess.ctxsep in ctx_rolename:
-            ref, rolename = ctx_rolename.split(dbaccess.ctxsep)
-            if ref in ctx_name_map:
-                ctx_name = ctx_name_map[ref]
+            oid, rolename = ctx_rolename.split(dbaccess.ctxsep)
+            if oid in ctx_name_map:
+                ctx_name = ctx_name_map[oid]
             else:
-                ctx_name = dbaccess.ref2name(ref)
-                ctx_name_map[ref] = ctx_name
+                ctx_name = dbaccess.oid2name(oid)
+                ctx_name_map[oid] = ctx_name
         else:
             rolename = ctx_rolename
             ctx_name = 'global'
