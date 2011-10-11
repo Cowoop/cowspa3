@@ -1,5 +1,5 @@
 // Globals
-current_bizplace = $.cookie("bizplace");
+current_bizplace = parseInt($.cookie("bizplace"));
 //
 
 $.webshims.setOptions('forms', {
@@ -73,7 +73,7 @@ function success(resp){
     {
         $("#bizplaces").show();
         for(bizplace in resp['result'])
-            $("#bizplaces").append("<option value="+resp['result'][bizplace]['bizplace_id']+">"+resp['result'][bizplace]['bizplace_name']+"</option>");
+            $("#bizplaces").append("<option value="+resp['result'][bizplace]['BizPlace_id']+">"+resp['result'][bizplace]['BizPlace_name']+"</option>");
         if(current_bizplace)
             jQuery("#bizplaces option[value='" + current_bizplace + "']").attr('selected', 'selected');
         else
