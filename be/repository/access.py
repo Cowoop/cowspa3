@@ -87,10 +87,10 @@ def list_activities_by_names(names, from_date, to_date, limit=20):
 def list_activities_by_roles(roles, limit=15):
     clause = 'role IN %(roles)s GROUP BY created, a_id ORDER BY created DESC LIMIT %(limit)s '
     clause_values = dict(roles=tuple(roles), limit=limit)
-    a_ids = (row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
+    a_ids = [row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False)]
     clause = '(id IN %(a_ids)s) ORDER BY created DESC'
     clause_values = dict(a_ids = tuple(a_ids))
-    return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True)
+    return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if len(a_ids)!=0 else []
 
 def oid2name(oid):
     store = stores_by_type[OidGenerator.get_otype(oid)]

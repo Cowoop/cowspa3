@@ -33,7 +33,7 @@ def get_latest(for_member=None, limit=30):
         roles = env.context.roles
     else:
         roles = [row[0] for row in userrole_store.get_by(crit=dict(user_id=for_member), fields=['role'], hashrows=False)]
-    roles.append(member_store.ref(for_member))
+    roles.append(str(for_member))
     activities = dbaccess.list_activities_by_roles(roles)
     messages = []
     for act in activities:
