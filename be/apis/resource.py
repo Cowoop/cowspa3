@@ -23,7 +23,7 @@ class ResourceCollection:
         """
         returns list of resource info dicts
         """
-        return resource_store.get_by(owner=owner, fields=['id', 'name', 'short_description'])
+        return resource_store.get_by(owner=owner, fields=['id', 'name', 'short_description', 'time_based', 'type', 'state'])
 
 class ResourceResource:
 
@@ -63,10 +63,9 @@ class ResourceResource:
         """
         relations: list of tuples containing other resource id and relation (integer)
         eg. Resource 12 contains resources 13, 14 and suggests 15.
-        >>> set_relations(12, [('contains', 13), ('contains', 14), ('suggests', 15)])
+        >>> set_relations(12, [(True, 13), (True, 14), (False, 15)])
         """
-        relations = [(resb_id, getattr(constants.resource_relations, relation)) for relation, resb_id in relations]
-        relation_dicts = dict(relations)
+        relation_dicts = {resb_id : relation for relation, resb_id in relations}
         existing_relations = dict(resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False))
         to_update = set(relation_dicts.keys()).intersection(existing_relations.keys())
         to_add = set(relation_dicts.keys()).difference(to_update)
@@ -85,7 +84,7 @@ class ResourceResource:
         other_resources = dict(resource_store.get_many(other_res_ids, fields=['id', 'name'], hashrows=False))
         d = collections.defaultdict(list)
         for relation, other_res_id in relations:
-            d[constants.resource_relations.rev(relation)].append(dict(id=other_res_id, name=other_resources[other_res_id]))
+            d[relation].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
 
 resource_resource = ResourceResource()

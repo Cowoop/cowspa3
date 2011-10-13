@@ -247,7 +247,7 @@ class ResourceRelation(PGStore):
     # resourceA --relation--> resourceB
     create_sql = """
     resourceA INTEGER,
-    relation INTEGER,
+    relation BOOLEAN,
     resourceB INTEGER
     """
 
