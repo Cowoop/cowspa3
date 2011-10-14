@@ -24,7 +24,6 @@
 - Resources # All
     - New
     - Manage
-    - Archive
 
 - Invoicing # Host, Member
     - New
@@ -34,7 +33,7 @@
     - Settings
     - Export
 
-- Location # Host, Director
+- Location Admin # Host, Director
     - New # All with help
     - Profile # Host, Director
         | About | Billing | Social | Contact | Preferences | Taxes # Host, Directors
