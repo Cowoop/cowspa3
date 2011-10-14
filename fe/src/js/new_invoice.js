@@ -77,7 +77,7 @@ $('#invoice-save').click( function () {
         delete o.unit;
         new_usages.push(o)
     });
-    var params = {issuer: current_bizplace, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
+    var params = {issuer: current_ctx, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
     jsonrpc('invoice.new', params, on_create_invoice, on_create_invoice_failure);
 });
 $('#invoice-view').click(function () {

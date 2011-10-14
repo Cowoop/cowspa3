@@ -22,7 +22,7 @@ $("#cancel-btn").click(function(){
 
 //**********************Update Invoice Preference Info**************************
 $("#save-btn").click(function(){
-    var params = {'owner':current_bizplace};
+    var params = {'owner':current_ctx};
     for(var key in changed_values){
         if(changed_values[key]==invoice_pref_info[key]){
             delete(changed_values[key])
@@ -47,7 +47,7 @@ $("#save-btn").click(function(){
         $('#edit_invoicepref-msg').html("<big>Error in Updating Invoice Preferences. Try again</big>");
     };
     if($.isEmptyObject(changed_values) == false){    
-        changed_values['owner'] = current_bizplace; 
+        changed_values['owner'] = current_ctx; 
         jsonrpc('invoicepref.update', changed_values, success, error);
     }
     else{
@@ -86,7 +86,7 @@ function success(response) {
     $("#bcc_email").val(response['result']['bcc_email']);    
 };
 function error(){};
-var params = { 'owner' : current_bizplace};
+var params = { 'owner' : current_ctx};
 jsonrpc('invoicepref.info', params, success, error);
 //xxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Preference Infoxxxxxxxxxxxxxxxxxxxxxxx
 

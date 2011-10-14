@@ -21,6 +21,12 @@ $total-cols: 14;
     background: $main-color;
 }
 
+.simple-box {
+    @include box-shadow($main-color 3px 3px 3px);
+}
+
+.opaq { opacity: 0.6; }
+
 * {
     color: $main-color; 
 } /* #222 is good too */
@@ -42,6 +48,93 @@ body {
     font-family: 'Ubuntu', 'Ubuntu Beta', UbuntuBeta, Ubuntu, 'Bitstream Vera Sans', 'DejaVu Sans', Tahoma, sans-serif;
     font-size: 105%;
 }
+
+nav {
+    line-height: 2em;
+    width: auto;
+    border: 1px solid $main-color;
+    padding: 0;
+    z-index: 100;
+    background: $page-background;
+    width: inherit;
+    position: absolute;
+    text-align: right;
+    a {
+        text-decoration: none; 
+        color: inherit;
+    }
+    a:active {background: gray;}
+
+    #context-select {
+        float: left;
+        width: 25%;
+        border: none;
+        border-right: 1px solid;
+        height: 100%;
+        width: 25%;
+    }
+    
+    .menu {
+        display: inline-block;
+        .current { 
+            color: $main-color;
+            background: $other-text-color;
+        }
+    }
+
+    
+    .menu-item { 
+        cursor: pointer;
+        border: 0;
+        border-right: 1px outset $main-color;
+        display: inline-block;
+        text-decoration: none;
+        padding: 0em;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        color: $other-text-color;
+        background: $main-color;
+        a {
+            font-weight: bold;
+            text-decoration: none;
+            text-shadow: none;
+        }
+    }
+
+    .submenu-container {
+        border-top: 1px solid $main-color;
+        text-align: right;
+    }
+
+    .submenu-box {
+        column-count: 3;
+        column-gap: 1em;
+        column-rule: 1px solid lighten($main-color, 20%);
+        column-width: auto;
+        -moz-column-count: 3;
+        -moz-column-gap: 1em;
+        -moz-column-rule: 1px solid lighten($main-color, 20%);
+        -moz-column-width: auto;
+        -webkit-column-count: 3;
+        -webkit-column-gap: 1em;
+        -webkit-column-rule: 1px solid lighten($main-color, 20%);
+        -webkit-column-width: auto;
+        display: none;
+        float: right;
+        padding: 0.5em;
+        width: 50%;
+    }
+
+    .submenu-item {
+        padding: 0 1em;
+        .current { text-decoration: underline; }
+        a {
+            display: inline;
+            text-decoration: none;
+        }
+    }
+}
+
 
 h2 { font-size: 120%; }
 h3 { font-weight: bold; }
@@ -98,15 +191,6 @@ legend {
     @include divsizing;
 }
 
-nav {
-    @include columns(3);
-    @include alpha;
-    padding: 0.5em;
-    border: 1px solid $main-color;
-    line-height: 2em;
-    @include divsizing;
-}
-
 button#new-plan {float: right; margin-top: 0.5em;}
 
 #plan_list {
@@ -135,13 +219,11 @@ div[role="main"] {
         background: lighten($page-background, 1%);
         margin-bottom: 1em;
         padding-bottom: 0.3em;
-        // text-align: center;
-        @include box-shadow(0 0 6px rgba(0,0,0,0.5));
+        float: left;
     }
     .searchbox {
         text-align: right;
-        @include full;
-        @include divsizing;
+        width: 100%;
         .search-label { 
             @include columns(4, 11);
             padding-bottom: 1em;
@@ -302,27 +384,6 @@ button[disabled], button[disabled]:hover {
     background: lighten($main-color, 20%);
     border: 1px solid lighten($page-background, 20%);
 }
-.nav-opt {
-    display: none;
-    margin-left: 2em;
-}
-.nav-opt-current { display: block; }
-.nav-opt a {
-    text-decoration: none; 
-    display: inline;
-}
-nav h2 {cursor: pointer;
-    // font-family: "Sans-serif", Tahoma;
-    font-weight: normal;
-}
-.nav-current:before { content: "→";}
-.nav-opt-item-current:before { content: "→";}
-nav h2 a {
-    text-decoration: none; 
-    color: inherit;
-}
-nav h2 a:active {background: gray;}
-
 .topbar a {text-decoration: none; color: $other-text-color; padding: 1em;}
 .topbar .logo {float: left; display: inline; color: $other-text-color;}
 

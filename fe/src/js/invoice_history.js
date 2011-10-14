@@ -29,6 +29,6 @@ function success(response) {
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
 function error(){};
-var params = { 'issuer' : current_bizplace};
+var params = { 'issuer' : current_ctx};
 jsonrpc('invoice.history', params, success, error);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx

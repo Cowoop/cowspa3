@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import sphc
 import sphc.more
 
@@ -11,6 +12,19 @@ class CSPage(sphc.more.HTML5Page):
     jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js'] + webshims + ['/js/common.js']
     # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
+
+    def style(self):
+        # .polyfill-import hack below lets password field with a placeholder to have same width as other input fields
+        # which otherwise is smaller with webshims style.
+        return """
+        .container {
+            width: 90%;
+            text-align: left;
+        }
+        div[role="main"] { float: none;}
+        .polyfill-important .placeholder-box {width: 100% !important; }
+        """
+
     def bottombar(self):
         bar = tf.DIV(Class='bottombar')
         links = []
@@ -25,21 +39,13 @@ class CSPage(sphc.more.HTML5Page):
 class CSAnonPage(CSPage):
     top_links = [('login', '/login')]
     css_links = ['/themes/default/css/main.css']
-    def style(self):
-        # .polyfill-import hack below lets password field with a placeholder to have same width as other input fields
-        # which otherwise is smaller with webshims style.
-        return """
-        .container {
-            width: 90%;
-            text-align: left;
-        }
-        div[role="main"] { float: none;}
-        .polyfill-important .placeholder-box {width: 100% !important; }
-        """
 
 members_opt = [
     #tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
     tf.A("New", href=ctxpath + '/member/new', Class='navlink-opt-item'),
+    tf.A("Memberships", href=ctxpath + '/member/memberships', Class='navlink-opt-item'),
+    tf.A("Manage Profile", href=ctxpath + '/member/edit', Class='navlink-opt-item'),
+    tf.A("Announce", href=ctxpath + '/member/edit', Class='navlink-opt-item'),
     tf.A("Export", href=ctxpath + "/member/export", Class='navlink-opt-item')]
 
 booking_opt = [
@@ -54,56 +60,57 @@ booking_opt = [
 
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoicing/new', Class='navlink-opt-item'),
-    tf.A("History", href=ctxpath+'/invoicing/history', Class='navlink-opt-item'),
-    tf.A("Add usages", href=ctxpath+'/invoicing/addusages', Class='navlink-opt-item'),
-    tf.A("Uninvoiced usages", href=ctxpath+'/invoicing/uninvoiced', Class='navlink-opt-item'),
-    tf.A("Preferences", href=ctxpath+'/invoicing/preferences', Class='navlink-opt-item'),
+    tf.A("Received", href=ctxpath+'/invoicing/sent', Class='navlink-opt-item'),
+    tf.A("Sent", href=ctxpath+'/invoicing/history', Class='navlink-opt-item'),
+    tf.A("Settings", href=ctxpath+'/invoicing/preferences', Class='navlink-opt-item'),
     tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto', Class='navlink-opt-item'),
     tf.A("Export", hre=ctxpath+'/invoicing/export', Class='navlink-opt-item')
 ]
 
 profile_opt = [
     tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),
-    tf.A("Memberships", href=ctxpath + '/profile#memberships', Class='navlink-opt-item', id='navlink-memberships'),
     tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact'),
+    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', Class='navlink-opt-item', id='navlink-billingpreferences'),
     tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
+    tf.A("Memberships", href=ctxpath + '/profile#memberships', Class='navlink-opt-item', id='navlink-memberships'),
     tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
     tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences'),
-    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', Class='navlink-opt-item', id='navlink-billingpreferences')
     ]
 
 resources_opt = [
-    tf.A("New", href=ctxpath + '/resource/new', Class='navlink-opt-item')]
+    tf.A("New", href=ctxpath + '/resource/new', Class='navlink-opt-item'),
+    tf.A("Manage", href=ctxpath + '/resource/list', Class='navlink-opt-item')
+    ]
 
-places_opt = [
+locations_opt = [
     tf.A("New", href=ctxpath + '/bizplace/new', Class='navlink-opt-item'),
     tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item')
     ]
 
-new_nav = [ ('Dashboard', ctxpath + '/dashboard', None) ]
+new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
 member_nav = new_nav + [
     ('Profile', '#profile', profile_opt),
     ('Members', '#', members_opt),
     ('Bookings', '#', booking_opt),
     ('Invoicing', '#', invoicing_opt), ]
 host_nav = member_nav + [
-    ('Places', '#', places_opt),
+    ('Locations', '#', locations_opt),
     ('Resources', '#', resources_opt),
-    ('Reports', '#', None), ]
+    ('Reports', '#', []), ]
 
 
 class CSAuthedPage(CSPage):
     top_links = [('Account', ctxpath + '/profile#account'), ('Theme', ctxpath + '/profile#preferences'), ('Logout', '/logout')]
     css_links = [ 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic', '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
-        ('Dashboard', ctxpath + '/dashboard', None),
-        ('Profile', '#profile', profile_opt),
+        ('Dashboard', ctxpath + '/dashboard', []),
+        ('My Profile', '#profile', profile_opt),
         ('Members', '#', members_opt),
         ('Bookings', '#', booking_opt),
         ('Invoicing', '#', invoicing_opt),
-        ('Places', '#', places_opt),
         ('Resources', '#', resources_opt),
-        ('Reports', '#', None),
+        ('Locations', '#', locations_opt),
+        ('Reports', '#', []),
         ]
     current_nav = '/Dashboard'
     content_title = ''
@@ -124,8 +131,37 @@ class CSAuthedPage(CSPage):
         topbar.links = links
         return topbar
 
+    def nav(self):
+        if not self.nav_menu: return ''
+        nav = tf.NAV()
+        nav.context_opt = sphc.more.jq_tmpl("context-opt-tmpl")
+        nav.context_opt.opt = tf.OPTION("${label}", value="${id}")
+        nav.context_box = tf.SPAN()
+        nav.context_box.selector = tf.SELECT(id="context-select")
+        menu = tf.DIV(Class="menu")
+        submenu_container = tf.DIV(Class="submenu-container")
+        for m_id, (label, url, submenu) in enumerate(self.nav_menu):
+            menu_item = tf.DIV(Class="menu-item", id="menu-item_%s" % m_id) # nav
+            menu_item.link = tf.A(label, href=url)
+            if label == self.current_nav:
+                menu_item.add_classes(["current"])
+            if submenu:
+                submenu_box = tf.DIV(Class="submenu-box", id="submenu_%s" % m_id)
+                for item in submenu:
+                    smi_box = tf.DIV(item, Class="submenu-item")
+                    if label == self.current_nav:
+                        smi_box.add_classes(["current"])
+                    submenu_box.smi_box = smi_box
+                submenu_container.submenu_box = submenu_box
+            menu.item = menu_item
+        nav.menu = menu
+        nav.submenu = submenu_container
+        return nav
+
     def main(self):
         main = tf.DIV()
+        main.clear = sphc.more.clear()
+        main.clear = tf.C('.', style="opacity:0;")
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
         main.contentbox = tf.DIV(Class="content")
@@ -134,9 +170,9 @@ class CSAuthedPage(CSPage):
         return main
 
     def search(self):
-        row = tf.DIV(Class="searchbox")
+        row = tf.DIV()
         cell = tf.DIV()
-        cell.data = tf.SPAN("Member Search", Class="search-label", For="search")
+        cell.data = tf.SPAN("Member Search..", Class="search-label", For="search")
         row.cell = cell
         cell = tf.DIV()
         cell.data = tf.INPUT(id="search", Class="search-input", type="text")

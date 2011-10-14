@@ -9,7 +9,7 @@ $('#save-btn').click(function () {
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
         }
-    params['owner'] = current_bizplace;    
+    params['owner'] = current_ctx;    
     params['picture'] = picture;
     function success() {
         $('#CreateResource-msg').html("<big>☑</big> Resource Created successful.");

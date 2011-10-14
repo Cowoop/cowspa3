@@ -13,9 +13,9 @@ class Login(fe.bases.CSAnonPage):
 
         formbox = tf.DIV(Class='inverse-box')
         form = sphc.more.Form(id="login-form", classes=['vform'])
-        form.add_field('', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username"))
+        form.add_field('', tf.INPUT(type="TEXT", id='username', name="username", placeholder="Username", nv_attrs=('required',)))
         form.add_field('', tf.INPUT(type="password", id='password', name="password", placeholder="Password"))
-        form.add_buttons(tf.BUTTON("Log In", id='login-btn', type='button'))
+        form.add_buttons(tf.BUTTON("Log In", id='login-btn', type='submit'))
         formbox.form = form.build()
 
         container.side_container.formbox = formbox

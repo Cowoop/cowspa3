@@ -1,7 +1,8 @@
 function login() {
     var action_status = $('#login-form .action-status');
     action_status.text("Logging in...");
-    var inputs = $('#login-form').serializeArray();
+    var theform = $('#login-form');
+    var inputs = theform.serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
@@ -13,7 +14,10 @@ function login() {
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');
         };
-    jsonrpc('login', params, success, error);
+    if(!theform.checkValidity || theform.checkValidity()){
+        jsonrpc('login', params, success, error);
+        return false;
+    };
 };
 
 $('#login-btn').click(login);

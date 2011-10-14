@@ -1,5 +1,5 @@
 // Globals
-current_bizplace = parseInt($.cookie("bizplace"));
+current_ctx = parseInt($.cookie("current_ctx"));
 //
 
 $.webshims.setOptions('forms', {
@@ -14,6 +14,11 @@ $.jsonRPC.setup({
     endPoint: '/app',
     namespace: ''
 });
+
+function set_context(ctx) {
+    current_ctx = ctx;
+    $.cookie("current_ctx", val);
+};
 
 function jsonrpc(apiname, params, success, error) {
     $.jsonRPC.request(apiname, {
@@ -41,54 +46,54 @@ function init_autocomplete() {
 };
 
 function init_nav() {
-    function set_current_opt () {
-        $('.nav-opt-item a').each( function () {
-            if ($(this).attr('href') == (window.location.pathname + window.location.hash)) {
-                $(this).parent().addClass('nav-opt-item-current');
-            };
-        });
+    function hide_submenu() {
+        $('.submenu-box').hide();
+        $('#main .content').removeClass('opaq');
+        $('nav').removeClass('simple-box');
+        $('#main .content').addClass('simple-box');
     };
-    $('nav h2').click( function () {
-        $('nav div.nav-opt').removeClass('open');
-        $('nav h2').removeClass('nav-current');
-        $(this).next().addClass('open').slideDown('slow');
-        $('nav div.nav-opt:not(.open)').slideUp('fast');
-        $(this).addClass('nav-current');
-        $('.nav-opt-item').removeClass('nav-opt-item-current');
-        set_current_opt();
+    $('.menu-item').click( function () {
+        $('#main .content').addClass('opaq');
+        hide_submenu();
+        $('.menu-item').removeClass('current');
+        var m_id = $(this).attr('id').split('_')[1];
+        // $('#submenu_' + m_id).show();
+        $(this).addClass('current');
+        var submenu = $('#submenu_' + m_id);
+        if(submenu) {
+            $('#submenu_' + m_id).slideDown('fast');
+            $('#main .content').addClass('opaq');
+            $('nav').addClass('simple-box');
+        };
     });
-    $('nav div.nav-opt a').click( function () {
-        $('.nav-opt-item').removeClass('nav-opt-item-current');
-        $(this).parent().addClass('nav-opt-item-current');
+    $(document).click( function (e) {
+        var t = $(e.target).parent();
+        if (!(t.hasClass('menu-item') | t.hasClass('submenu-item')) ) {
+            hide_submenu();
+        };
     });
-    set_current_opt();
+    $('#main .content').addClass('simple-box');
 };
+
 //******************************Load List of Bizplaces**************************************************
 
-function success(resp){
+function success(resp) {
     if(resp['result'].length == 0) {
-        $("#bizplaces").hide();
-    }
-    else
-    {
-        $("#bizplaces").show();
-        for(bizplace in resp['result'])
-            $("#bizplaces").append("<option value="+resp['result'][bizplace]['BizPlace_id']+">"+resp['result'][bizplace]['BizPlace_name']+"</option>");
-        if(current_bizplace)
-            jQuery("#bizplaces option[value='" + current_bizplace + "']").attr('selected', 'selected');
-        else
-            current_bizplace = $("#bizplaces").find('option:selected').val();
-            $.cookie("bizplace", current_bizplace);
+        $("#context-select").hide();
+    } else {
+        $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
+        if (current_ctx) {
+            $("#context-select option[value='" + current_ctx + "']").attr('selected', 'selected');
+        };
+        $('#context-select').change(function() {
+            set_context($('#context-select').find('option:selected').val());
+        });
+        set_context($("#context-select").find('option:selected').val());
     };
-    $('#bizplaces').change(function() {
-        var val = $("#bizplaces").find('option:selected').val();
-        $.cookie("bizplace", val);
-        window.location.reload();
-    });
-}
+};
 
-function error(){
-}
+function error(){ };
+
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
 if(params['user_id']) {
     jsonrpc('users.bizplace.list', params, success, error); 
