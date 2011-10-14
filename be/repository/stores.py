@@ -239,8 +239,8 @@ class Resource(PGStore):
     short_description TEXT,
     long_description TEXT,
     time_based BOOLEAN DEFAULT True,
-    quantity_unit TEXT,
-    picture TEXT
+    picture TEXT,
+    archived BOOLEAN DEFAULT False
     """
 
 class ResourceRelation(PGStore):

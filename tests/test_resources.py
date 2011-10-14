@@ -4,8 +4,6 @@ import test_data
 import be.apis.resource as resourcelib
 import commonlib.shared.constants as constants
 
-rr = constants.resource_relations
-
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
@@ -25,6 +23,10 @@ def test_create_more():
 
 def test_info():
     assert resourcelib.resource_resource.info(1).name == test_data.resource_data['name']
+    state = resourcelib.resource_resource.get(1,'state')
+    for attr in test_data.resource_data['state']:
+        assert state[attr] == test_data.resource_data['state'][attr]
+    assert len(resourcelib.resource_collection.list(4)) == 4
 
 def test_update():
     new_name = 'GlassHouse II'

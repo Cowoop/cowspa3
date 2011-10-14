@@ -1,17 +1,21 @@
 import datetime
 import collections
 import be.repository.access as dbaccess
-import commonlib.shared.constants as constants
 import be.apis.activities as activitylib
+import commonlib.shared.constants
 
 resource_store = dbaccess.stores.resource_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, long_description=None, time_based=False, quantity_unit=None, picture=None):
+    def new(self, name, short_description, type, owner, state=None, long_description=None, time_based=False, archived=False, picture=None):
         created = datetime.datetime.now()
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, long_description=long_description, type=type, time_based=time_based, quantity_unit=quantity_unit, picture=picture)
+        if state is None:
+            state = commonlib.shared.constants.resource.enabled
+        else:
+            state = commonlib.shared.constants.resource.to_flags(state)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
         res_id = resource_store.add(**data)
 
         #data = dict(name=name, bizplace=dbaccess.bizplace_store.get(owner, ['name']), user_id=env.context.user_id)
@@ -23,12 +27,16 @@ class ResourceCollection:
         """
         returns list of resource info dicts
         """
-        return resource_store.get_by(owner=owner, fields=['id', 'name', 'short_description', 'time_based', 'type', 'state'])
+        fields=['id', 'name', 'short_description', 'time_based', 'type', 'state', 'picture', 'archived']
+        resource_list = dbaccess.list_resources_in_order(owner, fields)
+        for resc in resource_list:
+            resc['state'] = commonlib.shared.constants.resource.to_dict(resc['state'])
+        return resource_list
 
 class ResourceResource:
 
-    get_attributes = ['name', 'short_description', 'long_description']
-    set_attributes = ['name', 'short_description', 'long_description']
+    get_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'time_based', 'archived', 'picture']
+    set_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'time_based', 'archived', 'picture']
 
     def info(self, res_id):
         """
@@ -44,6 +52,7 @@ class ResourceResource:
     def update(self, res_id, **mod_data):
         """
         """
+        if 'state' in mod_data: mod_data['state'] = commonlib.shared.constants.resource.to_flag(mod_data['state'])
         mod_data = dict((k,v) for k,v in mod_data.items() if k in self.set_attributes)
         resource_store.update(res_id, **mod_data)
         
@@ -53,10 +62,12 @@ class ResourceResource:
 
     def get(self, res_id, attrname):
         if not attrname in self.get_attributes: return
-        return resource_store.get(res_id, fields=[attrname], hashrows=False)
+        value = resource_store.get(res_id, fields=[attrname], hashrows=False)
+        return value if attrname != 'state' else commonlib.shared.constants.resource.to_dict(value)
 
     def set(self, res_id, attrname, v):
         if not attrname in self.set_attributes: return
+        v = commonlib.shared.constants.resource.to_flag(v) if attrname == 'state' else v
         self.update(res_id, **{attrname: v})
 
     def set_relations(self, res_id, relations):

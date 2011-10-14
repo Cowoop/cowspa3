@@ -92,6 +92,11 @@ def list_activities_by_roles(roles, limit=15):
     clause_values = dict(a_ids = tuple(a_ids))
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if len(a_ids)!=0 else []
 
+def list_resources_in_order(owner, fields):
+    clause = "owner = %(owner)s ORDER BY name"
+    clause_values = dict(owner=owner)
+    return resource_store.get_by_clause(clause, clause_values, fields)
+
 def oid2name(oid):
     store = stores_by_type[OidGenerator.get_otype(oid)]
     attr = 'name' if 'name' in store.schema else 'display_name'

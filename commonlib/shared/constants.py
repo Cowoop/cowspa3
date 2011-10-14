@@ -19,8 +19,8 @@ class user(states): pass
 
 class member(states): pass
 
-class resource_relations(Constants):
-    names = ['contains', 'contains_opt', 'requires', 'suggests']
+class resource(states):
+    names = ['enabled', 'host_only', 'repairs']
 
 member = member()
-resource_relations = resource_relations()
+resource = resource()
