@@ -74,7 +74,7 @@ def get_roles(user_id, role_filter=[]):
                     ctx_name_map[oid].append(rolename)
                 else:
                     ctx_name_map[oid] = [rolename]
-    return [{dbaccess.OidGenerator.get_otype(oid)+'_id':oid,dbaccess.OidGenerator.get_otype(oid)+'_name':dbaccess.oid2name(oid),'roles':ctx_name_map[oid]} for oid in ctx_name_map]
+    return [{'id':oid, 'label':dbaccess.oid2name(oid), 'roles':ctx_name_map[oid]} for oid in ctx_name_map]
 
 def get_user_roles(user_id):
     """
