@@ -76,7 +76,7 @@ class ResourceResource:
         eg. Resource 12 contains resources 13, 14 and suggests 15.
         >>> set_relations(12, [(True, 13), (True, 14), (False, 15)])
         """
-        relation_dicts = {resb_id : relation for relation, resb_id in relations}
+        relation_dicts = dict((resb_id, relation) for relation, resb_id in relations)
         existing_relations = dict(resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False))
         to_update = set(relation_dicts.keys()).intersection(existing_relations.keys())
         to_add = set(relation_dicts.keys()).difference(to_update)
