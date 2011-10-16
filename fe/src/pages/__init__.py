@@ -25,11 +25,14 @@ class Login(fe.bases.CSAnonPage):
         signup_box = tf.DIV(id='signup-box', Class="hidden inverse-box")
         form = sphc.more.Form(id="signup-form", classes=['vform'])
         form.add_field('First name', \
-            tf.INPUT(required=True, type="TEXT", name="first_name", placeholder="First Name", id="first_name"))
+            tf.INPUT(required=True, type="TEXT", name="first_name", placeholder="First Name", id="first_name", \
+                nv_attrs=('required',)))
         form.add_field('Last name', \
-            tf.INPUT(required=True, type="TEXT", name="last_name", placeholder="Last Name", id="last_name"))
-        form.add_field('Email', tf.INPUT(required=True, type="email", name="email", placeholder="Email Address", id="email"))
-        form.add_buttons(tf.BUTTON("Yes, I am ready!", id='register-btn', type='button'))
+            tf.INPUT(required=True, type="TEXT", name="last_name", placeholder="Last Name", id="last_name", \
+                nv_attrs=('required',)))
+        form.add_field('Email', tf.INPUT(required=True, type="email", name="email", placeholder="Email Address", id="email", \
+            nv_attrs=('required',)))
+        form.add_buttons(tf.BUTTON("Yes, I am ready!", id='register-btn', type='submit'))
         signup_box.form = form.build()
         container.signup_box = signup_box
 

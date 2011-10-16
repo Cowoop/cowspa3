@@ -1,34 +1,30 @@
+var login_form = $('#login-form');
+var signup_form = $('#signup-form');
+
 function login() {
     var action_status = $('#login-form .action-status');
-    action_status.text("Logging in...");
-    var theform = $('#login-form');
-    var inputs = theform.serializeArray();
+    var inputs = login_form.serializeArray();
     var params = {}
-    for(var i in inputs){
+    for(var i in inputs) {
         params[inputs[i].name] = inputs[i].value;
     };
     function success(resp) {
         action_status.text("Login is successful.").attr('class', 'status-success');
         window.location = "/"+resp['result']['language']+"/"+resp['result']['theme']+"/dashboard";
-        };
+    };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');
-        };
-    if(!theform.checkValidity || theform.checkValidity()){
-        jsonrpc('login', params, success, error);
-        return false;
     };
+    action_status.text("Logging in...");
+    jsonrpc('login', params, success, error);
 };
 
-$('#login-btn').click(login);
-
 function signup() {
-    $('#signup-box').dialog({ title: "Get ready", width: 500});
+    signup_form.dialog({ title: "Get ready", width: 500});
 };
 
 function register() {
     var action_status = $('#signup-form .action-status');
-    action_status.text("Signing up...");
     var inputs = $('#signup-form').serializeArray();
     var params = {}
     for(var i in inputs){
@@ -42,10 +38,22 @@ function register() {
         action_status.text("Error signing up. Try again").attr('class', 'status-fail');
     };
     jsonrpc('registration.new', params, success, error);
+    action_status.text("Signing up...");
 };
 
+login_form.submit(function () {
+    $(this).checkValidity();
+    login();
+    return false;
+});
+
+signup_form.submit(function () {
+    $(this).checkValidity();
+    register();
+    return false;
+});
+
 $('#signup-btn').click(signup);
-$('#register-btn').click(register);
 
 function enterKey(evt) {
     var evt = (evt) ? evt : event

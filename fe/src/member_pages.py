@@ -26,7 +26,7 @@ class MemberCreate(BasePage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'First Name', For="first_name")
-        field.input = tf.INPUT(type='text', id='first_name', name='first_name')
+        field.input = tf.INPUT(type='text', id='first_name', name='first_name').set_required()
         fields.append(field)
 
         field = tf.DIV()
@@ -36,12 +36,12 @@ class MemberCreate(BasePage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Username', FOR="user_name")
-        field.input = tf.INPUT(type='text', id='username', name='username')
+        field.input = tf.INPUT(type='text', id='username', name='username').set_required()
         fields.append(field)
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Password', FOR="password")
-        field.input = tf.INPUT(type='password', id='password', name='password')
+        field.input = tf.INPUT(type='password', id='password', name='password').set_required()
         fields.append(field)
 
         field = tf.DIV()
@@ -60,19 +60,19 @@ class MemberCreate(BasePage):
 
         field = tf.DIV()
         field.label = tf.LABEL(content = 'Email', FOR='email')
-        field.input = tf.INPUT(type='email', id='email', name='email')
+        field.input = tf.INPUT(type='email', id='email', name='email').set_required()
         fields.append(field)
 
+        fields.append(tf.DIV(id="CreateMember-msg"))
         field = tf.DIV(Class="submit-btns")
-        field.button = tf.BUTTON("Create", id='save-btn', type='button')
+        field.button = tf.BUTTON("Create", id='save-btn', type='submit')
         fields.append(field)
 
-        form  = tf.FORM(Class='profile-forms', id="createmember_form")
+        form  = tf.FORM(Class='profile-forms', id="createmember_form", method="POST")
         for field in fields:
             form.content = field
 
         container.form = form
-        container.msg = tf.SPAN(id="CreateMember-msg")
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
         return container
 
@@ -213,7 +213,7 @@ class MemberProfile(BasePage):
         
         next_tariff_form = sphc.more.Form(id='next-tariff-form', classes=['vform'])
         next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
-        next_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start', nv_attrs=('required')))
+        next_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start').set_required())
         next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
         next_tariff_section.form = next_tariff_form.build()
         next_tariff_section.tmpl = tariff_list_row

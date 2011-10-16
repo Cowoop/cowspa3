@@ -1,5 +1,7 @@
-$('#save-btn').click(function () {
-    var inputs = $('#createmember_form').serializeArray();
+$('#createmember_form').submit(function () {
+    var theform = $(this);
+    theform.checkValidity();
+    var inputs = theform.serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
@@ -11,4 +13,5 @@ $('#save-btn').click(function () {
         $('#CreateMember-msg').html("<big>Error in Member Creation. Try again</big>");
         }
     jsonrpc('member.new', params, success, error);
+    return false
     });
