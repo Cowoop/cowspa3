@@ -522,6 +522,10 @@ form.hform {
     }
     .field-input {
         width: 60%;
+        display: inline-block;
+    }
+    .input {
+        width: 90%;
     }
     textarea {
         height: 9em;

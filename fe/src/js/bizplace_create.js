@@ -1,14 +1,23 @@
-$('#save-btn').click(function () {
-    var inputs = $('#createbizplace_form').serializeArray();
-    var params = {}
+var theform = $('#createbizplace_form');
+
+function create_bizplace() {
+    var inputs = theform.serializeArray();
+    var action_status = $('#createbizplace_form .action-status');
+    var params = {};
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
-        }
+    }
     function success() {
-        $('#CreateBizplace-msg').html("<big>☑</big> Place Created Successfully.");
-        };
+        action_status.text("Location created successfully").attr('class', 'status-success');
+    };
     function error() {
-        $('#CreateBizplace-msg').html("<big>Error in Place Creation. Try again</big>");
-        };
+        action_status.text("Error in creating location").attr('class', 'status-fail');
+    };
     jsonrpc('bizplace.new', params, success, error);
-    });
+};
+
+theform.submit( function () {
+    $(this).checkValidity();
+    create_bizplace();
+    return false;
+});

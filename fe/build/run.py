@@ -14,7 +14,7 @@ import fe.src.pages
 import fe.src.pages as pagelib
 import fe.src.pages.invoicing
 import fe.src.member_pages as memberlib
-import fe.src.bizplace_pages as bizplacelib
+import fe.src.pages.bizplace as bizplacepages
 import fe.src.plan_pages as planlib
 import fe.src.resource_pages as resourcelib
 import commonlib.shared.static as static
@@ -93,7 +93,7 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(memberlib.MemberCreate, prefix + 'member/new'),
          PageBuilder(pagelib.Login, 'login'),
          PageBuilder(pagelib.Activation, 'activate'),
-         PageBuilder(bizplacelib.BizplaceCreate, prefix + 'bizplace/new'),
+         PageBuilder(bizplacepages.Create, prefix + 'bizplace/new'),
          PageBuilder(planlib.PlanCreate, prefix + 'bizplace/tariffs'),
          PageBuilder(resourcelib.ResourceCreate, prefix + 'resource/new'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
