@@ -618,3 +618,51 @@ form.hform {
 #signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
 #signup-box.ui-widget-content label{color:$other-text-color;}
 .ui-icon { display: inline-block; }
+
+.resource-list {
+    padding: 1em;   
+}
+.resource-box {
+    border: 1px solid $main-color;
+    width: 100%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.resource-hidden {
+    display: None;
+}
+.resource-image_part {
+    width: 20%;
+    display: inline-block;
+}
+.resource-data_part {
+    width: 60%;
+    display: inline-block;
+}
+.resource-filter_part {
+    width: 20%;
+    display: inline-block;
+}
+.resource_list-logo {
+    height: 4em; 
+    width: 4em;
+}
+input[type="button"].resource_type-show, input[type="button"].resource_filter-show {
+    @extend button;
+    color: $main-color;
+    background: $other-text-color;
+    border: 1px solid $main-color;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+input[type="button"].resource_type-hide, input[type="button"].resource_filter-hide {
+    @extend button;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+.resource_types, .resource_filters {
+    padding-left: 4em;
+    padding-right: 4em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}

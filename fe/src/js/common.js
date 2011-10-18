@@ -17,7 +17,7 @@ $.jsonRPC.setup({
 
 function set_context(ctx) {
     current_ctx = ctx;
-    $.cookie("current_ctx", val);
+    $.cookie("current_ctx", ctx);
 };
 
 function jsonrpc(apiname, params, success, error) {
