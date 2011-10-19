@@ -8,6 +8,7 @@ language_map = dict((lang.name, lang.alpha2) for lang in pycountry.languages if 
 languages = [dict(label='English',name=language_map['English']), dict(label='German', name=language_map['German'])]
 
 countries = [dict(label=country.name ,name=country.numeric) for country in list(pycountry.countries)]
+countries_map = dict((country.numeric,country.name) for country in list(pycountry.countries))
 
 currencies = [dict(name=currency.letter ,label=currency.name) for currency in list(pycountry.currencies)]
 

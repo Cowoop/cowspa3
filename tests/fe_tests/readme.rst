@@ -22,6 +22,9 @@ To executes the test cases, Go to ...../cowspa3/tests/fe_tests ::
     nosetests --wmbrowser firefox -v -d --with-xunit
 
 Output is available by default in **nosetests.xml** This file contains the test results. If needed, the output can be sent to another file.
+The XML output can be used to generate HTML report using following command ::
+
+    python xunit2html.py > nose_result.html
 
 Tests can also be executed via windmill binary as follows, but executing via nose is preferred due to the detailed report it provides ::
 

@@ -84,7 +84,8 @@ resources_opt = [
 
 locations_opt = [
     tf.A("New", href=ctxpath + '/bizplace/new', Class='navlink-opt-item'),
-    tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item')
+    tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item'),
+    tf.A("List", href=ctxpath + '/bizplace/list', Class='navlink-opt-item')    
     ]
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
