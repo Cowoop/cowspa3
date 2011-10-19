@@ -206,6 +206,22 @@ button#new-plan {float: right; margin-top: 0.5em;}
     }
 }
 
+#location-list {
+    padding: 1em;
+    .location-box {
+        padding: 0.5em;
+        margin: 1em;
+        border: 1px solid $main-color;
+        .location-title {
+            font-size: 120%;
+            font-weight: bold;
+        }
+        .location-info {
+            font-size: 80%;
+        }
+    }
+}
+
 div[role="main"] {   
     @include columns(11);
     @include omega;

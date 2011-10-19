@@ -3,6 +3,7 @@ import be.repository.access as dbaccess
 import be.apis.role as rolelib
 import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
+import commonlib.shared.static as static
 
 biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -23,11 +24,19 @@ class BizplaceCollection:
         
         return bizplace_id
 
-    def list(self):
+    def list(self, owner):
         """
         returns list of bizplace info dicts
         """
-        return dbaccess.list_bizplaces()
+        roles = rolelib.get_roles(owner, ['host', 'director'])
+        ids = [role['id'] for role in roles]
+        result = dbaccess.list_bizplaces(ids)
+        #DB returns country numeric code, which needs to be replaced by label
+        #before it is returned
+        for rec in result:
+            rec['country'] = static.countries_map[rec['country']]
+        
+        return result
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """
