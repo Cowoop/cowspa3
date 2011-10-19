@@ -127,6 +127,7 @@ nav {
 
     .submenu-item {
         padding: 0 1em;
+        white-space: nowrap;
         .current { text-decoration: underline; }
         a {
             display: inline;
