@@ -47,7 +47,7 @@ function init_autocomplete() {
 
 function init_nav() {
     function hide_submenu() {
-        $('.submenu-box').hide();
+        $('.submenu-box').slideUp('slow');
         $('#main .content').removeClass('opaq');
         $('nav').removeClass('simple-box');
         $('#main .content').addClass('simple-box');
@@ -57,7 +57,6 @@ function init_nav() {
         hide_submenu();
         $('.menu-item').removeClass('current');
         var m_id = $(this).attr('id').split('_')[1];
-        // $('#submenu_' + m_id).show();
         $(this).addClass('current');
         var submenu = $('#submenu_' + m_id);
         if(submenu) {
@@ -65,6 +64,9 @@ function init_nav() {
             $('#main .content').addClass('opaq');
             $('nav').addClass('simple-box');
         };
+    });
+    $('.submenu-item').click( function() {
+        hide_submenu();
     });
     $(document).click( function (e) {
         var t = $(e.target).parent();

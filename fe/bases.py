@@ -4,12 +4,12 @@ import sphc.more
 
 tf = sphc.TagFactory()
 
-webshims_base = '/js/webshims-1.8.1/'
-webshims = [webshims_base + "extras/mousepress.js", webshims_base + "/extras/modernizr-custom.js", webshims_base + "/extras/loaders/sssl.js", webshims_base + "/polyfiller.js"]
+webshims_base = '/js/webshims-1.8.2'
+webshims = [webshims_base + "/extras/modernizr-custom.js", webshims_base + "/polyfiller.js"]
 ctxpath = '/%(lang)s/%(theme)s'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js'] + webshims + ['/js/common.js']
+    jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js'] + webshims + ['/js/SS.min.js', '/js/common.js']
     # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
@@ -41,50 +41,50 @@ class CSAnonPage(CSPage):
     css_links = ['/themes/default/css/main.css']
 
 members_opt = [
-    #tf.INPUT(type="search", id= 'search', Class='navlink-opt-item', placeholder='Search..'),
-    tf.A("New", href=ctxpath + '/member/new', Class='navlink-opt-item'),
-    tf.A("Memberships", href=ctxpath + '/member/memberships', Class='navlink-opt-item'),
-    tf.A("Manage Profile", href=ctxpath + '/member/edit', Class='navlink-opt-item'),
-    tf.A("Announce", href=ctxpath + '/member/edit', Class='navlink-opt-item'),
-    tf.A("Export", href=ctxpath + "/member/export", Class='navlink-opt-item')]
+    #tf.INPUT(type="search", id= 'search', placeholder='Search..'),
+    tf.A("New", href=ctxpath + '/member/new'),
+    tf.A("Manage Profile", href=ctxpath + '/member/edit'),
+    tf.A("Memberships", href=ctxpath + '/member/memberships'),
+    tf.A("Announce", href=ctxpath + '/member/announce'),
+    tf.A("Export", href=ctxpath + "/member/export")]
 
 booking_opt = [
-    #tf.INPUT(type="search", Class='navlink-opt-item', placeholder='Search..'),
-    tf.A("New", href=ctxpath + '/bookings/new', Class='navlink-opt-item'),
-    tf.A("My Bookings", href=ctxpath + '/bookings/mine', Class='navlink-opt-item'),
-    tf.A("Calendar", href=ctxpath + '/bookings/calendar', Class='navlink-opt-item'),
-    tf.A("Agenda", href=ctxpath + "/bookings/agenda", Class='navlink-opt-item'),
-    tf.A("Events", href=ctxpath + "/bookings/events", Class='navlink-opt-item'),
-    tf.A("Export", href=ctxpath + "/bookings/export", Class='navlink-opt-item'),
+    #tf.INPUT(type="search", placeholder='Search..'),
+    tf.A("New", href=ctxpath + '/bookings/new'),
+    tf.A("My Bookings", href=ctxpath + '/bookings/mine'),
+    tf.A("Calendar", href=ctxpath + '/bookings/calendar'),
+    tf.A("Agenda", href=ctxpath + "/bookings/agenda"),
+    tf.A("Events", href=ctxpath + "/bookings/events"),
+    tf.A("Export", href=ctxpath + "/bookings/export"),
     ]
 
 invoicing_opt = [
-    tf.A("New", href=ctxpath+'/invoicing/new', Class='navlink-opt-item'),
-    tf.A("Received", href=ctxpath+'/invoicing/sent', Class='navlink-opt-item'),
-    tf.A("Sent", href=ctxpath+'/invoicing/history', Class='navlink-opt-item'),
-    tf.A("Settings", href=ctxpath+'/invoicing/preferences', Class='navlink-opt-item'),
-    tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto', Class='navlink-opt-item'),
-    tf.A("Export", hre=ctxpath+'/invoicing/export', Class='navlink-opt-item')
+    tf.A("New", href=ctxpath+'/invoicing/new'),
+    tf.A("Received", href=ctxpath+'/invoicing/sent'),
+    tf.A("Sent", href=ctxpath+'/invoicing/history'),
+    tf.A("Settings", href=ctxpath+'/invoicing/preferences'),
+    tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto'),
+    tf.A("Export", hre=ctxpath+'/invoicing/export')
 ]
 
 profile_opt = [
-    tf.A("About Me", href=ctxpath + '/profile#about', Class='navlink-opt-item', id='navlink-aboutme'),
-    tf.A("Contact", href=ctxpath + '/profile#contact', Class='navlink-opt-item', id='navlink-contact'),
-    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', Class='navlink-opt-item', id='navlink-billingpreferences'),
-    tf.A("Social Me", href=ctxpath + '/profile#social', Class='navlink-opt-item', id='navlink-social'),
-    tf.A("Memberships", href=ctxpath + '/profile#memberships', Class='navlink-opt-item', id='navlink-memberships'),
-    tf.A("Account", href=ctxpath + '/profile#account', Class='navlink-opt-item', id='navlink-account'),
-    tf.A("Preferences", href=ctxpath + '/profile#preferences', Class='navlink-opt-item', id='navlink-preferences'),
+    tf.A("About Me", href=ctxpath + '/profile#about', id='navlink-aboutme'),
+    tf.A("Contact", href=ctxpath + '/profile#contact', id='navlink-contact'),
+    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', id='navlink-billingpreferences'),
+    tf.A("Social Me", href=ctxpath + '/profile#social', id='navlink-social'),
+    tf.A("Memberships", href=ctxpath + '/profile#memberships', id='navlink-memberships'),
+    tf.A("Account", href=ctxpath + '/profile#account', id='navlink-account'),
+    tf.A("Preferences", href=ctxpath + '/profile#preferences', id='navlink-preferences'),
     ]
 
 resources_opt = [
-    tf.A("New", href=ctxpath + '/resource/new', Class='navlink-opt-item'),
-    tf.A("Manage", href=ctxpath + '/resource/list', Class='navlink-opt-item')
+    tf.A("New", href=ctxpath + '/resource/new'),
+    tf.A("Manage", href=ctxpath + '/resource/list')
     ]
 
 locations_opt = [
-    tf.A("New", href=ctxpath + '/bizplace/new', Class='navlink-opt-item'),
-    tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs', Class='navlink-opt-item'),
+    tf.A("New", href=ctxpath + '/bizplace/new'),
+    tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs'),
     tf.A("List", href=ctxpath + '/bizplace/list', Class='navlink-opt-item')    
     ]
 
