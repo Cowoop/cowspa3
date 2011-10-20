@@ -47,12 +47,11 @@ class List(BasePage):
         location_tmpl = sphc.more.jq_tmpl('loc_tmpl')
         location_tmpl.box = tf.DIV(Class='location-box')
         location_tmpl.box.link = tf.A("${name}", id='edit-link_${id}', href='#edit', Class='location-title')
-        location_tmpl.box.city = tf.LABEL("${city}", Class='location-info')
+        location_tmpl.box.city = tf.LABEL("   ${city}, ${country}", Class='location-info')
         location_tmpl.box.short_description = tf.DIV("${short_description}", Class='location-info')
         container.loctmpl = location_tmpl
 
-        container.script = tf.SCRIPT(open("fe/src/js/list_locations.js").read(), 
-                                   escape=False, type="text/javascript", 
-                                   language="javascript")
+        container.script = sphc.more.script_fromfile("fe/src/js/list_locations.js")
+
         return container
 
