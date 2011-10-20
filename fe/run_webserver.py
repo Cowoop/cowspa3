@@ -8,6 +8,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from flask import Flask, jsonify, url_for, session, redirect, request
+from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
@@ -69,16 +70,9 @@ def api_dispatch():
     cowspa.tr_complete()
     return jsonify(data)
 
-@app.route('/', methods=['GET'])
-@app.route('/<path:path>', methods=['GET'])
-def static(path='login'):
-    fspath = os.path.join(static_root, path)
-    filename = os.path.basename(path)
-    if '.' in path:
-        content_type = "text/" + path.split('.')[-1]
-    else:
-        content_type = "text/html"
-    return file(fspath).read(), 200, {'Content-Type': content_type +'; charset=utf-8', "Cache-Control": "max-age=31536000"}
+app = SharedDataMiddleware(app, {
+        '/': static_root,
+}, fallback_mimetype="text/html", cache=True, cache_timeout=31536000)
 
 if __name__ == '__main__':
     if env.config.threaded:
