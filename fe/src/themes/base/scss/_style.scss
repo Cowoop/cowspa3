@@ -210,16 +210,26 @@ button#new-plan {float: right; margin-top: 0.5em;}
 #location-list {
     padding: 1em;
     .location-box {
-        padding: 0.5em;
+        padding: 0.8em;
         margin: 1em;
         border: 1px solid $main-color;
         .location-title {
-            font-size: 120%;
+            border-bottom: 1px dotted;
+            font-size: 140%;
             font-weight: bold;
+            text-decoration: none;
         }
+
         .location-info {
-            font-size: 80%;
+            font-style: italic;
+            margin: 0.5em;
         }
+
+        .location-description {
+            border-top: 1px solid #70964B;
+            margin-top: 0.5em;
+        }
+
     }
 }
 

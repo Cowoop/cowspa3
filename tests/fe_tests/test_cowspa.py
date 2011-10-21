@@ -110,25 +110,19 @@ def test_bookings():
 
     logout(client)
 
-# def test_places():
-#     client = logged_in_client()
+def test_places():
+    client = logged_in_client()
 
-#     client.asserts.assertNode(link=u'Locations')
-#     client.click(link=u'Locations')
-#     client.asserts.assertNode(link=u'New')
-#     client.asserts.assertNode(link=u'Tariffs')
-#     client.click(xpath=u'/html/body/div[2]/nav/div[6]/div[1]/a')
-#     client.asserts.assertNode(xpath=u"//div[@id='main']/div/div[2]/h1")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[1]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[2]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[3]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[4]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[5]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[6]/label")
-#     client.asserts.assertNode(xpath=u"//form[@id='createbizplace_form']/div[7]/label")
-#     client.asserts.assertNode(id=u'save-btn')
+    client.asserts.assertNode(link=u'Locations')
+    client.click(link=u'Locations')
+    client.asserts.assertNode(link=u'New')
+    client.asserts.assertNode(link=u'Tariffs')
+    client.asserts.assertNode(link=u'List')
+    client.click(link=u'List')
+    client.waits.forPageLoad(timeout=u'20000')
+    client.asserts.assertText(xpath=u"//div[@id='main']/div/div[2]/h1", validator=u'List Locations')
 
-#     logout(client)
+    logout(client)
 
 def test_account():
     client = logged_in_client()
