@@ -13,52 +13,22 @@ class ResourceCreate(BasePage):
     def content(self):
         container = tf.DIV()
 
-        fields = []
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Name : ', For='name')
-        field.input = tf.INPUT(type='text', id='name', name='name')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL('Type : ', FOR='type')
-        field.input = tf.SELECT(id='type', name='type')
+        form = sphc.more.Form(id='createresource_form', classes=['hform'], enctype='multipart/form-data')
+        form.add_field('Name', tf.INPUT(type='text', id='name', name='name').set_required())
+        resource_types = tf.SELECT(id='type', name='type')
         for rtype in static.resource_types:
-            field.input.option = tf.OPTION(rtype['label'], value = rtype['name'])
-        fields.append(field)
-        
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Picture : ', FOR="picture")
-        field.input = tf.INPUT(name="picture", id="picture", type="file", accept="image/*")
-        fields.append(field)
-    
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Short Description : ', FOR="short_description")
-        field.input = tf.TEXTAREA( id='short_description', name='short_description', rows=2, cols=25)
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Long Description : ', FOR="long_description")
-        field.input = tf.TEXTAREA(id='long_description', name='long_description', rows=5, cols=25)
-        fields.append(field)
-
-        field = tf.DIV()
-        field.input = tf.INPUT(type='checkbox', id='time_based', name='time_based')
-        field.text = 'Time Based'
-        fields.append(field)
-        
-        field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
-        fields.append(field)
-
-        form  = tf.FORM(Class='profile-forms', id="createresource_form")
-        for field in fields:
-            field.line = tf.BR()
-            form.content = field
-    
-        container.form = form
-        container.msg = tf.SPAN(id="CreateResource-msg")
-        container.script = tf.SCRIPT(open("fe/src/js/resource_create.js").read(), escape=False, type="text/javascript", language="javascript")
+            resource_types.option = tf.OPTION(rtype['label'], value = rtype['name'])
+        form.add_field('Type', resource_types)
+        time_based = tf.SPAN()
+        time_based.input = tf.INPUT(type='checkbox', id='time_based', name='time_based')
+        time_based.label = tf.LABEL('Time Based', FOR="time_based")
+        form.add_field("", time_based)
+        form.add_field('Picture', tf.INPUT(name="picture", id="picture", type="file", accept="image/*"))
+        form.add_field('Short Description', tf.TEXTAREA( id='short_description', name='short_description'))
+        form.add_field('Long Description', tf.TEXTAREA(id='long_description', name='long_description'))
+        form.add_buttons(tf.BUTTON("Save", id='save-btn', type='button'))
+        container.form = form.build()
+        container.script = sphc.more.script_fromfile("fe/src/js/resource_create.js")
         return container
         
 class ResourceManage(BasePage):
@@ -69,7 +39,7 @@ class ResourceManage(BasePage):
         
         types = tf.DIV("Types : ", id="resource_types", Class="resource_types")
         for rtype in static.resource_types:
-            types.type = tf.INPUT(value=rtype['label'], type="Button", Class="resource_type-hide")
+            types.type = tf.INPUT(value=rtype['label'], type="Button", Class="resource_type-hide", id="rtype_"+rtype['name'])
         
         filters = tf.DIV("Filters : ", id="resource_filters", Class="resource_filters")
         filters.attr1 = tf.INPUT(value="Enabled", type="Button", Class="resource_filter-hide", id="enabled")
@@ -83,15 +53,40 @@ class ResourceManage(BasePage):
         resource_tmpl.box.first.picture = tf.IMG(Class='resource_list-logo', src="${picture}", id="picture_${id}")
         resource_tmpl.box.second = tf.DIV(Class='resource-data_part')
         resource_tmpl.box.second.name = tf.DIV()
-        resource_tmpl.box.second.name.link = tf.A("${name}", id="${id}", href="#")
+        resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#", Class="edit-link")
         resource_tmpl.box.second.description = tf.DIV("${short_description}", id="short_description_${id}")
         resource_tmpl.box.third = tf.DIV(Class='resource-filter_part')
-        resource_tmpl.box.third.clock = tf.H2("◴", title="Time Based", id="clock_${id}")
+        resource_tmpl.box.third.clock = tf.H2("◴", title="Time Based", id="clock_${id}", escape="false")
+        
+        resource_edit_form = sphc.more.Form(id='resource_edit_form', classes=['vform'])
+        resource_edit_form.add_field("Name", tf.INPUT(id="name", type="text"))
+        resource_type_list = tf.SELECT(id="type")
+        for rtype in static.resource_types:
+            resource_type_list.option = tf.OPTION(rtype['label'], value = rtype['name'])
+        resource_edit_form.add_field("Type", resource_type_list)
+        time_based = tf.DIV()
+        time_based.field = tf.INPUT(id="time_based", type="checkbox")
+        time_based.label = tf.C("Time Based")
+        resource_edit_form.add_field("", time_based, custom=True)
+        resource_edit_form.add_field("Picture", tf.INPUT(id="picture", type="file"))
+        resource_edit_form.add_field("Short Description", tf.TEXTAREA(id="short_desc"))
+        resource_edit_form.add_field("Long Description", tf.TEXTAREA(id="long_desc"))
+        resource_states = tf.DIV()
+        resource_states.state1 = tf.INPUT(id="state_enabled", type="checkbox")
+        resource_states.label1 = tf.C("Enabled")
+        resource_states.state2 = tf.INPUT(id="state_host_only", type="checkbox")
+        resource_states.label2 = tf.C("Host Only")
+        resource_states.state3 = tf.INPUT(id="state_repairs", type="checkbox")
+        resource_states.label3 = tf.C("Repairs")
+        resource_edit_form.add_field("", resource_states, custom=True)
+        resource_edit = tf.DIV(id="resource_edit", Class='hidden')
+        resource_edit.form = resource_edit_form.build()
         
         container.types = types
         container.filters = filters
         container.resource_tmpl = resource_tmpl
         container.resource_list = resource_list
+        container.resource_edit = resource_edit
         
         container.script = tf.SCRIPT(open("fe/src/js/resource_manage.js").read(), escape=False, type="text/javascript", language="javascript")     
         return container

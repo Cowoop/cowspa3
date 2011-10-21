@@ -2,7 +2,7 @@ import pycountry
 import glob
 import os
 
-resource_types = [dict(name='room', label='Room'), dict(name='phone', label='Phone'), dict(name='printer', label='Printer'), dict(name='custom', label='Custom'),dict(name='hotdesk', label='Hotdesk'), dict(name='calendar', label='Calender'), dict(name='other', label='Other')]
+resource_types = [dict(name='room', label='Room'), dict(name='phone', label='Phone'), dict(name='printer', label='Printer'), dict(name='custom', label='Custom'),dict(name='hotdesk', label='Hotdesk'), dict(name='calendar', label='Calendar'), dict(name='other', label='Other')]
 
 language_map = dict((lang.name, lang.alpha2) for lang in pycountry.languages if hasattr(lang, 'alpha2'))
 languages = [dict(label='English',name=language_map['English']), dict(label='German', name=language_map['German'])]

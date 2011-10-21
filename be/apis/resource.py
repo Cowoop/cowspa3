@@ -12,7 +12,7 @@ class ResourceCollection:
     def new(self, name, short_description, type, owner, state=None, long_description=None, time_based=False, archived=False, picture=None):
         created = datetime.datetime.now()
         if state is None:
-            state = commonlib.shared.constants.resource.enabled
+            state = 2 ** commonlib.shared.constants.resource.enabled
         else:
             state = commonlib.shared.constants.resource.to_flags(state)
         data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
@@ -27,7 +27,7 @@ class ResourceCollection:
         """
         returns list of resource info dicts
         """
-        fields=['id', 'name', 'short_description', 'time_based', 'type', 'state', 'picture', 'archived']
+        fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
         resource_list = dbaccess.list_resources_in_order(owner, fields)
         for resc in resource_list:
             resc['state'] = commonlib.shared.constants.resource.to_dict(resc['state'])
@@ -52,7 +52,7 @@ class ResourceResource:
     def update(self, res_id, **mod_data):
         """
         """
-        if 'state' in mod_data: mod_data['state'] = commonlib.shared.constants.resource.to_flag(mod_data['state'])
+        if 'state' in mod_data: mod_data['state'] = commonlib.shared.constants.resource.to_flags(mod_data['state'])
         mod_data = dict((k,v) for k,v in mod_data.items() if k in self.set_attributes)
         resource_store.update(res_id, **mod_data)
         
@@ -67,7 +67,7 @@ class ResourceResource:
 
     def set(self, res_id, attrname, v):
         if not attrname in self.set_attributes: return
-        v = commonlib.shared.constants.resource.to_flag(v) if attrname == 'state' else v
+        v = commonlib.shared.constants.resource.to_flags(v) if attrname == 'state' else v
         self.update(res_id, **{attrname: v})
 
     def set_relations(self, res_id, relations):
