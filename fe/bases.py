@@ -172,10 +172,8 @@ class CSAuthedPage(CSPage):
 
     def search(self):
         row = tf.DIV()
-        cell = tf.DIV()
-        cell.data = tf.SPAN("Member Search..", Class="search-label", For="search")
+        cell = tf.SPAN("Member Search", Class="search-label", For="search")
         row.cell = cell
-        cell = tf.DIV()
-        cell.data = tf.INPUT(id="search", Class="search-input", type="text")
+        cell = tf.INPUT(id="search", Class="search-input", type="text")
         row.cell = cell
         return row
