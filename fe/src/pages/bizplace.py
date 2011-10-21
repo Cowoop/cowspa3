@@ -30,7 +30,7 @@ class Create(BasePage):
         form.add_buttons(tf.BUTTON("Create", id='save-btn', type="submit"))
 
         container.form = form.build()
-        container.script = tf.SCRIPT(open("fe/src/js/bizplace_create.js").read(), escape=False, type="text/javascript", language="javascript")
+        container.script = sphc.more.script_fromfile("fe/src/js/bizplace_create.js")
         return container
 
 class List(BasePage):
