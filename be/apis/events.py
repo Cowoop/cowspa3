@@ -57,7 +57,8 @@ class MemberUpdated(BaseEvent):
             tmpl = "You have updated profile."
         else:
             tmpl = "%(actor_name)s has updated %(name)s's profile."
-        return tmpl
+        created_date = "<c class='date'>%s</c> " % self.data['created'].strftime('%b %-d, %Y')
+        return created_date + tmpl
     def _access(self):
         if self.actor  == self.data['id']:
             access = [self.actor]
