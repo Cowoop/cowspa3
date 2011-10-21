@@ -70,27 +70,30 @@ class New(BasePage):
         usages = tf.TABLE(id='usages', Class="stripped")
         usages.caption = tf.CAPTION("Usages")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in ('Resource', 'Rate', 'Qty', 'Unit', 'Start-End', 'Total', 'Actions')]
+        usages.header.cells = [tf.TH(name) for name in ('Resource', 'Rate', 'Qty', 'Start-End', 'Total', 'Actions')]
 
         content.usages = usages
 
         usage_tmpl = sphc.more.jq_tmpl("usage-tmpl")
-        usage_tmpl.tr = tf.TR(id="${id}")
+        usage_tmpl.tr = tf.TR(id="usage_row-${id}")
         usage_tmpl.tr.td = tf.TD('${resource_name}')
         usage_tmpl.tr.td = tf.TD('${rate}')
         usage_tmpl.tr.td = tf.TD('${quantity}')
-        usage_tmpl.tr.td = tf.TD('${unit}')
         usage_tmpl.tr.td = tf.TD('${start_time} - ${end_time}')
         usage_tmpl.tr.td = tf.TD('${calculated_cost}')
-        usage_tmpl.tr.td = tf.TD('')
+        cancel_usage = tf.A('X', title="Cancel Usage", href="#", Class="cancel-x cancel-usage", id="cancel_usage-${id}")
+        usage_tmpl.tr.td = tf.TD(cancel_usage)
 
         content.usage_tmpl = usage_tmpl
 
         add_usage_form = sphc.more.Form(id='new-usage-form', action='#', classes=['vform'])
-        add_usage_form.add_field("Resource Name", tf.INPUT(name='resource_name', id='resource_name', nv_attrs=('required',), placeholder="Resource name"))
+        usage_name = tf.DIV(id="usage_name")
+        usage_name.select = tf.SELECT(id="resource_select", name="resource_select")
+        usage_name.space = tf.SPAN(Class="div_right_margin")
+        usage_name.link = tf.A("Custom", id="custom", href="#")
+        add_usage_form.add_field("Resource Name", usage_name, tf.INPUT(name='resource_name', id='resource_name', nv_attrs=('required',), placeholder="Resource name", Class="hidden"))
         add_usage_form.add_field("Rate", tf.INPUT(name='rate', id='rate', nv_attrs=('required',), placeholder="eg. 12.00"), "Do not include currency")
         add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
-        add_usage_form.add_field("Unit", tf.INPUT(name='unit', id='unit', nv_attrs=('required',)))
         add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
         add_usage_form.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
         add_usage_form.add_buttons(tf.INPUT(type="button", value="Add", id='submit-usage'))
@@ -108,8 +111,12 @@ class New(BasePage):
         view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
         view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         
+        resource_select_tmpl = sphc.more.jq_tmpl("resource-tmpl")
+        resource_select_tmpl.option = tf.OPTION("${name}", id="resource_${id}", value="${name}")
+        
         content.new = tf.BUTTON("Add usage", id="new-usage-button")
         content.buttons = invoice_buttons
+        content.resource_select_tmpl = resource_select_tmpl
         content.view_invoice_dialog = view_invoice_dialog 
         content.script = tf.SCRIPT(open("fe/src/js/new_invoice.js").read(), escape=False)
 

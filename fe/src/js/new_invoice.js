@@ -1,6 +1,7 @@
 var inv_usages = [];
 var inv_id = null;
 var inv_member_id = null;
+var custom_resource = false;
 
 $('#invoicee-search').autocomplete({
     source: "/search/members",
@@ -43,17 +44,30 @@ $('#new-usage-form #end_time').datetimepicker({
     timeFormat: 'h:m',
 });
 $('#new-usage-button').click(function() {
+    $("#resource_select").show();
+    $("#resource_name").hide();
+    $("#custom").show();
+    custom_resource = false;
     $('#new-usage-form').dialog({ title: "Create new usage", width: 500});
 });
 $('#submit-usage').click( function () {
     var params = $('#new-usage-form').serializeArray();
-    var data = {};
+    var data = {}; 
     $.each(params, function(idx, v) {
         data[v.name] = v.value;
     });
+    if(!custom_resource){
+        data.resource_name = data.resource_select;
+    }
+    delete(data.resource_select);
     data.calculated_cost = (data.quantity * data.rate);
     data.id = inv_usages.push(data);
     $('#usage-tmpl').tmpl([data]).appendTo('#usages');
+    $(".cancel-usage").click(function(){
+        var usage_id = parseInt($(this).attr('id').split('-')[1]);
+        $(this).parent().parent().remove();
+        delete(inv_usages[usage_id-1]);
+    });
     $('#new-usage-form').dialog('close');
 });
 function on_create_invoice(response) {
@@ -72,10 +86,12 @@ function on_create_invoice_failure() {
 $('#invoice-save').click( function () {
     var new_usages = [];
     $.each(inv_usages, function(idx, v) {
-        var o = v;
-        delete o.id;
-        delete o.unit;
-        new_usages.push(o)
+        if(v != undefined){
+            var o = v;
+            delete o.id;
+            delete o.unit;
+            new_usages.push(o)
+        }
     });
     var params = {issuer: current_ctx, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
     jsonrpc('invoice.new', params, on_create_invoice, on_create_invoice_failure);
@@ -99,3 +115,17 @@ $('#invoice-send').click(function () {
     var params = {invoice_id : inv_id};
     jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);
 });
+//****************************Get Resources*************************************
+function on_get_resources_success(res) {
+    $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_select');
+};
+function on_get_resources_error(){};
+jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Resourcesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$("#custom").click(function(){
+    $("#resource_select").hide();
+    $("#resource_name").show();
+    $(this).hide();
+    custom_resource = true;
+});
+
