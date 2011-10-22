@@ -13,7 +13,7 @@ $('#save-btn').click(function () {
     function error() {
         $('#CreatePlan-msg').html("<big>Error in Tariff Creation. Try again</big>");
     };
-    params['bizplace_id'] = $("#bizplaces").val();
+    params['bizplace_id'] = current_ctx;
     jsonrpc('plan.new', params, success, error);
 });
     
@@ -34,7 +34,7 @@ $(document).ready(function() {
         };
     function error() {
         };
-    params['bizplace_id'] = $("#bizplaces").val();
+    params['bizplace_id'] = current_ctx;
     jsonrpc('bizplace_plans.list', params, success, error);
 });
 
