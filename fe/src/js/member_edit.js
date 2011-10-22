@@ -34,7 +34,7 @@ function show_section(section) {
 
 function show_about() { show_section('#mp-about'); };
 function show_billing() { show_section('#mp-billing'); };
-function show_memberships() { alert(1); show_section('#mp-memberships'); };
+function show_memberships() { show_section('#mp-memberships'); };
 function show_contact() { show_section('#mp-contact'); };
 function show_social() { show_section('#mp-social'); };
 function show_pref() { show_section('#mp-pref'); };
