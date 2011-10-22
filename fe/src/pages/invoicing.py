@@ -91,7 +91,7 @@ class New(BasePage):
         usage_name.select = tf.SELECT(id="resource_select", name="resource_select")
         usage_name.space = tf.SPAN(Class="div_right_margin")
         usage_name.link = tf.A("Custom", id="custom", href="#")
-        add_usage_form.add_field("Resource Name", usage_name, tf.INPUT(name='resource_name', id='resource_name', nv_attrs=('required',), placeholder="Resource name", Class="hidden"))
+        add_usage_form.add_field("Resource Name", usage_name, tf.INPUT(name='resource_name', id='resource_name', placeholder="Resource name", Class="hidden").set_required(), custom=True)
         add_usage_form.add_field("Rate", tf.INPUT(name='rate', id='rate', nv_attrs=('required',), placeholder="eg. 12.00"), "Do not include currency")
         add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
         add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))

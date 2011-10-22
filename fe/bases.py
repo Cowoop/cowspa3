@@ -85,7 +85,7 @@ resources_opt = [
 locations_opt = [
     tf.A("New", href=ctxpath + '/bizplace/new'),
     tf.A("Tariffs", href=ctxpath + '/bizplace/tariffs'),
-    tf.A("List", href=ctxpath + '/bizplace/list', Class='navlink-opt-item')    
+    tf.A("List", href=ctxpath + '/bizplace/list', Class='navlink-opt-item')
     ]
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
@@ -162,18 +162,24 @@ class CSAuthedPage(CSPage):
     def main(self):
         main = tf.DIV()
         main.clear = sphc.more.clear()
-        main.clear = tf.C('.', style="opacity:0;")
+        #main.clear = tf.C('.', style="opacity:0;")
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
         main.contentbox = tf.DIV(Class="content")
-        main.contentbox.title = tf.H1(self.content_title or self.title, Class="content-title")
+        title = self.content_title or self.title or ''
+        if title:
+            title += ' '
+            title_classes = "content-title"
+        else:
+            title_classes = "content-title hidden"
+        main.contentbox.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
         main.contentbox.content = self.content()
         return main
 
     def search(self):
-        row = tf.DIV()
-        cell = tf.SPAN("Member Search", Class="search-label", For="search")
-        row.cell = cell
-        cell = tf.INPUT(id="search", Class="search-input", type="text")
-        row.cell = cell
-        return row
+        container = tf.DIV()
+        container.search_box = tf.DIV(Class="search-box")
+        container.search_box.label = tf.SPAN(tf.LABEL("Member Search ", For="search"))
+        container.search_box.cell = tf.SPAN(tf.INPUT(id="search", type="text"), Class="search-input")
+        return container
+

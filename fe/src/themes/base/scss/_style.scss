@@ -192,6 +192,14 @@ legend {
     @include divsizing;
 }
 
+.section-title {
+    font-size: 120%;
+    border-bottom: 1px solid $main-color;
+    padding: 0.4em;
+    a { text-decoration: none; border-bottom: 1px dotted; }
+}
+.heading3 { font-size: 120%; }
+
 button#new-plan {float: right; margin-top: 0.5em;}
 
 #plan_list {
@@ -248,26 +256,43 @@ div[role="main"] {
         padding-bottom: 0.3em;
         float: left;
     }
-    .searchbox {
-        text-align: right;
-        width: 100%;
-        .search-label { 
-            @include columns(4, 11);
-            padding-bottom: 1em;
-        }
-        .search-input {
-            //@include columns(5, 9);
-            //@include omega;
-            height: 100%;
-            width: 100%;
-            display: inline;
-        }
+}
+
+// autocomplete, search style //
+.searchbox, .select-member {
+    text-align: right;
+    width: 100%;
+    vertical-align: middle;
+    margin-top: 1em;
+    .search-label { 
+        @include columns(4, 11);
+    }
+    .search-input {
+        height: 100%;
+        width: 40%;
+        display: inline-block;
+        text-align: left;
+        border: 0;
     }
 }
 
-.as-results { margin-left:20em; }
+.select-member {
+    text-align: left;
+}
+
+.select-member > span { 
+    margin-left: 0.5em;
+    display: inline-block;
+}
+
+// .select-member .search-input { width: 60%; display: inline-block; margin-top: 1em; }
+
 li.as-result-item.active { background: $main-color;} 
 input, textarea, select, .uneditable-input { color: $main-color; font-size: 90%; }
+ul.as-selection { display: inline-block; }
+ul.as-selections li.as-original input { width: 100%; }
+
+// autocomplete //
 
 .field-container {
     @include columns(11);
@@ -329,7 +354,7 @@ ul.as-selections {
             }
         }
         .search-input-as-input {
-            width: 100%;
+            width: 60%;
             height: 100%;
         }
     }
@@ -446,7 +471,7 @@ button[disabled], button[disabled]:hover {
 
 .edit-link-box { text-align: right; }
 
-.content .content-title {
+.content-title {
     font-size: 2.2em;
     text-align: left;
     padding-top: 0.3em;
@@ -454,7 +479,7 @@ button[disabled], button[disabled]:hover {
     margin-bottom: 0.3em;
     @include full;
     border-bottom: 1px solid;
-    .content-subtitle { font-style: italic; }
+    #content-subtitle { font-size: 50%; }
 }
 table.stripped {
     margin: 0 0 0.7em;
@@ -694,4 +719,10 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     padding-right: 4em;
     padding-top: 1em;
     padding-bottom: 1em;
+}
+.mp-section {
+    display: none;
+}
+.light {
+    color: lighten($main-color, 20%);
 }

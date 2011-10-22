@@ -8,7 +8,7 @@ $.webshims.setOptions('forms', {
 
 //load all polyfill features
 //or load only a specific feature with $.webshims.polyfill('feature-name');
-$.webshims.polyfill();
+$.webshims.polyfill();// forms-ext');
 
 $.jsonRPC.setup({
     endPoint: '/app',
@@ -37,10 +37,9 @@ function init_autocomplete() {
         selectionLimit: 0, 
         startText: "Enter name or email or id",
         resultClick: function (data) {
-            id = data['attributes']['id'];
-            path = $("#navlink-aboutme").attr('href');
-            path = path.substring(0,path.indexOf("profile"))
-            window.location = path+"profile?id="+id+"#about";
+            var id = data['attributes']['id'];
+            var basepath = '';
+            window.location = basepath + "member/edit/#/" +id+ "/about";
         } 
     });
 };
@@ -82,6 +81,9 @@ function init_nav() {
 function success(resp) {
     if(resp['result'].length == 0) {
         $("#context-select").hide();
+        $('#menu-item_3').hide();
+        $('#menu-item_4').hide();
+        $('#menu-item_5').hide();
     } else {
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
         if (current_ctx) {
