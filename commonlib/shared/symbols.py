@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 snowman = '☃'
 class circled_nums: pass
 circled_nums.one = '①'
