@@ -207,7 +207,7 @@ $(document).ready(function() {
         $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
         };
     function error1(){};
-    params1['bizplace_id'] = $("#bizplaces").val();
+    params1['bizplace_id'] = current_ctx;
     jsonrpc('bizplace_plans.list', params1, success1, error1);
     
     
