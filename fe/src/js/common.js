@@ -87,12 +87,12 @@ function success(resp) {
     } else {
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
         if (current_ctx) {
-            $("#context-select option[value='" + current_ctx + "']").attr('selected', 'selected');
+            $("#context-select").val(current_ctx);
         } else {
-            set_context($("#context-select").find('option:selected').val());
+            set_context($("#context-select").val());
         };
         $('#context-select').change(function() {
-            set_context($('#context-select').find('option:selected').val());
+            set_context($('#context-select').val());
         });
     };
 };
