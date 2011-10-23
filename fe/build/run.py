@@ -16,7 +16,7 @@ import fe.src.pages.invoicing
 import fe.src.member_pages as memberlib
 import fe.src.pages.bizplace as bizplacepages
 import fe.src.plan_pages as planlib
-import fe.src.resource_pages as resourcelib
+import fe.src.pages.resource_pages as resourcelib
 import commonlib.shared.static as static
 
 option_no_themes = '--nothemes' in sys.argv

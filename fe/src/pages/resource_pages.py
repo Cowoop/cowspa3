@@ -8,7 +8,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class ResourceCreate(BasePage):
-    current_tab = 'create'
+    current_tab = 'Resources'
     title = 'New Resource'
     def content(self):
         container = tf.DIV()
@@ -26,14 +26,14 @@ class ResourceCreate(BasePage):
         form.add_field('Picture', tf.INPUT(name="picture", id="picture", type="file", accept="image/*"))
         form.add_field('Short Description', tf.TEXTAREA( id='short_description', name='short_description'))
         form.add_field('Long Description', tf.TEXTAREA(id='long_description', name='long_description'))
-        form.add_buttons(tf.BUTTON("Save", id='save-btn', type='button'))
+        form.add_buttons(tf.BUTTON("Save", type='submit'))
         container.form = form.build()
         container.script = sphc.more.script_fromfile("fe/src/js/resource_create.js")
         return container
         
 class ResourceManage(BasePage):
-    current_tab = 'manage'
-    title = 'Manage Resources'
+    current_tab = 'Resources'
+    title = 'Manage resources'
     def content(self):
         container = tf.DIV()
         

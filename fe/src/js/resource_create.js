@@ -3,8 +3,12 @@ var picture = null;
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************Save Resource*************************************
-$('#save-btn').click(function () {
-    var inputs = $('#createresource_form').serializeArray();
+var create_resource_form = $('#createresource_form');
+
+function create_resource () {
+    var action_status = $('#createresource_form .action-status');
+    action_status.text("Creating resource ...");
+    var inputs = create_resource_form.serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
@@ -12,12 +16,18 @@ $('#save-btn').click(function () {
     params['owner'] = current_ctx;    
     params['picture'] = picture;
     function success() {
-        $('#createresource_form .action-status').text("Resource created successfully").attr('class', 'status-success');
+        action_status.text("Resource created successfully").attr('class', 'status-success');
     };
     function error() {
-        $('#createresource_form .action-status').text("Error in creating resource").attr('class', 'status-fail');
+        action_status.text("Error in creating resource").attr('class', 'status-fail');
     };
     jsonrpc('resource.new', params, success, error);
+};
+
+create_resource_form.submit( function () {
+    $(this).checkValidity();
+    create_resource();
+    return false;
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Save Resourcexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
