@@ -13,7 +13,7 @@ class Create(BasePage):
 
         form = sphc.more.Form(id='createbizplace_form', classes=['hform'], enctype='multipart/form-data')
 
-        form.add_field(input=tf.INPUT(type='hidden', id='biz_id', name='biz_id', value=1), custom=True)
+        form.add(tf.INPUT(type='hidden', id='biz_id', name='biz_id', value=1))
         form.add_field('Name', tf.INPUT(type='text', id='name', name='name').set_required())
         form.add_field('Address', tf.TEXTAREA(id='address', name='address'))
         form.add_field('City', tf.INPUT(type='text', id='city', name='city'))

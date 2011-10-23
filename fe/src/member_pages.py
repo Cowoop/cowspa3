@@ -217,8 +217,7 @@ class MemberCreate(BasePage):
         fields.append(field)
 
         form  = tf.FORM(Class='profile-forms', id="createmember_form", method="POST")
-        for field in fields:
-            form.content = field
+        form.fields = fields
 
         container.form = form
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")

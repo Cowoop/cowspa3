@@ -67,7 +67,7 @@ class ResourceManage(BasePage):
         time_based = tf.DIV()
         time_based.field = tf.INPUT(id="time_based", type="checkbox")
         time_based.label = tf.C("Time Based")
-        resource_edit_form.add_field("", time_based, custom=True)
+        resource_edit_form.add(time_based)
         resource_edit_form.add_field("Picture", tf.INPUT(id="picture", type="file"))
         resource_edit_form.add_field("Short Description", tf.TEXTAREA(id="short_desc"))
         resource_edit_form.add_field("Long Description", tf.TEXTAREA(id="long_desc"))
@@ -78,7 +78,7 @@ class ResourceManage(BasePage):
         resource_states.label2 = tf.C("Host Only")
         resource_states.state3 = tf.INPUT(id="state_repairs", type="checkbox")
         resource_states.label3 = tf.C("Repairs")
-        resource_edit_form.add_field("", resource_states, custom=True)
+        resource_edit_form.add(resource_states)
         resource_edit = tf.DIV(id="resource_edit", Class='hidden')
         resource_edit.form = resource_edit_form.build()
         
