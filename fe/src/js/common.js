@@ -88,11 +88,12 @@ function success(resp) {
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
         if (current_ctx) {
             $("#context-select option[value='" + current_ctx + "']").attr('selected', 'selected');
+        } else {
+            set_context($("#context-select").find('option:selected').val());
         };
         $('#context-select').change(function() {
             set_context($('#context-select').find('option:selected').val());
         });
-        set_context($("#context-select").find('option:selected').val());
     };
 };
 
