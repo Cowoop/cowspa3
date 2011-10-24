@@ -1,5 +1,6 @@
 var thismember = null;
 var thismember_id = null;
+var select_member_box = $('.select-member');
 
 function on_member_profile(response) {
     thismember = response.result;
@@ -7,13 +8,18 @@ function on_member_profile(response) {
     $('#content-title').text(thismember.profile.display_name);
     $('#content-subtitle').text("Membership no.: " + thismember_id);
     $('.section-title').slideDown('slow');
+    $('.data-id').text(thismember_id);
+    $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('input[name="long_description"]').val(thismember.profile.long_description);
     $('input[name="address"]').val(thismember.contact.address);
     $('input[name="city"]').val(thismember.contact.city);
+    $('input[name="email"]').val(thismember.contact.email);
+    $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('input[name="country"] option[value="' +thismember.contact.country+ '"]').attr('selected', 'selected');
+    $('#member-info').slideDown();
 };
 
 function hide_sections() {
@@ -21,6 +27,7 @@ function hide_sections() {
 };
 
 function act_on_route(id) {
+    select_member_box.hide();
     hide_sections();
     thismember_id = id;
     var params = {'member_id': id};
@@ -59,9 +66,11 @@ function setup_routing () {
 };
 
 function on_result_click (data) {
+    select_member_box.text("loading ...");
     thismember_id = data['attributes']['id'];
     var params = {'member_id': thismember_id};
     jsonrpc('member.profile', params, on_member_profile, error);
+    select_member_box.hide();
 }; 
 
 function autocomplete() {

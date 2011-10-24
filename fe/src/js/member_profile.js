@@ -66,6 +66,7 @@ $('#social_view_form #edit-link').click(function(){
 $("#contact_edit_form #save-btn").click(function(){
     var params = { 'member_id' : profile_id};
     result['result']['contact'] = save("contact", "member.update", params);
+    return false;
     });
 $("#contact_view_form #edit-link").click(function(){
     edit("contact");

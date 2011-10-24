@@ -10,6 +10,23 @@ import commonlib.shared.symbols
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
+def contact_form():
+    form = sphc.more.Form(id='member-contact-edit', Class='profile-edit-form', classes=['hform'])
+    form.add_field("Address", tf.TEXTAREA(name='address', type="text"))
+    form.add_field("City", tf.INPUT(name='city', type="text"))
+    select = tf.SELECT(id='country', name='country')
+    select.options = fe.src.common.country_options
+    form.add_field("Country", select)
+    form.add_field("Pincode/Zip", tf.INPUT(name='pincode', type="text"))
+    form.add_field("Phone", tf.INPUT(name='phone', type="text"))
+    form.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
+    form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
+    form.add_field("Email", tf.INPUT(name='email', type="email").set_required())
+    form.add_field("Skype", tf.INPUT(name='skype', type="text"))
+    form.add_field("Sip", tf.INPUT(name='sip', type="text"))
+    form.add_buttons(tf.BUTTON("Update", type="submit"))
+    return form
+
 def billing_pref_form():
     billing_pref_form = tf.form(id="billing_pref", Class="simple-hform")
     
@@ -96,7 +113,7 @@ def billing_pref_form():
     return billing_pref_form
 
 def add_tariffs_section(container):
-    tariff_box = tf.DIV(id="memberships_view_form", Class="profile-forms", style="display:none")
+    tariff_box = tf.DIV()
 
     new = tf.DIV(Class="right-action")
     new.button = tf.BUTTON("Next Tariff", id="next_tariff-btn", name="next_tarrif-btn", type="button")
@@ -124,7 +141,7 @@ def add_tariffs_section(container):
     tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#memberships')
 
     tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em", Class="stripped")
-    tariff_info.caption = tf.CAPTION("Manage Tariffs")
+    tariff_info.caption = tf.CAPTION("Current Tariffs")
     tariff_info.header = header
 
     tariff_box.new = new
@@ -160,7 +177,7 @@ def add_tariffs_section(container):
 def make_buttons():
     container = tf.DIV()
     buttons = tf.DIV(Class="buttons")
-    buttons.button = tf.BUTTON("Save", id='save-btn', type='button')
+    buttons.button = tf.BUTTON("Save", id='save-btn', type='submit')
     buttons.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
     container.buttons = buttons
     return container
@@ -171,56 +188,51 @@ class MemberCreate(BasePage):
     def content(self):
         container = tf.DIV()
 
-        fields = []
+        form  = tf.FORM(Class='hform simple-hform', id="createmember_form", method="POST")
 
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'First Name', For="first_name")
-        field.input = tf.INPUT(type='text', id='first_name', name='first_name').set_required()
-        fields.append(field)
+        sections = []
 
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Last Name', FOR="last_name")
-        field.input = tf.INPUT(type='text', id='last_name', name='last_name')
-        fields.append(field)
+        section = tf.FIELDSET()
+        section.legend = tf.LEGEND("About")
+        section.label = tf.LABEL(content = 'First Name', For="first_name")
+        section.input = tf.INPUT(type='text', id='first_name', name='first_name').set_required()
 
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Username', FOR="user_name")
-        field.input = tf.INPUT(type='text', id='username', name='username').set_required()
-        fields.append(field)
+        section.label = tf.LABEL(content = 'Last Name', FOR="last_name")
+        section.input = tf.INPUT(type='text', id='last_name', name='last_name')
 
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Password', FOR="password")
-        field.input = tf.INPUT(type='password', id='password', name='password').set_required()
-        fields.append(field)
+        section.label = tf.LABEL(content = 'Username', FOR="user_name")
+        section.input = tf.INPUT(type='text', id='username', name='username').set_required()
 
-        field = tf.DIV()
-        field.label = tf.LABEL('Language', FOR='language')
-        field.input = tf.SELECT(id='language', name='language')
-        for language in data_lists.languages:
-            field.input.option = tf.OPTION(language['label'], value=language['name'])
-        fields.append(field)
+        section.label = tf.LABEL(content = 'Password', FOR="password")
+        section.input = tf.INPUT(type='password', id='password', name='password').set_required()
 
-        field = tf.DIV()
-        field.label = tf.LABEL('Country', FOR='country')
-        field.input = tf.SELECT(id='country', name='country')
-        field.input.options = fe.src.common.country_options
-        fields.append(field)
+        section.label = tf.LABEL('Language', FOR='language')
+        section.lang = tf.SELECT(id='language', name='language')
+        section.lang.options = [tf.OPTION(language['label'], value=language['name']) for language in data_lists.languages]
 
-        field = tf.DIV()
-        field.label = tf.LABEL(content = 'Email', FOR='email')
-        field.input = tf.INPUT(type='email', id='email', name='email').set_required()
-        fields.append(field)
+        sections.append(section)
 
-        fields.append(tf.DIV(id="CreateMember-msg"))
-        field = tf.DIV(Class="submit-btns")
-        field.button = tf.BUTTON("Create", id='save-btn', type='submit')
-        fields.append(field)
+        section = tf.FIELDSET()
+        section.legend = tf.LEGEND("Contact")
 
-        form  = tf.FORM(Class='profile-forms', id="createmember_form", method="POST")
-        form.fields = fields
+        section.fields = contact_form().fields
+
+        #section.label = tf.LABEL('Country', FOR='country')
+        #section.input = tf.SELECT(id='country', name='country')
+        #section.input.options = fe.src.common.country_options
+        #section.label = tf.LABEL(content = 'Email', FOR='email')
+        #section.input = tf.INPUT(type='email', id='email', name='email').set_required()
+
+        sections.append(section)
+
+        form.sections = sections
+        form.status = tf.DIV(Class="action-status")
+        #field = tf.DIV(Class="submit-btns")
+        form.button = tf.BUTTON("Create", id='save-btn', type='submit')
 
         container.form = form
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
+
         return container
 
 class EditProfile(BasePage):
@@ -238,10 +250,16 @@ class EditProfile(BasePage):
         container.search_box.step = tf.C(commonlib.shared.symbols.circled_nums.one, Class="heading3")
         container.search_box.label = tf.SPAN(tf.LABEL("Select member", For="member-search"))
         container.search_box.cell = tf.SPAN(tf.INPUT(id="member-search", type="text"), Class="search-input")
-        container.clear = tf.hr(Class="light")
+        container.search_box.line = tf.hr(Class="light")
         #container.title = tf.DIV([tf.c(id="content-title"), tf.SPAN(id="content-subtitle")], Class="content-title")
 
         # About
+        container.info = tf.DIV(id="member-info", Class="labeled-list hidden")
+        container.info.id = [tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")]
+        container.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")])
+        container.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        container.info.line = tf.hr(Class="light")
+
         container.title = tf.DIV(tf.A("About", href="#", id="st-about"), Class="section-title")
         container.about_div = tf.DIV(Class="mp-section", id="mp-about")
 
@@ -258,22 +276,7 @@ class EditProfile(BasePage):
         container.title = tf.DIV(tf.A("Contact", href="#", id="st-contact"), Class="section-title")
         container.contact_div = tf.DIV(Class="mp-section", id="mp-contact")
 
-        form = sphc.more.Form(id='member-contact-edit', Class='profile-edit-form', classes=['hform'])
-        form.add_field("Address", tf.TEXTAREA(name='address', type="text"))
-        form.add_field("City", tf.INPUT(name='city', type="text"))
-        select = tf.SELECT(id='country', name='country')
-        select.options = fe.src.common.country_options
-        form.add_field("Country", select)
-        form.add_field("Pincode/Zip", tf.INPUT(name='pincode', type="text"))
-        form.add_field("Phone", tf.INPUT(name='phone', type="text"))
-        form.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
-        form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
-        form.add_field("Email", tf.INPUT(name='email', type="email").set_required())
-        form.add_field("Skype", tf.INPUT(name='skype', type="text"))
-        form.add_field("Sip", tf.INPUT(name='sip', type="text"))
-        form.add_buttons(tf.BUTTON("Update", type="submit"))
-
-        container.contact_div.form = form.build()
+        container.contact_div.form = contact_form().build()
 
         # Billing
         container.title = tf.DIV(tf.A("Billing", href="#", id="st-billing"), Class="section-title")
@@ -288,7 +291,7 @@ class EditProfile(BasePage):
         # Memberships
 
         container.title = tf.DIV(tf.A("Memberships", href="#", id="st-memberships"), Class="section-title")
-        container.memberships_div = tf.DIV(Class="mp-section", id="mp-memberships")
+        container.memberships_div = tf.DIV(Class="mp-section hidden", id="mp-memberships")
         add_tariffs_section(container.memberships_div)
 
         container.script = sphc.more.script_fromfile("fe/src/js/common_form_methods.js")
@@ -391,7 +394,8 @@ class MemberProfile(BasePage):
 
         ######### Memberships ###################
 
-        add_tariffs_section(container)
+        container.tariffs_section = tf.DIV(id="memberships_view_form", Class="profile-forms", style="display: none")
+        add_tariffs_section(container.tariffs_section)
 
         #                                                Contact Form
         field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
@@ -415,7 +419,7 @@ class MemberProfile(BasePage):
 
         fields.append(make_buttons())
 
-        form  = tf.FORM(Class='profile-forms', id="contact_edit_form", style="display:none")
+        form  = tf.FORM(Class='profile-forms', id="contact_edit_form", style="display:none", method="POST")
         for field in fields:
             form.content = field
 
