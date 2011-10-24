@@ -2,16 +2,16 @@ $('#createmember_form').submit(function () {
     var theform = $(this);
     theform.checkValidity();
     var inputs = theform.serializeArray();
-    var params = {}
+    var params = {};
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
-        }
+    };
     function success() {
-        $('#CreateMember-msg').html("<big>☑</big> Member Created successfully.");
-        }
+        $('.action-status').text("Member Created successfully.").addClass('status-success');
+    };
     function error() {
-        $('#CreateMember-msg').html("<big>Error in Member Creation. Try again</big>");
-        }
+        $('.action-status').text("Error in Member Creation").addClass('status-fail');
+    };
     jsonrpc('member.new', params, success, error);
     return false
-    });
+});
