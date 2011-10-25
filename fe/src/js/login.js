@@ -10,7 +10,7 @@ function login() {
     };
     function success(resp) {
         action_status.text("Login is successful.").attr('class', 'status-success');
-        window.location = "/"+resp['result']['language']+"/"+resp['result']['theme']+"/dashboard";
+        window.location = "/" + resp.result.language + "/" + resp.result.theme + "/dashboard";
     };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');
@@ -54,13 +54,3 @@ signup_form.submit(function () {
 });
 
 $('#signup-btn').click(signup);
-
-function enterKey(evt) {
-    var evt = (evt) ? evt : event
-    var charCode = (evt.which) ? evt.which : evt.keyCode
-    if (charCode == 13) {
-      login();
-    };
-}; 
-
-document.body.onkeypress = enterKey;
