@@ -76,8 +76,6 @@ $('.resource_type-show').click(hide_resource);
 
 //***************************On Resource Filter Click***************************
 function show_filtered_resources(){
-    $(this).attr('class', 'resource_filter-show');
-    $('.resource_filter-show').click(hide_filtered_resources);
     state |= states[$(this).attr('id')];
     $('.filtered_resource-visible').each(function(){
         res_id = parseInt($(this).attr('id').split('_')[1]);
@@ -88,10 +86,11 @@ function show_filtered_resources(){
             $(this).addClass("resource-hidden");
         }
     });
+    $(this).unbind('click');
+    $(this).attr('class', 'resource_filter-show');
+    $(this).click(hide_filtered_resources);
 }
 function hide_filtered_resources(){
-    $(this).attr('class', 'resource_filter-hide');
-    $('.resource_filter-hide').click(show_filtered_resources);
     state ^= states[$(this).attr('id')];
     $('.filtered_resource-hidden').each(function(){
         res_id = parseInt($(this).attr('id').split('_')[1]);
@@ -108,6 +107,9 @@ function hide_filtered_resources(){
             $(this).removeClass("resource-visible");
         }
     });
+    $(this).unbind('click');
+    $(this).attr('class', 'resource_filter-hide');
+    $(this).click(show_filtered_resources);
 }
 $('.resource_filter-hide').click(show_filtered_resources);
 $('.resource_filter-show').click(hide_filtered_resources);
