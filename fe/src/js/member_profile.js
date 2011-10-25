@@ -6,7 +6,9 @@ if(hash == "#account")
 else if(hash == "#billingpreferences")
     $("#billing_preferences_view_section").show();
 else
-    $(hash+"_view_form").show();
+    if (hash.indexOf('/') === -1) {
+        $(hash+"_view_form").show();
+    };
 function success(response) {
     bind_values(response['result']['profile'], "about");
     bind_values(response['result']['profile'], "social");
@@ -77,8 +79,10 @@ $("#preferences_edit_form #save-btn").click(function(){
     result['result']['preferences'] = save("preferences", "member.update", params);
     var new_theme = "/"+result['result']['preferences']['theme'].toLowerCase()+"/";
     var location = window.location.toString();
-    if(prev_theme != new_theme)
+    // if(prev_theme != new_theme) { # TODO investigate later
         window.location = location.replace(prev_theme, new_theme);
+    // };
+    return false;
     });
 $("#preferences_view_form #edit-link").click(function(){
     edit("preferences");
