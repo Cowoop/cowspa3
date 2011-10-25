@@ -354,8 +354,10 @@ class MemberProfile(BasePage):
         field.input = tf.INPUT(type='password', id='password', name='password', placeholder="••••••••")
         fields.append(field)
 
+        fields.append(tf.DIV(Class="action-status"))
+
         field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='button')
+        field.button = tf.BUTTON("Save", id='save-btn', type='submit')
         fields.append(field)
 
         form  = tf.FORM(Class='profile-forms', id="account_edit_form", style="display:none")

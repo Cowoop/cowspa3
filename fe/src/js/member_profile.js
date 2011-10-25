@@ -47,25 +47,29 @@ else
 var params = {'member_id': profile_id};
 jsonrpc('member.profile', params, success, error);
 
-$('#about_edit_form #save-btn').click(function(){
+$('#about_edit_form').submit(function(){
     var params = { 'member_id' : profile_id};
     result['result']['profile'] = save("about", "member.update", params);
+    return false;
     });
 $('#about_view_form #edit-link').click(function(){
     edit("about");
     });
-$('#account_edit_form #save-btn').click(function(){
+$('#account_edit_form').submit(function(){
     var params = { 'member_id' : profile_id};
     result['result']['profile'] = save("account", "member.update", params);
+    $('#account_edit_form .action-status').text("Updated successfully")
+    return false;
     });
-$('#social_edit_form #save-btn').click(function(){
+$('#social_edit_form').submit(function(){
     var params = { 'member_id' : profile_id};
     result['result']['profile'] = save("social", "member.update", params);
+    return false;
     });
 $('#social_view_form #edit-link').click(function(){
     edit("social");
     })
-$("#contact_edit_form #save-btn").click(function(){
+$("#contact_edit_form").submit(function(){
     var params = { 'member_id' : profile_id};
     result['result']['contact'] = save("contact", "member.update", params);
     return false;
