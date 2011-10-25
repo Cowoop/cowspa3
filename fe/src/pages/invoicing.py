@@ -89,7 +89,6 @@ class New(BasePage):
         add_usage_form = sphc.more.Form(id='new-usage-form', action='#', classes=['vform'])
         usage_name = tf.DIV(id="usage_name")
         usage_name.select = tf.SELECT(id="resource_select", name="resource_select")
-        usage_name.space = tf.SPAN(Class="div_right_margin")
         usage_name.link = tf.A("Custom", id="custom", href="#")
         add_usage_form.add_field("Resource Name", tf.DIV((usage_name, tf.INPUT(name='resource_name', id='resource_name', placeholder="Resource name", Class="hidden").set_required())))
         add_usage_form.add_field("Rate", tf.INPUT(name='rate', id='rate', nv_attrs=('required',), placeholder="eg. 12.00"), "Do not include currency")
