@@ -458,7 +458,7 @@ button[disabled], button[disabled]:hover {
 
 .inverse-box {
     padding: 2em;
-    font-size: 130%;
+    font-size: 120%;
     color: $other-text-color;
     margin-top: 1em;
     @include single-box-shadow($main-color);
@@ -479,7 +479,7 @@ button[disabled], button[disabled]:hover {
     z-index: 100;
     .signup { 
         color: $other-text-color;
-        font-size: 130%;
+        font-size: 120%;
     }
 }
 
