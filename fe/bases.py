@@ -45,26 +45,26 @@ members_opt = [
     tf.A("New", href=ctxpath + '/member/new'),
     tf.A("Manage Profile", href=ctxpath + '/member/edit'),
     tf.A("Memberships", href=ctxpath + '/member/memberships'),
-    tf.A("Announce", href=ctxpath + '/member/announce'),
-    tf.A("Export", href=ctxpath + "/member/export")]
+    tf.A("Announce", href='#' + ctxpath + '/member/announce'),
+    tf.A("Export", href='#' + ctxpath + "/member/export")]
 
 booking_opt = [
     #tf.INPUT(type="search", placeholder='Search..'),
-    tf.A("New", href=ctxpath + '/bookings/new'),
-    tf.A("My Bookings", href=ctxpath + '/bookings/mine'),
-    tf.A("Calendar", href=ctxpath + '/bookings/calendar'),
-    tf.A("Agenda", href=ctxpath + "/bookings/agenda"),
-    tf.A("Events", href=ctxpath + "/bookings/events"),
-    tf.A("Export", href=ctxpath + "/bookings/export"),
+    tf.A("New", href='#/' + ctxpath + '/bookings/new'),
+    tf.A("My Bookings", href='#/' + ctxpath + '/bookings/mine'),
+    tf.A("Calendar", href='#/' + ctxpath + '/bookings/calendar'),
+    tf.A("Agenda", href='#/' + ctxpath + "/bookings/agenda"),
+    tf.A("Events", href='#/' + ctxpath + "/bookings/events"),
+    tf.A("Export", href='#/' + ctxpath + "/bookings/export"),
     ]
 
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoicing/new'),
-    tf.A("Received", href=ctxpath+'/invoicing/sent'),
     tf.A("Sent", href=ctxpath+'/invoicing/history'),
+    tf.A("Received", href='#'),
     tf.A("Settings", href=ctxpath+'/invoicing/preferences'),
-    tf.A("Auto-Generate", hre=ctxpath+'/invoicing/auto'),
-    tf.A("Export", hre=ctxpath+'/invoicing/export')
+    tf.A("Auto-Generate", href='#'),
+    tf.A("Export", href='#')
 ]
 
 profile_opt = [
