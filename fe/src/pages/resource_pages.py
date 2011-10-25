@@ -50,7 +50,7 @@ class ResourceManage(BasePage):
         resource_tmpl = sphc.more.jq_tmpl("resource-tmpl")
         resource_tmpl.box = tf.DIV(Class='resource-box resource-hidden filtered_resource-visible typed_resource-hidden', id="resource_${id}")
         resource_tmpl.box.first = tf.DIV(Class='resource-image_part')
-        resource_tmpl.box.first.picture = tf.IMG(Class='resource_list-logo', src="${picture}", id="picture_${id}", alt="Picture is not available")
+        resource_tmpl.box.first.picture = tf.IMG(Class='resource_list-logo', src="${picture}", id="picture_${id}", onerror="ImageNotAvailable(this);")
         resource_tmpl.box.second = tf.DIV(Class='resource-data_part')
         resource_tmpl.box.second.name = tf.DIV()
         resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#", Class="edit-link")
