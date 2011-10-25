@@ -68,6 +68,9 @@ class PlanResource:
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
         if old_sub:
+            if isinstance(starts, basestring):
+                mm, dd, yy = (int(x) for x in starts.split('/'))
+                starts = datetime.date(yy, mm, dd)
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
                 raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
