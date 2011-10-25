@@ -377,6 +377,7 @@ textarea {
     background: darken($page-background, 5%);
     border: 1px solid lighten($main-color, 10%);
     @include divsizing;
+    height: 6em;
 }
 
 form.profile-forms {
@@ -544,11 +545,15 @@ form.vform {
         margin-top: 1em;
         text-align: center;
     }
-    .field .field-input input, input, select {
+    .field .field-input input, input, select, textarea {
+        width: 90%;
+    }
+    input[type="date"] {
         width: 90% !important; // webshim shrinks input size if type is date also possibly for others like required
     }
-    input[type="button"] {
+    input[type="button"], input[type="checkbox"] {
         width: auto;
+        display: inline-block;
     }
 }
 
