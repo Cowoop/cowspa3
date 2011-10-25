@@ -132,7 +132,7 @@ def add_tariffs_section(container):
     tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
     tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
     cell = tf.TD()
-    cell.a = tf.A("Change", href="#change-sub", Class="change-sub", id="change_sub-${id}")
+    cell.a = tf.A("Change", href="#memberships", Class="change-sub", id="change_sub-${id}")
     cell.c = tf.C(" | ")
     cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-sub", id="cancel_sub-${id}")    
     tariff_row.tr.td = cell

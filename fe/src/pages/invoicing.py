@@ -81,7 +81,7 @@ class New(BasePage):
         usage_tmpl.tr.td = tf.TD('${quantity}')
         usage_tmpl.tr.td = tf.TD('${start_time} - ${end_time}')
         usage_tmpl.tr.td = tf.TD('${calculated_cost}')
-        cancel_usage = tf.A('X', title="Cancel Usage", href="#", Class="cancel-x cancel-usage", id="cancel_usage-${id}")
+        cancel_usage = tf.A('X', title="Remove Usage", href="#", Class="cancel-x cancel-usage", id="cancel_usage-${id}")
         usage_tmpl.tr.td = tf.TD(cancel_usage)
 
         content.usage_tmpl = usage_tmpl

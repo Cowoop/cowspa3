@@ -268,8 +268,10 @@ function bind_cancel_and_change_tariff() {
                         params['ends'] = $('#change-tariff-form #end').val();
                     }
                     function success(resp) { 
-                        $("#tariff_row-"+subscription_id+" #start").text(params['starts']);
-                        $("#tariff_row-"+subscription_id+" #ends").text(params['ends']);
+                        var date = new Date(params['starts']);
+                        $("#tariff_row-"+subscription_id+" #start").text($.datepicker.formatDate('M dd, yy', date));
+                        date = new Date(params['ends']);
+                        $("#tariff_row-"+subscription_id+" #ends").text($.datepicker.formatDate('M dd, yy', date));
                         $("#tariff_row-"+subscription_id+" #plan_name").text($("#change-tariff-form #tariff option[value='"+params['plan_id']+"']").text());
                         $("#Change_Tariff-msg").html("");
                         $('#change-tariff-form').dialog("close");

@@ -64,9 +64,11 @@ $('#submit-usage').click( function () {
     data.id = inv_usages.push(data);
     $('#usage-tmpl').tmpl([data]).appendTo('#usages');
     $(".cancel-usage").click(function(){
-        var usage_id = parseInt($(this).attr('id').split('-')[1]);
-        $(this).parent().parent().remove();
-        delete(inv_usages[usage_id-1]);
+        if(confirm("Do you want to remove?")){
+            var usage_id = parseInt($(this).attr('id').split('-')[1]);
+            $(this).parent().parent().remove();
+            delete(inv_usages[usage_id-1]);
+        }
     });
     $('#new-usage-form').dialog('close');
 });
