@@ -38,8 +38,8 @@ function init_autocomplete() {
         startText: "Enter name or email or id",
         resultClick: function (data) {
             var id = data['attributes']['id'];
-            var basepath = '';
-            window.location = basepath + "member/edit/#/" +id+ "/about";
+            var basepath = window.location.pathname.split('/').slice(0,3).join('/');
+            window.location = basepath + "/member/edit/#/" +id+ "/about";
         } 
     });
 };
