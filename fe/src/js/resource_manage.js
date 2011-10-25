@@ -2,11 +2,15 @@
 var picture = null;
 var resource_list = {};
 var state = 0;
-var checked_map = {'checked':true, undefined:false};
+var checked_map = {'checked':true, 'on':true, undefined:false};
 var states = {'enabled':1, 'host_only':2, 'repairs':4};
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************List Resource*************************************
+function ImageNotAvailable(source){
+    $("#"+source.id).hide();
+    return true;
+}
 function success(res) {
     $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_list');
     for(resc in res['result']){
@@ -146,9 +150,9 @@ function resource_editing(){
                             resource_list[res_id]['time_based'] = params['time_based'];
                             if(picture){
                                 resource_list[res_id]['picture'] = picture;
+                                $("#picture_"+res_id).show();
                                 $("#picture_"+res_id).attr('src', picture);
                             }
-                            
                             if(resource_list[res_id]['time_based'])
                                 $("#clock_"+res_id).show();
                             else
@@ -177,11 +181,11 @@ function resource_editing(){
                         params['type'] = $("#type").val();
                         params['short_description'] = $("#short_desc").val();
                         params['long_description'] = $("#long_desc").val();
-                        params['time_based'] = checked_map[$("#time_based").attr('checked')];
+                        params['time_based'] = checked_map[$("#time_based:checked").val()];
                         params['state'] = {};
-                        params['state']['enabled'] = checked_map[$("#state_enabled").attr('checked')];
-                        params['state']['host_only'] = checked_map[$("#state_host_only").attr('checked')];
-                        params['state']['repairs'] = checked_map[$("#state_repairs").attr('checked')];
+                        params['state']['enabled'] = checked_map[$("#state_enabled:checked").val()];
+                        params['state']['host_only'] = checked_map[$("#state_host_only:checked").val()];
+                        params['state']['repairs'] = checked_map[$("#state_repairs:checked").val()];
                         if(picture)
                             params['picture'] = picture;
                         jsonrpc('resource.update', params, success, error);  
