@@ -46,7 +46,7 @@ function init_autocomplete() {
 
 function init_nav() {
     function hide_submenu() {
-        $('.submenu-box').slideUp('slow');
+        $('.submenu-box').hide();
         $('#main .content').removeClass('opaq');
         $('nav').removeClass('simple-box');
         $('#main .content').addClass('simple-box');
