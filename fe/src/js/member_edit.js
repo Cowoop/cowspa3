@@ -2,8 +2,8 @@ var thismember = null;
 var thismember_id = null;
 var select_member_box = $('.select-member');
 
-function on_member_profile(response) {
-    thismember = response.result;
+function on_member_profile(resp) {
+    thismember = resp.result;
     $('.content-title').show();
     $('#content-title').text(thismember.profile.display_name);
     $('#content-subtitle').text("Membership no.: " + thismember_id);
@@ -20,6 +20,11 @@ function on_member_profile(response) {
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('input[name="country"] option[value="' +thismember.contact.country+ '"]').attr('selected', 'selected');
     $('#member-info').slideDown();
+    var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme + '/member/edit/#/';
+    $('#st-about').attr('href', base_url + thismember_id + '/about');
+    $('#st-contact').attr('href', base_url + thismember_id + '/contact');
+    $('#st-billing').attr('href', base_url + thismember_id + '/billing');
+    $('#st-memberships').attr('href', base_url + thismember_id + '/memberships');
 };
 
 function hide_sections() {
@@ -27,11 +32,13 @@ function hide_sections() {
 };
 
 function act_on_route(id) {
-    select_member_box.hide();
-    hide_sections();
-    thismember_id = id;
-    var params = {'member_id': id};
-    jsonrpc('member.profile', params, on_member_profile, error);
+    if (thismember_id != id) {
+        select_member_box.hide();
+        hide_sections();
+        thismember_id = id;
+        var params = {'member_id': id};
+        jsonrpc('member.profile', params, on_member_profile, error);
+    };
 };
 
 function show_section(section) {
@@ -81,14 +88,15 @@ function autocomplete() {
         minChars: 1,
         selectionLimit: 0, 
         startText: "Enter name or email or id",
-        resultClick: on_result_click
+        // resultClick: on_result_click
+        resultClick: function (data) {
+            var id = data['attributes']['id'];
+            var basepath = window.location.pathname.split('/').slice(0,3).join('/');
+            window.location = basepath + "/member/edit/#/" +id+ "/about";
+        }
     });
 };
 
-$('#st-about').click(show_about);
-$('#st-contact').click(show_contact);
-$('#st-billing').click(show_billing);
-$('#st-memberships').click(show_memberships);
 $('.section-title').hide();
 $('button[value="cancel"]').click(hide_sections);
 
