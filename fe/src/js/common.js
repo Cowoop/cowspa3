@@ -84,7 +84,11 @@ function success(resp) {
         $('#menu-item_3').hide();
         $('#menu-item_4').hide();
         $('#menu-item_5').hide();
-    } else {
+    } 
+    else if(resp['result'].length == 1) {
+        $("#context-select").hide();
+    }
+    else {
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
         if (current_ctx) {
             $("#context-select").val(current_ctx);
