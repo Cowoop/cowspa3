@@ -1,5 +1,6 @@
 //*****************************Global Section***********************************
 var picture = null;
+var image_size_limit = 256000;//256kb
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************Save Resource*************************************
@@ -38,7 +39,11 @@ $('#picture').change(function handleFileSelect(evt) {
     reader.onload = (function(e) {
         picture = e.target.result;
     });
-    if(files.length == 1)
-        reader.readAsDataURL(files[0]);
+    if(files.length == 1){
+        if(files[0].size <= image_size_limit)
+            reader.readAsDataURL(files[0]);
+        else
+            alert("Image size exceeds image upload limit, Image size must be less than "+ (image_size_limit/1000) + "kb.");
+    }
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxEnd Upload Invoice Picturexxxxxxxxxxxxxxxxxxxxxxxxxxx

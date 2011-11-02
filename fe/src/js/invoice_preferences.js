@@ -1,6 +1,7 @@
 //****************************Global Section************************************
 var invoice_pref_info;
 var changed_values = {};
+var image_size_limit = 128000;//128kb
 //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 $("#edit-link").click(function(){
@@ -65,8 +66,12 @@ $('#logo').change(function handleFileSelect(evt) {
     reader.onload = (function(e) {
         changed_values['logo'] = e.target.result;
     });
-    if(files.length == 1)
-        reader.readAsDataURL(files[0]);
+    if(files.length == 1){
+        if(files[0].size <= image_size_limit)
+            reader.readAsDataURL(files[0]);
+        else
+            alert("Image size exceeds image upload limit, Image size must be less than "+ (image_size_limit/1000) + "kb.");
+    }
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxEnd Upload Invoice Logoxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
