@@ -139,6 +139,7 @@ class CSAuthedPage(CSPage):
         nav.context_opt.opt = tf.OPTION("${label}", value="${id}")
         nav.context_box = tf.SPAN()
         nav.context_box.selector = tf.SELECT(id="context-select")
+        nav.context_box.single_context = tf.SPAN(id="context-single")
         menu = tf.DIV(Class="menu")
         submenu_container = tf.DIV(Class="submenu-container")
         for m_id, (label, url, submenu) in enumerate(self.nav_menu):

@@ -81,14 +81,18 @@ function init_nav() {
 function success(resp) {
     if(resp['result'].length == 0) {
         $("#context-select").hide();
+        $("#context-single").hide();
         $('#menu-item_3').hide();
         $('#menu-item_4').hide();
         $('#menu-item_5').hide();
     } 
     else if(resp['result'].length == 1) {
         $("#context-select").hide();
+        $("#context-single").text(resp.result[0].label);
+        set_context(resp.result[0].id);
     }
     else {
+        $("#context-single").hide();
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
         if (current_ctx) {
             $("#context-select").val(current_ctx);
