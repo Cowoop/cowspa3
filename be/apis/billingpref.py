@@ -1,11 +1,9 @@
 import datetime
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
-import be.apis.biz as bizlib
 import commonlib.helpers
 
 member_store = dbaccess.stores.member_store
-biz_store = dbaccess.stores.biz_store
 billingpref_store = dbaccess.stores.billingpref_store
 modes = commonlib.helpers.odict(**{'self':0, 'custom':1, 'another':2, 'business':3})
 

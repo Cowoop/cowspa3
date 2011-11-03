@@ -42,10 +42,10 @@ def test_find_by():
     usages = usagelib.usage_resource.find(**data)
     assert len(usages) == 0
     
-    data = dict(resource_ids=[2], res_owner_refs=[4])
+    data = dict(resource_ids=[2], res_owner_refs=[test_data.bizplace_id])
     usages = usagelib.usage_resource.find(**data)
     assert len(usages) == 1
-    assert usages[0]['resource_id'] in [2] 
+    assert usages[0]['resource_id'] in [2]
     
     data = dict(start=datetime.datetime(2011,11,01,0,0,0), resource_types=['Type1'])
     usages = usagelib.usage_resource.find(**data)

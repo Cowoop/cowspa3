@@ -14,6 +14,7 @@ Member
 - /members/#new [ member.new ]
 - /members/#22 [ member.info(22) ]
 - /members/#22/edit/contact [ member.update(22, ..) ]
+- /members/#me 
 
 Location
 ========

@@ -3,7 +3,6 @@ import commontest
 import test_data
 
 import test_member
-import be.apis.biz as bizlib
 import be.apis.bizplace as bizplacelib
 import be.apis.plan as planlib
 import be.apis.member as memberlib
@@ -13,7 +12,7 @@ def setup():
     env.context.pgcursor.connection.commit()
 
 def test_add_plan():
-    test_data.plan_data['bizplace_id'] = 4
+    test_data.plan_data['bizplace_id'] = test_data.bizplace_id
     plan_id = planlib.plan_collection.new(**test_data.plan_data)
     env.context.pgcursor.connection.commit()
     test_data.plan_id = plan_id
@@ -21,7 +20,7 @@ def test_add_plan():
 
 def test_add_subscribers():
     starts = datetime.datetime(2011, 1, 1, 0, 0, 1)
-    planlib.plan_resource.new_subscribers(1, starts, test_data.more_member_ids)
+    planlib.plan_resource.new_subscribers(test_data.plan_id, starts, test_data.more_member_ids)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():
@@ -29,14 +28,14 @@ def test_find_bizplace_plans():
     data.update(test_data.more_plan_data)
     for i in range(4):
         data['name'] = test_data.more_plan_data['name'] + str(i)
-        data['bizplace_id'] = 4
+        data['bizplace_id'] = test_data.bizplace_id
         planlib.plan_collection.new(**data)
         env.context.pgcursor.connection.commit()
-    plans = bizplacelib.bizplace_resource.plans(4)
+    plans = bizplacelib.bizplace_resource.plans(test_data.bizplace_id)
     assert len(plans) == 5
 
 def test_subscribers():
-    subscribers = planlib.plan_resource.subscribers(1)
+    subscribers = planlib.plan_resource.subscribers(test_data.plan_id)
     assert len(subscribers) == len(test_data.more_member_ids)
 
 def test_plan_info():

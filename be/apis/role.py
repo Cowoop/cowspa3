@@ -4,7 +4,6 @@ import datetime
 import be.repository.access as dbaccess
 import commonlib.shared.roles as roledefs
 
-biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
 userrole_store = dbaccess.stores.userrole_store
 userpermission_store = dbaccess.stores.userpermission_store
@@ -74,7 +73,7 @@ def get_roles(user_id, role_filter=[]):
                     ctx_name_map[oid].append(rolename)
                 else:
                     ctx_name_map[oid] = [rolename]
-    return sorted([{'id':oid, 'label':dbaccess.oid2name(oid), 'roles':ctx_name_map[oid]} for oid in ctx_name_map], key=lambda k: k['label'].lower())
+    return sorted([{'id':oid, 'label':dbaccess.oid2name(oid), 'roles':ctx_name_map[oid]} for oid in ctx_name_map], key=lambda k: k['label'])
 
 def get_user_roles(user_id):
     """

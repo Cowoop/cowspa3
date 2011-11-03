@@ -18,10 +18,10 @@ manage_biz_profile = Permission('manage_biz_profile')
 apply_membership = Permission('apply_membership')
 view_own_invoices = Permission('view_own_invoices')
 search_biz = Permission('search_biz')
-approve_plan = Permission('approve_plan')
+approve_membership = Permission('approve_membership')
 invite_member = Permission('invite_member')
 activate_member = Permission('activate_member')
-change_member_role = Permission('change_member_role')
+manage_team = Permission('manage_team')
 
 class Role(ACObject): pass
 
@@ -44,22 +44,22 @@ member.permissions = [
 
 host = Role("host")
 host.permissions = [
-    approve_plan,
+    approve_membership,
     invite_member,
     manage_biz_profile,
     activate_member,
     manage_biz_invoices,
-    change_member_role,
+    manage_team,
     ]
 
 director = Role("director")
 director.permissions = [
-    approve_plan,
+    approve_membership,
     invite_member,
     manage_biz_profile,
     activate_member,
     manage_biz_invoices,
-    change_member_role,
+    manage_team,
     ]
 
 

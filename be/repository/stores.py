@@ -135,18 +135,6 @@ class UserPermission(PGStore):
     permission TEXT NOT NULL
     """
 
-class BizProfile(PGStore):
-    create_sql = """
-    short_description TEXT,
-    long_description TEXT,
-    tags TEXT[],
-    website TEXT,
-    blog TEXT,
-    twitter TEXT[2],
-    facebook TEXT[2],
-    linkedin TEXT[2]
-    """
-
 class BizplaceProfile(PGStore):
     create_sql = """
     short_description TEXT,
@@ -159,28 +147,12 @@ class BizplaceProfile(PGStore):
     linkedin TEXT[2]
     """
 
-#class BizInvoicingPref(PGStore):
-#    invoice_logo = Attribute()
-#
-class Biz(PGStore):
-    create_sql = """
-    id INTEGER NOT NULL UNIQUE,
-    name TEXT NOT NULL,
-    state INTEGER default 1 NOT NULL,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    logo TEXT,
-    contact INTEGER
-    """
-    parent_stores = [BizProfile(), Contact()]
-
 class BizPlace(PGStore):
     create_sql = """
     id INTEGER NOT NULL UNIQUE,
-    biz INTEGER,
     name TEXT NOT NULL,
     state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    contact INTEGER,
     langs TEXT[],
     tz TEXT,
     holidays smallint[],
@@ -192,19 +164,30 @@ class BizPlace(PGStore):
     parent_stores = [BizplaceProfile(), Contact()]
     pickle_cols = ['taxes']
 
+class Organization(PGStore):
+    create_sql = """
+    id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    state INTEGER default 1 NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    """
+    parent_stores = [Contact()]
+
 class Request(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
+    state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     acted_at TIMESTAMP WITHOUT TIME ZONE,
     requestor_id integer,
-    request_note TEXT,
+    note TEXT,
     status smallint default 0 NOT NULL,
     approver_id integer,
-    approver_perm TEXT NOT NULL,
-    _req_data bytea
+    api TEXT NOT NULL,
+    params bytea
     """
+    pickle_cols = ['params']
 
 class Plan(PGStore):
     create_sql = """
@@ -312,7 +295,7 @@ class InvoicePref(PGStore):
     bank_details TEXT,
     logo TEXT
     """
-    
+
 class Activity(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
@@ -340,7 +323,7 @@ class BillingPref(PGStore):
     details BYTEA
     """
     pickle_cols = ['details']
-    
+
 class OidGen(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,

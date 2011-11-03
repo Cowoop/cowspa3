@@ -15,7 +15,6 @@ import be.apis.invoice as invoicelib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.registration as registrationlib
 import be.apis.billingpref as billingpreflib
-import be.apis.biz as bizlib
 
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -52,7 +51,7 @@ cowspa.connect(activitylib.get_latest, "current.activities")
 cowspa.connect(bizplacelib.bizplace_collection.list, "bizplace.list")
 cowspa.connect(rolelib.get_roles, "users.bizplace.list")
 cowspa.connect(planlib.plan_collection.list, "bizplace_plans.list")
-cowspa.connect(planlib.plan_resource.new_subscriber, "next.tariff")
+cowspa.connect(planlib.plan_resource.new_subscriber, "plan.new_subscriber")
 cowspa.connect(memberlib.member_resource.get_teriff_history, "teriff.history")
 cowspa.connect(invoicelib.invoice_collection.new, "invoice.new")
 cowspa.connect(invoicelib.invoice_collection.search, "invoices.search")
@@ -65,5 +64,4 @@ cowspa.connect(planlib.plan_resource.change_subscription, "subscription.change")
 cowspa.connect(billingpreflib.billingpref_resource.info, "billingpref.info")
 cowspa.connect(billingpreflib.billingpref_resource.update, "billingpref.update")
 cowspa.connect(billingpreflib.billingpref_resource.get_details, "billingpref.details")
-cowspa.connect(bizlib.biz_collection.search, "businesses.search")
 cowspa.startup()

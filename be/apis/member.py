@@ -106,8 +106,8 @@ class MemberResource:
         preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
         memberships = dbaccess.get_member_current_subscriptions(member_id)
         for ms in memberships[::-1]:
-            ms['starts'] = ms['starts'].strftime('%b %d, %Y')
-            ms['ends'] =  ms['ends'].strftime('%b %d, %Y') if ms['ends'] else '-'
+            ms['starts'] = ms['starts'].isoformat()
+            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
         return dict(profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
     def contact(self, member_id):
@@ -126,8 +126,8 @@ class MemberResource:
     def get_teriff_history(self, member_id):
         memberships = dbaccess.get_member_teriff_history(member_id)
         for ms in memberships[::-1]:
-            ms['starts'] = ms['starts'].strftime('%b %d, %Y')
-            ms['ends'] =  ms['ends'].strftime('%b %d, %Y') if ms['ends'] else '-'
+            ms['starts'] = ms['starts'].isoformat()
+            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
         return memberships
         
 member_resource = MemberResource()

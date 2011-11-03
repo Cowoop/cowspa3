@@ -5,14 +5,13 @@ import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
 import commonlib.shared.static as static
 
-biz_store = dbaccess.stores.biz_store
 bizplace_store = dbaccess.stores.bizplace_store
 
 class BizplaceCollection:
-    def new(self, biz_id, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None, currency=None):
+    def new(self, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None, currency=None):
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
-        data = dict(id=bizplace_id, biz=biz_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
+        data = dict(id=bizplace_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
         bizplace_store.add(**data)
         
         rolelib.assign(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
@@ -24,19 +23,15 @@ class BizplaceCollection:
         
         return bizplace_id
 
-    def list(self, owner):
+    def list(self, owner=None):
         """
         returns list of bizplace info dicts
         """
+        if not owner:
+            owner = env.context.user_id
         roles = rolelib.get_roles(owner, ['host', 'director'])
         ids = [role['id'] for role in roles]
-        result = dbaccess.list_bizplaces(ids)
-        #DB returns country numeric code, which needs to be replaced by label
-        #before it is returned
-        for rec in result:
-            rec['country'] = static.countries_map[rec['country']]
-        
-        return result
+        return dbaccess.list_bizplaces(ids)
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """

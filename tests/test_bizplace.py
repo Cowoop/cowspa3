@@ -1,7 +1,6 @@
 import commontest
 import test_data
 
-import be.apis.biz as bizlib
 import be.apis.bizplace as bizplacelib
 import be.apis.plan as planlib
 import be.apis.member as memberlib
@@ -12,23 +11,12 @@ def setup():
     env.context.pgcursor.connection.commit()
     commontest.setup_system_context()
 
-def test_add_biz():
-    biz_id = bizlib.biz_collection.new(**test_data.biz)
-    env.context.pgcursor.connection.commit()
-    assert dbaccess.OidGenerator.get_otype(biz_id) == "Biz"
-    test_data.biz_id = biz_id
-
 def test_add_bizplace():
-    test_data.bizplace['biz_id'] = test_data.biz_id
     bizplace_id = bizplacelib.bizplace_collection.new(**test_data.bizplace)
     env.context.pgcursor.connection.commit()
     test_data.bizplace_id = bizplace_id
     assert dbaccess.OidGenerator.get_otype(bizplace_id) == "BizPlace"
     test_data.bizplace_id = bizplace_id
-
-def test_biz_info():
-    d = bizlib.biz_resource.info(test_data.biz_id)
-    assert (d['short_description'], d['email']) == (test_data.biz['short_description'], test_data.biz['email'])
 
 def test_bizplace_info():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)
@@ -41,5 +29,5 @@ def test_bizplace_update():
 
 def test_list_bizplaces_list():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)
-    l = bizplacelib.bizplace_collection .list()
+    l = bizplacelib.bizplace_collection.list()
     assert d in l
