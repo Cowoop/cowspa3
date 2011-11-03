@@ -1,3 +1,5 @@
+import sys
+import traceback
 import be.repository.pgdb as pgdb
 
 pg_provider = pgdb.PGProvider()
@@ -9,6 +11,7 @@ def pg_transaction(f):
         except:
             pg_provider.tr_abort(env.context)
             raise
+        traceback.print_exc(file=sys.stdout)
         return res
     return wrapper
 pg_transaction.prop = 'pgdb'
