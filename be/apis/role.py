@@ -74,7 +74,7 @@ def get_roles(user_id, role_filter=[]):
                     ctx_name_map[oid].append(rolename)
                 else:
                     ctx_name_map[oid] = [rolename]
-    return [{'id':oid, 'label':dbaccess.oid2name(oid), 'roles':ctx_name_map[oid]} for oid in ctx_name_map]
+    return sorted([{'id':oid, 'label':dbaccess.oid2name(oid), 'roles':ctx_name_map[oid]} for oid in ctx_name_map], key=lambda k: k['label'].lower())
 
 def get_user_roles(user_id):
     """

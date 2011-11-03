@@ -75,6 +75,15 @@ nav {
         width: 25%;
     }
     
+    #context-single {
+        float: left;
+        width: 25%;
+        border: none;
+        border-right: 1px solid;
+        height: 100%;
+        width: 25%;
+    }
+    
     .menu {
         display: inline-block;
         .current { 

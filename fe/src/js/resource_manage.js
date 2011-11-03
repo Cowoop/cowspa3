@@ -4,6 +4,7 @@ var resource_list = {};
 var state = 0;
 var checked_map = {'checked':true, 'on':true, undefined:false};
 var states = {'enabled':1, 'host_only':2, 'repairs':4};
+var image_size_limit = 256000;//256kb
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************List Resource*************************************
@@ -34,8 +35,12 @@ $('#picture').change(function handleFileSelect(evt) {
     reader.onload = (function(e) {
         picture = e.target.result;
     });
-    if(files.length == 1)
-        reader.readAsDataURL(files[0]);
+    if(files.length == 1){
+        if(files[0].size <= image_size_limit)
+            reader.readAsDataURL(files[0]);
+        else
+            alert("Image size exceeds image upload limit, Image size must be less than "+ (image_size_limit/1000) + "kb.");
+    }
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxEnd Upload Invoice Picturexxxxxxxxxxxxxxxxxxxxxxxxxxx
 

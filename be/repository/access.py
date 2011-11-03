@@ -211,12 +211,12 @@ def search_member(keys, options, limit):
             keys[0] = int(keys[0])
             clause += 'Member.id = %(key)s'
         except:
-            keys[0] = keys[0].lower() + "%"
-            clause += '(lower(Member.first_name) LIKE %(key)s OR lower(Member.last_name) LIKE %(key)s OR lower(Member.email) LIKE %(key)s OR lower(Member.organization) LIKE %(key)s)'
+            keys[0] = keys[0] + "%"
+            clause += '(Member.first_name ILIKE %(key)s OR Member.last_name ILIKE %(key)s OR Member.email ILIKE %(key)s OR Member.organization ILIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
     elif len(keys) == 2:
-        clause += '((lower(Member.first_name) = %(key1)s AND lower(Member.last_name) like %(key2)s) OR (lower(Member.first_name) like %(key2)s AND lower(Member.last_name) = %(key1)s))'
-        values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
+        clause += '((Member.first_name ILIKE %(key1)s AND Member.last_name ILIKE %(key2)s) OR (Member.first_name ILIKE %(key2)s AND Member.last_name ILIKE %(key1)s))'
+        values = dict(key1=keys[0], key2=keys[1]+"%", limit=limit)
     query  += ' WHERE '+clause+' LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
     
@@ -228,8 +228,8 @@ def search_biz(key, limit):
         key = int(key)
         clause = 'id = %(key)s'
     except:
-        key = key.lower() + "%"
-        clause = 'lower(name) LIKE %(key)s OR lower(email) LIKE %(key)s LIMIT %(limit)s'
+        key = key + "%"
+        clause = 'name ILIKE %(key)s OR email ILIKE %(key)s LIMIT %(limit)s'
     clause_values =  dict(key=key, limit=limit)
     return biz_store.get_by_clause(clause, clause_values, fields)
 
@@ -266,12 +266,12 @@ def search_invoice(keys, options, limit):
             keys[0] = int(keys[0])
             clause += ' invoice.id = %(key)s'
         except:
-            keys[0] = keys[0].lower() + "%"
-            clause += ' (lower(member.first_name) LIKE %(key)s OR lower(member.last_name) LIKE %(key)s)'
+            keys[0] = keys[0] + "%"
+            clause += ' (member.first_name ILIKE %(key)s OR member.last_name ILIKE %(key)s)'
         values = dict(key=keys[0], limit=limit)
     elif len(keys) == 2:
-        clause += '((lower(member.first_name) = %(key1)s AND lower(member.last_name) like %(key2)s) OR (lower(member.first_name) like %(key2)s AND lower(member.last_name) = %(key1)s))'
-        values = dict(key1=keys[0].lower(), key2=keys[1].lower()+"%", limit=limit)
+        clause += '((member.first_name ILIKE %(key1)s AND member.last_name ILIKE %(key2)s) OR (member.first_name ILIKE %(key2)s AND member.last_name ILIKE %(key1)s))'
+        values = dict(key1=keys[0], key2=keys[1]+"%", limit=limit)
     query  += ' WHERE '+clause+' AND member.id=invoice.member LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
     
