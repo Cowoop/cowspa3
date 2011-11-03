@@ -19,8 +19,8 @@ def test_add_plan():
     assert plan_id == 1
 
 def test_add_subscribers():
-    starts = datetime.datetime(2011, 1, 1, 0, 0, 1)
-    planlib.plan_resource.new_subscribers(test_data.plan_id, starts, test_data.more_member_ids)
+    starts = datetime.date(2011, 1, 1).isoformat()
+    planlib.plan_resource.new_subscribers(test_data.plan_id, test_data.more_member_ids, starts)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():

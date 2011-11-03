@@ -1,5 +1,5 @@
 #!/bin/bash
-nosetests -v  --pdb-failures --pdb \
+nosetests -vx --pdb-failures --pdb \
 tests/test_schemas.py \
 tests/test_system.py \
 tests/test_bizplace.py \

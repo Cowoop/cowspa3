@@ -56,6 +56,3 @@ invoice_preference_data = [
     dict(email_text="See the attached pdf.\nThank you.", terms_and_conditions="Pay within 20days", due_date=20, bcc_email="india@hub.com", bank_details="State Bank of India,\nMumbai", logo="")
     ]
 
-request_name = 'membership'
-request_api = 'plan.new_subscriber'
-request_params = dict(plan_id=plan_id)

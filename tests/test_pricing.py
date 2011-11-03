@@ -61,8 +61,8 @@ def test_add_pricing_for_default_plan():
 def test_add_member_w_plan_subscription():
     data = test_data.even_more_members[0]
     member_id = test_member.test_create_member(data)
-    starts = datetime.datetime.now()
-    assert planlib.plan_resource.new_subscriber(test_data.plan_id, starts, member_id) == True
+    starts = datetime.date.today().isoformat()
+    assert planlib.plan_resource.new_subscriber(test_data.plan_id, member_id, starts) == True
     test_data.member_w_plan = member_id
     env.context.pgcursor.connection.commit()
 

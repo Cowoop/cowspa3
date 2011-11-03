@@ -179,7 +179,7 @@ class Request(PGStore):
     name TEXT NOT NULL,
     state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    acted_at TIMESTAMP WITHOUT TIME ZONE,
+    acted TIMESTAMP WITHOUT TIME ZONE,
     requestor_id integer,
     note TEXT,
     status smallint default 0 NOT NULL,

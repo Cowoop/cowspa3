@@ -54,4 +54,4 @@ def html2pdf(input_file ,output_file):
 
 def iso2date(iso):
     sep = iso[4]
-    return datetime.date(*iso.split(sep))
+    return datetime.date(*(int(x) for x in iso.split(sep)))

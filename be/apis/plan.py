@@ -68,8 +68,8 @@ class PlanResource:
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
+        starts = commonlib.helpers.iso2date(starts) if starts else datetime.date.today()
         if old_sub:
-            starts = commonlib.helpers.iso2date(starts) if starts else datetime.date.today()
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
                 raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
@@ -80,13 +80,13 @@ class PlanResource:
         # set end date to it
         return True
 
-    def new_subscribers(self, plan_id, starts, subscriber_ids):
+    def new_subscribers(self, plan_id, subscriber_ids, starts):
         """
         """
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         for subscriber_id in subscriber_ids:
-            self.new_subscriber(plan_id, starts, subscriber_id)
+            self.new_subscriber(plan_id, subscriber_id, starts)
         return True
 
 
