@@ -8,6 +8,7 @@ biz_id = None
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='Mali', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
 bizplace_id = None
 plan_data = dict(name="Hub 25", description="Not just another plan")
+plan_id = None
 
 more_plan_data = dict(name="Plan ", description="Not just another plan")
 
@@ -36,11 +37,11 @@ more_invoice_data = [
     dict(member=3, usages=[3])
     ]
 
-resource_data = dict(name='GlassHouse', owner='4', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False))
+resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False))
 
-more_resource = [dict(name='RES1', owner='4', short_description='Resource 1', type='Type1'),
-    dict(name='RES2', owner='4', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True)),
-    dict(name='RES3', owner='4', short_description='Resource 3', type='Type1')]
+more_resource = [dict(name='RES1', short_description='Resource 1', type='Type1'),
+    dict(name='RES2', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True)),
+    dict(name='RES3', short_description='Resource 3', type='Type1')]
 
 usage = dict(resource_id=1, resource_name='RES1', rate=11, quantity=11, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat())
 
@@ -54,3 +55,7 @@ invoice_preference_data = [
     dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune", logo=""),
     dict(email_text="See the attached pdf.\nThank you.", terms_and_conditions="Pay within 20days", due_date=20, bcc_email="india@hub.com", bank_details="State Bank of India,\nMumbai", logo="")
     ]
+
+request_name = 'membership'
+request_api = 'plan.new_subscriber'
+request_params = dict(plan_id=plan_id)
