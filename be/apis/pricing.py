@@ -8,6 +8,7 @@ class PricingCollection:
 
     def new(self, resource_id, plan_id, starts, amount):
         # starts should be greater than last pricings start which has no 'ends' date yet
+        starts = datetime.datetime.strptime(starts, "%Y-%m-%dT%H:%M:%S")
         old_pricings = pricing_store.get_by(crit=dict(plan=plan_id, resource=resource_id, ends=None))
         if old_pricings:
             old_pricing = old_pricings[0]
@@ -30,7 +31,10 @@ class PricingCollection:
 class PricingResource:
 
     def info(self, pricing_id):
-        return pricing_store.get(pricing_id)
+        result = pricing_store.get(pricing_id)
+        result['starts'] = result['starts'].isoformat()
+        result['ends'] = result['ends'].isoformat() if result['ends'] else result['ends']
+        return result
 
     def update(self, plan_id, resource_prices):
         """

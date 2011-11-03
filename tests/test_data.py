@@ -42,12 +42,12 @@ more_resource = [dict(name='RES1', owner='4', short_description='Resource 1', ty
     dict(name='RES2', owner='4', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True)),
     dict(name='RES3', owner='4', short_description='Resource 3', type='Type1')]
 
-usage = dict(resource_id=1, resource_name='RES1', rate=11, quantity=11, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0))
+usage = dict(resource_id=1, resource_name='RES1', rate=11, quantity=11, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat())
 
 more_usages = [
-    dict(resource_id=2, resource_name='RES2', rate=12, quantity=12, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0)),
-    dict(resource_id=1, resource_name='RES1', rate=14, quantity=14, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0)),
-    dict(resource_id=3, resource_name='RES3', rate=13, quantity=13, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0), end_time=datetime.datetime(2011,11,01,18,0,0)),
+    dict(resource_id=2, resource_name='RES2', rate=12, quantity=12, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat()),
+    dict(resource_id=1, resource_name='RES1', rate=14, quantity=14, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat()),
+    dict(resource_id=3, resource_name='RES3', rate=13, quantity=13, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat()),
     ]
 
 invoice_preference_data = [

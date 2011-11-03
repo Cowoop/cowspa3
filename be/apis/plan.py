@@ -69,8 +69,7 @@ class PlanResource:
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
         if old_sub:
             if isinstance(starts, basestring):
-                mm, dd, yy = (int(x) for x in starts.split('/'))
-                starts = datetime.date(yy, mm, dd)
+                starts = datetime.datetime.strptime(starts, "%Y-%m-%dT%H:%M:%S")
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
                 raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
@@ -100,11 +99,9 @@ class PlanResource:
         """
         """
         if 'starts' in mod_data:
-            mm, dd, yyyy = (int(x) for x in mod_data['starts'].split('/'))
-            mod_data['starts'] = datetime.date(yyyy, mm, dd)
+            mod_data['starts'] = datetime.datetime.strptime(mod_data['starts'], "%Y-%m-%dT%H:%M:%S")
         if 'ends' in mod_data and mod_data['ends'] != "":
-            mm, dd, yyyy = (int(x) for x in mod_data['ends'].split('/'))
-            mod_data['ends'] = datetime.date(yyyy, mm, dd)
+            mod_data['ends'] = datetime.datetime.strptime(mod_data['ends'], "%Y-%m-%dT%H:%M:%S")
         return subscription_store.update(subscription_id, **mod_data)
         
 plan_collection = PlanCollection()
