@@ -2,7 +2,8 @@ import datetime
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 
-biz_store = dbaccess.biz_store
+import commonlib.helpers
+
 bizplace_store = dbaccess.bizplace_store
 plan_store = dbaccess.plan_store
 subscription_store = dbaccess.subscription_store
@@ -13,7 +14,7 @@ class PlanCollection:
         created = datetime.datetime.now()
         data = dict(name=name, bizplace=bizplace_id, description=description, created=created)
         plan_id = plan_store.add(**data)
-        
+
         data = dict(name=name, id=plan_id, bizplace=bizplace_store.get(bizplace_id, ['name']))
         activity_id = activitylib.add('plan_management', 'plan_created', data, created)
         return plan_id
@@ -61,16 +62,14 @@ class PlanResource:
             member_list.append(m_dict)
         return member_list
 
-    def new_subscriber(self, plan_id, starts, subscriber_id):
+    def new_subscriber(self, plan_id, subscriber_id, starts=None):
         """
         """
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
         if old_sub:
-            if isinstance(starts, basestring):
-                mm, dd, yy = (int(x) for x in starts.split('/'))
-                starts = datetime.date(yy, mm, dd)
+            starts = commonlib.helpers.date2iso(starts) if starts else datetime.date.today()
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
                 raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
@@ -106,6 +105,6 @@ class PlanResource:
             mm, dd, yyyy = (int(x) for x in mod_data['ends'].split('/'))
             mod_data['ends'] = datetime.date(yyyy, mm, dd)
         return subscription_store.update(subscription_id, **mod_data)
-        
+
 plan_collection = PlanCollection()
 plan_resource = PlanResource()

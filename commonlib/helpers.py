@@ -1,3 +1,4 @@
+import datetime
 import collections
 import base64, random, hashlib
 import wkhtmltox
@@ -50,3 +51,7 @@ def html2pdf(input_file ,output_file):
     pdf.add_page({'page': input_file})
     pdf.convert()
     return True
+
+def iso2date(iso):
+    sep = iso[4]
+    return datetime.date(*iso.split(sep))
