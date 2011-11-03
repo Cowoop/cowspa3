@@ -66,16 +66,7 @@ nav {
     }
     a:active {background: gray;}
 
-    #context-select {
-        float: left;
-        width: 25%;
-        border: none;
-        border-right: 1px solid;
-        height: 100%;
-        width: 25%;
-    }
-    
-    #context-single {
+    #context-select, #context-single {
         float: left;
         width: 25%;
         border: none;
