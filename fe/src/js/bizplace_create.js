@@ -2,7 +2,7 @@ var theform = $('#createbizplace_form');
 
 function create_bizplace() {
     var inputs = theform.serializeArray();
-    var action_status = $('#createbizplace_form .action-status');
+    var action_status = $('#bizplace_form .action-status');
     var params = {};
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;

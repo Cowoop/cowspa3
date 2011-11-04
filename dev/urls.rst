@@ -18,9 +18,10 @@ Member
 
 Location
 ========
-- /bizplaces/new
-- /bizplaces/#4
+- /bizplaces/ [List all the Locations]
+- /bizplaces/#4 [Show details of Location with ID 4]
 - /bizplaces/#4/edit/
+- /bizplaces/new
 
 Tariffs
 =======
