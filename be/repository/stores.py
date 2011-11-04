@@ -126,12 +126,14 @@ class Session(PGStore):
 class UserRole(PGStore):
     create_sql = """
     user_id integer NOT NULL,
+    context integer,
     role TEXT NOT NULL
     """
 
 class UserPermission(PGStore):
     create_sql = """
     user_id integer NOT NULL,
+    context integer,
     permission TEXT NOT NULL
     """
 

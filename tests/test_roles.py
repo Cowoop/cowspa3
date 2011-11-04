@@ -15,21 +15,24 @@ def setup():
 
 def test_assign_role():
     role_data = get_role_data()
-    rolelib.assign(**role_data)
-    roles_dict = rolelib.get_user_roles(role_data['user_id'])
-    assert set(role_map.values()).issubset(roles_dict[test_data.bizplace['name']]) == True
+    rolelib.new_roles(**role_data)
+    for role_dict in rolelib.get_roles(role_data['user_id']):
+        if role_dict['id'] == role_data['context']:
+            break
+    assert set(role_data['roles']).issubset(role_dict['roles']) == True
     env.context.pgcursor.connection.commit()
 
 def test_reassign_role():
     role_data = get_role_data()
-    rolelib.assign(**role_data)
-    roles_dict = rolelib.get_user_roles(role_data['user_id'])
-    assert set(role_map.values()).issubset(roles_dict[test_data.bizplace['name']]) == True
+    rolelib.new_roles(**role_data)
+    assert set(role_data['roles']).issubset(rolelib.get_roles_in_context(role_data['user_id'], role_data['context'])) == True
     env.context.pgcursor.connection.commit()
 
 def test_revoke_role():
     role_data = get_role_data()
-    rolelib.revoke(**role_data)
-    roles_dict = rolelib.get_user_roles(role_data['user_id'])
-    assert set(role_map.values()).intersection(roles_dict[test_data.bizplace['name']]) == set()
+    role_data['roles'] = []
+    old_roles = rolelib.get_roles_in_context(role_data['user_id'], role_data['context'])
+    rolelib.new_roles(**role_data)
+    new_roles = rolelib.get_roles_in_context(role_data['user_id'], role_data['context'])
+    assert set(new_roles).intersection(old_roles) == set()
     env.context.pgcursor.connection.commit()

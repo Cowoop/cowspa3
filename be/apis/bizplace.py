@@ -13,14 +13,14 @@ class BizplaceCollection:
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
         data = dict(id=bizplace_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
         bizplace_store.add(**data)
-        
-        rolelib.assign(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-        
+
+        rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
+
         invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id))
-        
+
         data = dict(name=name, id=bizplace_id)
         activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)
-        
+
         return bizplace_id
 
     def list(self, owner=None):
@@ -29,9 +29,17 @@ class BizplaceCollection:
         """
         if not owner:
             owner = env.context.user_id
-        roles = rolelib.get_roles(owner, ['host', 'director'])
-        ids = [role['id'] for role in roles]
+            roles = env.context.roles
+        else:
+            roles = rolelib.get_roles(owner, ['host', 'director', 'admin'])
+        ids = [role for context, role in roles if context]
         return dbaccess.list_bizplaces(ids)
+
+    def all(self):
+        """
+        returns list of all bizplace info dicts
+        """
+        return dbaccess.list_all_bizplaces()
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """

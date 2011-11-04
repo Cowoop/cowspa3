@@ -58,8 +58,8 @@ def set_context(id_or_username):
     else:
         user = user_store.get(id_or_username)
     env.context.user_id = user.id
-    roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['role'], False)
-    env.context.roles = [role[0] for role in roles]
+    roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['context',  'role'], False)
+    env.context.roles = roles
     try:
         env.context.display_name = member_store.get(env.context.user_id, fields=['display_name'])
     except:
@@ -87,7 +87,7 @@ def create_system_account():
     username = env.config.system_username
     password = commonlib.helpers.random_key_gen()
     user_id = new(username, password)
-    rolelib.assign(user_id, ['admin'])
+    rolelib.new_roles(user_id, ['admin'], None)
     return user_id
 
 def get_user_preferences():

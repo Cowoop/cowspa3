@@ -4,6 +4,7 @@ import test_data
 import be.apis.bizplace as bizplacelib
 import be.apis.plan as planlib
 import be.apis.member as memberlib
+import be.apis.user as userlib
 import be.repository.access as dbaccess
 
 def setup():
@@ -29,5 +30,5 @@ def test_bizplace_update():
 
 def test_list_bizplaces_list():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)
-    l = bizplacelib.bizplace_collection.list()
+    l = bizplacelib.bizplace_collection.all()
     assert d in l

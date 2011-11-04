@@ -10,5 +10,5 @@ def setup(username, password, email, first_name):
     system_user_id = userlib.create_system_account()
     # 2. Create an Admin member
     admin_user_id = memberlib.member_collection.new(username, password, email, first_name)
-    rolelib.assign(admin_user_id, ['admin'])
+    rolelib.new_roles(admin_user_id, ['admin'], None)
     return (system_user_id, admin_user_id)

@@ -126,7 +126,10 @@ def find_bizplace_plans(bizplace_id, fields):
     return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
     
 def list_bizplaces(ids):
-    return bizplace_store.get_many(ids,fields=bizplace_info_fields)
+    return bizplace_store.get_many(ids,fields=bizplace_info_fields) if ids else []
+
+def list_all_bizplaces():
+    return bizplace_store.get_all(fields=bizplace_info_fields)
 
 def find_plan_members(plan_ids, fields=['member', 'display_name'], at_time=None):
     plan_ids = tuple(plan_ids)
@@ -244,14 +247,14 @@ def get_price(resource_id, member_id, usage_time):
     if pricing:
         return pricing[0].amount
 
-def remove_user_roles(user_id, roles):
-    clause = 'user_id = %(user_id)s AND role IN %(roles)s'
-    userrole_store.remove_by_clause(clause, dict(user_id=user_id, roles=tuple(roles)))
+def remove_user_roles(user_id, roles, context):
+    clause = 'user_id = %(user_id)s AND context = %(context)s AND role IN %(roles)s'
+    userrole_store.remove_by_clause(clause, dict(user_id=user_id, roles=tuple(roles), context=context))
 
-def remove_user_permissions(user_id, permissions):
-    clause = 'user_id = %(user_id)s AND permission IN %(permissions)s'
-    userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions)))
-    
+def remove_user_permissions(user_id, permissions, context):
+    clause = 'user_id = %(user_id)s AND context = %(context)s AND permission IN %(permissions)s'
+    userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions), context=context))
+
 def search_invoice(keys, options, limit):
     fields = ['id', 'member']
     query = 'SELECT invoice.id, invoice.member FROM invoice, member'
