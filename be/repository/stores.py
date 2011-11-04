@@ -207,8 +207,8 @@ class Subscription(PGStore):
     subscriber_id INTEGER NOT NULL,
     plan_id INTEGER NOT NULL,
     plan_name TEXT,
-    starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    ends TIMESTAMP WITHOUT TIME ZONE,
+    starts DATE NOT NULL,
+    ends DATE,
     bizplace_id INTEGER NOT NULL,
     bizplace_name TEXT
     """
@@ -241,8 +241,8 @@ class Pricing(PGStore):
     id SERIAL NOT NULL UNIQUE,
     plan INTEGER NOT NULL,
     resource INTEGER NOT NULL,
-    starts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    ends TIMESTAMP WITHOUT TIME ZONE,
+    starts DATE NOT NULL,
+    ends DATE,
     amount NUMERIC(16, 2),
     state INTEGER default 1 NOT NULL
     """
@@ -278,12 +278,13 @@ class Invoice(PGStore):
     invoicee_details bytea,
     cost NUMERIC(16, 2),
     tax_dict bytea,
-    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     state INTEGER default 0 NOT NULL,
     notice TEXT,
     po_number TEXT
     """
+    #end is keyword, thats why start_date & end_date is used instead of start & end.
     pickle_cols = ['invoicee_details', 'tax_dict']
 
 class InvoicePref(PGStore):
