@@ -39,7 +39,7 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
-        data = dict(issuer=issuer, member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_time=start_date, end_time=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        data = dict(issuer=issuer, member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
