@@ -20,6 +20,7 @@ userrole_store = stores_mod.UserRole()
 bizplace_store = stores_mod.BizPlace()
 bizplaceprofile_store = stores_mod.BizplaceProfile()
 request_store = stores_mod.Request()
+requestpermission_store = stores_mod.RequestPermission()
 plan_store = stores_mod.Plan()
 subscription_store = stores_mod.Subscription()
 resource_store = stores_mod.Resource()
@@ -261,7 +262,7 @@ def search_invoice(keys, options, limit):
     clause = ""
     if 'global::admin' not in env.context.roles or options['mybizplace']:
         query += ', subscription'
-        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND' 
+        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND'
     if len(keys) == 1:
         try:
             keys[0] = int(keys[0])
@@ -273,18 +274,24 @@ def search_invoice(keys, options, limit):
     elif len(keys) == 2:
         clause += '((member.first_name ILIKE %(key1)s AND member.last_name ILIKE %(key2)s) OR (member.first_name ILIKE %(key2)s AND member.last_name ILIKE %(key1)s))'
         values = dict(key1=keys[0], key2=keys[1]+"%", limit=limit)
-    query  += ' WHERE '+clause+' AND member.id=invoice.member LIMIT %(limit)s'  
+    query  += ' WHERE '+clause+' AND member.id=invoice.member LIMIT %(limit)s'
     values['subscriber_id'] =  env.context.user_id
-    
+
     return member_store.query_exec(query, values)
-    
+
+def find_requests_for_approval(perms):
+    ctx_perms = tuple((str(c) + ctxsep + p) for c, p in perms)
+    clause = " permission IN %(ctx_perms)s"
+    values = dict(ctx_perms=ctx_perms)
+    req_ids = tuple(row[0] for row in requestpermission_store.get_by_clause(clause, values, fields=['request'], hashrows=False))
+    return request_store.get_many(req_ids)
+
 class OidGenerator(object):
-    
+
     @staticmethod
     def next(otype):
         return oidgen_store.add(**dict(type=otype))
-    
+
     @staticmethod
     def get_otype(oid):
         return oidgen_store.get(oid, fields=['type'])
-    

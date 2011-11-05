@@ -126,14 +126,14 @@ class Session(PGStore):
 class UserRole(PGStore):
     create_sql = """
     user_id integer NOT NULL,
-    context integer,
+    context integer NOT NULL,
     role TEXT NOT NULL
     """
 
 class UserPermission(PGStore):
     create_sql = """
     user_id integer NOT NULL,
-    context integer,
+    context integer NOT NULL,
     permission TEXT NOT NULL
     """
 
@@ -190,6 +190,12 @@ class Request(PGStore):
     params bytea
     """
     pickle_cols = ['params']
+
+class RequestPermission(PGStore):
+    create_sql = """
+    request INTEGER NOT NULL,
+    permission TEXT NOT NULL
+    """
 
 class Plan(PGStore):
     create_sql = """

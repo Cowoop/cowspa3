@@ -87,7 +87,7 @@ def create_system_account():
     username = env.config.system_username
     password = commonlib.helpers.random_key_gen()
     user_id = new(username, password)
-    rolelib.new_roles(user_id, ['admin'], None)
+    rolelib.new_roles(user_id, ['admin'], 0)
     return user_id
 
 def get_user_preferences():

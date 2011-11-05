@@ -1,3 +1,13 @@
+"""
+role and permissions
+
+eg. Host at location with id 3 and global admin role
+    0 indicates 'global' context
+
+context role
+ 3      host
+ 0      admin
+"""
 import itertools
 import collections
 import datetime
@@ -59,3 +69,6 @@ def get_roles(user_id, role_filter=[]):
         if not role_filter or role in role_filter: ctx_roles[context].append(role)
     sorter = lambda d: d['label']
     return sorted((dict(label=dbaccess.oid2name(ctx), id=ctx, roles=roles) for ctx, roles in ctx_roles.items()), key=sorter)
+
+def get_permissions(user_id):
+    return dbaccess.userpermission_store.get_by(dict(user_id=user_id), ['context', 'permission'], hashrows=False)

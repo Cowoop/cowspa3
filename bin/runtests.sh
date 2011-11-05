@@ -7,6 +7,7 @@ tests/test_member.py \
 tests/test_user.py \
 tests/test_resources.py \
 tests/test_plans.py \
+tests/test_requests.py \
 tests/test_usage.py \
 tests/test_pricing.py \
 tests/test_roles.py \
