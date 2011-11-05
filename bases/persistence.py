@@ -231,7 +231,7 @@ class PGStore(BaseStore):
             ret = ret[0]
         return ret
 
-    def get_by(self, crit, fields=[], hashrows=True):
+    def get_by(self, crit, fields=[], hashrows=True, limit=None):
         """
         crit: eg. name='Joe', lang='en'
         -> odict
@@ -241,6 +241,7 @@ class PGStore(BaseStore):
         crit_keys_s = ' AND '.join(('%s = %%(%s)s' if v is not None else '%s is %%(%s)s') % (k,k) for k,v in crit.items())
         table_name = self.table_name
         q = 'SELECT %(cols_str)s FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
+        if limit: q = q + ' LIMIT %d' % limit
         return self.query_exec(q, crit, hashrows=hashrows)
 
     def get_one_by(self, crit, fields=[], hashrows=True):

@@ -16,6 +16,12 @@ def test_new_req():
     env.context.pgcursor.connection.commit()
     assert requestlib.info(req_id).params == request_params
 
+def test_requests_made():
+    requestor_id = test_data.member_id
+    reqs = requestlib.made(requestor_id)
+    req_ids = [req.id for req in reqs]
+    assert test_data.request_id in req_ids
+
 def test_list():
     reqs = requestlib.in_queue(1)
     req_ids = [req.id for req in reqs]
