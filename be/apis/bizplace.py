@@ -31,9 +31,9 @@ class BizplaceCollection:
             owner = env.context.user_id
             roles = env.context.roles
         else:
-            roles = rolelib.get_roles(owner, ['host', 'director', 'admin'])
-        ids = [role for context, role in roles if context]
-        return dbaccess.list_bizplaces(ids)
+            roles = dbaccess.userrole_store.get_by(dict(user_id=owner), ['context',  'role'], False)
+        my_bizplace_ids = [role for context, role in roles if context]
+        return dbaccess.list_bizplaces(my_bizplace_ids)
 
     def all(self):
         """
