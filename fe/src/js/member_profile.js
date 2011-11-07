@@ -23,6 +23,9 @@ function success(response) {
     //     $('#content-title').text(display_name);
     //     $('#content-subtitle').text("Membership no:" + profile_id);
     // };
+    for(i in response.result.memberships){
+        response.result.memberships[i].starts = to_formatted_date(response.result.memberships[i].starts);
+    }
     $('#tariff-row').tmpl(response.result.memberships).appendTo('#tariff-info');
     bind_cancel_and_change_tariff();
     result = response;
@@ -182,6 +185,11 @@ $("#preferences_edit_form #cancel-btn").click(function(){
     });
 // *******************Next Tariff**********************************
  
+$('#next-tariff-form #start-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#start',
+    dateFormat: 'M d, yy'
+});
 $('#next_tariff-btn').click(function() {
     $('#next-tariff-form').dialog({ 
         title: "Next Tariff", 
@@ -199,8 +207,8 @@ $('#next_tariff-btn').click(function() {
                 };
                 params['subscriber_id'] = $.cookie('user_id');
                 params['plan_id'] = $("#next-tariff-form #tariff").val();
-                params['starts'] = $("#next-tariff-form #start").val();
-                jsonrpc('next.tariff', params, success, error);
+                params['starts'] = to_iso_date($("#next-tariff-form #start").val());
+                jsonrpc('plan.new_subscriber', params, success, error);
     
             }, 
             "Cancel": function() { 
@@ -220,23 +228,36 @@ function error1(){};
 params1['bizplace_id'] = current_ctx;
 jsonrpc('bizplace_plans.list', params1, success1, error1);
     
-    
 //*******************End Next Tariff**************************
 
 //***********************Tariff History**************************************
 $('#load-tariff-history').click(function(){
    var params = {}
-    function success2(response) {     
+    function success2(response) {
+        for(i in response.result){
+            response.result[i].starts = to_formatted_date(response.result[i].starts);
+        }
         $('#tariff-row').tmpl(response.result).appendTo('#tariff-info');
         $('#load-tariff-history').hide();
         bind_cancel_and_change_tariff();
         };
     function error2(){};
     params['member_id'] = $.cookie('user_id');
-    jsonrpc('teriff.history', params, success2, error2); 
+    jsonrpc('tariff.history', params, success2, error2); 
 });
 //************************End Tariff History*********************************
 //************************Cancel/Change Tariff**********************************
+$('#change-tariff-form #starts-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#change-tariff-form #starts',
+    dateFormat: 'M d, yy'
+});
+$('#change-tariff-form #ends-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#change-tariff-form #ends',
+    dateFormat: 'M d, yy'
+});
+
 function bind_cancel_and_change_tariff() {
     $('.cancel-sub').click(function(){
         var params = {'subscription_id': $(this).attr('id').split("-")[1]};
@@ -250,13 +271,11 @@ function bind_cancel_and_change_tariff() {
     });
     $('.change-sub').click(function(){
         var subscription_id = $(this).attr('id').split("-")[1];
-        var date = new Date($("#tariff_row-"+subscription_id+" #starts").text());
-        date = $.datepicker.formatDate('mm/dd/yy', date);
-        $('#change-tariff-form #start').val(date);
+        var date = iso_to_formatted($("#tariff_row-"+subscription_id+" #starts").text());
+        $('#change-tariff-form #starts-vis').datepicker("setDate", date);
         if($("#tariff_row-"+subscription_id+" #ends").text()!="-"){
-            date = new Date($("#tariff_row-"+subscription_id+" #ends").text());
-            date = $.datepicker.formatDate('mm/dd/yy', date);
-            $('#change-tariff-form #end').val(date);
+            date = iso_to_formatted($("#tariff_row-"+subscription_id+" #ends").text());
+            $('#change-tariff-form #ends-vis').datepicker("setDate", date);
         }
         $("#change-tariff-form #tariff option:contains('" + $("#tariff_row-"+subscription_id+" #plan_name").text() + "')").attr('selected', 'selected');
         $('#change-tariff-form').dialog({ 
@@ -267,15 +286,15 @@ function bind_cancel_and_change_tariff() {
                     var params = {'subscription_id':subscription_id};
                     params['plan_id'] = $("#change-tariff-form #tariff").val();
                     params['plan_name'] = $("#change-tariff-form #tariff option[value='"+params['plan_id']+"']").text();
-                    params['starts'] = $('#change-tariff-form #start').val();
+                    params['starts'] = to_iso_date($('#change-tariff-form #starts').val());
                     if($('#change-tariff-form #end').val() != ""){
-                        params['ends'] = $('#change-tariff-form #end').val();
+                        params['ends'] = to_iso_date($('#change-tariff-form #ends').val());
                     }
                     function success(resp) { 
-                        var date = new Date(params['starts']);
-                        $("#tariff_row-"+subscription_id+" #start").text($.datepicker.formatDate('M dd, yy', date));
-                        date = new Date(params['ends']);
-                        $("#tariff_row-"+subscription_id+" #ends").text($.datepicker.formatDate('M dd, yy', date));
+                        var date = to_formatted_date(params['starts']);
+                        $("#tariff_row-"+subscription_id+" #start").text(date);//$.datepicker.formatDate('M dd, yy', date));
+                        date = to_formatted_date(params['ends']);
+                        $("#tariff_row-"+subscription_id+" #ends").text(date);//$.datepicker.formatDate('M dd, yy', date));
                         $("#tariff_row-"+subscription_id+" #plan_name").text($("#change-tariff-form #tariff option[value='"+params['plan_id']+"']").text());
                         $("#Change_Tariff-msg").html("");
                         $('#change-tariff-form').dialog("close");

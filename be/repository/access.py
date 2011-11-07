@@ -171,7 +171,7 @@ def get_member_subscription(member_id, bizplace_id, date):
     if subscriptions:
         return subscriptions[0]
 
-def get_member_teriff_history(member_id, bizplace_ids=[]):
+def get_member_tariff_history(member_id, bizplace_ids=[]):
     date = datetime.datetime.now()
     clause = '(subscriber_id = %(subscriber_id)s) AND (ends <= %(date)s)'
     if bizplace_ids:

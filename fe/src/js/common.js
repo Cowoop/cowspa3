@@ -75,7 +75,6 @@ function init_nav() {
     });
     $('#main .content').addClass('simple-box');
 };
-
 //******************************Load List of Bizplaces**************************************************
 
 function success(resp) {
@@ -113,7 +112,26 @@ if(params['user_id']) {
 };
      
 //******************************************End**********************************************************
-  
+//*******************************************Date Formatting*********************************************
+function to_iso_date(date){
+    var fdate = new Date(date);
+    return  $.datepicker.formatDate('yy-mm-dd', fdate);
+}
+function to_iso_datetime(date){
+    var fdate = new Date(date);
+    var hh = fdate.getHours();
+    hh = (hh<10?"0":"") + hh; 
+    var mm = fdate.getMinutes();
+    mm = (mm<10?"0":"") + mm;
+    var ss = fdate.getSeconds();
+    ss = (ss<10?"0":"") + ss;
+    return $.datepicker.formatDate('yy-mm-dd', fdate)+" "+hh+":"+mm+":"+ss;
+}
+function to_formatted_date(date){
+    var fdate = new Date(date);
+    return $.datepicker.formatDate('M dd, yy', fdate);
+}
+//*******************************************************************************************************
 $(document).ready(function() {
     init_autocomplete();
     init_nav();

@@ -2,8 +2,6 @@ import datetime
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 
-import commonlib.helpers
-
 bizplace_store = dbaccess.bizplace_store
 plan_store = dbaccess.plan_store
 subscription_store = dbaccess.subscription_store
@@ -68,7 +66,7 @@ class PlanResource:
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
-        starts = commonlib.helpers.iso2date(starts) if starts else datetime.date.today()
+        starts =  datetime.datetime.strptime(starts, "%Y-%m-%d").date() if starts else datetime.date.today()
         if old_sub:
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
@@ -98,10 +96,6 @@ class PlanResource:
     def change_subscription(self, subscription_id, **mod_data):
         """
         """
-        if 'starts' in mod_data:
-            mod_data['starts'] = datetime.datetime.strptime(mod_data['starts'], "%Y-%m-%dT%H:%M:%S")
-        if 'ends' in mod_data and mod_data['ends'] != "":
-            mod_data['ends'] = datetime.datetime.strptime(mod_data['ends'], "%Y-%m-%dT%H:%M:%S")
         return subscription_store.update(subscription_id, **mod_data)
 
 plan_collection = PlanCollection()

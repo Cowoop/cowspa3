@@ -8,7 +8,12 @@ function success(response) {
             { "sTitle": "ID" },
             { "sTitle": "MEMBER" },
             { "sTitle": "COST" },
-            { "sTitle": "DATE" },
+            { "sTitle": "DATE",
+              "fnRender": function(obj) {
+                    var sReturn = obj.aData[obj.iDataColumn];
+                    return to_fomatted_date(sReturn);
+                    }   
+            },
             { "sTitle": "Link",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];

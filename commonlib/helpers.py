@@ -51,7 +51,3 @@ def html2pdf(input_file ,output_file):
     pdf.add_page({'page': input_file})
     pdf.convert()
     return True
-
-def iso2date(iso):
-    sep = iso[4]
-    return datetime.date(*(int(x) for x in iso.split(sep)))

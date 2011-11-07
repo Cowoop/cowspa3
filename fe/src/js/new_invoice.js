@@ -35,13 +35,13 @@ $('#inv-end_date-vis').datepicker( {
 
 $('#new-usage-form #start_time').datetimepicker({
     ampm: true,
-    dateFormat: 'yy-mm-dd',
-    timeFormat: 'h:m',
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm tt',
 });
 $('#new-usage-form #end_time').datetimepicker({
     ampm: true,
-    dateFormat: 'yy-mm-dd',
-    timeFormat: 'h:m',
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm tt',
 });
 $('#new-usage-button').click(function() {
     $("#resource_select").show();
@@ -92,6 +92,8 @@ $('#invoice-save').click( function () {
             var o = v;
             delete o.id;
             delete o.unit;
+            o.start_time = to_iso_datetime(o.start_time);
+            o.end_time = to_iso_datetime(o.end_time);
             new_usages.push(o)
         }
     });

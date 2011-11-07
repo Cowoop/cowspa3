@@ -156,7 +156,8 @@ def add_tariffs_section(container):
     
     next_tariff_form = sphc.more.Form(id='next-tariff-form', classes=['vform'])
     next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
-    next_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start').set_required())
+    next_tariff_form.add_field("", tf.INPUT(id='start', type="hidden"))
+    next_tariff_form.add_field("Start", tf.INPUT(name='start-vis', id='start-vis').set_required())
     next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
     next_tariff_section.form = next_tariff_form.build()
     next_tariff_section.tmpl = tariff_list_row
@@ -165,8 +166,10 @@ def add_tariffs_section(container):
     
     change_tariff_form = sphc.more.Form(id='change-tariff-form', classes=['vform'])
     change_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
-    change_tariff_form.add_field("Start", tf.INPUT(name='start', type="date", id='start'))
-    change_tariff_form.add_field("End", tf.INPUT(name='end', type="date", id='end'))
+    change_tariff_form.add_field("", tf.INPUT(type="hidden", id='starts'))
+    change_tariff_form.add_field("Start", tf.INPUT(name='starts-vis', id='starts-vis'))
+    change_tariff_form.add_field("", tf.INPUT(type="hidden", id='ends'))
+    change_tariff_form.add_field("End", tf.INPUT(name='ends-vis', id='ends-vis'))
     change_tariff_section = tf.DIV(id='change-tariff-section', Class='hidden')
     change_tariff_section.form = change_tariff_form.build()
     change_tariff_section.tmpl = tariff_list_row
