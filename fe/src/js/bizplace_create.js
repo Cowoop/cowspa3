@@ -1,4 +1,4 @@
-var theform = $('#createbizplace_form');
+var theform = $('#bizplace_form');
 
 function create_bizplace() {
     var inputs = theform.serializeArray();
