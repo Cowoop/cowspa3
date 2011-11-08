@@ -155,7 +155,7 @@ class Preferences(BasePage):
         container.view_form = view_section
         
         edit_form = sphc.more.Form(id='preferences_edit_form', classes=['hform'], enctype='multipart/form-data')
-        edit_form.add_field("Logo", tf.INPUT(name="logo", id="logo", type="file", accept="image/*"), "Image dimensions should be 150x150.")
+        edit_form.add_field("Logo", tf.INPUT(name="logo", id="logo", type="file", accept="image/*"), "Suggested Image Dimensions : 150x150.")
         edit_form.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="email_text"))
         edit_form.add_field("Terms And Conditions", tf.TEXTAREA(Class="changed-data", name="terms_and_conditions", id="terms_and_conditions"))
         edit_form.add_field("Invoice Due Date",tf.INPUT(Class="changed-data", name="due_date", id="due_date", type="number"), "Days after sending invoice")
