@@ -61,9 +61,9 @@ def set_context(id_or_username):
     roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['context',  'role'], False)
     env.context.roles = roles
     try:
-        env.context.display_name = member_store.get(env.context.user_id, fields=['display_name'])
+        env.context.name = member_store.get(env.context.user_id, fields=['name'])
     except:
-        env.context.display_name = user.username
+        env.context.name = user.username
 
 def set_context_by_session(session_id):
     set_context(session_lookup(session_id))

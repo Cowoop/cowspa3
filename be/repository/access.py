@@ -98,8 +98,7 @@ def list_resources_in_order(owner, fields):
 
 def oid2name(oid):
     store = stores_by_type[OidGenerator.get_otype(oid)]
-    attr = 'name' if 'name' in store.schema else 'display_name'
-    return store.get(oid, [attr], hashrows=False)
+    return store.get(oid, ['name'], hashrows=False)
 
 def oid2o(oid):
     store = stores_by_type[OidGenerator.get_otype]
@@ -115,7 +114,7 @@ def add_membership(member_id, plan_id):
     subscription_store.add(**data)
     return True
 
-def find_bizplace_members(bizplace_ids, fields=['member', 'display_name']):
+def find_bizplace_members(bizplace_ids, fields=['member', 'name']):
     bizplace_ids = tuple(bizplace_ids)
     clause = 'member IN (SELECT subscriber_id FROM subscription WHERE bizplace_id IN %s)'
     clause_values = (bizplace_ids,)
@@ -132,7 +131,7 @@ def list_bizplaces(ids):
 def list_all_bizplaces():
     return bizplace_store.get_all(fields=bizplace_info_fields)
 
-def find_plan_members(plan_ids, fields=['member', 'display_name'], at_time=None):
+def find_plan_members(plan_ids, fields=['member', 'name'], at_time=None):
     plan_ids = tuple(plan_ids)
     if not at_time: at_time = datetime.datetime.now()
     clause = 'member IN (SELECT subscriber_id FROM subscription WHERE plan_id IN %(plan_ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL))'
@@ -171,7 +170,7 @@ def get_member_subscription(member_id, bizplace_id, date):
     if subscriptions:
         return subscriptions[0]
 
-def get_member_teriff_history(member_id, bizplace_ids=[]):
+def get_member_tariff_history(member_id, bizplace_ids=[]):
     date = datetime.datetime.now()
     clause = '(subscriber_id = %(subscriber_id)s) AND (ends <= %(date)s)'
     if bizplace_ids:
@@ -197,13 +196,13 @@ def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
     return subscription_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):
-    query = "SELECT invoice.id, member.display_name, invoice.cost::TEXT, DATE(invoice.created)::TEXT as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
+    query = "SELECT invoice.id, member.name, invoice.cost::TEXT, DATE(invoice.created)::TEXT as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit) 
     return invoice_store.query_exec(query, values, hashrows=False)
     
 def search_member(keys, options, limit):
-    fields = ['id', 'display_name']
-    query = 'SELECT member.id, member.display_name as name, member.display_name as label, member.email FROM member'
+    fields = ['id', 'name']
+    query = 'SELECT member.id, member.name, member.name as label, member.email FROM member'
     clause = ""
     if 'global::admin' not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
         query += ', subscription'

@@ -1,6 +1,7 @@
 import datetime
 import be.repository.access as dbaccess
 import be.errors
+import commonlib.helpers
 
 pricing_store = dbaccess.pricing_store
 
@@ -8,7 +9,7 @@ class PricingCollection:
 
     def new(self, resource_id, plan_id, starts, amount):
         # starts should be greater than last pricings start which has no 'ends' date yet
-        starts = datetime.datetime.strptime(starts, "%Y-%m-%dT%H:%M:%S").date()
+        starts = commonlib.helpers.iso2date(starts)
         old_pricings = pricing_store.get_by(crit=dict(plan=plan_id, resource=resource_id, ends=None))
         if old_pricings:
             old_pricing = old_pricings[0]

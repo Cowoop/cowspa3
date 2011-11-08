@@ -15,9 +15,9 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, display_name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
+    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
 
-        if not display_name: display_name = first_name + ' ' + (last_name or '')
+        if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
         if state is None:
             state = commonlib.shared.constants.member.enabled
@@ -30,17 +30,17 @@ class MemberCollection:
         memberpref_store.add(**data)
 
         #owner = user_id
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, display_name=display_name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
         member_store.add(**data)
 
-        search_d = dict(id=user_id, display_name=display_name, short_description=short_description, long_description=long_description, username=username)
+        search_d = dict(id=user_id, name=name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
         
         invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
         
         billingpreflib.billingpref_collection.new(**dict(member=user_id))
 
-        data = dict(name=display_name, id=user_id)
+        data = dict(name=name, id=user_id)
         activity_id = activitylib.add('member_management', 'member_created', data, created)
 
         return user_id
@@ -90,12 +90,12 @@ class MemberResource:
         else:
             member_store.update(member_id, **mod_data)
 
-        display_name = member_store.get(member_id, fields=['display_name'])
-        data = dict(id=member_id, name=display_name, attrs=', '.join(attr for attr in mod_data))
+        name = member_store.get(member_id, fields=['name'])
+        data = dict(id=member_id, name=name, attrs=', '.join(attr for attr in mod_data))
         activity_id = activitylib.add('member_management', 'member_updated', data)
 
     def info(self, member_id):
-        info = member_store.get(member_id, ['id', 'state', 'display_name'])
+        info = member_store.get(member_id, ['id', 'state', 'name'])
         info['state'] = commonlib.shared.constants.member.to_dict(info['state'])
         return info
 
@@ -122,13 +122,6 @@ class MemberResource:
     def set(self, member_id, attrname, v):
         if not attrname in self.set_attributes: return
         self.update(member_id, **{attrname: v})
-
-    def get_teriff_history(self, member_id):
-        memberships = dbaccess.get_member_teriff_history(member_id)
-        for ms in memberships[::-1]:
-            ms['starts'] = ms['starts'].isoformat()
-            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
-        return memberships
         
 member_resource = MemberResource()
 member_collection = MemberCollection()

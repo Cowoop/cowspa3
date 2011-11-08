@@ -14,7 +14,7 @@ def add(category, name, data, created=None):
     if not created:
         created = datetime.datetime.now()
     actor_id = env.context.user_id
-    data['actor_name'] = env.context.display_name
+    data['actor_name'] = env.context.name
     activity_id = activity_store.add(category=category, name=name, actor=actor_id, data=data, created=created)
     Event = events.categories[category][name]
     event = Event(env.context.user_id, created, data)

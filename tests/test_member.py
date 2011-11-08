@@ -56,7 +56,7 @@ def test_create_10k_members():
 def test_info():
     m_id = test_data.member_id
     info = memberlib.member_resource.info(m_id)
-    assert info.id == m_id and test_data.member['first_name'] in info.display_name
+    assert info.id == m_id and test_data.member['first_name'] in info.name
 
 def test_search():
     result = memberlib.member_collection.search("pet")
