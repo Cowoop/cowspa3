@@ -35,7 +35,7 @@ def test_set_default_plan():
 
 def test_add_pricing_for_a_plan():
     amount = 20
-    starts = datetime.datetime(2011,8,1).isoformat()
+    starts = datetime.date(2011,8,1).isoformat()
     pricing_id  = pricinglib.pricing_collection.new(test_data.resource_id, test_data.plan_id, starts, amount)
     info = pricinglib.pricing_resource.info(pricing_id)
     env.context.pgcursor.connection.commit()
@@ -44,14 +44,14 @@ def test_add_pricing_for_a_plan():
 def test_add_pricing_for_a_plan_with_same_date():
     amount = 20
     test_data.price_w_plan = amount
-    starts = datetime.datetime(2011,8,1).isoformat()
+    starts = datetime.date(2011,8,1).isoformat()
     assert_raises(be.errors.ErrorWithHint, \
         pricinglib.pricing_collection.new, test_data.resource_id, test_data.plan_id, starts, amount)
 
 def test_add_pricing_for_default_plan():
     amount = 50
     test_data.price_wo_plan = amount
-    starts = datetime.datetime(2011,8,1).isoformat()
+    starts = datetime.date(2011,8,1).isoformat()
     pricing_id = pricinglib.pricing_collection.new(test_data.resource_id, test_data.default_plan_id, starts, amount)
     info = pricinglib.pricing_resource.info(pricing_id)
     test_data.default_pricing_id = pricing_id

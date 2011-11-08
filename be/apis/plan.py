@@ -1,6 +1,7 @@
 import datetime
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
+import commonlib.helpers
 
 bizplace_store = dbaccess.bizplace_store
 plan_store = dbaccess.plan_store
@@ -66,7 +67,7 @@ class PlanResource:
         plan = plan_store.get(plan_id)
         bizplace = bizplace_store.get(plan.bizplace)
         old_sub = dbaccess.get_member_subscription(subscriber_id, bizplace.id, starts)
-        starts =  datetime.datetime.strptime(starts, "%Y-%m-%d").date() if starts else datetime.date.today()
+        starts =  commonlib.helpers.iso2date(starts) if starts else datetime.date.today()
         if old_sub:
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
@@ -86,7 +87,6 @@ class PlanResource:
         for subscriber_id in subscriber_ids:
             self.new_subscriber(plan_id, subscriber_id, starts)
         return True
-
 
     def remove_subscriber(self, subscription_id):
         """

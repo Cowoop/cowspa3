@@ -122,13 +122,6 @@ class MemberResource:
     def set(self, member_id, attrname, v):
         if not attrname in self.set_attributes: return
         self.update(member_id, **{attrname: v})
-
-    def get_tariff_history(self, member_id):
-        memberships = dbaccess.get_member_tariff_history(member_id)
-        for ms in memberships[::-1]:
-            ms['starts'] = ms['starts'].isoformat()
-            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
-        return memberships
         
 member_resource = MemberResource()
 member_collection = MemberCollection()
