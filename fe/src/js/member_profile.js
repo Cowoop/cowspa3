@@ -18,9 +18,9 @@ function success(response) {
     // var first_name = response['result']['profile']['first_name'] || '';
     // var last_name = response['result']['profile']['last_name'] || '';
     // if (first_name || last_name) {
-    //     var display_name = first_name + ' ' + last_name;
+    //     var name = first_name + ' ' + last_name;
     //     $('.content-title').show();
-    //     $('#content-title').text(display_name);
+    //     $('#content-title').text(name);
     //     $('#content-subtitle').text("Membership no:" + profile_id);
     // };
     for(i in response.result.memberships){

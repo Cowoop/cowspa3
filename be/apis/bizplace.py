@@ -50,7 +50,7 @@ class BizplaceCollection:
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """
-        returns list bizplace members in the form of tuple (id, display_name)
+        returns list bizplace members in the form of tuple (id, name)
         """
         return dbaccess.find_bizplace_members(bizplace_id)
 

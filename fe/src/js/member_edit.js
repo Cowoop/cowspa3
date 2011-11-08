@@ -5,7 +5,7 @@ var select_member_box = $('.select-member');
 function on_member_profile(resp) {
     thismember = resp.result;
     $('.content-title').show();
-    $('#content-title').text(thismember.profile.display_name);
+    $('#content-title').text(thismember.profile.name);
     $('#content-subtitle').text("Membership no.: " + thismember_id);
     $('.section-title').slideDown('slow');
     $('.data-id').text(thismember_id);

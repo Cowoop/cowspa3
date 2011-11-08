@@ -24,7 +24,7 @@ class BillingprefResource:
             del mod_data['biz_details']
         billingpref_store.update_by(dict(member=member), **mod_data)
         
-        data = dict(name=member_store.get(member, ['display_name']), member_id=member)
+        data = dict(name=member_store.get(member, ['name']), member_id=member)
         activity_id = activitylib.add('billingpref_management', 'billingpref_updated', data)
         
         return True
@@ -38,9 +38,7 @@ class BillingprefResource:
             details = preferences['details'] if billto != member or preferences['mode'] != modes.another else None
             mode = preferences['mode'] if billto != member or preferences['mode'] != modes.another else modes.self
             if mode == modes.self:
-                details = member_store.get(billto, ['display_name', 'address', 'city', 'country', 'phone', 'email'])
-                details['name'] = details['display_name']
-                del details['display_name']
+                details = member_store.get(billto, ['name', 'address', 'city', 'country', 'phone', 'email'])
                 break
             elif mode == modes.custom:
                 break

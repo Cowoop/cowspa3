@@ -81,7 +81,7 @@ class MemberProfile(PGStore):
     member INTEGER NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT,
-    display_name TEXT,
+    name TEXT,
     short_description TEXT,
     long_description TEXT,
     interests TEXT[],
