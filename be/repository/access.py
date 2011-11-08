@@ -55,9 +55,9 @@ def find_memberships(member_id):
     return subscription_store.get_by(crit=dict(subscriber_id=member_id))
 
 def biz_info(biz_id):
-    return biz_store.get(biz_id, ['name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email'])
+    return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
 
-bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'tags', 'website', 'blog', 'address', 'city', 'country', 'email']
+bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email']
 
 def bizplace_info(bizplace_id):
     return bizplace_store.get(bizplace_id, bizplace_info_fields)

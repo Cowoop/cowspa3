@@ -63,7 +63,14 @@ class BizplaceResource:
         """
         returns dict containing essential information of specified business place
         """
-        return dbaccess.bizplace_info(bizplace_id)
+        result = dbaccess.bizplace_info(bizplace_id)
+
+        #DB returns country numeric code, which needs to be replaced by label
+        #before it is returned
+        result['country'] = static.countries_map[result['country']]
+
+        return result
+
 
     def plans(self, bizplace_id):
         """

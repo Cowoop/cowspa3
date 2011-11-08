@@ -9,9 +9,9 @@ def pg_transaction(f):
         try:
             res = f(*args, **kw)
         except:
+            traceback.print_exc(file=sys.stdout)
             pg_provider.tr_abort(env.context)
             raise
-        traceback.print_exc(file=sys.stdout)
         return res
     return wrapper
 pg_transaction.prop = 'pgdb'

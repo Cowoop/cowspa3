@@ -69,17 +69,15 @@ function location_info(resp) {
     $('#location_view_form #city').text(loc.city);
     $('#location_view_form #email').text(loc.email);
     $('#location_view_form #short_description').text(loc.short_description);
-    // We get country ID, need to convert to text
     $('#location_view_form #country').text(loc.country);
 
     $('input[name="name"]').val(loc.name);
     $('input[name="address"]').val(loc.address);
-    // Convert ID to text
-    $('input[name="country"]').val(loc.country);
+    $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
     $('textarea[name="short_description"]').val(loc.short_description);
     $('input[name="city"]').val(loc.city);
     $('input[name="email"]').val(loc.email);
-    // Set the appropriate entry from currency drop down
+    $('#currency').val(loc.currency);
 }
 
 function bizplace_info_error() {

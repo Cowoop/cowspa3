@@ -18,7 +18,7 @@ function on_member_profile(resp) {
     $('input[name="city"]').val(thismember.contact.city);
     $('input[name="email"]').val(thismember.contact.email);
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
-    $('input[name="country"] option[value="' +thismember.contact.country+ '"]').attr('selected', 'selected');
+    $('#country').val(thismember.contact.country);
     $('#member-info').slideDown();
     var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme + '/member/edit/#/';
     $('#st-about').attr('href', base_url + thismember_id + '/about');
