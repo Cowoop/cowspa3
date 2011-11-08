@@ -189,7 +189,7 @@ def get_member_current_subscriptions(member_id, bizplace_ids=[]):
 def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
     if not since:
         since = datetime.datetime.now() - datetime.timedelta(365)
-    clause = '(subscriber_id = %(subscriber_id)s) AND ((ends >= %(since)s) OR (ends IS NULL))'
+    clause = '(subscriber_id = %(subscriber_id)s) AND (ends >= %(since)s)'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, since=since, bizplace_ids=bizplace_ids)

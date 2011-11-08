@@ -6,5 +6,5 @@ $(document).ready(function() {
         });
     };
     function error() { };   
-    jsonrpc('current.activities', {}, success, error);
+    jsonrpc('activities.recent', {}, success, error);
     });

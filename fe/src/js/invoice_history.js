@@ -35,5 +35,5 @@ function success(response) {
 };
 function error(){};
 var params = { 'issuer' : current_ctx};
-jsonrpc('invoice.history', params, success, error);
+jsonrpc('invoice.list', params, success, error);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx

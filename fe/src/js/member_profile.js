@@ -243,7 +243,7 @@ $('#load-tariff-history').click(function(){
         };
     function error2(){};
     params['member_id'] = $.cookie('user_id');
-    jsonrpc('tariff.history', params, success2, error2); 
+    jsonrpc('plan.member_subscriptions', params, success2, error2); 
 });
 //************************End Tariff History*********************************
 //************************Cancel/Change Tariff**********************************

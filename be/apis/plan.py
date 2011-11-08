@@ -88,6 +88,13 @@ class PlanResource:
             self.new_subscriber(plan_id, subscriber_id, starts)
         return True
 
+    def get_member_subscriptions(self, member_id):
+        memberships = dbaccess.get_member_subscriptions(member_id)
+        for ms in memberships[::-1]:
+            ms['starts'] = ms['starts'].isoformat()
+            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
+        return memberships
+
     def remove_subscriber(self, subscription_id):
         """
         """
