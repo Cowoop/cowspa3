@@ -200,39 +200,28 @@ def list_invoices(issuer ,limit):
     values = dict(issuer = issuer, limit = limit) 
     return invoice_store.query_exec(query, values, hashrows=False)
     
-def search_member(keys, options, limit):
+def search_member(query_parts, options, limit):
     fields = ['id', 'name']
-    query = 'SELECT member.id, member.name, member.name as label, member.email FROM member'
+    query = 'SELECT member.id, member.name, member.email, member.name as label FROM member'
     clause = ""
-    if 'global::admin' not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
+    if [0,'admin'] not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
-    if len(keys) == 1:
+    if len(query_parts) == 1:
         try:
-            keys[0] = int(keys[0])
-            clause += 'Member.id = %(key)s'
+            query_parts[0] = int(query_parts[0])
+            clause += 'Member.id = %(query_part)s'
         except:
-            keys[0] = keys[0] + "%"
-            clause += '(Member.first_name ILIKE %(key)s OR Member.last_name ILIKE %(key)s OR Member.email ILIKE %(key)s OR Member.organization ILIKE %(key)s)'
-        values = dict(key=keys[0], limit=limit)
-    elif len(keys) == 2:
-        clause += '((Member.first_name ILIKE %(key1)s AND Member.last_name ILIKE %(key2)s) OR (Member.first_name ILIKE %(key2)s AND Member.last_name ILIKE %(key1)s))'
-        values = dict(key1=keys[0], key2=keys[1]+"%", limit=limit)
+            query_parts[0] = query_parts[0] + "%"
+            clause += '(Member.first_name ILIKE %(query_part)s OR Member.last_name ILIKE %(query_part)s OR Member.email ILIKE %(query_part)s OR Member.organization ILIKE %(query_part)s)'
+        values = dict(query_part=query_parts[0], limit=limit)
+    elif len(query_parts) == 2:
+        clause += '((Member.first_name ILIKE %(query_part1)s AND Member.last_name ILIKE %(query_part2)s) OR (Member.first_name ILIKE %(query_part2)s AND Member.last_name ILIKE %(query_part1)s))'
+        values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
     query  += ' WHERE '+clause+' LIMIT %(limit)s'  
     values['subscriber_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
-
-def search_biz(key, limit):
-    fields = ['id', 'name', 'name as label']
-    try:
-        key = int(key)
-        clause = 'id = %(key)s'
-    except:
-        key = key + "%"
-        clause = 'name ILIKE %(key)s OR email ILIKE %(key)s LIMIT %(limit)s'
-    clause_values =  dict(key=key, limit=limit)
-    return biz_store.get_by_clause(clause, clause_values, fields)
 
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
@@ -255,24 +244,24 @@ def remove_user_permissions(user_id, permissions, context):
     clause = 'user_id = %(user_id)s AND context = %(context)s AND permission IN %(permissions)s'
     userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions), context=context))
 
-def search_invoice(keys, options, limit):
+def search_invoice(query_parts, options, limit):
     fields = ['id', 'member']
     query = 'SELECT invoice.id, invoice.member FROM invoice, member'
     clause = ""
-    if 'global::admin' not in env.context.roles or options['mybizplace']:
+    if [0, 'admin'] not in env.context.roles or options['mybizplace']:
         query += ', subscription'
         clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND'
-    if len(keys) == 1:
+    if len(query_parts) == 1:
         try:
-            keys[0] = int(keys[0])
-            clause += ' invoice.id = %(key)s'
+            query_parts[0] = int(query_parts[0])
+            clause += ' invoice.id = %(query_part)s'
         except:
-            keys[0] = keys[0] + "%"
-            clause += ' (member.first_name ILIKE %(key)s OR member.last_name ILIKE %(key)s)'
-        values = dict(key=keys[0], limit=limit)
-    elif len(keys) == 2:
-        clause += '((member.first_name ILIKE %(key1)s AND member.last_name ILIKE %(key2)s) OR (member.first_name ILIKE %(key2)s AND member.last_name ILIKE %(key1)s))'
-        values = dict(key1=keys[0], key2=keys[1]+"%", limit=limit)
+            query_parts[0] = query_parts[0] + "%"
+            clause += ' (member.first_name ILIKE %(query_part)s OR member.last_name ILIKE %(query_part)s)'
+        values = dict(query_part=query_parts[0], limit=limit)
+    elif len(query_parts) == 2:
+        clause += '((member.first_name ILIKE %(query_part1)s AND member.last_name ILIKE %(query_part2)s) OR (member.first_name ILIKE %(query_part2)s AND member.last_name ILIKE %(query_part1)s))'
+        values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
     query  += ' WHERE '+clause+' AND member.id=invoice.member LIMIT %(limit)s'
     values['subscriber_id'] =  env.context.user_id
 

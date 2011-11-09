@@ -71,8 +71,8 @@ class MemberCollection:
         limit: number of results to return
         return -> list of tuples containing member's display name and member id
         """
-        keys = q.split()
-        return dbaccess.search_member(keys, options, limit)
+        query_parts = q.split()
+        return dbaccess.search_member(query_parts, options, limit)
 
 class MemberResource:
 

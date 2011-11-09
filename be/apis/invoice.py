@@ -73,8 +73,8 @@ class InvoiceCollection:
         limit: number of results to return
         return -> list of tuples containing invoice id and member id
         """
-        keys = q.split()
-        return dbaccess.search_invoice(keys, options, limit)
+        query_parts = q.split()
+        return dbaccess.search_invoice(query_parts, options, limit)
 
     def list(self, issuer, limit=100):
         data = dict(issuer=issuer, limit=limit)
