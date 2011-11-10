@@ -29,8 +29,8 @@ class ResourceCollection:
         """
         fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
         resource_list = dbaccess.list_resources_in_order(owner, fields)
-        for resc in resource_list:
-            resc['state'] = commonlib.shared.constants.resource.to_dict(resc['state'])
+        for res in resource_list:
+            res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
         return resource_list
 
 class ResourceResource:
