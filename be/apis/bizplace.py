@@ -46,7 +46,13 @@ class BizplaceCollection:
         """
         returns list of all bizplace info dicts
         """
-        return dbaccess.list_all_bizplaces()
+        result = dbaccess.list_all_bizplaces()
+        #DB returns country numeric code, which needs to be replaced by label
+        #before it is returned
+        for rec in result :
+            rec['country'] = static.countries_map[rec['country']]
+
+        return result
 
     def members(self, bizplace_id, show_enabled=True, show_disabled=True, show_hidden=True):
         """

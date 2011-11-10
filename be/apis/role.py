@@ -54,7 +54,6 @@ def new_roles(user_id, roles, context):
 
 def get_roles_in_context(user_id, context):
     """
-    role_filter: eg. ['host', 'director']
     returns [{id: 1, label: '<name>', roles: ['<role1>', '<role2>']}, ...]
     """
     return tuple(row[0] for row in dbaccess.userrole_store.get_by(dict(user_id=user_id, context=context), ['role'], False))

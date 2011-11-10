@@ -1,5 +1,6 @@
 // Globals
 current_ctx = parseInt($.cookie("current_ctx"));
+current_userid = parseInt($.cookie("user_id"));
 //
 
 $.webshims.setOptions('forms', {
@@ -18,6 +19,11 @@ $.jsonRPC.setup({
 function set_context(ctx) {
     current_ctx = ctx;
     $.cookie("current_ctx", ctx);
+};
+
+function set_userid(uid) {
+    current_userid = uid;
+    $.cookie("user_id", uid);
 };
 
 function jsonrpc(apiname, params, success, error) {
@@ -106,9 +112,12 @@ function success(resp) {
 
 function error(){ };
 
+// TODO : Verify whether role_filter specified below is required at all
+//        If required, is the list sufficient
+
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
 if(params['user_id']) {
-    jsonrpc('users.bizplace.list', params, success, error); 
+    jsonrpc('roles.list', params, success, error); 
 };
      
 //******************************************End**********************************************************
