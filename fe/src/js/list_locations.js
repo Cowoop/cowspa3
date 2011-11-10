@@ -17,13 +17,14 @@ $('#location_view_form #edit-link').click(function(){
 //     alert('Show Edit : ' + id);
 // }
 
-function show_list() {
+function show_mylocations() {
     $('#bizplace_form').hide();
-    $('#location-list').show();
+    $('#my_loc_list').show();
     $('#location_view_form').hide();
+    // TODO : Set the URL to ../bizplaces
 }
 
-$('#bizplace_form #cancel-btn').click(show_list);
+$('#bizplace_form #cancel-btn').click(show_mylocations);
 // $('#location_view_form #cancel-btn').click(show_list);
 
 function edit_location(theform) {
@@ -84,7 +85,7 @@ function bizplace_info_error() {
     alert('Error in bizplace.info')
 }
 function act_on_route(id) {
-    $('#location-list').hide();
+    $('#my_loc_list').hide();
     $('#bizplace_form').hide();
     $('#location_view_form').show();
 
@@ -107,21 +108,39 @@ function setup_routing () {
 setup_routing();
 
 $(document).ready(function() {
-    var params = {};
-    
+    $('#location_tabs').tabs({
+        collapsible:false
+    });
+    load_my_locations();
+    load_all_locations();
+});
+
+function load_my_locations() {
     function success(resp) {
-        $('#loc_tmpl').tmpl(resp['result']).appendTo('#location-list');
-		// $('.location-title').click(function() {
-  //           alert(this.id);
-  //     //       $('#location-list').hide();          
-  //     //       // Need to call bizplace.info and populate the view form
-		//     // $('#location_view_form').show();
-		// });        
+        $('#my_loc_tmpl').tmpl(resp['result']).appendTo('#my_loc_list');
     };
 
     function error() {
+        alert('Error getting my locations');
     };
 
-    params = {'owner':$.cookie('user_id')};
-    jsonrpc('bizplace.list', params, success, error);
-});
+    var params = {};
+    params = {'user_id': current_userid}
+    if(params['user_id']) {
+        jsonrpc('roles.list', params, success, error); 
+    };
+
+};
+
+function load_all_locations() {
+    function success(resp) {
+        $('#all_loc_tmpl').tmpl(resp['result']).appendTo('#all_loc_list');
+    };
+
+    function error() {
+        alert('Error getting all locations');
+    };
+
+    var params = {};
+    jsonrpc('bizplace.all', params, success, error);
+};
