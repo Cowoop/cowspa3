@@ -27,10 +27,6 @@ function on_member_profile(resp) {
     $('#st-memberships').attr('href', base_url + thismember_id + '/memberships');
 };
 
-function hide_sections() {
-    $('.mp-section').hide();
-};
-
 function act_on_route(id) {
     if (thismember_id != id) {
         select_member_box.hide();
@@ -45,10 +41,14 @@ function show_section(section) {
     hide_sections();
     $(section).slideToggle('slow');
 };
-
-function show_about() { show_section('#mp-about'); };
+//********************************Tabs******************************************
+$("#tabs").tabs({
+    collapsible:false
+});
+//-------------------------------End Tabs---------------------------------------
+function show_about() { $("#tabs").tabs('select', 0); };
 function show_billing() { show_section('#mp-billing'); };
-function show_memberships() { show_section('#mp-memberships'); };
+function show_memberships() { $("#tabs").tabs('select', 1); };
 function show_contact() { show_section('#mp-contact'); };
 function show_social() { show_section('#mp-social'); };
 function show_pref() { show_section('#mp-pref'); };
@@ -58,10 +58,9 @@ function setup_routing () {
 
     var routes = {
         '/:id': {
-            '/about': show_about,
+            '/profile': show_about,
             '/billing': show_billing,
             '/memberships': show_memberships,
-            '/contact': show_contact,
             '/social': show_contact,
             '/pref': show_pref,
             '/account': show_account,
@@ -127,3 +126,4 @@ $('.profile-edit-form').submit(function () {
     edit_member(theform);
     return false;
 });
+

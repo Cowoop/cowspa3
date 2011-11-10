@@ -243,29 +243,21 @@ class EditProfile(BasePage):
     title = ''
     content_title = ''
 
-    def search(self):
-        return ''
-
     def content(self):
         container = tf.DIV()
 
-        container.search_box = tf.DIV(Class="select-member")
-        container.search_box.step = tf.C(commonlib.shared.symbols.circled_nums.one, Class="heading3")
-        container.search_box.label = tf.SPAN(tf.LABEL("Select member", For="member-search"))
-        container.search_box.cell = tf.SPAN(tf.INPUT(id="member-search", type="text"), Class="search-input")
-        container.search_box.line = tf.hr(Class="light")
-        #container.title = tf.DIV([tf.c(id="content-title"), tf.SPAN(id="content-subtitle")], Class="content-title")
+        # Profile
+        profile = tf.DIV(id="profile")
+        profile.info = tf.DIV(id="member-info", Class="labeled-list hidden")
+        profile.info.id = [tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")]
+        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")])
+        profile.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        profile.info.line = tf.hr(Class="light")
 
         # About
-        container.info = tf.DIV(id="member-info", Class="labeled-list hidden")
-        container.info.id = [tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")]
-        container.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")])
-        container.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
-        container.info.line = tf.hr(Class="light")
-
-        container.title = tf.DIV(tf.A("About", href="#", id="st-about"), Class="section-title")
-        container.about_div = tf.DIV(Class="mp-section", id="mp-about")
-
+        profile.about = tf.FIELDSET()
+        profile.about.legend = tf.LEGEND("About")
+        profile.about.about_div = tf.DIV(id="mp-about")
         form = sphc.more.Form(id='member-about-edit', Class='profile-edit-form', classes=['hform'])
         form.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required())
         form.add_field("Last Name", tf.INPUT(name='last_name', type="text"))
@@ -273,29 +265,46 @@ class EditProfile(BasePage):
         form.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
         form.add_buttons(tf.BUTTON("Update", type="submit"))
 
-        container.about_div.form = form.build()
+        profile.about.about_div.form = form.build()
 
         # Contact
-        container.title = tf.DIV(tf.A("Contact", href="#", id="st-contact"), Class="section-title")
-        container.contact_div = tf.DIV(Class="mp-section", id="mp-contact")
-
-        container.contact_div.form = contact_form().build()
+        profile.contact = tf.FIELDSET()
+        profile.contact.legend = tf.LEGEND("Contact")
+        profile.contact.contact_div = tf.DIV(id="mp-contact")
+        profile.contact.contact_div.form = contact_form().build()
 
         # Billing
-        container.title = tf.DIV(tf.A("Billing", href="#", id="st-billing"), Class="section-title")
-        container.billing_div = tf.DIV(Class="mp-section", id="mp-billing")
+        billing = tf.DIV(id="billing")
+        billing.form = billing_pref_form()
 
-        container.billing_div.form = billing_pref_form()
-
-        preferences_div = tf.DIV(Class="mp-section", id="mp-pref")
-        social_div = tf.DIV(Class="mp-section", id="mp-social")
-        account_div = tf.DIV(Class="mp-section", id="mp-account")
+        preferences_div = tf.DIV(id="mp-pref")
+        social_div = tf.DIV(id="mp-social")
+        account_div = tf.DIV(id="mp-account")
 
         # Memberships
 
-        container.title = tf.DIV(tf.A("Memberships", href="#", id="st-memberships"), Class="section-title")
-        container.memberships_div = tf.DIV(Class="mp-section hidden", id="mp-memberships")
-        add_tariffs_section(container.memberships_div)
+        memberships = tf.DIV(id="memberships")
+        add_tariffs_section(memberships) 
+        
+        # Usages
+        usages = tf.DIV(id="usages")
+        
+        #Invoices
+        invoices = tf.DIV(id="invoices")
+        
+        # Tabs
+        container.tabs = tf.DIV(id="profile_tabs")
+        container.tabs.list = tf.UL()
+        container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile"))
+        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships"))
+        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing"))
+        container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages"))
+        container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices"))
+        container.tabs.profile = profile
+        container.tabs.memberships = memberships
+        container.tabs.billing = billing
+        container.tabs.usages = usages
+        container.tabs.invoices = invoices
 
         container.script = sphc.more.script_fromfile("fe/src/js/common_form_methods.js")
         container.script = sphc.more.script_fromfile("fe/src/js/member_profile.js")
@@ -458,7 +467,7 @@ class MemberProfile(BasePage):
         container.form = form
 
         ############################Billing Preferences############################
-         
+        
         billing_pref_view = tf.DIV(id="billing_preferences_view_section", Class="profile-forms hidden")
         billing_pref_view.edit = tf.DIV(Class="edit-link-box")
         billing_pref_view.edit.link = tf.A("Edit", id='edit-link', href='#billingpreferences')
