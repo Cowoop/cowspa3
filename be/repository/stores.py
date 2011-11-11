@@ -47,22 +47,6 @@ class MemberPref(PGStore):
     language TEXT DEFAULT 'en'
     """
 
-#class BillingPref(PGStore):
-#    table_name = "billing_pref"
-#    create_sql = """
-#    owner TEXT NOT NULL,
-#    name TEXT NOT NULL,
-#    address TEXT,
-#    city TEXT,
-#    country TEXT,
-#    pincode TEXT,
-#    phone TEXT,
-#    mobile TEXT,
-#    fax TEXT,
-#    email TEXT,
-#    company_no TEXT
-#    """
-
 class MemberServices(PGStore):
     table_name = "member_service"
     create_sql = """
@@ -197,41 +181,31 @@ class RequestPermission(PGStore):
     permission TEXT NOT NULL
     """
 
-class Plan(PGStore):
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
-    name TEXT NOT NULL,
-    bizplace integer NOT NULL,
-    description TEXT,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    state INTEGER default 1 NOT NULL
-    """
-
-class Subscription(PGStore):
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
-    subscriber_id INTEGER NOT NULL,
-    plan_id INTEGER NOT NULL,
-    plan_name TEXT,
-    starts DATE NOT NULL,
-    ends DATE,
-    bizplace_id INTEGER NOT NULL,
-    bizplace_name TEXT
-    """
-
 class Resource(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
+    state INTEGER default 1 NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     type TEXT,
-    state INTEGER default 1 NOT NULL,
     owner INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
     time_based BOOLEAN DEFAULT True,
     picture TEXT,
     archived BOOLEAN DEFAULT False
+    """
+
+class Membership(PGStore):
+    create_sql = """
+    id SERIAL NOT NULL UNIQUE,
+    subscriber_id INTEGER NOT NULL,
+    tariff_id INTEGER NOT NULL,
+    tariff_name TEXT,
+    starts DATE NOT NULL,
+    ends DATE,
+    bizplace_id INTEGER NOT NULL,
+    bizplace_name TEXT
     """
 
 class ResourceRelation(PGStore):
@@ -267,9 +241,9 @@ class Usage(PGStore):
     start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time  TIMESTAMP WITHOUT TIME ZONE,
     member INTEGER NOT NULL,
+    pricing INTEGER,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
     """
-    #price INTEGER NOT NULL,
     pickle_cols = ['tax_dict']
 
 class Invoice(PGStore):

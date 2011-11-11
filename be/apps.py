@@ -4,7 +4,6 @@ import be.apis.system as systemlib
 import be.apis.user as userlib
 import be.apis.member as memberlib
 import be.apis.bizplace as bizplacelib
-import be.apis.plan as planlib
 import be.apis.role as rolelib
 import be.apis.resource as resourcelib
 import be.repository.pgdb as pgdb
@@ -15,6 +14,7 @@ import be.apis.invoice as invoicelib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.registration as registrationlib
 import be.apis.billingpref as billingpreflib
+import be.apis.membership as membershiplib
 
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -39,7 +39,6 @@ cowspa.connect(registrationlib.new, "registration.new")
 cowspa.connect(registrationlib.activate, "registration.activate")
 cowspa.connect(memberlib.member_collection.new, "member.new")
 cowspa.connect(bizplacelib.bizplace_collection.new, "bizplace.new")
-cowspa.connect(planlib.plan_collection.new, "plan.new")
 cowspa.connect(resourcelib.resource_collection.new, "resource.new")
 cowspa.connect(resourcelib.resource_collection.list, "resource.list")
 cowspa.connect(resourcelib.resource_resource.update, "resource.update")
@@ -54,17 +53,14 @@ cowspa.connect(rolelib.get_roles, "roles.list")
 cowspa.connect(rolelib.get_roles_in_context, "roles.context.list")
 cowspa.connect(bizplacelib.bizplace_resource.info, "bizplace.info")
 cowspa.connect(bizplacelib.bizplace_resource.update, "bizplace.update")
-cowspa.connect(planlib.plan_collection.list, "bizplace_plans.list")
-cowspa.connect(planlib.plan_resource.new_subscriber, "plan.new_subscriber")
-cowspa.connect(planlib.plan_resource.get_member_subscriptions, "plan.member_subscriptions")
 cowspa.connect(invoicelib.invoice_collection.new, "invoice.new")
 cowspa.connect(invoicelib.invoice_collection.search, "invoices.search")
 cowspa.connect(invoicelib.invoice_resource.send, "invoice.send")
 cowspa.connect(invoicelib.invoice_collection.list, "invoice.list")
 cowspa.connect(invoicepreflib.invoicepref_resource.info, "invoicepref.info")
 cowspa.connect(invoicepreflib.invoicepref_resource.update, "invoicepref.update")
-cowspa.connect(planlib.plan_resource.remove_subscriber, "subscription.remove")
-cowspa.connect(planlib.plan_resource.change_subscription, "subscription.change")
+cowspa.connect(membershiplib.memberships, "memberships")
+cowspa.connect(membershiplib.membership, "membership")
 cowspa.connect(billingpreflib.billingpref_resource.info, "billingpref.info")
 cowspa.connect(billingpreflib.billingpref_resource.update, "billingpref.update")
 cowspa.connect(billingpreflib.billingpref_resource.get_details, "billingpref.details")

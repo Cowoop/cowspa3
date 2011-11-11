@@ -18,17 +18,23 @@ class ResourceCollection:
         data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
         res_id = resource_store.add(**data)
 
-        #data = dict(name=name, bizplace=dbaccess.bizplace_store.get(owner, ['name']), user_id=env.context.user_id)
-        #activity_id = activitylib.add('resource_management', 'resource_created', data, created)
-            
+        data = dict(name=name, bizplace=dbaccess.oid2name(owner), user_id=env.context.user_id, created=created, type=type)
+        activity_id = activitylib.add('resource_management', 'resource_created', data, created)
+
         return res_id
 
-    def list(self, owner):
+    def delete(self, res_id):
         """
+        Deletes a resource. Only if there are no usages/subscribers.
+        """
+
+    def list(self, owner, type=None):
+        """
+        type: filter by specified type
         returns list of resource info dicts
         """
         fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
-        resource_list = dbaccess.list_resources_in_order(owner, fields)
+        resource_list = dbaccess.list_resources(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
         return resource_list
@@ -55,7 +61,7 @@ class ResourceResource:
         if 'state' in mod_data: mod_data['state'] = commonlib.shared.constants.resource.to_flags(mod_data['state'])
         mod_data = dict((k,v) for k,v in mod_data.items() if k in self.set_attributes)
         resource_store.update(res_id, **mod_data)
-        
+
         data = dict(user_id=env.context.user_id, res_id=res_id, attrs=', '.join(attr for attr in mod_data))
         # TODO: Add relevant event in events.py and uncomment below line
         #activity_id = activitylib.add('ResourceManagement', 'ResourceUpdated', env.context.user_id, data)
@@ -97,6 +103,7 @@ class ResourceResource:
         for relation, other_res_id in relations:
             d[relation].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
+
 
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()

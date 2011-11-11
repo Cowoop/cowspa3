@@ -4,14 +4,14 @@ import be.apis.activities as activitylib
 import commonlib.helpers
 
 bizplace_store = dbaccess.bizplace_store
-plan_store = dbaccess.plan_store
-subscription_store = dbaccess.subscription_store
+plan_store = dbaccess.resource_store
+membership_store = dbaccess.membership_store
 
 class PlanCollection:
 
-    def new(self, name, bizplace_id, description=''):
+    def new(self, name, bizplace_id, short_description='', long_description=''):
         created = datetime.datetime.now()
-        data = dict(name=name, bizplace=bizplace_id, description=description, created=created)
+        data = dict(name=name, bizplace=bizplace_id, short_description=short_description, long_description=long_description, created=created)
         plan_id = plan_store.add(**data)
 
         data = dict(name=name, id=plan_id, bizplace=bizplace_store.get(bizplace_id, ['name']))
@@ -27,7 +27,7 @@ class PlanCollection:
         """
         returns list of plans which are at bizplace_id
         """
-        return plan_store.get_by(crit=dict(bizplace=bizplace_id), fields=['id', 'name', 'description'])
+        return plan_store.get_by(crit=dict(bizplace=bizplace_id), fields=['id', 'name', 'short_description'])
 
 class PlanResource:
 
@@ -41,7 +41,7 @@ class PlanResource:
         """
         """
         d = info(plan_id)
-        d['subscribers'] = subscribers(plan_id)
+        d['subscribers'] = self.subscribers(plan_id)
         return d
 
     def update(self, plan_id, mod_data):
@@ -72,8 +72,8 @@ class PlanResource:
             ends = starts - datetime.timedelta(1)
             if ends <= old_sub.starts.date():
                 raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
-            subscription_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=old_sub.plan_id, starts=old_sub.starts), ends=ends)
-        subscription_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
+            membership_store.update_by(crit=dict(subscriber_id=subscriber_id, plan_id=old_sub.plan_id, starts=old_sub.starts), ends=ends)
+        membership_store.add(plan_id=plan_id, starts=starts, subscriber_id=subscriber_id, bizplace_id=plan.bizplace, \
             bizplace_name=bizplace.name, plan_name=plan.name)
         # find old subscription
         # set end date to it
@@ -98,12 +98,12 @@ class PlanResource:
     def remove_subscriber(self, subscription_id):
         """
         """
-        return subscription_store.remove(subscription_id)
+        return membership_store.remove(subscription_id)
 
     def change_subscription(self, subscription_id, **mod_data):
         """
         """
-        return subscription_store.update(subscription_id, **mod_data)
+        return membership_store.update(subscription_id, **mod_data)
 
 plan_collection = PlanCollection()
 plan_resource = PlanResource()

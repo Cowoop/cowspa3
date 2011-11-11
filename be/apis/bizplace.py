@@ -82,11 +82,11 @@ class BizplaceResource:
         """
         returns list of plan info dicts for this business place
         """
-        return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.plan_info_fields)
+        return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.tariff_info_fields)
 
     def update(self, bizplace_id, **mod_data):
         bizplace_store.update(bizplace_id, **mod_data)
-        
+
         bizplace_name = bizplace_store.get(bizplace_id, fields=['name'])
         data = dict(id=bizplace_id, name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
         activity_id = activitylib.add('bizplace_management', 'bizplace_updated', data)

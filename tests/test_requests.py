@@ -9,8 +9,8 @@ def setup():
 def test_new_req():
     requestor_id = test_data.member_id
     request_name = 'membership'
-    request_api = 'plan.new_subscriber'
-    request_params = dict(plan_id=1, subscriber_id=4)
+    request_api = 'memberships.new'
+    request_params = dict(tariff_id=1, subscriber_id=4)
     req_id = requestlib.new(request_name, requestor_id, request_api, request_params)
     test_data.request_id = req_id
     env.context.pgcursor.connection.commit()

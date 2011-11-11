@@ -21,8 +21,7 @@ bizplace_store = stores_mod.BizPlace()
 bizplaceprofile_store = stores_mod.BizplaceProfile()
 request_store = stores_mod.Request()
 requestpermission_store = stores_mod.RequestPermission()
-plan_store = stores_mod.Plan()
-subscription_store = stores_mod.Subscription()
+membership_store = stores_mod.Membership()
 resource_store = stores_mod.Resource()
 resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
@@ -52,7 +51,7 @@ for name, store in stores_mod.known_stores.items():
     stores_by_type[store.__class__.__name__] = store
 
 def find_memberships(member_id):
-    return subscription_store.get_by(crit=dict(subscriber_id=member_id))
+    return membership_store.get_by(crit=dict(subscriber_id=member_id))
 
 def biz_info(biz_id):
     return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
@@ -91,9 +90,11 @@ def list_activities_by_roles(roles, limit=15):
     clause_values = dict(a_ids = tuple(a_ids))
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if len(a_ids)!=0 else []
 
-def list_resources_in_order(owner, fields):
+def list_resources(owner, fields, type=None):
     clause = "owner = %(owner)s ORDER BY name"
-    clause_values = dict(owner=owner)
+    if type:
+        clause = "type = %(type)s AND " + clause
+    clause_values = dict(owner=owner, type=type)
     return resource_store.get_by_clause(clause, clause_values, fields)
 
 def oid2name(oid):
@@ -108,35 +109,35 @@ def get_passphrase_by_username(username):
     return user_store.get_by(crit={'username': username})[0].password
 
 def add_membership(member_id, plan_id):
-    plan = plan_store.get(plan_id)
+    plan = resource_store.get(plan_id)
     bizplace_name = bizplace_store.get(bizplace_id, fields=['name']).name
     data = dict(plan_id=plan_id, subscriber_id=member_id, plan_name=plan.name, bizplace_id=plan.bizplace_id, bizplace_name=bizplace_name)
-    subscription_store.add(**data)
+    membership_store.add(**data)
     return True
 
 def find_bizplace_members(bizplace_ids, fields=['member', 'name']):
     bizplace_ids = tuple(bizplace_ids)
-    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE bizplace_id IN %s)'
+    clause = 'member IN (SELECT subscriber_id FROM membership WHERE bizplace_id IN %s)'
     clause_values = (bizplace_ids,)
     return memberprofile_store.get_by_clause(clause, clause_values, fields)
 
-plan_info_fields = ['id', 'name', 'bizplace', 'description']
+tariff_info_fields = ['id', 'name', 'owner', 'short_description']
 
 def find_bizplace_plans(bizplace_id, fields):
-    return plan_store.get_by(crit={'bizplace':bizplace_id}, fields=fields)
-    
+    return resource_store.get_by(crit={'owner':bizplace_id, 'type':'tariff'}, fields=fields)
+
 def list_bizplaces(ids):
     return bizplace_store.get_many(ids,fields=bizplace_info_fields) if ids else []
 
 def list_all_bizplaces():
     return bizplace_store.get_all(fields=bizplace_info_fields)
 
-def find_plan_members(plan_ids, fields=['member', 'name'], at_time=None):
+def find_tariff_members(plan_ids, fields=['member', 'name'], at_time=None):
     plan_ids = tuple(plan_ids)
     if not at_time: at_time = datetime.datetime.now()
-    clause = 'member IN (SELECT subscriber_id FROM subscription WHERE plan_id IN %(plan_ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL))'
+    clause = 'member IN (SELECT subscriber_id FROM membership WHERE tariff_id IN %(plan_ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL))'
     clause_values = dict(plan_ids=plan_ids, at_time=at_time)
-    return memberprofile_store.get_by_clause(clause, clause_values, fields)
+    return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
 def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types):
@@ -157,7 +158,7 @@ def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_ty
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'subscriber_id = %(subscriber_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
-    plan_ids = subscription_store.get_by_clause(clause, values, fields=['plan_id'], hashrows=False)
+    plan_ids = membership_store.get_by_clause(clause, values, fields=['tariff_id'], hashrows=False)
     if plan_ids:
         return plan_ids[0][0]
     elif default:
@@ -166,7 +167,7 @@ def get_member_plan_id(member_id, bizplace_id, date, default=True):
 def get_member_subscription(member_id, bizplace_id, date):
     clause = 'subscriber_id = %(subscriber_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(subscriber_id=member_id, date=date, bizplace_id=bizplace_id)
-    subscriptions = subscription_store.get_by_clause(clause, values)
+    subscriptions = membership_store.get_by_clause(clause, values)
     if subscriptions:
         return subscriptions[0]
 
@@ -176,7 +177,7 @@ def get_member_tariff_history(member_id, bizplace_ids=[]):
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
-    return subscription_store.get_by_clause(clause, values)
+    return membership_store.get_by_clause(clause, values)
 
 def get_member_current_subscriptions(member_id, bizplace_ids=[]):
     date = datetime.datetime.now().date()
@@ -184,7 +185,7 @@ def get_member_current_subscriptions(member_id, bizplace_ids=[]):
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, date=date, bizplace_ids=bizplace_ids)
-    return subscription_store.get_by_clause(clause, values)
+    return membership_store.get_by_clause(clause, values)
 
 def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
     if not since:
@@ -193,7 +194,7 @@ def get_member_subscriptions(member_id, bizplace_ids=[], since=None):
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(subscriber_id=member_id, since=since, bizplace_ids=bizplace_ids)
-    return subscription_store.get_by_clause(clause, values)
+    return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):
     query = "SELECT invoice.id, member.name, invoice.cost::TEXT, DATE(invoice.created)::TEXT as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
@@ -206,7 +207,7 @@ def search_member(query_parts, options, limit):
     clause = ""
     if [0,'admin'] not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
         query += ', subscription'
-        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND ' 
+        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM membership where subscriber_id = %(subscriber_id)s) AND ' 
     if len(query_parts) == 1:
         try:
             query_parts[0] = int(query_parts[0])
@@ -250,7 +251,7 @@ def search_invoice(query_parts, options, limit):
     clause = ""
     if [0, 'admin'] not in env.context.roles or options['mybizplace']:
         query += ', subscription'
-        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM subscription where subscriber_id = %(subscriber_id)s) AND'
+        clause = 'subscription.subscriber_id = Member.id AND subscription.bizplace_id = (SELECT bizplace_id FROM membership where subscriber_id = %(subscriber_id)s) AND'
     if len(query_parts) == 1:
         try:
             query_parts[0] = int(query_parts[0])

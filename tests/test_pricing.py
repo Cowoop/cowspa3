@@ -4,8 +4,9 @@ import commontest
 import test_data
 
 import be.apis.bizplace as bizplacelib
-import be.apis.plan as planlib
+import be.apis.resource as resourcelib
 import be.apis.pricing as pricinglib
+import be.apis.membership as membershiplib
 import be.errors
 import be.repository.access as dbaccess
 import test_member
@@ -15,15 +16,16 @@ import test_member
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
+    commontest.setup_system_context()
 
 def _add_plan(data):
-    plan_id = planlib.plan_collection.new(**data)
+    plan_id = resourcelib.resource_collection.new(**data)
     env.context.pgcursor.connection.commit()
     return plan_id
 
 def test_add_default_plan():
     plan_data = test_data.default_plan_data
-    plan_data['bizplace_id'] = test_data.bizplace_id
+    plan_data['owner'] = test_data.bizplace_id
     plan_id =_add_plan(plan_data)
     test_data.default_plan_id = plan_id
     assert test_data.plan_id != plan_id
@@ -62,7 +64,7 @@ def test_add_member_w_plan_subscription():
     data = test_data.even_more_members[0]
     member_id = test_member.test_create_member(data)
     starts = datetime.date.today().isoformat()
-    assert planlib.plan_resource.new_subscriber(test_data.plan_id, member_id, starts) == True
+    assert membershiplib.memberships.new(test_data.plan_id, member_id, starts) == True
     test_data.member_w_plan = member_id
     env.context.pgcursor.connection.commit()
 

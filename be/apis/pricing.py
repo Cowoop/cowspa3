@@ -29,6 +29,12 @@ class PricingCollection:
         """
         raise NotImplemented
 
+    def list_for_resource(self, resource_id):
+        """
+        returns list of pricings for specified resource
+        """
+        raise NotImplemented
+
 class PricingResource:
 
     def info(self, pricing_id):

@@ -37,10 +37,10 @@ class Membership(RequestHelper):
         label = self.label
         requestor_name = dbaccess.oid2name(self.requestor_id)
         requestor = requestor_name + " [%s]" % self.requestor_id
-        tariff_name = dbaccess.stores.plan_store.get(self.params['plan_id']).name
+        tariff_name = dbaccess.stores.resource_store.get(self.params['tariff_id']).name
         return '%(label)s by "%(requestor)s" for tariff "%(tariff_name)s"' % locals()
     def approver_perms(self):
-        bizplace_id = dbaccess.stores.plan_store.get(self.params['plan_id']).bizplace
+        bizplace_id = dbaccess.stores.resource_store.get(self.params['tariff_id']).owner
         return [str(bizplace_id) + dbaccess.ctxsep + 'approve_membership']
 
 class NewTeamMember(RequestHelper):

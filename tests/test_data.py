@@ -8,12 +8,11 @@ biz_id = None
 
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
 bizplace_id = None
-plan_data = dict(name="Hub 25", description="Not just another plan")
+
+plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff")
 plan_id = None
-
-more_plan_data = dict(name="Plan ", description="Not just another plan")
-
-default_plan_data = dict(name="Hub Connect", description="Guest Tariff")
+more_plan_data = dict(name="Plan ", short_description="Not just another plan", type="tariff")
+default_plan_data = dict(name="Hub Connect", short_description="Guest Tariff", type="tariff")
 
 member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', state=dict(enabled=True, hidden=False))
 member_id = None
