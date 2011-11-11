@@ -57,6 +57,9 @@ class Application(object):
         if isinstance(methods, (list, tuple)):
             for m in methods:
                 self.mapper[prefix + m.__name__] = self.APIExecutor(m)
+        elif isinstance(methods, (Resource, Collection)):
+            for m in methods.exposed_funcs:
+                self.mapper[prefix + '.' + m.__name__] = self.APIExecutor(m)
         else:
             if not prefix:
                 prefix = methods.__name__
