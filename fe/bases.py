@@ -67,16 +67,6 @@ invoicing_opt = [
     tf.A("Export", href='#')
 ]
 
-profile_opt = [
-    tf.A("About Me", href=ctxpath + '/profile#about', id='navlink-aboutme'),
-    tf.A("Contact", href=ctxpath + '/profile#contact', id='navlink-contact'),
-    tf.A("Billing Preferences", href=ctxpath + '/profile#billingpreferences', id='navlink-billingpreferences'),
-    tf.A("Social Me", href=ctxpath + '/profile#social', id='navlink-social'),
-    tf.A("Memberships", href=ctxpath + '/profile#memberships', id='navlink-memberships'),
-    tf.A("Account", href=ctxpath + '/profile#account', id='navlink-account'),
-    tf.A("Preferences", href=ctxpath + '/profile#preferences', id='navlink-preferences'),
-    ]
-
 resources_opt = [
     tf.A("New", href=ctxpath + '/resource/new'),
     tf.A("Manage", href=ctxpath + '/resource/list')
@@ -90,7 +80,6 @@ locations_opt = [
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
 member_nav = new_nav + [
-    ('Profile', '#profile', profile_opt),
     ('Members', '#', members_opt),
     ('Bookings', '#', booking_opt),
     ('Invoicing', '#', invoicing_opt), ]
@@ -101,11 +90,10 @@ host_nav = member_nav + [
 
 
 class CSAuthedPage(CSPage):
-    top_links = [('Account', ctxpath + '/profile#account'), ('Theme', ctxpath + '/profile#preferences'), ('Logout', '/logout')]
+    top_links = [('Profile_Link', ctxpath + ''), ('Logout', '/logout')]
     css_links = [ 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic', '/themes/%(theme)s/css/main.css' ]
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
-        ('My Profile', '#profile', profile_opt),
         ('Members', '#', members_opt),
         ('Bookings', '#', booking_opt),
         ('Invoicing', '#', invoicing_opt),

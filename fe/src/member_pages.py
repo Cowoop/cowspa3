@@ -27,6 +27,26 @@ def contact_form():
     form.add_buttons(tf.BUTTON("Update", type="submit"))
     return form
 
+def account_form():
+    form = sphc.more.Form(id='member-account-edit', Class='profile-edit-form', classes=['hform'])
+    form.add_field("Username", tf.INPUT(type='text', id='username', name='username'))
+    form.add_field("Password", tf.INPUT(type='password', id='password', name='password', placeholder="••••••••"))
+    form.add_buttons(tf.BUTTON("Update", type="submit"))
+    return form
+
+def preferences_form():
+    form = sphc.more.Form(id='member-preferences-edit', Class='profile-edit-form', classes=['hform'])
+    themes = tf.SELECT(id="theme", name="theme")
+    for ob in data_lists.themes:
+        themes.option = tf.OPTION(ob['label'], value=ob['name'])
+    form.add_field("Theme", themes)
+    languages = tf.SELECT(id="language", name="language")
+    for ob in data_lists.languages:
+        languages.option = tf.OPTION(ob['label'], value=ob['name'])
+    form.add_field("Languages", languages)
+    form.add_buttons(tf.BUTTON("Update", type="submit"))
+    return form
+
 def billing_pref_form():
     billing_pref_form = tf.form(id="billing_pref", Class="simple-hform")
     
@@ -43,7 +63,7 @@ def billing_pref_form():
     billing_pref_form.mode.radio3.label = tf.label("Another Member")
     billing_pref_form.mode.radio4 = tf.DIV(id="radio_field4")
     billing_pref_form.mode.radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")
-    billing_pref_form.mode.radio4.label = tf.label("Business")
+    billing_pref_form.mode.radio4.label = tf.label("Organization")
     
     billing_pref_form.details = tf.FIELDSET()
     
@@ -75,40 +95,39 @@ def billing_pref_form():
     billing_pref_form.details.member.label = tf.LABEL("Bill To Existing Member")
     billing_pref_form.details.member.value = tf.INPUT(id="member", type="text")
     
-    billing_pref_form.details.bizness = tf.DIV(id="details_3", Class="hidden")
-    billing_pref_form.details.bizness.radio1 = tf.DIV(id="bizness_radio_field1")
-    billing_pref_form.details.bizness.radio1.value = tf.INPUT(id="bizness_mode0", name="bizness_mode", type="radio", value="0")
-    billing_pref_form.details.bizness.radio1.label = tf.label("Bill To Existing")
-    billing_pref_form.details.bizness.radio1.input = tf.INPUT(type="text", id="existing_biz")
-    billing_pref_form.details.bizness.radio2 = tf.DIV(id="bizness_radio_field2")
-    billing_pref_form.details.bizness.radio2.value = tf.INPUT(id="bizness_mode1", name="bizness_mode", type="radio", value="1")
-    billing_pref_form.details.bizness.radio2.label = tf.label("Add New Business")
-    billing_pref_form.details.bizness.form = tf.FORM(id="new_biz-form")
-    billing_pref_form.details.bizness.form.name = tf.DIV()
-    billing_pref_form.details.bizness.form.name.label = tf.LABEL(content = 'Business Name', For="biz_name")
-    billing_pref_form.details.bizness.form.name.input = tf.INPUT(type='text', id='biz_name', name='biz_name')        
-    billing_pref_form.details.bizness.form.address = tf.DIV()
-    billing_pref_form.details.bizness.form.address.label = tf.LABEL(content = 'Address', FOR="biz_address")
-    billing_pref_form.details.bizness.form.address.input = tf.TEXTAREA(id='biz_address', name='biz_address')
-    billing_pref_form.details.bizness.form.city = tf.DIV()
-    billing_pref_form.details.bizness.form.city.label = tf.LABEL(content = 'City', FOR="biz_city")
-    billing_pref_form.details.bizness.form.city.input = tf.INPUT(id='biz_city', name='biz_city', type="text")
-    billing_pref_form.details.bizness.form.country = tf.DIV()
-    billing_pref_form.details.bizness.form.country.label = tf.LABEL(content = 'Country', FOR="biz_country")
-    billing_pref_form.details.bizness.form.country.input = tf.SELECT(id='biz_country', name='biz_country')
-    billing_pref_form.details.bizness.form.country.input.options = fe.src.common.country_options
-    billing_pref_form.details.bizness.form.phone = tf.DIV()
-    billing_pref_form.details.bizness.form.phone.label = tf.LABEL(content = 'Phone', FOR='biz_phone')
-    billing_pref_form.details.bizness.form.phone.input = tf.INPUT(type='text', id='biz_phone', name='biz_phone')
-    billing_pref_form.details.bizness.form.email = tf.DIV()
-    billing_pref_form.details.bizness.form.email.label = tf.LABEL(content = 'Email', FOR='biz_email')
-    billing_pref_form.details.bizness.form.email.input = tf.INPUT(type='email', id='biz_email', name='biz_email')
+    billing_pref_form.details.organization = tf.DIV(id="details_3", Class="hidden")
+    billing_pref_form.details.organization.radio1 = tf.DIV(id="organization_radio_field1")
+    billing_pref_form.details.organization.radio1.value = tf.INPUT(id="organization_mode0", name="organization_mode", type="radio", value="0")
+    billing_pref_form.details.organization.radio1.label = tf.label("Bill To Existing")
+    billing_pref_form.details.organization.radio1.input = tf.INPUT(type="text", id="existing_org")
+    billing_pref_form.details.organization.radio2 = tf.DIV(id="organization_radio_field2")
+    billing_pref_form.details.organization.radio2.value = tf.INPUT(id="organization_mode1", name="organization_mode", type="radio", value="1")
+    billing_pref_form.details.organization.radio2.label = tf.label("Add New Organization")
+    billing_pref_form.details.organization.form = tf.FORM(id="new_org-form")
+    billing_pref_form.details.organization.form.name = tf.DIV()
+    billing_pref_form.details.organization.form.name.label = tf.LABEL(content = 'Organization Name', For="org_name")
+    billing_pref_form.details.organization.form.name.input = tf.INPUT(type='text', id='org_name', name='org_name')        
+    billing_pref_form.details.organization.form.address = tf.DIV()
+    billing_pref_form.details.organization.form.address.label = tf.LABEL(content = 'Address', FOR="org_address")
+    billing_pref_form.details.organization.form.address.input = tf.TEXTAREA(id='org_address', name='org_address')
+    billing_pref_form.details.organization.form.city = tf.DIV()
+    billing_pref_form.details.organization.form.city.label = tf.LABEL(content = 'City', FOR="org_city")
+    billing_pref_form.details.organization.form.city.input = tf.INPUT(id='org_city', name='org_city', type="text")
+    billing_pref_form.details.organization.form.country = tf.DIV()
+    billing_pref_form.details.organization.form.country.label = tf.LABEL(content = 'Country', FOR="org_country")
+    billing_pref_form.details.organization.form.country.input = tf.SELECT(id='org_country', name='org_country')
+    billing_pref_form.details.organization.form.country.input.options = fe.src.common.country_options
+    billing_pref_form.details.organization.form.phone = tf.DIV()
+    billing_pref_form.details.organization.form.phone.label = tf.LABEL(content = 'Phone', FOR='org_phone')
+    billing_pref_form.details.organization.form.phone.input = tf.INPUT(type='text', id='org_phone', name='org_phone')
+    billing_pref_form.details.organization.form.email = tf.DIV()
+    billing_pref_form.details.organization.form.email.label = tf.LABEL(content = 'Email', FOR='org_email')
+    billing_pref_form.details.organization.form.email.input = tf.INPUT(type='email', id='org_email', name='org_email')
     
     billing_pref_form.msg = tf.SPAN(id="billing_pref-msg")
     
     billing_pref_form.buttons = tf.DIV(Class="buttons")
-    billing_pref_form.buttons.save = tf.INPUT(id="save-billingpref", type="button", value="Save")
-    billing_pref_form.buttons.save = tf.INPUT(id="cancel-billingpref", type="button", value="Cancel")
+    billing_pref_form.buttons.update = tf.INPUT(id="update-billingpref", type="button", value="Update")
 
     return billing_pref_form
 
@@ -175,7 +194,6 @@ def add_tariffs_section(container):
     change_tariff_section.tmpl = tariff_list_row
     change_tariff_section.form.msg = tf.SPAN(id="Change_Tariff-msg")
     container.change_tarrif = change_tariff_section
-
 
 def make_buttons():
     container = tf.DIV()
@@ -257,32 +275,38 @@ class EditProfile(BasePage):
         # About
         profile.about = tf.FIELDSET()
         profile.about.legend = tf.LEGEND("About")
-        profile.about.about_div = tf.DIV(id="mp-about")
+        profile.about.about_div = tf.DIV(id="about")
         form = sphc.more.Form(id='member-about-edit', Class='profile-edit-form', classes=['hform'])
         form.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required())
         form.add_field("Last Name", tf.INPUT(name='last_name', type="text"))
         form.add_field("Short description", tf.INPUT(name='short_description', type="text"))
         form.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
         form.add_buttons(tf.BUTTON("Update", type="submit"))
-
         profile.about.about_div.form = form.build()
 
+        # Account
+        profile.account = tf.FIELDSET()
+        profile.account.legend = tf.LEGEND("Account")
+        profile.account.account_div = tf.DIV(id="account")
+        profile.account.account_div.form = account_form().build()
+                
         # Contact
         profile.contact = tf.FIELDSET()
         profile.contact.legend = tf.LEGEND("Contact")
-        profile.contact.contact_div = tf.DIV(id="mp-contact")
+        profile.contact.contact_div = tf.DIV(id="contact")
         profile.contact.contact_div.form = contact_form().build()
 
+        # Preferences
+        profile.preferences = tf.FIELDSET()
+        profile.preferences.legend = tf.LEGEND("Preferences")
+        profile.preferences.preferences_div = tf.DIV(id="preferences")
+        profile.preferences.preferences_div.form = preferences_form().build()
+        
         # Billing
         billing = tf.DIV(id="billing")
         billing.form = billing_pref_form()
 
-        preferences_div = tf.DIV(id="mp-pref")
-        social_div = tf.DIV(id="mp-social")
-        account_div = tf.DIV(id="mp-account")
-
         # Memberships
-
         memberships = tf.DIV(id="memberships")
         add_tariffs_section(memberships) 
         
@@ -292,11 +316,11 @@ class EditProfile(BasePage):
         #Invoices
         invoices = tf.DIV(id="invoices")
         
-        # Tabs
+        # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile"))
-        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships"))
+        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="member_tab_link"))
         container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing"))
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices"))
@@ -306,234 +330,7 @@ class EditProfile(BasePage):
         container.tabs.usages = usages
         container.tabs.invoices = invoices
 
-        container.script = sphc.more.script_fromfile("fe/src/js/common_form_methods.js")
-        container.script = sphc.more.script_fromfile("fe/src/js/member_profile.js")
         container.script = sphc.more.script_fromfile("fe/src/js/member_edit.js")
 
         return container
 
-class MemberProfile(BasePage):
-    current_nav = 'My Profile'
-    title = 'My Profile'
-    content_title = ''
-
-    def content(self):
-
-        container = tf.DIV()
-        #                                                 About me Form       
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#about')
-        fields = [edit]
-
-        field_data = [('First name', 'first_name'),
-            ('Last name', 'last_name'),
-            ('Short description', 'short_description'),
-            ('Long description', 'long_description')]
-        for label, name in field_data:
-            field = tf.DIV(Class="field-container")
-            field.label = tf.DIV(label, Class="field-name")
-            field.value = tf.DIV(id=name, Class="field-value")
-            fields.append(field)
-
-        view = tf.DIV(Class='profile-forms', id="about_view_form", style="display:none")
-        view.fields= fields
-
-        container.view = view
-
-        field_list = ['First_Name','Last_Name','Short_Description','Long_Description','Organization']
-
-        input_type_text = ['First_Name','Last_Name','Organization']
-        input_type_textarea = ['Short_Description','Long_Description']
-        fields = get_editable_fields(field_list, input_type_text, {}, input_type_textarea, [])
-
-        fields.append(make_buttons())
-
-        form  = tf.FORM(Class='profile-forms', id="about_edit_form", style="display:none")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        #                                       Account
-        fields = []
-        field = tf.DIV()
-        field.label = tf.LABEL('User Name', FOR='username')
-        field.input = tf.INPUT(type='text', id='username', name='username')
-        fields.append(field)
-
-        field = tf.DIV()
-        field.label = tf.LABEL('Password', FOR='password')
-        field.input = tf.INPUT(type='password', id='password', name='password', placeholder="••••••••")
-        fields.append(field)
-
-        fields.append(tf.DIV(Class="action-status"))
-
-        field = tf.DIV()
-        field.button = tf.BUTTON("Save", id='save-btn', type='submit')
-        fields.append(field)
-
-        form  = tf.FORM(Class='profile-forms', id="account_edit_form", style="display:none")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        #                                         Social me Form       
-        field_list = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
-        fields = []
-        web_links = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
-
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#social')
-        fields = [edit]
-
-        fields = get_static_fields(field_list, web_links, fields)
-
-        form  = tf.FORM(Class='profile-forms', id="social_view_form", style="display:none")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        input_type_text = ['Website', 'Blog', 'Twitter', 'Facebook', 'Linkedin']
-        fields = get_editable_fields(field_list, input_type_text, {}, [], [])
-
-        fields.append(make_buttons())
-
-        form  = tf.FORM(Class='profile-forms', id="social_edit_form", style="display:none")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        ######### Memberships ###################
-
-        container.tariffs_section = tf.DIV(id="memberships_view_form", Class="profile-forms", style="display: none")
-        add_tariffs_section(container.tariffs_section)
-
-        #                                                Contact Form
-        field_list = ['Address', 'City', 'Country', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
-
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#contact')
-        fields = [edit]
-
-        fields = get_static_fields(field_list, [], fields)
-
-        form  = tf.FORM(Class='profile-forms', id="contact_view_form", style="display:none")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        input_type_text = ['City', 'Pincode', 'Phone', 'Mobile', 'Fax', 'Email', 'Skype', 'Sip']
-        input_type_list = {'Country': data_lists.countries}
-        input_type_textarea = ['Address']
-        fields = get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, [])
-
-        fields.append(make_buttons())
-
-        form  = tf.FORM(Class='profile-forms', id="contact_edit_form", style="display:none", method="POST")
-        for field in fields:
-            form.content = field
-
-        container.form = form
-
-        #                                                Preferences Form
-        field_list = ['Theme', 'Language']
-
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#preferences')
-
-        fields = [edit]
-
-        fields = get_static_fields(field_list, [], fields)
-
-        form  = tf.FORM(Class='profile-forms', id="preferences_view_form", style="display:none")
-        for field in fields:
-            form.field = field
-
-        container.form = form
-
-        input_type_list = {'Theme': data_lists.themes, 'Language': data_lists.languages}
-        fields = get_editable_fields(field_list, [], input_type_list, [], [])
-
-        fields.append(make_buttons())
-
-        form  = tf.FORM(Class='profile-forms', id="preferences_edit_form", style="display:none")
-        for field in fields:
-            form.field = field
-
-        container.form = form
-
-        ############################Billing Preferences############################
-        
-        billing_pref_view = tf.DIV(id="billing_preferences_view_section", Class="profile-forms hidden")
-        billing_pref_view.edit = tf.DIV(Class="edit-link-box")
-        billing_pref_view.edit.link = tf.A("Edit", id='edit-link', href='#billingpreferences')
-        billing_pref_view.name = tf.DIV(Class="field-container")
-        billing_pref_view.name.label = tf.DIV(content = 'Name', Class="field-name")
-        billing_pref_view.name.a = tf.DIV(id='bill_name', name='bill_name', Class="field-value")
-        billing_pref_view.address = tf.DIV(Class="field-container")
-        billing_pref_view.address.label = tf.DIV(content = 'Address', Class="field-name")
-        billing_pref_view.address.a = tf.DIV(id='bill_address', name='bill_address', Class="field-value")
-        billing_pref_view.city = tf.DIV(Class="field-container")
-        billing_pref_view.city.label = tf.DIV(content = 'City', Class="field-name")
-        billing_pref_view.city.a = tf.DIV(id='bill_city', name='bill_city', Class="field-value")
-        billing_pref_view.country = tf.DIV(Class="field-container")
-        billing_pref_view.country.label = tf.DIV(content = 'Country', Class="field-name")
-        billing_pref_view.country.a = tf.DIV(id='bill_country', name='bill_country', Class="field-value")
-        billing_pref_view.phone = tf.DIV(Class="field-container")
-        billing_pref_view.phone.label = tf.DIV(content = 'Phone', Class="field-name")
-        billing_pref_view.phone.a = tf.DIV(id='bill_phone', name='bill_phone', Class="field-value")
-        billing_pref_view.email = tf.DIV(Class="field-container")
-        billing_pref_view.email.label = tf.DIV(content = 'Email', Class="field-name")
-        billing_pref_view.email.a = tf.DIV(id='bill_email', name='bill_email', Class="field-value")
-        container.billing_pref_view = billing_pref_view
-        
-        billing_pref = tf.DIV(id="billing_preferences_edit_section", Class="profile-forms hidden")
-        
-        billing_pref.form = billing_pref_form()
-              
-        container.billing_pref = billing_pref
-    
-        container.script = sphc.more.script_fromfile("fe/src/js/common_form_methods.js")
-        container.script = sphc.more.script_fromfile("fe/src/js/member_profile.js")
-        return container
-
-def get_static_fields(field_list, web_links, fields):
-    
-    for attr in field_list:
-        field = tf.DIV(Class="field-container")
-        field.label = tf.DIV(content = ' '.join(attr.split('_')), Class="field-name")
-        if attr in web_links:
-            field.a = tf.A(id=attr.lower(), name=attr.lower(), href="")
-        else:
-            field.a = tf.DIV(id=attr.lower(), name=attr.lower(), Class="field-value")
-        fields.append(field)
-    fields.append(sphc.more.clear())
-    return fields
-
-def get_editable_fields(field_list, input_type_text, input_type_list, input_type_textarea, fields):
-
-    for attr in field_list:
-        field = tf.DIV()
-        field.label = tf.LABEL(' '.join(attr.split('_')), FOR=attr.lower())
-        field.input_section = tf.DIV(Class='input-section')
-        if attr in input_type_text:
-            if attr in ['Twitter', 'Facebook', 'Linkedin']:
-                placeholder = 'Eg. My ' + attr
-                inputs = [
-                    tf.INPUT(type='text', id=attr.lower()+"-label", name=attr.lower()+"-label", placeholder=placeholder),
-                    tf.INPUT(type='text', id=attr.lower()+"-url", name=attr.lower()+"-url", placeholder="URL") ]
-                field.input_section.inputs = inputs
-            else:
-                field.input_section.input = tf.INPUT(type='text', id=attr.lower(), name=attr.lower())
-        elif attr in input_type_textarea:
-            field.input_section.input = tf.TEXTAREA(id=attr.lower(), name=attr.lower(), rows=2, cols=25)
-        elif attr in input_type_list:
-            field.input_section.input = tf.SELECT(id=attr.lower(), name=attr.lower())
-            for ob in input_type_list[attr]:
-                field.input_section.input.option = tf.OPTION(ob['label'], value=ob['name'])
-        fields.append(field)
-    return fields

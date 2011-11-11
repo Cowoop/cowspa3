@@ -1,6 +1,7 @@
 // Hide the form to beginwith
 $('#bizplace_form').hide();
 $('#location_view_form').hide();
+$('#all_location_view').hide();
 
 // This should be handled via show_editform() below
 // href for edit link needs to be fixed and then 
@@ -24,8 +25,16 @@ function show_mylocations() {
     // TODO : Set the URL to ../bizplaces
 }
 
+function show_all_locations() {
+    $('#bizplace_form').hide();
+    $('#all_loc_list').show();
+    $('#all_location_view').hide();
+    // TODO : Set the URL to ../bizplaces
+}
+
 $('#bizplace_form #cancel-btn').click(show_mylocations);
-// $('#location_view_form #cancel-btn').click(show_list);
+$('#location_view_form #cancel-link').click(show_mylocations);
+$('#all_location_view #cancel-link').click(show_all_locations);
 
 function edit_location(theform) {
     // var loc_id = window.location.split('#').slice(1,1);
@@ -64,34 +73,52 @@ function location_info(resp) {
     //     $('#location_view_form #location_'+attrib).text(loc.name);
     // }
 
-    $('#location_view_form #name').text(loc.name);
-    $('#location_view_form #currency').text(loc.currency);
-    $('#location_view_form #address').text(loc.address);
-    $('#location_view_form #city').text(loc.city);
-    $('#location_view_form #email').text(loc.email);
-    $('#location_view_form #short_description').text(loc.short_description);
-    $('#location_view_form #country').text(loc.country);
+    // TODO : Populate only appropriate view/form based on which tab is
+    // selected
 
-    $('input[name="name"]').val(loc.name);
-    $('input[name="address"]').val(loc.address);
-    $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
-    $('textarea[name="short_description"]').val(loc.short_description);
-    $('input[name="city"]').val(loc.city);
-    $('input[name="email"]').val(loc.email);
-    $('#currency').val(loc.currency);
+    selected_tab = $('#location_tabs').tabs('option', 'selected');
+
+    if (selected_tab == 0) {  // My Location
+        $('#location_view_form #name').text(loc.name);
+        $('#location_view_form #currency').text(loc.currency);
+        $('#location_view_form #address').text(loc.address);
+        $('#location_view_form #city').text(loc.city);
+        $('#location_view_form #email').text(loc.email);
+        $('#location_view_form #short_description').text(loc.short_description);
+        $('#location_view_form #country').text(loc.country);
+
+        $('input[name="name"]').val(loc.name);
+        $('input[name="address"]').val(loc.address);
+        $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
+        $('textarea[name="short_description"]').val(loc.short_description);
+        $('input[name="city"]').val(loc.city);
+        $('input[name="email"]').val(loc.email);
+        $('#currency').val(loc.currency);
+
+        $('#location_view_form').show();
+        $('#my_loc_list').hide();
+        $('#bizplace_form').hide();
+    } else {
+        $('#all_location_view #name').text(loc.name);
+        $('#all_location_view #currency').text(loc.currency);
+        $('#all_location_view #address').text(loc.address);
+        $('#all_location_view #city').text(loc.city);
+        $('#all_location_view #email').text(loc.email);
+        $('#all_location_view #short_description').text(loc.short_description);
+        $('#all_location_view #country').text(loc.country);
+        $('#all_location_view').show();
+        $('#all_loc_list').hide();
+    }
 }
 
 function bizplace_info_error() {
     alert('Error in bizplace.info')
 }
+
 function act_on_route(id) {
-    $('#my_loc_list').hide();
-    $('#bizplace_form').hide();
-    $('#location_view_form').show();
 
     var params = {'bizplace_id': id};
     jsonrpc('bizplace.info', params, location_info, bizplace_info_error);
-
 };
 
 function setup_routing () {

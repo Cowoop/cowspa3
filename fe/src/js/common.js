@@ -1,6 +1,8 @@
 // Globals
-current_ctx = parseInt($.cookie("current_ctx"));
-current_userid = parseInt($.cookie("user_id"));
+var current_ctx = parseInt($.cookie("current_ctx"));
+var current_userid = parseInt($.cookie("user_id"));
+var member_name = $.cookie("member_name");
+var basepath = window.location.pathname.split('/').slice(0,3).join('/');
 //
 
 $.webshims.setOptions('forms', {
@@ -44,8 +46,7 @@ function init_autocomplete() {
         startText: "Enter name or email or id",
         resultClick: function (data) {
             var id = data['attributes']['id'];
-            var basepath = window.location.pathname.split('/').slice(0,3).join('/');
-            window.location = basepath + "/member/edit/#/" +id+ "/about";
+            window.location = basepath + "/member/edit/#/" +id+ "/profile";
         } 
     });
 };
@@ -87,9 +88,9 @@ function success(resp) {
     if(resp['result'].length == 0) {
         $("#context-select").hide();
         $("#context-single").hide();
+        $('#menu-item_2').hide();
         $('#menu-item_3').hide();
         $('#menu-item_4').hide();
-        $('#menu-item_5').hide();
     } 
     else if(resp['result'].length == 1) {
         $("#context-select").hide();
@@ -142,6 +143,8 @@ function to_formatted_date(date){
 }
 //*******************************************************************************************************
 $(document).ready(function() {
+    $("#profile_link").text(member_name);
+    $("#profile_link").attr('href', basepath + "/member/edit/#/" +current_userid+ "/profile");
     init_autocomplete();
     init_nav();
 });    

@@ -10,6 +10,7 @@ function login() {
     };
     function success(resp) {
         action_status.text("Login is successful.").attr('class', 'status-success');
+        $.cookie("member_name", $.cookie("member_name").replace(/"/g, ""));
         window.location = "/" + resp.result.language + "/" + resp.result.theme + "/dashboard";
     };
     function error() {

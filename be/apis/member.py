@@ -76,8 +76,12 @@ class MemberCollection:
 
 class MemberResource:
 
-    get_attributes = ['state']
-    set_attributes = ['state']
+    get_attributes = ['id', 'created', 'state', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests',\
+                      'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city',\
+                      'country', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype', 'sip']
+    set_attributes = ['state', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise',\
+                       'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'country',\
+                       'pincode', 'phone', 'mobile', 'fax', 'email', 'skype', 'sip']
 
     def update(self, member_id, **mod_data):
         if 'state' in mod_data:
