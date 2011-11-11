@@ -16,6 +16,8 @@ class RandomKeyFactory(object):
        return base64.b64encode(hashlib.sha256(str(random.getrandbits(256))).digest(), \
            random.choice(self.random_choices)).rstrip('==')
 
+callable = lambda o: isinstance(o, collections.Callable)
+
 def encrypt(s, salt=''):
     h = hashlib.sha256()
     h.update(s+salt)
