@@ -14,6 +14,7 @@ app.secret_key = os.urandom(24)
 
 static_root = 'pub'
 import be.apis.user as userlib
+import be.apis.member as memberlib
 import be.bootstrap
 be.bootstrap.start('conf_test')
 import be.apps
@@ -63,6 +64,7 @@ def api_dispatch():
             resp.set_cookie('authcookie',value=auth_token)
             resp.set_cookie('user_id',value=env.context.user_id)
             resp.set_cookie('roles',value=env.context.roles)
+            resp.set_cookie('member_name', value=memberlib.member_resource.get(env.context.user_id, 'name'))
             cowspa.tr_complete()
             return resp
     except:
