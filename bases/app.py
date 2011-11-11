@@ -1,6 +1,29 @@
 import sys
 import traceback
 import functools
+import commonlib.helpers
+
+# * Resource and Collection *
+# Structures that helps clean organize Resource/Collection APIs.
+# These objects may help publisher to introspect resource/collection and decide on exposing APIs
+# Apart from this these structures do not play any significant role.
+
+class Resource(object):
+    """
+    function with name that starts with _ will be considered as internal apis
+    """
+    def __init__(self):
+        self.exposed_funcs = []
+    def __setattr__(self, name, f):
+        if name[0] is not '_' and commonlib.helpers.callable(f):
+            self.exposed_funcs.append(f)
+        object.__setattr__(self, name, f)
+
+class Collection(Resource):
+    """
+    Currently there is no implementation difference between Resource and Collection.
+    In future there might be a few. So keeping Collection as independent class.
+    """
 
 class APIExecutor(object):
 
