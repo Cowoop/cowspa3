@@ -46,32 +46,34 @@ class List(BasePage):
     def content(self):
         container = tf.DIV()
 
-        my_locations = tf.DIV(id='my-location-list', Class='location-list')
-        all_locations = tf.DIV(id='all-location-list', Class='location-list')
+        my_locations = tf.DIV(id='my-locations', Class='location-list')
+        all_locations = tf.DIV(id='all-locations', Class='location-list')
 
         # Tabs
         container.tabs = tf.DIV(id="location_tabs")
         container.tabs.list = tf.UL()
         container.tabs.list.tab1 = tf.li(tf.A("My Locations",
-            href="#my-location-list"))
+            href="#my-locations"))
         container.tabs.list.tab2 = tf.li(tf.A("All Locations",
-            href="#all-location-list"))
+            href="#all-locations"))
 
         # My Locations
         my_loc_list = tf.DIV(id='my_loc_list')
         my_loc_tmpl = sphc.more.jq_tmpl('my_loc_tmpl')
         my_loc_tmpl.box = tf.DIV(Class='location-box')
-        my_loc_tmpl.box.link = tf.A("${label}", id='edit-link_${id}', 
+        my_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
+        my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', 
                 href='#/${id}/', Class='location-title')
+        my_loc_tmpl.box.info.my_role = tf.DIV(Class='location-description')
+        my_loc_tmpl.box.info.my_role.label = tf.LABEL("My Role(s) : ")
+        my_loc_tmpl.box.info.my_role.role = tf.LABEL("${roles}")
 
         loc_buttons = tf.DIV(Class="buttons")
-        loc_buttons.button = tf.BUTTON("Profile", id='profile-btn', type='button')
-        loc_buttons.button = tf.BUTTON("Tariff", id='tariff-btn', type='button')
-#        my_loc_tmpl.box.buttons = loc_buttons
-
-        my_loc_tmpl.box.my_role = tf.DIV(Class='location-description')
-        my_loc_tmpl.box.my_role.label = tf.LABEL("My Role(s) : ")
-        my_loc_tmpl.box.my_role.role = tf.LABEL("${roles}") #, id='my_role_${id}')
+#        loc_buttons.prof_btn = tf.BUTTON("Profile",href='#/${id}', id='myloc_profile-btn', type='button')
+        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff-btn', type='button')
+        loc_buttons.team_btn = tf.BUTTON("Team", id='myloc_team-btn', type='button')
+        my_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
+        my_loc_tmpl.box.btn.buttons = loc_buttons
 
         my_loc_list.loc_tmpl = my_loc_tmpl
 
@@ -83,7 +85,7 @@ class List(BasePage):
         fields = [edit]
 
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("Back to List", id='cancel-link', href='')
+        cancel.link = tf.A("Back to List", id='cancel-link', href='#')
         fields.append(cancel)
 
         form = get_location_form()
@@ -108,8 +110,7 @@ class List(BasePage):
             field.value = tf.DIV(id=name, Class="field-value")
             fields.append(field)
 
-        view = tf.DIV(Class='location-forms', id="location_view_form", 
-                style="display:none")
+        view = tf.DIV(id="location_view_form")
         view.fields= fields
 
         my_locations.view = view
@@ -118,19 +119,27 @@ class List(BasePage):
         all_loc_list = tf.DIV(id='all_loc_list')
         all_loc_tmpl = sphc.more.jq_tmpl('all_loc_tmpl')
         all_loc_tmpl.box = tf.DIV(Class='location-box')
-        all_loc_tmpl.box.link = tf.A("${name}", id='edit-link_${id}', 
+        all_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
+        all_loc_tmpl.box.info.link = tf.A("${name}", id='edit-link_${id}', 
                 href='#/${id}/', Class='location-title')
-        all_loc_tmpl.box.city = tf.LABEL("${city}, ${country}", 
+        all_loc_tmpl.box.info.city = tf.LABEL("${city}, ${country}", 
                 Class='location-info')
-        all_loc_tmpl.box.short_description = tf.DIV("${short_description}", 
+        all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", 
                 Class='location-description')
-        all_loc_list.loc_tmpl = all_loc_tmpl
 
+        loc_buttons = tf.DIV(Class="buttons")
+#        loc_buttons.prof_btn = tf.BUTTON("Profile", href='#/${id}', id='all_profile-btn', type='button')
+        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='all_tariff-btn', type='button')
+        all_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
+        all_loc_tmpl.box.btn.buttons = loc_buttons
+
+        all_loc_list.loc_tmpl = all_loc_tmpl
         all_locations.all_loc_list = all_loc_list
+
 
         # View Location Details
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("Back to List", id='cancel-link', href='')
+        cancel.link = tf.A("Back to List", id='cancel-link', href='#')
         fields = [cancel]
 
         field_data = [('Name', 'name'),
@@ -147,10 +156,11 @@ class List(BasePage):
             field.value = tf.DIV(id=name, Class="field-value")
             fields.append(field)
 
-        view = tf.DIV(Class='location-forms', id="location_view_form", style="display:none")
-        view.fields= fields
+        all_loc_view = tf.DIV(id="all_location_view")
+        all_loc_view.fields= fields
 
-        all_locations.view = view
+        all_locations.view = all_loc_view
+
         container.tabs.myloc = my_locations
         container.tabs.all_loc = all_locations
 

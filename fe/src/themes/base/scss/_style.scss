@@ -239,6 +239,17 @@ button#new-plan {float: right; margin-top: 0.5em;}
             margin-top: 0.5em;
         }
 
+        .loc_info_part {
+            width: 70%;
+            display: inline-block;
+        }
+
+        .loc_btns_part {
+            width: 30%;
+            display: inline-block;
+            text-align: center;
+        }
+
     }
 }
 
