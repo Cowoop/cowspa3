@@ -18,7 +18,13 @@ def add(category, name, data, created=None):
     activity_id = activity_store.add(category=category, name=name, actor=actor_id, data=data, created=created)
     Event = events.categories[category][name]
     event = Event(env.context.user_id, created, data)
-    activityaccess_store.add_many([dict(a_id=activity_id, role=role, created=created) for role in event.access])
+    access_items = []
+    if 'roles' in event.access:
+        for role_id, role_name in event.access['roles']:
+            access_items.append(dict(a_id=activity_id, role_ctx=role_id, role_name=role_name, member_id=None))
+    if 'member_ids' in event.access:
+        access_items += [dict(a_id=activity_id, role_name=None, role_ctx=None, member_id=member_id) for member_id in event.access['member_ids']]
+    activityaccess_store.add_many(access_items)
     return activity_id
 
 def delete(activity_ids):
@@ -33,8 +39,7 @@ def get_latest(for_member=None, limit=30):
         roles = env.context.roles
     else:
         roles = [row[0] for row in userrole_store.get_by(crit=dict(user_id=for_member), fields=['role'], hashrows=False)]
-    roles.append(str(for_member))
-    activities = dbaccess.list_activities_by_roles(roles)
+    activities = dbaccess.find_activities([for_member], roles)
     messages = []
     for act in activities:
         event = events.categories[act.category][act.name](act.actor, act.created, act.data)

@@ -147,7 +147,7 @@ def add_tariffs_section(container):
     tariff_row = sphc.more.jq_tmpl("tariff-row")
     tariff_row.tr = tf.TR(id="tariff_row-${id}")
     tariff_row.tr.td = tf.TD("${bizplace_name}", id="bizplace_name")
-    tariff_row.tr.td = tf.TD("${plan_name}", id="plan_name")
+    tariff_row.tr.td = tf.TD("${tariff_name}", id="tariff_name")
     tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
     tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
     cell = tf.TD()

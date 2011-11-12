@@ -108,7 +108,7 @@ class MemberResource:
         contact = contact_store.get_by(dict(id=member_id))[0]
         account = dict(username=user_store.get(member_id, ['username']), password="")
         preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
-        memberships = dbaccess.get_member_current_subscriptions(member_id)
+        memberships = dbaccess.get_member_current_memberships(member_id)
         for ms in memberships[::-1]:
             ms['starts'] = ms['starts'].isoformat()
             ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']

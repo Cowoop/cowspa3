@@ -1,5 +1,5 @@
 $('#save-btn').click(function () {
-    var inputs = $('#createplan_form').serializeArray();
+    var inputs = $('#createtariff_form').serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
@@ -14,34 +14,34 @@ $('#save-btn').click(function () {
         $('#CreatePlan-msg').html("<big>Error in Tariff Creation. Try again</big>");
     };
     params['bizplace_id'] = current_ctx;
-    jsonrpc('plan.new', params, success, error);
+    jsonrpc('tariff.new', params, success, error);
 });
     
 $("#cancel-btn").click(function (){
-    $("#createplan_form").hide();
-    $("#new-plan").show();
-    $("#plan_list").show();
+    $("#createtariff_form").hide();
+    $("#new-tariff").show();
+    $("#tariff_list").show();
 });
 
 $(document).ready(function() {
     var params = {}
     function success(resp) {
-        var markup = "<div class='plan-box'><div class='plan-title'>${name}</div> ${description}</div>";
-        $.template( "planTemplate", markup );
-        no_plans = resp['result'].length;
-        $.tmpl( "planTemplate", resp['result'].slice(0,no_plans/2)).appendTo( "#plan_list #left" );
-        $.tmpl( "planTemplate", resp['result'].slice(no_plans/2)).appendTo( "#plan_list #right" );
+        var markup = "<div class='tariff-box'><div class='tariff-title'>${name}</div> ${description}</div>";
+        $.template( "tariffTemplate", markup );
+        no_tariffs = resp['result'].length;
+        $.tmpl( "tariffTemplate", resp['result'].slice(0,no_tariffs/2)).appendTo( "#tariff_list #left" );
+        $.tmpl( "tariffTemplate", resp['result'].slice(no_tariffs/2)).appendTo( "#tariff_list #right" );
         };
     function error() {
         };
     params['bizplace_id'] = current_ctx;
-    jsonrpc('bizplace_plans.list', params, success, error);
+    jsonrpc('bizplace_tariffs.list', params, success, error);
 });
 
-$("#new-plan").click(function (){
-    $("#plan_list").hide();
-    $("#new-plan").hide();
-    $("#createplan_form #name").val("");
-    $("#createplan_form #description").val("");
-    $("#createplan_form").show();
+$("#new-tariff").click(function (){
+    $("#tariff_list").hide();
+    $("#new-tariff").hide();
+    $("#createtariff_form #name").val("");
+    $("#createtariff_form #description").val("");
+    $("#createtariff_form").show();
 });

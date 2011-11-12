@@ -199,7 +199,7 @@ class Resource(PGStore):
 class Membership(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    subscriber_id INTEGER NOT NULL,
+    member_id INTEGER NOT NULL,
     tariff_id INTEGER NOT NULL,
     tariff_name TEXT,
     starts DATE NOT NULL,
@@ -293,8 +293,9 @@ class Activity(PGStore):
 class ActivityAccess(PGStore):
     create_sql = """
     a_id INTEGER NOT NULL,
-    role TEXT NOT NULL,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    role_ctx INTEGER,
+    role_name TEXT,
+    member_id INTEGER
     """
 
 class BillingPref(PGStore):

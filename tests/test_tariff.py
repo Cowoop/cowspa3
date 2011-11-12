@@ -19,7 +19,7 @@ def test_add_plan():
     test_data.plan_id = plan_id
     assert str(plan_id).isdigit() == True
 
-def test_add_subscribers():
+def test_add_members():
     starts = datetime.date(2011, 1, 1).isoformat()
     membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, starts)
     env.context.pgcursor.connection.commit()
@@ -35,9 +35,9 @@ def test_find_bizplace_plans():
     plans = bizplacelib.bizplace_resource.plans(test_data.bizplace_id)
     assert len(plans) == 5
 
-def test_subscribers():
-    subscribers = membershiplib.memberships.list(test_data.plan_id)
-    assert len(subscribers) == len(test_data.more_member_ids)
+def test_members():
+    members = membershiplib.memberships.list(test_data.plan_id)
+    assert len(members) == len(test_data.more_member_ids)
 
 def test_plan_info():
     planlib.resource_resource.info(test_data.plan_id)

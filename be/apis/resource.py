@@ -18,14 +18,14 @@ class ResourceCollection:
         data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
         res_id = resource_store.add(**data)
 
-        data = dict(name=name, bizplace=dbaccess.oid2name(owner), user_id=env.context.user_id, created=created, type=type)
+        data = dict(name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
         activity_id = activitylib.add('resource_management', 'resource_created', data, created)
 
         return res_id
 
     def delete(self, res_id):
         """
-        Deletes a resource. Only if there are no usages/subscribers.
+        Deletes a resource. Only if there are no usages/members.
         """
 
     def list(self, owner, type=None):

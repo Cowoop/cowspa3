@@ -10,20 +10,20 @@ class PlanCreate(BasePage):
     def content(self):
         container = tf.DIV()
         
-        new_plan = tf.BUTTON("New Tariff", id="new-plan", type='button')
-        container.button = new_plan
+        new_tariff = tf.BUTTON("New Tariff", id="new-tariff", type='button')
+        container.button = new_tariff
         
-        plans = tf.DIV(id="plan_list")
-        plans.left = tf.DIV(id="left")
-        plans.right = tf.DIV(id="right")
+        tariffs = tf.DIV(id="tariff_list")
+        tariffs.left = tf.DIV(id="left")
+        tariffs.right = tf.DIV(id="right")
         
-        container.plans = plans
+        container.tariffs = tariffs
 
         #                                   New PLAN
         fields = []
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Name : ', For='plan_name')
+        field.label = tf.LABEL(content = 'Name : ', For='tariff_name')
         field.input = tf.INPUT(type='text', id='name', name='name')
         fields.append(field)
 
@@ -37,7 +37,7 @@ class PlanCreate(BasePage):
         field.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         fields.append(field)
 
-        form  = tf.FORM(Class='profile-forms', id="createplan_form", style="display:none")
+        form  = tf.FORM(Class='profile-forms', id="createtariff_form", style="display:none")
         for field in fields:
             field.line = tf.BR()
             form.content = field

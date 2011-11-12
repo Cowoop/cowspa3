@@ -91,7 +91,9 @@ host_nav = member_nav + [
 
 class CSAuthedPage(CSPage):
     top_links = [('Profile_Link', ctxpath + ''), ('Logout', '/logout')]
-    css_links = [ 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic', '/themes/%(theme)s/css/main.css' ]
+    # 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic'
+    # Ubuntu font link. Better policy would be use Ubuntu only if available. This eliminates one external heavy http req.
+    css_links = ['/themes/%(theme)s/css/main.css']
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
         ('Members', '#', members_opt),
