@@ -129,7 +129,7 @@ function setup_routing () {
         },
     };
 
-    Router(routes).use({ recurse: 'forward' }).init();
+    Router(routes).configure({ recurse: 'forward' }).init();
 };
 
 setup_routing();

@@ -9,6 +9,7 @@ Javascript
 - git clone git://github.com/trentrichardson/jQuery-Timepicker-Addon.git
     cp css to ../css
 - SugarSkull for client side routing: http://hij1nx.github.com/SugarSkull/
+    cp build/*.min.js fe/contrib/js/SS.min.js
 - webshims
     Download webshims
     copy js-webshim/minified/ to fe/contrib/webshims-<version>
