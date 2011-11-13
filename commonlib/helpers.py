@@ -55,7 +55,7 @@ def html2pdf(input_file ,output_file):
     return True
 
 def date4human(date):
-    return date.strftime("%m %d, %Y")
+    return date.strftime("%b %d, %Y")
 
 def iso2date(iso):
     return datetime.datetime.strptime(iso, "%Y-%m-%d").date()

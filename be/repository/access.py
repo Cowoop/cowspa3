@@ -93,18 +93,17 @@ def list_activities_by_roles(roles, limit=15):
 def find_activities(member_ids=[], roles=[], limit=15):
     clause = ''
     if member_ids:
-        clause += "(member_id IN %s) OR "
+        clause += "(member_id = %s) OR "
     if roles:
         role_clauses = ["(role_ctx = %s AND role_name = %s)" for role in roles]
         clause += ' OR '.join(role_clauses)
     clause_values = [tuple(member_ids)]
     for role in roles:
         clause_values.extend(role)
-    print roles
-    print clause
-    print clause_values
-    a_ids = [row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False)]
-    return activity_store.get_many(a_ids) if a_ids else []
+    a_ids = tuple(row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
+    clause = '(id IN %(a_ids)s) ORDER BY created DESC'
+    clause_values = dict(a_ids = a_ids)
+    return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if a_ids else []
 
 def list_resources(owner, fields, type=None):
     clause = "owner = %(owner)s ORDER BY name"
