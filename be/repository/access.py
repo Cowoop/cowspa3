@@ -114,7 +114,7 @@ def list_resources(owner, fields, type=None):
     return resource_store.get_by_clause(clause, clause_values, fields)
 
 def oid2name(oid):
-    if oid is 0: return 'global'
+    if oid is 0: return 'Global'
     store = stores_by_type[OidGenerator.get_otype(oid)]
     return store.get(oid, ['name'], hashrows=False)
 
