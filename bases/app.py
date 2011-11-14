@@ -1,6 +1,5 @@
 import sys
 import traceback
-import functools
 import commonlib.helpers
 
 # * Resource and Collection *
