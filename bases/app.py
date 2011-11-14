@@ -12,10 +12,10 @@ class Resource(object):
     function with name that starts with _ will be considered as internal apis
     """
     def __init__(self):
-        self.exposed_funcs = []
+        self.exposed_funcs = {}
     def __setattr__(self, name, f):
         if name[0] is not '_' and commonlib.helpers.callable(f):
-            self.exposed_funcs.append(f)
+            self.exposed_funcs[name] = f
         object.__setattr__(self, name, f)
 
 class Collection(Resource):
@@ -57,8 +57,8 @@ class Application(object):
             for m in methods:
                 self.mapper[prefix + m.__name__] = self.APIExecutor(m)
         elif isinstance(methods, (Resource, Collection)):
-            for m in methods.exposed_funcs:
-                self.mapper[prefix + '.' + m.__name__] = self.APIExecutor(m)
+            for name, f in methods.exposed_funcs.items():
+                self.mapper[prefix + '.' + name] = self.APIExecutor(f)
         else:
             if not prefix:
                 prefix = methods.__name__
