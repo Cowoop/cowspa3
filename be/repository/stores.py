@@ -143,12 +143,12 @@ class BizPlace(PGStore):
     tz TEXT,
     holidays smallint[],
     default_plan INTEGER,
-    taxes BYTEA,
+    default_taxes BYTEA,
     currency TEXT,
     logo TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
-    pickle_cols = ['taxes']
+    pickle_cols = ['default_taxes']
 
 class Organization(PGStore):
     create_sql = """
@@ -194,6 +194,13 @@ class Resource(PGStore):
     time_based BOOLEAN DEFAULT True,
     picture TEXT,
     archived BOOLEAN DEFAULT False
+    """
+
+class ResourceTax(PGStore):
+    create_sql = """
+    resource INTEGER NOT NULL,
+    tax_name INTEGER NOT NULL,
+    tax INTEGER NOT NULL
     """
 
 class Membership(PGStore):
