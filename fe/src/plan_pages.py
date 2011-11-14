@@ -9,14 +9,14 @@ class PlanCreate(BasePage):
     title = 'Tariffs'
     def content(self):
         container = tf.DIV()
-        
+
         new_tariff = tf.BUTTON("New Tariff", id="new-tariff", type='button')
         container.button = new_tariff
-        
+
         tariffs = tf.DIV(id="tariff_list")
         tariffs.left = tf.DIV(id="left")
         tariffs.right = tf.DIV(id="right")
-        
+
         container.tariffs = tariffs
 
         #                                   New PLAN
@@ -28,10 +28,10 @@ class PlanCreate(BasePage):
         fields.append(field)
 
         field = tf.DIV()
-        field.label = tf.LABEL(content = 'Description : ', FOR="description")
-        field.input = tf.TEXTAREA(id='description', name='description', rows=2, cols=25)
+        field.label = tf.LABEL(content = 'Description : ', FOR="short_description")
+        field.input = tf.TEXTAREA(id='short_description', name='short_description', rows=2, cols=25)
         fields.append(field)
-        
+
         field = tf.DIV()
         field.save = tf.BUTTON("Save", id='save-btn', type='button')
         field.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')

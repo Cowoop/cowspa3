@@ -292,8 +292,9 @@ function success1(resp) {
     $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
     };
 function error1(){};
-params1['bizplace_id'] = current_ctx;
-jsonrpc('bizplace_tariffs.list', params1, success1, error1);
+params1['owner'] = current_ctx;
+params1['type'] = 'tariff';
+jsonrpc('resource.list', params1, success1, error1);
     
 //*************************End Next Tariff**************************************
 

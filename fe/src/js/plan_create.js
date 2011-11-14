@@ -13,8 +13,9 @@ $('#save-btn').click(function () {
     function error() {
         $('#CreatePlan-msg').html("<big>Error in Tariff Creation. Try again</big>");
     };
-    params['bizplace_id'] = current_ctx;
-    jsonrpc('tariff.new', params, success, error);
+    params['owner'] = current_ctx;
+    params['type'] = 'tariff';
+    jsonrpc('resource.new', params, success, error);
 });
     
 $("#cancel-btn").click(function (){
@@ -34,8 +35,9 @@ $(document).ready(function() {
         };
     function error() {
         };
-    params['bizplace_id'] = current_ctx;
-    jsonrpc('bizplace_tariffs.list', params, success, error);
+    params['owner'] = current_ctx;
+    params['type'] = 'tariff';
+    jsonrpc('resource.list', params, success, error);
 });
 
 $("#new-tariff").click(function (){
