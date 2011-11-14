@@ -6,7 +6,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 def get_location_form():
-    form = sphc.more.Form(id='bizplace_form', classes=['hform'])
+    form = sphc.more.Form(id='bizplace_form', classes=['hform', 'simple-hform'])
 
     form.add_field('Name', tf.INPUT(type='text', name='name').set_required())
     form.add_field('Address', tf.TEXTAREA(id='address', name='address'))
@@ -14,8 +14,11 @@ def get_location_form():
     country_select = tf.SELECT(id='country', name='country')
     country_select.options = fe.src.common.country_options
     form.add_field('Country', country_select)
-    form.add_field('Email', tf.INPUT(type='email', id='email', 
-        name='email').set_required())
+
+    #tz_select = tf.SELECT(id='tz', name='tz')
+    #tz_select.options = fe.src.common.tz_options
+    #form.add_field('Time zone', tz_select)
+
     form.add_field('Short Description', tf.TEXTAREA( id='short_description', 
                     name='short_description', rows=2, cols=25))
     curr_select = tf.SELECT(id='currency', name='currency')
@@ -23,6 +26,32 @@ def get_location_form():
         curr_select.option = tf.OPTION(currency['label']+" ("+currency['name']+")", 
                         value=currency['name'])
     form.add_field('Currency', curr_select)
+
+    fldset = tf.FIELDSET()
+    fldset.legend = tf.LEGEND('Contact Details ')
+
+    fldset.phone = tf.DIV(id='phone')
+    fldset.phone.label = tf.LABEL('Phone ');
+    fldset.phone.fld = tf.INPUT(id='phone', name='phone')
+
+    fldset.fax = tf.DIV(id='fax')
+    fldset.fax.label = tf.LABEL('Fax ');
+    fldset.fax.fld = tf.INPUT(id='fax', name='fax')
+
+    fldset.email = tf.DIV(id='email')
+    fldset.email.label = tf.LABEL('Email ')
+    fldset.email.fld = tf.INPUT(type='email', id='email', name='email').set_required()
+
+    fldset.booking_email = tf.DIV(id='booking_email')
+    fldset.booking_email.label = tf.LABEL('Booking Email ')
+    fldset.booking_email.fld = tf.INPUT(type='email', id='booking_email',
+            name='booking_email')
+
+    fldset.host_email = tf.DIV(id='host_email')
+    fldset.host_email.label = tf.LABEL('Host Email ')
+    fldset.host_email.fld = tf.INPUT(type='email', id='host_email', name='host_email')
+
+    form.add_field('',fldset)
 
     return form
 
@@ -63,7 +92,7 @@ class List(BasePage):
         my_loc_tmpl.box = tf.DIV(Class='location-box')
         my_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
         my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', 
-                href='#/${id}/', Class='location-title')
+                href='#/${id}', Class='location-title')
         my_loc_tmpl.box.info.my_role = tf.DIV(Class='location-description')
         my_loc_tmpl.box.info.my_role.label = tf.LABEL("My Role(s) : ")
         my_loc_tmpl.box.info.my_role.role = tf.LABEL("${roles}")
@@ -100,9 +129,13 @@ class List(BasePage):
             ('Address', 'address'),
             ('City', 'city'),
             ('Country', 'country'),
-            ('Email', 'email'),
             ('Short description', 'short_description'),
-            ('Currency', 'currency')
+            ('Currency', 'currency'),
+            ('Phone','phone'),
+            ('Fax','fax'),
+            ('Email', 'email'),
+            ('Host Email', 'host_email'),
+            ('Booking Email', 'booking_email')
             ]
         for label, name in field_data:
             field = tf.DIV(Class="field-container")
@@ -121,7 +154,7 @@ class List(BasePage):
         all_loc_tmpl.box = tf.DIV(Class='location-box')
         all_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
         all_loc_tmpl.box.info.link = tf.A("${name}", id='edit-link_${id}', 
-                href='#/${id}/', Class='location-title')
+                href='#/${id}', Class='location-title')
         all_loc_tmpl.box.info.city = tf.LABEL("${city}, ${country}", 
                 Class='location-info')
         all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", 
@@ -142,14 +175,6 @@ class List(BasePage):
         cancel.link = tf.A("Back to List", id='cancel-link', href='#')
         fields = [cancel]
 
-        field_data = [('Name', 'name'),
-            ('Address', 'address'),
-            ('City', 'city'),
-            ('Country', 'country'),
-            ('Email', 'email'),
-            ('Short description', 'short_description'),
-            ('Currency', 'currency')
-            ]
         for label, name in field_data:
             field = tf.DIV(Class="field-container")
             field.label = tf.DIV(label, Class="field-name")

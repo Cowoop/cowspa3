@@ -1,6 +1,8 @@
 import pycountry
 import glob
 import os
+#from pytz import country_timezones
+#from itertools import chain
 
 resource_types = [dict(name='room', label='Room'), dict(name='tariff', label='Tariff'), dict(name='phone', label='Phone'), dict(name='printer', label='Printer'), dict(name='hotdesk', label='Hotdesk'), dict(name='other', label='Other')]
 
@@ -11,6 +13,10 @@ countries = [dict(label=country.name ,name=country.numeric) for country in list(
 countries_map = dict((country.numeric,country.name) for country in list(pycountry.countries))
 
 currencies = [dict(name=currency.letter ,label=currency.name) for currency in list(pycountry.currencies)]
+
+#TODO : The final list is jumbled, not sorted well. Need to sort
+# Look at pytz implementation in JS
+#timezones = [dict(name=el,label=el) for el in chain.from_iterable(country_timezones[c] for c in country_timezones)]
 
 themeroot = 'fe/src/themes'
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]

@@ -8,10 +8,20 @@ import commonlib.shared.static as static
 bizplace_store = dbaccess.stores.bizplace_store
 
 class BizplaceCollection:
-    def new(self, name, address, city, country, email, short_description, long_description=None, tags=None, website=None, blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, sip=None, skype=None, mobile=None, currency=None):
+    def new(self, name, address, city, country, email, short_description,
+            long_description=None, tags=None, website=None, blog=None,
+            twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
+            sip=None, skype=None, mobile=None, currency=None, host_email=None,
+            booking_email=None):
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
-        data = dict(id=bizplace_id, name=name, created=created, short_description=short_description, long_description=long_description, tags=tags, website=website, blog=blog, twitter=twitter, facebook=facebook, address=address, city=city, country=country, email=email, phone=phone, fax=fax, sip=sip, skype=skype, mobile=mobile, currency=currency)
+        data = dict(id=bizplace_id, name=name, created=created,
+                short_description=short_description,
+                long_description=long_description, tags=tags, website=website,
+                blog=blog, twitter=twitter, facebook=facebook, address=address,
+                city=city, country=country, email=email, phone=phone, fax=fax,
+                sip=sip, skype=skype, mobile=mobile, currency=currency,
+                host_email=host_email, booking_email=booking_email)
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
@@ -62,8 +72,8 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
-    get_attributes = ['taxes', 'default_plan']
-    set_attributes = ['taxes', 'default_plan']
+    get_attributes = ['default_taxes', 'default_plan']
+    set_attributes = ['default_taxes', 'default_plan']
 
     def info(self, bizplace_id):
         """

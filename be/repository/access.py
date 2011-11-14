@@ -56,7 +56,9 @@ def find_memberships(member_id):
 def biz_info(biz_id):
     return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
 
-bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email']
+bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency',
+'address', 'city', 'country', 'email', 'phone', 'fax','host_email',
+'booking_email']
 
 def bizplace_info(bizplace_id):
     return bizplace_store.get(bizplace_id, bizplace_info_fields)

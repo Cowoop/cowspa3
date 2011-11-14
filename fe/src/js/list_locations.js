@@ -86,6 +86,10 @@ function location_info(resp) {
         $('#location_view_form #email').text(loc.email);
         $('#location_view_form #short_description').text(loc.short_description);
         $('#location_view_form #country').text(loc.country);
+        $('#location_view_form #phone').text(loc.phone);
+        $('#location_view_form #fax').text(loc.fax);
+        $('#location_view_form #host_email').text(loc.host_email);
+        $('#location_view_form #booking_email').text(loc.booking_email);
 
         $('input[name="name"]').val(loc.name);
         $('input[name="address"]').val(loc.address);
@@ -94,6 +98,11 @@ function location_info(resp) {
         $('input[name="city"]').val(loc.city);
         $('input[name="email"]').val(loc.email);
         $('#currency').val(loc.currency);
+        $('input[name="email"]').val(loc.email);
+        $('input[name="host_email"]').val(loc.host_email);
+        $('input[name="booking_email"]').val(loc.booking_email);
+        $('input[name="phone"]').val(loc.phone);
+        $('input[name="fax"]').val(loc.fax);
 
         $('#location_view_form').show();
         $('#my_loc_list').hide();
@@ -106,6 +115,10 @@ function location_info(resp) {
         $('#all_location_view #email').text(loc.email);
         $('#all_location_view #short_description').text(loc.short_description);
         $('#all_location_view #country').text(loc.country);
+        $('#all_location_view #phone').text(loc.phone);
+        $('#all_location_view #fax').text(loc.fax);
+        $('#all_location_view #host_email').text(loc.host_email);
+        $('#all_location_view #booking_email').text(loc.booking_email);
         $('#all_location_view').show();
         $('#all_loc_list').hide();
     }
@@ -116,7 +129,6 @@ function bizplace_info_error() {
 }
 
 function act_on_route(id) {
-
     var params = {'bizplace_id': id};
     jsonrpc('bizplace.info', params, location_info, bizplace_info_error);
 };

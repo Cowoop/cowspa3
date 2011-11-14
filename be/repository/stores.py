@@ -130,7 +130,9 @@ class BizplaceProfile(PGStore):
     blog TEXT,
     twitter TEXT[2],
     facebook TEXT[2],
-    linkedin TEXT[2]
+    linkedin TEXT[2],
+    booking_email TEXT,
+    host_email TEXT
     """
 
 class BizPlace(PGStore):

@@ -25,8 +25,8 @@ def test_bizplace_info():
 
 def test_bizplace_update():
     taxes = (('VAT', 19), ('Service Tax', 10.5))
-    bizplacelib.bizplace_resource.update(test_data.bizplace_id, taxes=taxes)
-    assert bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'taxes') == taxes
+    bizplacelib.bizplace_resource.update(test_data.bizplace_id, default_taxes=taxes)
+    assert bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'default_taxes') == taxes
 
 def test_list_bizplaces_list():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)
