@@ -237,7 +237,7 @@ def search_member(query_parts, options, limit):
     elif len(query_parts) == 2:
         clause += '((Member.first_name ILIKE %(query_part1)s AND Member.last_name ILIKE %(query_part2)s) OR (Member.first_name ILIKE %(query_part2)s AND Member.last_name ILIKE %(query_part1)s))'
         values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
-    query  += ' WHERE '+clause+' LIMIT %(limit)s'  
+    query  += ' WHERE '+clause+' LIMIT %(limit)s'
     values['member_id'] =  env.context.user_id
     
     return member_store.query_exec(query, values)
@@ -246,6 +246,16 @@ def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
     return pricing_store.get_by_clause(clause, values, fields=['id', 'starts', 'ends', 'amount'])
+
+def get_tariff_pricings(tariff_id, usage_time):
+    clause = 'plan = %(tariff_id)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
+    values = dict(tariff_id=tariff_id, usage_time=usage_time)
+    pricings = dict(pricing_store.get_by_clause(clause, values, fields=['resource', 'amount'], hashrows=False))
+    resource_ids = list(pricings.keys())
+    resources = resource_store.get_many(resource_ids, fields=['id', 'name'])
+    for res in resources:
+        res['price'] = pricings[res.id]
+    return resources
 
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?

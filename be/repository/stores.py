@@ -146,6 +146,7 @@ class BizPlace(PGStore):
     holidays smallint[],
     default_plan INTEGER,
     default_taxes BYTEA,
+    tax_included BOOLEAN DEFAULT True,
     currency TEXT,
     logo TEXT
     """
@@ -202,7 +203,7 @@ class ResourceTax(PGStore):
     create_sql = """
     resource INTEGER NOT NULL,
     tax_name INTEGER NOT NULL,
-    tax INTEGER NOT NULL
+    tax REAL NOT NULL
     """
 
 class Membership(PGStore):

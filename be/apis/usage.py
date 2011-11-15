@@ -48,6 +48,5 @@ class UsageResource:
         """
         return dbaccess.find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types)
 
-
 usage_collection = UsageCollection()
 usage_resource = UsageResource()

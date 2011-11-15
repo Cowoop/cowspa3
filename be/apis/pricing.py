@@ -3,6 +3,9 @@ import bases.app as applib
 import be.repository.access as dbaccess
 import be.errors
 import commonlib.helpers
+import be.libs.cost as costlib
+
+odict = commonlib.helpers.odict
 
 resource_store = dbaccess.resource_store
 pricing_store = dbaccess.pricing_store
@@ -29,7 +32,7 @@ def list(tariff_id, for_date):
     """
     raise NotImplemented
 
-def list_for_resource(resource_id):
+def list_for_resource(resource_id, for_date):
     """
     returns list of pricings for specified resource
     """
@@ -42,8 +45,15 @@ def get(member_id, resource_id, usage_time=None):
     bizplace_id = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     plan_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
+    print pricing
     if pricing:
         return pricing[0].amount
+
+def member_tariff(member_id, bizplace_id, usage_time=None):
+    if not usage_time:
+        usage_time = datetime.datetime.now().isoformat()
+    tariff_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
+    return dbaccess.get_tariff_pricings(tariff_id, usage_time)
 
 pricings = applib.Collection()
 pricings.new = new
@@ -65,3 +75,28 @@ def update(tariff_id, resource_prices):
 pricing = applib.Resource()
 pricing.info = info
 pricing.update = update
+
+## Cost calculations
+
+class InitialCost(costlib.Rule):
+    name = 'Initial Cost'
+    def apply(self, env, usage, cost):
+        rate = pricings.get(usage.member_id, usage.resource_id, usage.starts)
+        amount = rate * usage.quantity
+        cost.new(self.name, amount)
+        return costlib.flags.proceed
+
+class Taxes(costlib.Rule):
+    name = 'Initial Cost'
+    def apply(self, env, usage, cost):
+        raise NotImplemented
+
+rules = [InitialCost()]
+
+def calculate_cost(member_id, resource_id, quantity, starts, ends):
+    usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends)
+    resource = resource_store.get(usage.resource_id)
+    if resource.time_based:
+        quantity = (ends - starts).seconds / 3600.0
+    processor = costlib.Processor(usage, rules)
+    return processor.run()

@@ -37,7 +37,7 @@ more_invoice_data = [
     dict(member=3, usages=[3])
     ]
 
-resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False))
+resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False), time_based=True)
 
 more_resource = [dict(name='RES1', short_description='Resource 1', type='Type1'),
     dict(name='RES2', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True)),

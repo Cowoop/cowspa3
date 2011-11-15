@@ -67,6 +67,9 @@ def test_add_member_w_plan_subscription():
     test_data.member_w_plan = member_id
     env.context.pgcursor.connection.commit()
 
+def test_member_tariff():
+    return pricinglib.member_tariff(test_data.member_w_plan, test_data.bizplace_id)
+
 def test_add_member_wo_plan_subscription():
     data = test_data.even_more_members[1]
     member_id = test_member.test_create_member(data)
@@ -80,3 +83,11 @@ def test_get_pricing_for_member_w_plan():
 def test_get_pricing_for_member_wo_plan():
     usage_time = datetime.datetime.now()
     assert pricinglib.get(test_data.member_wo_plan, test_data.resource_id, usage_time) == test_data.price_wo_plan
+
+def test_cost():
+    quantity = 10
+    starts = datetime.datetime.now()
+    ends = starts + datetime.timedelta(0, 10*3600)
+    cost = pricinglib.calculate_cost(test_data.member_w_plan, test_data.resource_id, quantity, starts, ends)
+    rate = pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, starts)
+    assert cost == (quantity * rate)
