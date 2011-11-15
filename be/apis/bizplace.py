@@ -94,6 +94,7 @@ class BizplaceResource:
         """
         return dbaccess.find_bizplace_plans(bizplace_id, dbaccess.tariff_info_fields)
 
+    #TODO: dictshield to validate mod_data especially default_taxes
     def update(self, bizplace_id, **mod_data):
         bizplace_store.update(bizplace_id, **mod_data)
 
