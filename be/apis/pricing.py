@@ -45,7 +45,6 @@ def get(member_id, resource_id, usage_time=None):
     bizplace_id = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     plan_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
-    print pricing
     if pricing:
         return pricing[0].amount
 
