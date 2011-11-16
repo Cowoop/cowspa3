@@ -159,20 +159,21 @@ def find_tariff_members(plan_ids, fields=['member', 'name'], at_time=None):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types):
+def find_usage(start, end, invoice, res_owner_refs, resource_ids, member_ids, resource_types, fields, hashrows):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
     if end: clauses.append('start_time <= %(end_time)s')
+    if invoice: clauses.append('invoice = %(invoice)s')
     if res_owner_refs: clauses.append('(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_refs)s))')
     if resource_ids: clauses.append('(resource_id IN %(resource_ids)s)')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
 
     clauses_s = ' AND '.join(clauses)
-    clause_values = dict(start_time=start, end_time=end, resource_ids=tuple(resource_ids), owner_refs=tuple(res_owner_refs), member_id=tuple(member_ids), resource_types=tuple(resource_types))
+    clause_values = dict(start_time=start, end_time=end, invoice=invoice, resource_ids=tuple(resource_ids), owner_refs=tuple(res_owner_refs), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
-    return usage_store.get_by_clause(clauses_s, clause_values, fields=None)
+    return usage_store.get_by_clause(clauses_s, clause_values, fields=fields, hashrows=hashrows)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'

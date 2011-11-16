@@ -42,11 +42,11 @@ class UsageResource:
             result = result.isoformat()
         return result
 
-    def find(self, start=None, end=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[]):
+    def find(self, start=None, end=None, invoice=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[], fields=None, hashrows=True):
         """
         return list of dicts which contains information of usage, which are sorted on the basis of selected criteria like start time, end time, resource ids, resource owner references, member ids or resource types
         """
-        return dbaccess.find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types)
-
+        return dbaccess.find_usage(start, end, invoice, res_owner_refs, resource_ids, member_ids, resource_types, fields, hashrows=hashrows)
+     
 usage_collection = UsageCollection()
 usage_resource = UsageResource()
