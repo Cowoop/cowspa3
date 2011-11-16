@@ -204,15 +204,18 @@ $("#resource_edit_form #cancel-btn").click(function(){
     $("#resource_types").show();
     history.pushState("", document.title, window.location.pathname); //To remove hash from url
 });
-function resource_editing(){
-    $("#name").val(resource_list[res_id]['name']);
-    $("#type option[value='" + resource_list[res_id]['type'] + "']").attr('selected', 'selected');
-    $("#short_desc").val(resource_list[res_id]['short_description']);
-    $("#long_desc").val(resource_list[res_id]['long_description']);
-    $("#time_based").attr('checked', resource_list[res_id]['time_based']);
-    $("#state_enabled").attr('checked', resource_list[res_id]['state']['enabled']);
-    $("#state_host_only").attr('checked', resource_list[res_id]['state']['host_only']);
-    $("#state_repairs").attr('checked', resource_list[res_id]['state']['repairs']);
+function resource_editing() {
+    var resource = resource_list[res_id];
+    var name = resource.name;
+    $("#content-title").text(name);
+    $("#name").val(name);
+    $("#type option[value='" + resource.type + "']").attr('selected', 'selected');
+    $("#short_desc").val(resource.short_description);
+    $("#long_desc").val(resource.long_description);
+    $("#time_based").attr('checked', resource.time_based);
+    $("#state_enabled").attr('checked', resource.state.enabled);
+    $("#state_host_only").attr('checked', resource.state.host_only);
+    $("#state_repairs").attr('checked', resource.state.repairs);
     $("#resource_list").hide();
     $("#resource_filters").hide();
     $("#resource_types").hide();
