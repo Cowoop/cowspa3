@@ -43,7 +43,7 @@ function init_autocomplete() {
         searchObjProps: "name, email, id",
         minChars: 1,
         selectionLimit: 0, 
-        startText: "Enter name or email or id",
+        startText: "Search member by name, email or id",
         resultClick: function (data) {
             var id = data['attributes']['id'];
             window.location = basepath + "/member/edit/#/" +id+ "/profile";
