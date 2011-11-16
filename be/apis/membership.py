@@ -54,11 +54,7 @@ def list_by_tariff(tariff_id):
     return member_list
 
 def list_for_member(member_id):
-    memberships = dbaccess.get_member_memberships(member_id)
-    for ms in memberships[::-1]:
-        ms['starts'] = ms['starts'].isoformat()
-        ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
-    return memberships
+    return dbaccess.get_member_memberships(member_id)
 
 def list_memberships(by_tariff=None, for_member=None):
     if by_tariff:

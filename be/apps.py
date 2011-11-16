@@ -16,6 +16,7 @@ import be.apis.registration as registrationlib
 import be.apis.billingpref as billingpreflib
 import be.apis.membership as membershiplib
 import be.apis.pricing as pricinglib
+import be.apis.usage as usagelib
 
 pg_provider = pgdb.PGProvider(env.config.threaded)
 pg_tr_start = lambda: pg_provider.tr_start(env.context)
@@ -69,4 +70,6 @@ cowspa.connect(pricinglib.calculate_cost, "pricing.calculate_cost")
 cowspa.connect(billingpreflib.billingpref_resource.info, "billingpref.info")
 cowspa.connect(billingpreflib.billingpref_resource.update, "billingpref.update")
 cowspa.connect(billingpreflib.billingpref_resource.get_details, "billingpref.details")
+cowspa.connect(usagelib.usage_collection.new, "usage.new")
+cowspa.connect(usagelib.usage_resource.find, "usage.find")
 cowspa.startup()

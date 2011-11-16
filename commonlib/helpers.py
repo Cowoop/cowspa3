@@ -2,6 +2,7 @@ import datetime
 import collections
 import base64, random, hashlib
 import wkhtmltox
+import simplejson
 
 random_key_gen = None
 
@@ -62,3 +63,7 @@ def iso2date(iso):
 
 def iso2datetime(iso):
     return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S").date()
+    
+def Jsonify(obj):
+    dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
+    return simplejson.dumps(obj, use_decimal=True, default=dthandler)

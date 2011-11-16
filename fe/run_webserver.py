@@ -1,13 +1,12 @@
 import os
 import sys
 from jsonrpc2 import JsonRpc
-import simplejson
 
 path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from flask import Flask, jsonify, url_for, session, redirect, request
+from flask import Flask, url_for, session, redirect, request
 from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -19,7 +18,8 @@ import be.bootstrap
 be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
-
+import commonlib.helpers as helpers
+        
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
@@ -31,9 +31,9 @@ def search(entity):
     data = cowspa.mapper(params)
     cowspa.tr_complete()
     if 'result' in data:
-        return simplejson.dumps(data['result'])
+        return helpers.Jsonify(data['result'])
     else:
-        return jsonify(data)
+        return helpers.Jsonify(data)
 
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoices(oid, format):
@@ -60,7 +60,7 @@ def api_dispatch():
         if params['method'] == 'login' and 'result' in data:
             auth_token = data['result']
             data['result'] = userlib.get_user_preferences()
-            resp = jsonify(data)
+            resp = helpers.Jsonify(data)
             resp.set_cookie('authcookie',value=auth_token)
             resp.set_cookie('user_id',value=env.context.user_id)
             resp.set_cookie('roles',value=env.context.roles)
@@ -70,7 +70,7 @@ def api_dispatch():
     except:
         cowspa.tr_abort()
     cowspa.tr_complete()
-    return jsonify(data)
+    return helpers.Jsonify(data)
 
 app = SharedDataMiddleware(app, {
         '/': static_root,

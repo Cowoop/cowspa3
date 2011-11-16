@@ -41,7 +41,7 @@ def list_for_resource(resource_id, for_date):
 def get(member_id, resource_id, usage_time=None):
     # TODO: if resource owner is not bizplace then?
     if not usage_time:
-        usage_time = datetime.datetime.now().isoformat()
+        usage_time = datetime.datetime.now()
     bizplace_id = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     plan_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
@@ -50,7 +50,7 @@ def get(member_id, resource_id, usage_time=None):
 
 def member_tariff(member_id, bizplace_id, usage_time=None):
     if not usage_time:
-        usage_time = datetime.datetime.now().isoformat()
+        usage_time = datetime.datetime.now()
     tariff_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     return dbaccess.get_tariff_pricings(tariff_id, usage_time)
 
@@ -60,10 +60,7 @@ pricings.get = get
 pricings.list = list_for_resource
 
 def info(pricing_id):
-    result = pricing_store.get(pricing_id)
-    result['starts'] = result['starts'].isoformat()
-    result['ends'] = result['ends'].isoformat() if result['ends'] else result['ends']
-    return result
+    return pricing_store.get(pricing_id)
 
 def update(tariff_id, resource_prices):
     """

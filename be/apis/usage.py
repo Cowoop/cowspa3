@@ -25,10 +25,7 @@ class UsageResource:
         """
         return dict containg information of usage
         """
-        result = usage_store.get(usage_id)
-        result['start_time'] = result['start_time'].isoformat()
-        result['end_time'] = result['end_time'].isoformat() if result['end_time'] else result['end_time']
-        return result
+        return usage_store.get(usage_id)
 
     def update(self, usage_id, mod_data):
         usage_store.update(usage_id, **mod_data)
@@ -37,16 +34,13 @@ class UsageResource:
         """
         return value of attrname
         """
-        result = usage_store.get(usage_id, fields=[attrname])
-        if (attrname == 'start_time' or attrname == 'end_time') and result:
-            result = result.isoformat()
-        return result
+        return usage_store.get(usage_id, fields=[attrname])
 
-    def find(self, start=None, end=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[]):
+    def find(self, start=None, end=None, invoice=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[], fields=None, hashrows=True):
         """
         return list of dicts which contains information of usage, which are sorted on the basis of selected criteria like start time, end time, resource ids, resource owner references, member ids or resource types
         """
-        return dbaccess.find_usage(start, end, res_owner_refs, resource_ids, member_ids, resource_types)
-
+        return dbaccess.find_usage(start, end, invoice, res_owner_refs, resource_ids, member_ids, resource_types, fields, hashrows=hashrows)
+     
 usage_collection = UsageCollection()
 usage_resource = UsageResource()
