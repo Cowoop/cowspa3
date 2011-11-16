@@ -16,7 +16,7 @@ import fe.src.pages.invoicing
 import fe.src.member_pages as memberlib
 import fe.src.pages.bizplace as bizplacepages
 import fe.src.plan_pages as planlib
-import fe.src.pages.resource_pages as resourcelib
+import fe.src.pages.resource as resourcepages
 import commonlib.shared.static as static
 
 option_no_themes = '--nothemes' in sys.argv
@@ -96,8 +96,8 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(bizplacepages.Create, prefix + 'bizplace/new'),
          PageBuilder(bizplacepages.List, prefix + 'bizplaces'),
          PageBuilder(planlib.PlanCreate, prefix + 'tariffs'),
-         PageBuilder(resourcelib.ResourceCreate, prefix + 'resource/new'),
-         PageBuilder(resourcelib.ResourceManage, prefix + 'resources'),
+         PageBuilder(resourcepages.ResourceCreate, prefix + 'resource/new'),
+         PageBuilder(resourcepages.ResourceManage, prefix + 'resources'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
          PageBuilder(memberlib.EditProfile, prefix + 'member/edit'),
          PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),
