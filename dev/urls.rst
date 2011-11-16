@@ -1,6 +1,6 @@
 Scheme
 ======
-/<otype>/#[<id>/]<action>[/<section>]
+/<otype>/#/[<id>/]<action>[/<section>]
 
 Member
 ======
@@ -11,25 +11,29 @@ Member
     (-) Bigger page and slightly complex search/other sections
     (+) Simple/RESTish URLs
 
-- /members/#new [ member.new ]
-- /members/#22 [ member.info(22) ]
-- /members/#22/edit/contact [ member.update(22, ..) ]
-- /members/#me 
+- /members/#/new [ member.new ]
+- /members/#/22 [ member.info(22) ]
+- /members/#/22/edit/contact [ member.update(22, ..) ]
+- /members/#/me 
 
 Location
 ========
 - /bizplaces/ [List all the Locations]
-- /bizplaces/#4 [Show details of Location with ID 4]
-- /bizplaces/#4/edit/
+- /bizplaces/#/4 [Show details of Location with ID 4]
+- /bizplaces/#/4/edit
 - /bizplaces/new
-- /bizplaces/#4/tariffs/
+- /bizplaces/#/4/tariffs
 
 Tariffs
 =======
 - /tariffs/ [ list of tariffs ] # context-specific
-- /tariffs/#24/
-- /tariffs/#24/edit/
+- /tariffs/#/24/
+- /tariffs/#24/edit
 
+Resources
+=========
+- /resources/
+- /resources/#/11/edit
 Other options considered
 ========================
 Scheme used for 0.3
