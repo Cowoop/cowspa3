@@ -200,8 +200,25 @@ legend {
     a { text-decoration: none; border-bottom: 1px dotted; }
 }
 .heading3 { font-size: 120%; }
+.text-xl { font-size: 200%; }
 
 button#new-tariff {float: right; margin-top: 0.5em;}
+
+.list-boxes {
+    padding: 1em;
+    .row {
+        border: 1px solid $main-color;
+        width: 100%;
+        padding: 1em;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    .row-title { 
+        border-bottom: 1px dotted;
+        font-size: 140%;
+        text-decoration: none;
+    }
+}
 
 #tariff_list {
     padding: 1em;
@@ -227,7 +244,6 @@ button#new-tariff {float: right; margin-top: 0.5em;}
         .location-title {
             border-bottom: 1px dotted;
             font-size: 140%;
-            font-weight: bold;
             text-decoration: none;
         }
 
@@ -712,15 +728,6 @@ form.hform {
 #signup-box.ui-widget-content label{color:$other-text-color;}
 .ui-icon { display: inline-block; }
 
-.resource-list {
-    padding: 1em;   
-}
-.resource-box {
-    border: 1px solid $main-color;
-    width: 100%;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
 .resource-hidden {
     display: None;
 }
