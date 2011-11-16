@@ -210,8 +210,10 @@ button#new-tariff {float: right; margin-top: 0.5em;}
         margin: 1em;
         border: 1px solid $main-color;
         .tariff-title {
-            font-size: 110%;
+            border-bottom: 1px dotted;
+            font-size: 140%;
             font-weight: bold;
+            text-decoration: none;
             }
     }
 }
