@@ -217,7 +217,7 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None):
     return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):
-    query = "SELECT invoice.id, member.name, invoice.cost::TEXT, DATE(invoice.created)::TEXT as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
+    query = "SELECT invoice.id, member.name, invoice.cost, DATE(invoice.created) as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit) 
     return invoice_store.query_exec(query, values, hashrows=False)
     

@@ -109,9 +109,6 @@ class MemberResource:
         account = dict(username=user_store.get(member_id, ['username']), password="")
         preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
         memberships = dbaccess.get_member_current_memberships(member_id)
-        for ms in memberships[::-1]:
-            ms['starts'] = ms['starts'].isoformat()
-            ms['ends'] =  ms['ends'].isoformat() if ms['ends'] else ms['ends']
         return dict(profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
     def contact(self, member_id):
