@@ -53,12 +53,12 @@ class ResourceManage(BasePage):
         resource_tmpl.box.first.picture = tf.IMG(Class='resource_list-logo', src="${picture}", id="picture_${id}", onerror="ImageNotAvailable(this);")
         resource_tmpl.box.second = tf.DIV(Class='resource-data_part')
         resource_tmpl.box.second.name = tf.DIV()
-        resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#", Class="edit-link")
+        resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#/${id}/edit", Class="edit-link")
         resource_tmpl.box.second.description = tf.DIV("${short_description}", id="short_description_${id}")
         resource_tmpl.box.third = tf.DIV(Class='resource-filter_part')
         resource_tmpl.box.third.clock = tf.H2("◴", title="Time Based", id="clock_${id}", escape="false")
         
-        resource_edit_form = sphc.more.Form(id='resource_edit_form', classes=['vform'])
+        resource_edit_form = sphc.more.Form(id='resource_edit_form', classes=['hform'])
         resource_edit_form.add_field("Name", tf.INPUT(id="name", type="text"))
         resource_type_list = tf.SELECT(id="type")
         for rtype in static.resource_types:
@@ -67,7 +67,7 @@ class ResourceManage(BasePage):
         time_based = tf.DIV()
         time_based.field = tf.INPUT(id="time_based", type="checkbox")
         time_based.label = tf.C("Time Based")
-        resource_edit_form.add(time_based)
+        resource_edit_form.add_field("", time_based)
         resource_edit_form.add_field("Picture", tf.INPUT(id="picture", type="file"), "Suggested Image Dimensions : 250x250.")
         resource_edit_form.add_field("Short Description", tf.TEXTAREA(id="short_desc"))
         resource_edit_form.add_field("Long Description", tf.TEXTAREA(id="long_desc"))
@@ -78,7 +78,8 @@ class ResourceManage(BasePage):
         resource_states.label2 = tf.C("Host Only")
         resource_states.state3 = tf.INPUT(id="state_repairs", type="checkbox")
         resource_states.label3 = tf.C("Repairs")
-        resource_edit_form.add(resource_states)
+        resource_edit_form.add_field("", resource_states)
+        resource_edit_form.add_buttons(tf.INPUT(type="button", value="Upadate", id='update_resource-btn'), tf.INPUT(type="button", value="Cancel", id='cancel-btn'))
         resource_edit = tf.DIV(id="resource_edit", Class='hidden')
         resource_edit.form = resource_edit_form.build()
         

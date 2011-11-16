@@ -69,7 +69,7 @@ invoicing_opt = [
 
 resources_opt = [
     tf.A("New", href=ctxpath + '/resource/new'),
-    tf.A("Manage", href=ctxpath + '/resource/list')
+    tf.A("Manage", href=ctxpath + '/resources/')
     ]
 
 locations_opt = [
