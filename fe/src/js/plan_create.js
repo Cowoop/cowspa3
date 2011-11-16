@@ -27,7 +27,7 @@ $("#cancel-btn").click(function (){
 $(document).ready(function() {
     var params = {}
     function success(resp) {
-        var markup = "<div class='tariff-box'><div class='tariff-title'>${name}</div> ${description}</div>";
+        var markup = "<div class='tariff-box'><div class='tariff-title'>${name}</div> ${short_description}</div>";
         $.template( "tariffTemplate", markup );
         no_tariffs = resp['result'].length;
         $.tmpl( "tariffTemplate", resp['result'].slice(0,no_tariffs/2)).appendTo( "#tariff_list #left" );

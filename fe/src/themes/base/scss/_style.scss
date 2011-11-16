@@ -201,15 +201,15 @@ legend {
 }
 .heading3 { font-size: 120%; }
 
-button#new-plan {float: right; margin-top: 0.5em;}
+button#new-tariff {float: right; margin-top: 0.5em;}
 
-#plan_list {
+#tariff_list {
     padding: 1em;
-    .plan-box {
+    .tariff-box {
         padding: 0.5em;
         margin: 1em;
         border: 1px solid $main-color;
-        .plan-title {
+        .tariff-title {
             font-size: 110%;
             font-weight: bold;
             }
