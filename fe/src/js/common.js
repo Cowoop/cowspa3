@@ -107,6 +107,7 @@ function success(resp) {
         };
         $('#context-select').change(function() {
             set_context($('#context-select').val());
+            window.location.reload();
         });
     };
 };
