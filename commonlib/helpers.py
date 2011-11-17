@@ -3,6 +3,7 @@ import collections
 import base64, random, hashlib
 import wkhtmltox
 import simplejson
+from flask import current_app
 
 random_key_gen = None
 
@@ -66,4 +67,4 @@ def iso2datetime(iso):
     
 def Jsonify(obj):
     dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
-    return simplejson.dumps(obj, use_decimal=True, default=dthandler)
+    return current_app.response_class(simplejson.dumps(obj, use_decimal=True, default=dthandler), mimetype='application/json')
