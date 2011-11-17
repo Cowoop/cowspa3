@@ -74,6 +74,7 @@ resources_opt = [
 
 locations_opt = [
     tf.A("New", href=ctxpath + '/bizplace/new'),
+    tf.A("Team", href=ctxpath + '/team'),
     tf.A("Tariffs", href=ctxpath + '/tariffs'),
     tf.A("List", href=ctxpath + '/bizplaces')
     ]

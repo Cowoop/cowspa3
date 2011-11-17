@@ -13,6 +13,7 @@ import fe
 import fe.src.pages
 import fe.src.pages as pagelib
 import fe.src.pages.invoicing
+import fe.src.pages.team
 import fe.src.member_pages as memberlib
 import fe.src.pages.bizplace as bizplacepages
 import fe.src.plan_pages as planlib
@@ -103,7 +104,9 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),
          PageBuilder(pagelib.LogoutPage, 'logout'),
          PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoicing/preferences'),
-         PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoicing/history')
+         PageBuilder(fe.src.pages.invoicing.History, prefix +
+             'invoicing/history'),
+         PageBuilder(fe.src.pages.team.List, prefix + 'team')
         ]
 
 def copydirs(srcs, dst, verbose=False, overwrite=True):
