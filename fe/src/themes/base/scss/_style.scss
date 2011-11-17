@@ -180,8 +180,6 @@ legend {
     text-align: right; 
     width: 100%; 
     @include reverse-colors;
-    position: fixed;
-    opacity: 1;
     top: 0; left: 0; right: 0;
     font-size: 0.8em;
 }
@@ -482,8 +480,17 @@ button[disabled], button[disabled]:hover {
 .topbar a {text-decoration: none; color: $other-text-color; padding: 1em;}
 .topbar .logo {float: left; display: inline; color: $other-text-color;}
 
-.bottombar {text-align: center; width: 100%; background: $main-color; color: $other-text-color; position: fixed; bottom: 0; left: 0; right: 0; -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px; -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;}
-.bottombar a {text-decoration: none; color: $other-text-color; padding: 1em;}
+.bottombar {
+    text-align: center;
+    width: 100%;
+    background: $main-color;
+    color: $other-text-color;
+    bottom: 0; left: 0; right: 0;
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;
+    a {text-decoration: none; color: $other-text-color; padding: 1em;}
+}
 
 .inverse-box {
     padding: 2em;

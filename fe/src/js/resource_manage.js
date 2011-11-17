@@ -32,7 +32,8 @@ jsonrpc('resource.list', {'owner':current_ctx}, success, error);
 function setup_routing () {
     var routes = {
         '/:id': {
-            '/edit' : resource_editing,
+            '/edit/profile' : resource_editing,
+            '/edit/pricing' : load_pricing,
             on: act_on_route
         },
     };
