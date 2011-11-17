@@ -52,7 +52,7 @@ class ResourceManage(BasePage):
         resource_tmpl.box = tf.DIV(Class='row resource-hidden filtered_resource-visible typed_resource-hidden', id="resource_${id}")
         resource_tmpl.box.second = tf.DIV(Class='resource-data_part')
         resource_tmpl.box.second.name = tf.DIV()
-        resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#/${id}/edit", Class="row-title")
+        resource_tmpl.box.second.name.link = tf.A("${name}", id="edit_${id}", href="#/${id}/edit/profile", Class="row-title")
         resource_tmpl.box.second.description = tf.DIV("${short_description}", id="short_description_${id}")
         resource_tmpl.box.third = tf.DIV(Class='resource-filter_part')
         resource_tmpl.box.third.clock = tf.C("◴", title="Time Based", id="clock_${id}", Class="text-xl", escape="false")
@@ -79,14 +79,23 @@ class ResourceManage(BasePage):
         resource_states.label3 = tf.C("Repairs")
         resource_edit_form.add_field("", resource_states)
         resource_edit_form.add_buttons(tf.INPUT(type="button", value="Update", id='update_resource-btn'), tf.INPUT(type="button", value="Cancel", id='cancel-btn'))
-        resource_edit = tf.DIV(id="resource_edit", Class='hidden')
-        resource_edit.form = resource_edit_form.build()
+        #resource_edit = tf.DIV(id="resource_edit")
+        #resource_edit.form = resource_edit_form.build()
+
+        # Tabs
+        tab_container = tf.DIV(id="resource_tabs", Class="hidden")
+        tab_container.tabs = tf.UL([tf.LI(tf.A("Profile", href="#resource_profile")), tf.LI(tf.A("Pricing", href="#resource_pricing"))])
+        tab_container.profile = tf.DIV(id="resource_profile")
+        tab_container.profile.content = resource_edit_form.build()
+        tab_container.pricing = tf.DIV(id="resource_pricing")
+
+        tab_container.pricing.content = tf.C("123")
 
         container.types = types
         container.filters = filters
         container.resource_tmpl = resource_tmpl
         container.resource_list = resource_list
-        container.resource_edit = resource_edit
+        container.resource_tabs = tab_container
 
         container.script = sphc.more.script_fromfile("fe/src/js/resource_manage.js")
         return container

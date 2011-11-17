@@ -8,6 +8,10 @@ var image_size_limit = 256000;//256kb
 var res_id = null;
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+$("#resource_tabs").tabs({
+    collapsible:false
+});
+
 //****************************List Resource*************************************
 function ImageNotAvailable(source){
     $("#"+source.id).hide();
@@ -40,9 +44,9 @@ function setup_routing () {
     Router(routes).configure({ recurse: 'forward' }).init();
 };
 function act_on_route(id) {
+    $('#resource_tabs').show();
     res_id = id;
 };
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Routing****************************************
 //***************************Upload Resource Picture****************************
 $('#picture').change(function handleFileSelect(evt) {
     var files = evt.target.files;
@@ -175,7 +179,6 @@ $("#resource_edit_form #update_resource-btn").click(function(){
             $("#resource_"+res_id).addClass("resource-hidden");
             $("#resource_"+res_id).removeClass("resource-visible");
         }
-        $("#resource_edit").hide();
         $("#resource_list").show();
         $("#resource_filters").show();
         $("#resource_types").show();
@@ -199,12 +202,12 @@ $("#resource_edit_form #update_resource-btn").click(function(){
     jsonrpc('resource.update', params, success, error); 
 });
 $("#resource_edit_form #cancel-btn").click(function(){
-    $("#resource_edit").hide();
+    $("#resource_tabs").hide();
     $("#resource_list").show();
     $("#resource_filters").show();
     $("#resource_types").show();
-    history.pushState("", document.title, window.location.pathname); //To remove hash from url
 });
+
 function resource_editing() {
     var resource = resource_list[res_id];
     var name = resource.name;
@@ -220,6 +223,10 @@ function resource_editing() {
     $("#resource_list").hide();
     $("#resource_filters").hide();
     $("#resource_types").hide();
-    $("#resource_edit").show();
+    $("#resource_tabs").tabs('select', 0);
+};
+
+function load_pricing() {
+    $("#resource_tabs").tabs('select', 1);
 };
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Edit Resourcexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
