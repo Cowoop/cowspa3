@@ -37,7 +37,7 @@ $total-cols: 14;
 html { 
     margin: 0; padding: 0;
     background: $page-background;
-    background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);
+    // background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);
 }
 
 // body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 1.8em; 
@@ -179,9 +179,12 @@ legend {
 .topbar {
     text-align: right; 
     width: 100%; 
-    @include reverse-colors;
+    // @include reverse-colors;
     top: 0; left: 0; right: 0;
     font-size: 0.8em;
+    overflow: hidden; // stops generating browser horizontal scrollbar when it's really not required
+    a {text-decoration: none; padding: 1em;}
+    .logo {float: left; display: inline;}
 }
 .container {
     @include container;
@@ -477,8 +480,6 @@ button[disabled], button[disabled]:hover {
     background: lighten($main-color, 20%);
     border: 1px solid lighten($page-background, 20%);
 }
-.topbar a {text-decoration: none; color: $other-text-color; padding: 1em;}
-.topbar .logo {float: left; display: inline; color: $other-text-color;}
 
 .bottombar {
     text-align: center;
@@ -486,6 +487,7 @@ button[disabled], button[disabled]:hover {
     background: $main-color;
     color: $other-text-color;
     bottom: 0; left: 0; right: 0;
+    position: fixed; // else bottombar jumps up on less content
     -webkit-border-top-left-radius: 8px;
     -webkit-border-top-right-radius: 8px;
     -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;
@@ -730,10 +732,6 @@ form.hform {
 .status-success:before { font-size: 120%; content: "☑ ";}
 .status-fail { color: $imp-color; }
 .invoice-logo { height: 10em; width: 10em;}
-#ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
-#signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
-#signup-box.ui-widget-content label{color:$other-text-color;}
-.ui-icon { display: inline-block; }
 
 .resource-hidden {
     display: None;
@@ -782,3 +780,10 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 .light {
     color: lighten($main-color, 20%);
 }
+
+// Hacks goes here
+#ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
+#signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
+#signup-box.ui-widget-content label{color:$other-text-color;}
+.ui-icon { display: inline-block; }
+.ui-state-default, .ui-widget-header { background: none; } // removes background images behind jqui tabs
