@@ -142,6 +142,22 @@ function to_formatted_date(date){
     var fdate = new Date(date);
     return $.datepicker.formatDate('M dd, yy', fdate);
 }
+function to_formatted_datetime(date){
+    var fdate = new Date(date);
+    var hh = fdate.getHours();
+    var time=" am";
+    if(hh>=12){
+        time = " pm";
+        hh -= 12;
+    }
+    hh = (hh<10?"0":"") + hh; 
+    var mm = fdate.getMinutes();
+    mm = (mm<10?"0":"") + mm;
+    //var ss = fdate.getSeconds();
+    //ss = (ss<10?"0":"") + ss;
+    time = hh + ":" +  mm + time
+    return $.datepicker.formatDate('M dd, yy', fdate) + " " + time;
+}
 //*******************************************************************************************************
 $(document).ready(function() {
     $("#profile_link").text(member_name);
