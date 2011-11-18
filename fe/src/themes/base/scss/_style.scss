@@ -179,12 +179,12 @@ legend {
 .topbar {
     text-align: right; 
     width: 100%; 
-    // @include reverse-colors;
+    @include reverse-colors;
     top: 0; left: 0; right: 0;
     font-size: 0.8em;
     overflow: hidden; // stops generating browser horizontal scrollbar when it's really not required
-    a {text-decoration: none; padding: 1em;}
-    .logo {float: left; display: inline;}
+    a {text-decoration: none; padding: 1em; color: $other-text-color;}
+    .logo {float: left; display: inline; color: $other-text-color;}
 }
 .container {
     @include container;
@@ -202,6 +202,35 @@ legend {
 }
 .heading3 { font-size: 120%; }
 .text-xl { font-size: 200%; }
+
+.tabs {
+    border-bottom: 1px solid $main-color;
+    width: 100%;
+    height: 2.5em;
+    margin: 0;
+    padding: 0;
+}
+
+.tab {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.5em;
+    margin: 0;
+}
+
+.tab-selected {
+    border: 1px solid $main-color;
+    border-bottom: 0;
+    background: $page-background;
+    height: 2.5em;
+}
+
+.tab-content {
+    border: 1px solid $main-color;
+    border-top: 0;
+}
+
+
 
 button#new-tariff {float: right; margin-top: 0.5em;}
 
