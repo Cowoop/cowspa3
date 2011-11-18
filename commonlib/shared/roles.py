@@ -65,3 +65,8 @@ director.permissions = [
 
 all_roles = dict((v.name, v) for v in globals().values() if isinstance(v, Role))
 all_permissions = dict((v.name, v) for v in globals().values() if isinstance(v, Permission))
+
+#TODO : Add additional roles like accountant, event manager when they are
+#       defined above
+team_roles =  [host, director]
+

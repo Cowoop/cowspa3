@@ -9,24 +9,10 @@ def get_team_form():
 
     form.add_field('Name', tf.INPUT(type='text', id='member_name',
         name='member_name'))
-    role_select = tf.SELECT(id='role', name='role')
-    #role_select.options = fe.src.common.role_options
-    form.add_field('Role', role_select)
+    roles = tf.DIV(fe.src.common.team_options, id='roles')
+    form.add_field('Role', roles)
 
     return form
-
-#class Create(BasePage):
-    #current_nav = 'Team'
-    #title = 'New Team Member'
-
-    #def content(self):
-        #container = tf.DIV()
-
-        #form = get_team_form()
-        #form.add_buttons(tf.BUTTON("Add", id='save-btn', type="submit"))
-        #container.form = form.build()
-        #container.script = sphc.more.script_fromfile("fe/src/js/team_create.js")
-        #return container
 
 class List(BasePage):
     current_nav = 'Team'

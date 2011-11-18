@@ -261,7 +261,7 @@ class Invoice(PGStore):
     id SERIAL NOT NULL UNIQUE,
     number INTEGER UNIQUE,
     member INTEGER,
-    issuer TEXT,
+    issuer INTEGER,
     usages INTEGER[],
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     sent TIMESTAMP WITHOUT TIME ZONE,
