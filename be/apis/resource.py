@@ -48,7 +48,7 @@ class ResourceResource:
         """
         returns dict containing essential information of specified business
         """
-        info_attributes = ['name', 'owner', 'short_description']
+        info_attributes = ['name', 'owner', 'short_description', 'state', 'id']
         info = resource_store.get(res_id, info_attributes)
         # TODO change owner ref to name
         info['owner_id'] = info['owner']
@@ -103,7 +103,6 @@ class ResourceResource:
         for relation, other_res_id in relations:
             d[relation].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
-
 
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()

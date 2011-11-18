@@ -230,7 +230,7 @@ legend {
     border-top: 0;
 }
 
-
+.cell { display: inline-block; margin: 0.3em; }
 
 button#new-tariff {float: right; margin-top: 0.5em;}
 
@@ -809,6 +809,8 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 .light {
     color: lighten($main-color, 20%);
 }
+
+#current-prices {padding: 0.3em;}
 
 // Hacks goes here
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack

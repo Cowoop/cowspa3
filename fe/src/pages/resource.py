@@ -83,18 +83,22 @@ class ResourceManage(BasePage):
         #resource_edit.form = resource_edit_form.build()
 
         # Tabs
-        tab_container = tf.DIV(id="resource_tabs", Class="hidden")
-        tab_container.tabs = tf.UL([tf.LI(tf.A("Profile", href="#resource_profile")), tf.LI(tf.A("Pricing", href="#resource_pricing"))])
-        tab_container.profile = tf.DIV(id="resource_profile")
-        tab_container.profile.content = resource_edit_form.build()
-        tab_container.pricing = tf.DIV(id="resource_pricing")
+        tab_container = tf.DIV(Class="tab-container hidden")
+        tab_container.tabs = tf.DIV(id="tabs", Class="tabs")
+        tab_container.tabs.items = [tf.A(tf.DIV("Profile"), href="#/ID/edit/profile", id="res-profile-tab", Class="tab"),
+            tf.A(tf.DIV("Pricing"), href="#/ID/edit/pricing", id="res-pricing-tab", Class="tab")]
+        tab_container.profile = tf.DIV(resource_edit_form.build(), id="res-profile-content", Class="tab-content")
+        tab_container.pricing = tf.DIV(id="res-pricing-content", Class="tab-content")
 
-        tab_container.pricing.content = tf.C("123")
+        tab_container.pricing.price_tmpl = sphc.more.jq_tmpl("price-tmpl")
+        tab_container.pricing.price_tmpl.column = tf.DIV([tf.DIV("${tariff_name}", Class="text-small"), tf.DIV("${amount}", Class="text-xl")], Class="cell")
+        tab_container.pricing.current = tf.DIV(id="current-prices")
 
-        container.types = types
-        container.filters = filters
-        container.resource_tmpl = resource_tmpl
-        container.resource_list = resource_list
+        container.list_container = tf.DIV(id="list-container", Class="hidden")
+        container.list_container.types = types
+        container.list_container.filters = filters
+        container.list_container.resource_tmpl = resource_tmpl
+        container.list_container.resource_list = resource_list
         container.resource_tabs = tab_container
 
         container.script = sphc.more.script_fromfile("fe/src/js/resource_manage.js")

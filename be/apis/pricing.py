@@ -32,11 +32,13 @@ def list(tariff_id, for_date):
     """
     raise NotImplemented
 
-def list_for_resource(resource_id, for_date):
+def by_resource(resource_id, for_date=None):
     """
     returns list of pricings for specified resource
     """
-    raise NotImplemented
+    for_date = for_date or datetime.datetime.now()
+    return dbaccess.get_resource_pricings(resource_id, for_date)
+
 
 def get(member_id, resource_id, usage_time=None):
     # TODO: if resource owner is not bizplace then?
@@ -57,7 +59,7 @@ def member_tariff(member_id, bizplace_id, usage_time=None):
 pricings = applib.Collection()
 pricings.new = new
 pricings.get = get
-pricings.list = list_for_resource
+pricings.by_resource = by_resource
 
 def info(pricing_id):
     return pricing_store.get(pricing_id)
