@@ -72,6 +72,7 @@ function on_list_resources(resp) {
     for(i in result) {
         on_resource_data(result[i]);
     };
+    view_resource_list();
 };
 
 if (window.location.hash == '') {
