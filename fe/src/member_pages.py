@@ -312,6 +312,24 @@ class EditProfile(BasePage):
         
         # Usages
         usages = tf.DIV(id="usages")
+        add_usage = tf.FIELDSET()
+        add_usage.legend = tf.LEGEND("Add Usage")
+        add_usage_form = sphc.more.Form(id='add-usage-form', action='#', Class='profile-edit-form', classes=['hform'])
+        add_usage_form.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', placeholder="Resource name").set_required())
+        add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
+        add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
+        add_usage_form.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
+        add_usage_form.add_field("Cost", tf.INPUT(name='cost', id='cost'))
+        add_usage_form.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"))
+        add_usage.form = add_usage_form.build()
+        usages.add_usage = add_usage
+        usages.resource_select_tmpl = sphc.more.jq_tmpl("resource-tmpl")
+        usages.resource_select_tmpl.option = tf.OPTION("${name}", id="resource_${id}", value="${id}")
+        
+        uninvoiced = tf.FIELDSET()
+        uninvoiced.legend = tf.LEGEND("Uninvoiced Usages")
+        uninvoiced.table = tf.TABLE(id="usage_table")
+        usages.uninvoiced = uninvoiced
         
         #Invoices
         invoices = tf.DIV(id="invoices")

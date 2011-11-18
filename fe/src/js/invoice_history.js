@@ -11,7 +11,7 @@ function success(response) {
             { "sTitle": "DATE",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
-                    return to_fomatted_date(sReturn);
+                    return to_formatted_date(sReturn);
                     }   
             },
             { "sTitle": "Link",

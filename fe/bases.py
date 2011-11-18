@@ -43,9 +43,6 @@ class CSAnonPage(CSPage):
 members_opt = [
     #tf.INPUT(type="search", id= 'search', placeholder='Search..'),
     tf.A("New", href=ctxpath + '/member/new'),
-    tf.A("Manage Profile", href=ctxpath + '/member/edit'),
-    tf.A("Memberships", href=ctxpath + '/member/memberships'),
-    tf.A("Announce", href='#' + ctxpath + '/member/announce'),
     tf.A("Export", href='#' + ctxpath + "/member/export")]
 
 booking_opt = [

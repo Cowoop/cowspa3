@@ -21,6 +21,11 @@ function on_member_profile(resp) {
     $('input[name="username"]').val(thismember.account.username);
     $('select[name="theme"]').val(thismember.preferences.theme);
     $('select[name="language"]').val(thismember.preferences.language);
+    for(i in thismember.memberships){
+        thismember.memberships[i].starts = to_formatted_date(thismember.memberships[i].starts);
+        thismember.memberships[i].ends = thismember.memberships[i].ends?to_formatted_date(thismember.memberships[i].ends):"-";
+    }
+    $('#tariff-row').tmpl(thismember.memberships).appendTo('#tariff-info');
     var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme + '/member/edit/#/';
     $('#st-about').attr('href', base_url + thismember_id + '/about');
     $('#st-contact').attr('href', base_url + thismember_id + '/contact');
@@ -36,6 +41,7 @@ function act_on_route(id) {
         jsonrpc('member.profile', params, on_member_profile, error);
         get_billing_preferences();
         get_billing_pref_details();
+        get_uninvoiced_usages();
     };
 };
 
@@ -74,6 +80,7 @@ function on_result_click (data) {
     select_member_box.hide();
     get_billing_preferences();
     get_billing_pref_details();
+    get_uninvoiced_usages()
 }; 
 
 function autocomplete() {
@@ -299,7 +306,7 @@ jsonrpc('resource.list', params1, success1, error1);
 
 //**************************Tariff History**************************************
 $('#load-tariff-history').click(function(){
-   var params = {}
+    var params = {}
     function success2(response) {
         for(i in response.result){
             response.result[i].starts = to_formatted_date(response.result[i].starts);
@@ -378,8 +385,107 @@ function bind_cancel_and_change_tariff() {
                     $("#Change_Tariff-msg").html("");
                 }
             } 
-        });
+        });d
     });
 };   
 //***********************End Cancel/Change Tariff*******************************
+
+//****************************Usage Management********************************** 
+//-----------------------------Get Resources------------------------------------
+function on_get_resources_success(res) {
+    $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_select');
+    var custom_resource = [{'id':0, 'name':'Custom'}];
+    $('#resource-tmpl').tmpl(custom_resource).appendTo('#resource_select');
+    $("#resource_name").val($("#resource_select option:first").text());
+};
+function on_get_resources_error(){};
+jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
+//--------------------------------Add Usage-------------------------------------
+$("#resource_select").change(function(){
+    $("#resource_name").val($("#resource_select option:selected").text());
+});
+$('#add-usage-form #start_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm tt',
+});
+$('#add-usage-form #end_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm tt',
+});
+$("#calculate_cost-btn").click(function(){
+    params = {
+        'resource_id' : $("#resource_select").val(),
+        'quantity' : $("#quantity").val(),
+        'member_id' : thismember_id,
+        'starts' : to_iso_datetime($("#start_time").val()),
+        'ends' : to_iso_datetime($("#end_time").val())
+    };
+    function on_calculate_cost_success(resp){
+       $("#cost").val(resp['result']);
+       $("#submit-usage").removeAttr("disabled"); 
+    };
+    function on_calculate_cost_error(){
+        action_status.text("Cost Calculation fail.").attr('class', 'status-fail');
+    };
+    jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+});
+$('#submit-usage').click(function(){
+    var action_status = $('#add-usage-form .action-status');
+    params = {
+        'resource_id' : $("#resource_select").val(),
+        'resource_name' : $("#resource_name").val(),
+        'quantity' : $("#quantity").val(),
+        'cost' : $("#cost").val(),
+        'member' : thismember_id,
+        'start_time' : to_iso_datetime($("#start_time").val()),
+        'end_time' : to_iso_datetime($("#end_time").val())
+    };
+    function on_add_usage_success(resp){
+        action_status.text("Add usage is successful.").attr('class', 'status-success');
+        $("#resource_select").show();
+        $("#resource_name").hide();
+        $("#submit-usage").attr("disabled", true);
+        get_uninvoiced_usages();
+    };
+    function on_add_usage_error(){
+        action_status.text("Add usage fail.").attr('class', 'status-fail');
+    };
+    jsonrpc('usage.new', params, on_add_usage_success, on_add_usage_error);
+});
+//-----------------------------Uninvoiced Usages--------------------------------
+function get_uninvoiced_usages(){
+    function success(response){
+        $('#usage_table').dataTable({
+            "aaData": response['result'],
+            "bJQueryUI": true,
+            "bAutoWidth": false,
+            "bDestroy": true,
+            "sPaginationType": "full_numbers",
+            "aoColumns": [
+                { "sTitle": "RESOURCE NAME", "sWidth":"20%" },
+                { "sTitle": "START TIME", "sWidth":"26%",
+                    "fnRender": function(obj) {
+                        var sReturn = obj.aData[obj.iDataColumn];
+                        return to_formatted_datetime(sReturn);
+                        }
+                },
+                { "sTitle": "END TIME", "sWidth":"26%",
+                    "fnRender": function(obj) {
+                        var sReturn = obj.aData[obj.iDataColumn];
+                        return to_formatted_datetime(sReturn);
+                        }
+                },
+                { "sTitle": "QUANTITY", "sWidth":"14%"},
+                { "sTitle": "Cost",  "sWidth":"14%" },
+            ]
+        });
+    };
+    function error(){};
+    var params = { 'member_ids' : [parseInt(thismember_id)], 'hashrows':false};
+    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost'];
+    jsonrpc('usage.find', params, success, error);
+};
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Usage Managementxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
