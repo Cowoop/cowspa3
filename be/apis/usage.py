@@ -1,15 +1,17 @@
 import datetime
 import be.repository.access as dbaccess
+import be.apis.pricing as pricinglib
 
 usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 
-    def new(self, resource_name, rate, quantity, calculated_cost, member, start_time, cost=None, tax_dict={}, invoice=None, resource_id=None, end_time=None):
-        if not cost: cost = calculated_cost
+    def new(self, resource_id, resource_name, quantity, cost, member, start_time, end_time=None, tax_dict={}, invoice=None):
+    
         created = datetime.datetime.now()
+        calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time))
         if not end_time: end_time = start_time
-        data = dict(resource_id=resource_id, resource_name=resource_name, rate=rate, quantity=quantity, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
+        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
         usage_id = usage_store.add(**data)
         return usage_id
 
