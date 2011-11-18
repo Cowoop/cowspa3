@@ -78,7 +78,11 @@ class InvoiceCollection:
 
     def list(self, issuer, limit=100):
         data = dict(issuer=issuer, limit=limit)
-        return dbaccess.list_invoices(**data) 
+        return dbaccess.list_invoices(**data)
+    
+    def by_member(self, issuer, member):
+        crit = dict(issuer=issuer, member=member)
+        return invoice_store.get_by(crit, fields=['id', 'cost', 'created', 'id'])
 
 class InvoiceResource:
 
