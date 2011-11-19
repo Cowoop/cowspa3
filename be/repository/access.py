@@ -281,6 +281,10 @@ def remove_user_roles(user_id, roles, context):
     clause = 'user_id = %(user_id)s AND context = %(context)s AND role IN %(roles)s'
     userrole_store.remove_by_clause(clause, dict(user_id=user_id, roles=tuple(roles), context=context))
 
+def remove_all_roles_for_user(user_id, context):
+    clause = 'user_id = %(user_id)s AND context = %(context)s'
+    userrole_store.remove_by_clause(clause, dict(user_id=user_id, context=context))
+
 def remove_user_permissions(user_id, permissions, context):
     clause = 'user_id = %(user_id)s AND context = %(context)s AND permission IN %(permissions)s'
     userpermission_store.remove_by_clause(clause, dict(user_id=user_id, permissions=tuple(permissions), context=context))

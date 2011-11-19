@@ -28,7 +28,7 @@ class List(BasePage):
         team_tmpl = sphc.more.jq_tmpl('team_tmpl')
         team_tmpl.box = tf.DIV(Class='team-box')
         team_tmpl.box.label = tf.LABEL("${user}", Class='team-title')
-        team_tmpl.box.link = tf.A("X", id='delete-link_${user_id}', href='',
+        team_tmpl.box.link = tf.A("X", id='delete_link-${user_id}', href='',
                 Class='remove_staff')
 
         teams.team_tmpl = team_tmpl

@@ -8,9 +8,6 @@ $('#new-team').click(function() {
     $('#team_form').show();
 });
 
-$('.remove_staff').click(function() {
-    return false;
-});
 
 function search_members_autocomplete() {
     $('input#member_name').autoSuggest("/search/members", {
@@ -31,6 +28,16 @@ function search_members_autocomplete() {
 function load_team() {
     function success(resp) {
         $('#team_tmpl').tmpl(resp['result']).appendTo('#team_list');
+        $(".remove_staff").click(function() {
+            //TODO : Implement jQuery modal dialog box
+            //Reference : stackoverflow.com/questions/887029/how-to-implement-confirmation-dialog-in-jquery-ui-dialog
+            if (confirm("Remove user from Team?")) {
+                user_id_to_remove = this.id.split('-')[1];
+                remove_from_team();
+            } else {
+                return false;
+            }
+        });
     };
 
     function error() {
@@ -81,8 +88,28 @@ function add_roles() {
     jsonrpc('roles.add', params, success, error);
 };
 
+function remove_from_team() {
+    var params = {};
+
+    params['context'] = current_ctx
+    params['user_id'] = user_id_to_remove
+
+    function success() {
+        action_status.text("User successfully removed from team").attr('class', 'status-success');
+        setTimeout(function(){
+            window.location.reload()
+        }, 1000);
+    };
+    function error() {
+        action_status.text("Error removing user from team").attr('class', 'status-fail');
+    };
+    jsonrpc('roles.remove', params, success, error);
+};
+
+
 theform.submit( function () {
     $(this).checkValidity();
     add_roles();
     return false;
 });
+

@@ -53,6 +53,9 @@ def new_roles(user_id, roles, context):
     if perms_to_revoke:
         dbaccess.remove_user_permissions(user_id, perms_to_revoke, context)
 
+def remove_roles(user_id, context):
+    dbaccess.remove_all_roles_for_user(user_id, context)
+
 def get_roles_in_context(user_id, context):
     """
     returns [{id: 1, label: '<name>', roles: ['<role1>', '<role2>']}, ...]
