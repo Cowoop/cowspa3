@@ -27,10 +27,9 @@ class List(BasePage):
         teams = tf.DIV(id="team_list")
         team_tmpl = sphc.more.jq_tmpl('team_tmpl')
         team_tmpl.box = tf.DIV(Class='team-box')
-        team_tmpl.box.link = tf.A("${name}", id='edit-link_${id}', 
-                href='#/${id}/edit', Class='team-title')
-        team_tmpl.box.short_description = tf.DIV("${short_description}", 
-                Class='team-description')
+        team_tmpl.box.label = tf.LABEL("${user}", Class='team-title')
+        team_tmpl.box.link = tf.A("X", id='delete-link_${user_id}', href='',
+                Class='remove_staff')
 
         teams.team_tmpl = team_tmpl
 

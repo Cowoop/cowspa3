@@ -1,13 +1,16 @@
 var new_member_id = null;
 
 $('#team_form').hide();
+$('#team_list').show();
 
 $('#new-team').click(function() {
+    $('#team_list').hide();
     $('#team_form').show();
 });
 
-//$('#save-btn').click(function() {
-//});
+$('.remove_staff').click(function() {
+    return false;
+});
 
 function search_members_autocomplete() {
     $('input#member_name').autoSuggest("/search/members", {
@@ -25,8 +28,26 @@ function search_members_autocomplete() {
     });
 };
 
+function load_team() {
+    function success(resp) {
+        $('#team_tmpl').tmpl(resp['result']).appendTo('#team_list');
+    };
+
+    function error() {
+        alert('Error getting team information');
+    };
+
+    var params = {};
+    params = {'context': current_ctx}
+    if(params['context']) {
+        jsonrpc('roles.team', params, success, error); 
+    };
+
+}
+
 $(document).ready(function() {
     search_members_autocomplete();
+    load_team();
 });
 
 
@@ -51,7 +72,7 @@ function add_roles() {
     function success() {
         action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
         setTimeout(function(){
-            $('#team_form').hide();
+            window.location.reload()
         }, 1000);
     };
     function error() {

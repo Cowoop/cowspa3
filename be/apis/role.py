@@ -17,6 +17,7 @@ import commonlib.shared.roles as roledefs
 bizplace_store = dbaccess.stores.bizplace_store
 userrole_store = dbaccess.stores.userrole_store
 userpermission_store = dbaccess.stores.userpermission_store
+member_store = dbaccess.stores.member_store
 
 def role_permissions(roles):
     all_perms = []
@@ -71,3 +72,13 @@ def get_roles(user_id, role_filter=[]):
 
 def get_permissions(user_id):
     return dbaccess.userpermission_store.get_by(dict(user_id=user_id), ['context', 'permission'], hashrows=False)
+
+def get_team_in_context(context):
+    """
+    returns all entries having role defined for that context
+    """
+    result = dbaccess.userrole_store.get_by(crit=dict(context=context))
+    for rec in result:
+        rec['user'] = member_store.get(rec['user_id'], 'name')
+    return result
+
