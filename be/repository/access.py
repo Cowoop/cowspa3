@@ -247,7 +247,7 @@ def search_member(query_parts, options, limit):
 def get_resource_pricing(plan_id, resource_id, usage_time):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
-    return pricing_store.get_by_clause(clause, values, fields=['id', 'plan' 'starts', 'ends', 'amount'])
+    return pricing_store.get_by_clause(clause, values, fields=['id', 'plan', 'starts', 'ends', 'amount'])
 
 def get_resource_pricings(resource_id, usage_time):
     # Along with tariff_id we also need tariff_name so we have a join (clause_resource)
