@@ -80,8 +80,20 @@ def get_team_in_context(context):
     """
     returns all entries having role defined for that context
     """
-    result = dbaccess.userrole_store.get_by(crit=dict(context=context))
-    for rec in result:
-        rec['user'] = member_store.get(rec['user_id'], 'name')
+    users = set()
+    res = dbaccess.userrole_store.get_by(dict(context=context),['user_id'])
+    #To ensure that user with multiple role is shown only once
+    #TODO : Is there a better way ?
+    for rec in res:
+        users.add(rec['user_id'])
+
+    result = []
+    for usrid in users:
+        usr_dict = {}
+        usr_dict['user'] = member_store.get(usrid, 'name')
+        usr_dict['user_id'] = usrid
+        usr_dict['roles'] = get_roles_in_context(usrid,context)
+        result.append(usr_dict)
+
     return result
 

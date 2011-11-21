@@ -277,9 +277,24 @@ button#new-tariff {float: right; margin-top: 0.5em;}
             font-weight: bold;
             text-decoration: none;
             }
+
+        .team_name_part {
+            width: 20%;
+            display: inline-block;
+        }
+
+        .team_roles_part {
+            width: 60%;
+            display: inline-block;
+        }
+
+        .team_delete_btn_part {
+            width: 20%;
+            display: inline-block;
+            text-align: center;
+        }
         .remove_staff {
-            margin: 5em;
-            padding: 0.5em;
+            margin: 1em
         }
     }
 }

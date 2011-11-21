@@ -25,9 +25,23 @@ function search_members_autocomplete() {
     });
 };
 
+// We need to initiate appropriate states for the checkboxes
+// Based on the roles
+function init_checkboxes(result) {
+    for (i in result) {
+        var usrid = result[i]['user_id'];
+        $('#chkboxes-'+usrid+' [name="roles"]').each(function() {
+            if (result[i]['roles'].indexOf($(this).val()) != -1) {
+                $(this).attr('checked', true);
+            }
+        });
+    }
+}
+
 function load_team() {
     function success(resp) {
         $('#team_tmpl').tmpl(resp['result']).appendTo('#team_list');
+        init_checkboxes(resp['result']);
         $(".remove_staff").click(function() {
             //TODO : Implement jQuery modal dialog box
             //Reference : stackoverflow.com/questions/887029/how-to-implement-confirmation-dialog-in-jquery-ui-dialog
@@ -38,6 +52,7 @@ function load_team() {
                 return false;
             }
         });
+        $(".update_staff").click(update_roles);
     };
 
     function error() {
@@ -61,7 +76,6 @@ $(document).ready(function() {
 var theform = $('#team_form');
 
 function add_roles() {
-    //var inputs = theform.serializeArray();
     var action_status = $('#team_form .action-status');
     var roles = [];
     var params = {};
@@ -69,9 +83,6 @@ function add_roles() {
        roles.push($(this).val());
      });
 
-    //for(var i in inputs){
-        //params[inputs[i].name] = inputs[i].value;
-    //}
     params['context'] = current_ctx
     params['user_id'] =  new_member_id
     params['roles'] =  roles
@@ -86,6 +97,36 @@ function add_roles() {
         action_status.text("Error assigning role(s)").attr('class', 'status-fail');
     };
     jsonrpc('roles.add', params, success, error);
+};
+
+function update_roles() {
+    var member_id = this.id.split('-')[1];
+    var action_status = $('#roles-'+member_id+' .action-status');
+    var roles = [];
+    var params = {};
+    $('#roles-'+member_id+' :checked').each(function() {
+       roles.push($(this).val());
+     });
+
+    params['context'] = current_ctx
+    params['user_id'] =  member_id
+    params['roles'] =  roles
+
+    function success() {
+        action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
+        setTimeout(function(){
+            window.location.reload()
+        }, 1000);
+    };
+    function error() {
+        action_status.text("Error assigning role(s)").attr('class', 'status-fail');
+    };
+
+    if(roles.length > 0) {
+        jsonrpc('roles.add', params, success, error);
+    } else {
+        alert('Please select at least one role');
+    }
 };
 
 function remove_from_team() {
