@@ -164,7 +164,8 @@ function load_my_locations() {
     };
 
     var params = {};
-    params = {'user_id': current_userid}
+    // TODO : Update role_filter when additional roles like accountant are added
+    params = {'user_id': current_userid, 'role_filter':['director','host']};
     if(params['user_id']) {
         jsonrpc('roles.list', params, success, error); 
     };

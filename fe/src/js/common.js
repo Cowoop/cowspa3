@@ -114,8 +114,7 @@ function success(resp) {
 
 function error(){ };
 
-// TODO : Verify whether role_filter specified below is required at all
-//        If required, is the list sufficient
+// TODO : Update role_filter when additional roles like accountant are added
 
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
 if(params['user_id']) {
