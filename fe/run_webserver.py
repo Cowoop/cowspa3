@@ -31,9 +31,9 @@ def search(entity):
     data = cowspa.mapper(params)
     cowspa.tr_complete()
     if 'result' in data:
-        return helpers.Jsonify(data['result'])
+        return helpers.jsonify(data['result'])
     else:
-        return helpers.Jsonify(data)
+        return helpers.jsonify(data)
 
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoices(oid, format):
@@ -60,7 +60,7 @@ def api_dispatch():
         if params['method'] == 'login' and 'result' in data:
             auth_token = data['result']
             data['result'] = userlib.get_user_preferences()
-            resp = helpers.Jsonify(data)
+            resp = helpers.jsonify(data)
             resp.set_cookie('authcookie',value=auth_token)
             resp.set_cookie('user_id',value=env.context.user_id)
             resp.set_cookie('roles',value=env.context.roles)
@@ -70,7 +70,7 @@ def api_dispatch():
     except:
         cowspa.tr_abort()
     cowspa.tr_complete()
-    return helpers.Jsonify(data)
+    return helpers.jsonify(data)
 
 app = SharedDataMiddleware(app, {
         '/': static_root,

@@ -59,12 +59,15 @@ def html2pdf(input_file ,output_file):
 def date4human(date):
     return date.strftime("%b %d, %Y")
 
+def datetime4human(date):
+    return date.strftime("%b %d, %Y %I:%M%p")
+
 def iso2date(iso):
     return datetime.datetime.strptime(iso, "%Y-%m-%d").date()
 
 def iso2datetime(iso):
     return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S").date()
 
-def Jsonify(obj):
+def jsonify(obj):
     dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
     return current_app.response_class(simplejson.dumps(obj, use_decimal=True, default=dthandler), mimetype='application/json')
