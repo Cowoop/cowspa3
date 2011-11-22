@@ -34,6 +34,12 @@ Resources
 =========
 - /resources/
 - /resources/#/11/edit
+
+Invoices
+========
+- /invoicing/new/
+- /invoicing/new/#/invoicee/<id>
+
 Other options considered
 ========================
 Scheme used for 0.3

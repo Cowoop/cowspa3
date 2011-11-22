@@ -41,7 +41,7 @@ class InvoiceCollection:
             usages.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
-        cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
+        cost = decimal.Decimal(sum([usagelib.usage_resource.get(usage, 'cost') for usage in usages]))
         data = dict(issuer=issuer, member=member, usages=usages, number=None, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
@@ -83,9 +83,9 @@ class InvoiceCollection:
         data = dict(issuer=issuer, limit=limit)
         return dbaccess.list_invoices(**data)
     
-    def by_member(self, issuer, member):
+    def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
-        return invoice_store.get_by(crit, fields=['id', 'cost', 'created', 'id'])
+        return invoice_store.get_by(crit, fields=['id', 'cost', 'created', 'id'], hashrows=hashrows)
 
 class InvoiceResource:
 

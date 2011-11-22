@@ -524,8 +524,12 @@ function get_invoice_tab_data(){
         //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
     function get_invoice_history_error(){};
-    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id)};
+    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id), 'hashrows' : false};
     jsonrpc('invoice.by_member', params, get_invoice_history_success, get_invoice_history_error);
 };
+$("#new_invoice-btn").click(function(){
+    var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme;
+    window.location = base_url + '/invoicing/new/#/invoicee/' + thismember_id;
+});
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Invoicesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
