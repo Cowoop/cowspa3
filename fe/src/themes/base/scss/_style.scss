@@ -228,6 +228,7 @@ legend {
 .tab-content {
     border: 1px solid $main-color;
     border-top: 0;
+    padding: 1em;
 }
 
 .cell { display: inline-block; margin: 0.3em; }
@@ -598,6 +599,7 @@ button[disabled], button[disabled]:hover {
     border-bottom: 1px solid;
     #content-subtitle { font-size: 50%; }
 }
+
 table.stripped {
     margin: 0 0 0.7em;
     th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
@@ -614,11 +616,16 @@ table.stripped {
     }
 }
 
+table.grid {
+    width: 90%;
+}
+
 .date {font-style: italic;}
 
 .cancel-x {
     color: $imp-color;
     font-size: 110%;
+    text-decoration: dotted;
 }
 
 .right-action {float: right; position: static;}
@@ -845,6 +852,27 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 }
 
 #current-prices {padding: 0.3em;}
+#old-pricing {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#new-pricing, .pricing {
+    width: 90%;
+    margin-top: 1em;
+    span {
+        width: 25%;
+        display: inline-block;
+    }
+    input {
+        width: 80%;
+    }
+}
+
+#tariff-select {
+    width: 80%;
+    font-size: 140%;
+}
 
 // Hacks goes here
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack

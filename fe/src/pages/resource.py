@@ -88,11 +88,33 @@ class ResourceManage(BasePage):
         tab_container.tabs.items = [tf.A(tf.DIV("Profile"), href="#/ID/edit/profile", id="res-profile-tab", Class="tab"),
             tf.A(tf.DIV("Pricing"), href="#/ID/edit/pricing", id="res-pricing-tab", Class="tab")]
         tab_container.profile = tf.DIV(resource_edit_form.build(), id="res-profile-content", Class="tab-content")
-        tab_container.pricing = tf.DIV(id="res-pricing-content", Class="tab-content")
 
-        tab_container.pricing.price_tmpl = sphc.more.jq_tmpl("price-tmpl")
-        tab_container.pricing.price_tmpl.column = tf.DIV([tf.DIV("${tariff_name}", Class="text-small"), tf.DIV("${amount}", Class="text-xl")], Class="cell")
-        tab_container.pricing.current = tf.DIV(id="current-prices")
+        pricing = tf.DIV(id="res-pricing-content", Class="tab-content")
+
+        pricing.price_tmpl = sphc.more.jq_tmpl("price-tmpl")
+        pricing.price_tmpl.col = tf.DIV([tf.DIV("${tariff_name}", Class="text-small"), tf.DIV("${amount}", Class="text-xl")], Class="cell")
+        pricing.current = tf.DIV(id="current-prices")
+        pricing.hr = tf.HR()
+
+        pricing.tariff_option = sphc.more.jq_tmpl("tariff-option-tmpl")
+        pricing.tariff_option.li = tf.OPTION("${tariff_name}", value="${tariff_id}", name="tariff")
+
+        pricing.tariff_dropdown = tf.DIV(tf.SELECT(tf.OPTION("Select tariff", selected="true", disabled="true"), id="tariff-select").set_required())
+        #pricing.tip = tf.DIV(tf.C("Schedule new price"))
+        pricing.pricing_tmpl = sphc.more.jq_tmpl("old-pricing-tmpl")
+        pricing.pricing_tmpl.pricing = tf.DIV(Class="pricing")
+        pricing.pricing_tmpl.pricing.starts = tf.SPAN("${starts}", Class="pricing-date")
+        pricing.pricing_tmpl.pricing.amount = tf.SPAN("${amount}")
+        pricing.pricing_tmpl.pricing.edit = tf.SPAN(tf.A("Edit"))
+        pricing.pricing_tmpl.pricing.cancel = tf.SPAN(tf.A("X", id="pricing_${id}", Class="cancel-x"))
+
+        pricing.new = tf.FORM(id="new-pricing", method="POST", Class="hidden")
+        pricing.new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis'))
+        pricing.new.starts = tf.INPUT(id='new-starts', type="hidden").set_required()
+        pricing.new.amount = tf.SPAN(tf.INPUT(placeholder="New price", type="text", id='new-amount').set_required())
+        pricing.new.action = tf.SPAN(tf.BUTTON("Save", type="submit"))
+
+        pricing.table = tf.DIV(id="old-pricings", Class="grid")
 
         container.list_container = tf.DIV(id="list-container", Class="hidden")
         container.list_container.types = types
@@ -100,6 +122,7 @@ class ResourceManage(BasePage):
         container.list_container.resource_tmpl = resource_tmpl
         container.list_container.resource_list = resource_list
         container.resource_tabs = tab_container
+        container.resource_tabs.pricing = pricing
 
         container.script = sphc.more.script_fromfile("fe/src/js/resource_manage.js")
         return container

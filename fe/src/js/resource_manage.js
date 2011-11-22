@@ -25,6 +25,7 @@ function setup_routing () {
 
 function act_on_route(id) {
     res_id = id;
+    this_resource_id = id;
     view_resource_tabs();
     $('.tab').each( function () {
         var href = $(this).attr('href');
@@ -274,6 +275,16 @@ function on_resource_pricings(resp) {
     this_res_pricing = resp.result;
     $('#price-tmpl').tmpl(this_res_pricing).appendTo('#current-prices');
     $('#res-pricing-content').show();
+    $('#tariff-option-tmpl').tmpl(this_res_pricing).appendTo('#tariff-select')
+};
+
+function on_tariff_pricings(resp) {
+    $('#new-pricing').slideDown();
+    $('#old-pricings').empty();
+    $('#old-pricing-tmpl').tmpl(resp.result).appendTo('#old-pricings');
+    $('.pricing-date').each( function() {
+        $(this).text(to_formatted_date($(this).text()));
+    });
 };
 
 function error(resp) {
@@ -281,13 +292,41 @@ function error(resp) {
 };
 
 function get_pricing(id) {
-    var params = {'resource_id': id};
     if (this_res_pricing == null) {
+        var params = {'resource_id': id};
         jsonrpc('pricings.by_resource', params, on_resource_pricings, error);
     } else {
         $('#res-pricing-content').show();
     };
 };
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Edit Resourcexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+function load_tariff_pricings() {
+    var params = {'resource_id': this_resource_id, 'tariff_id': $('#tariff-select').val()};
+    jsonrpc('pricings.list', params, on_tariff_pricings, error);
+};
+
+$('#tariff-select').change( load_tariff_pricings );
+
+$('#new-starts-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#new-starts',
+    dateFormat: 'M d, yy'
+});
+
+function add_new_pricing() {
+    var params = {'resource_id': this_resource_id, 'tariff_id': $('#tariff-select').val(), 'starts': $('#new-starts').val(), 
+        'amount': $('#new-amount').val()};
+    function error(resp) {
+        alert('error adding new pricings: ' + resp.error.message);
+    };
+    function success () {};
+    jsonrpc("pricings.new", params, load_tariff_pricings, error);
+};
+
+$('#new-pricing').submit(function () {
+    $(this).checkValidity();
+    add_new_pricing();
+    return false;
+});
 
 setup_routing();
