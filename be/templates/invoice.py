@@ -31,15 +31,15 @@ class Template(sphc.more.HTML5Page):
 
         container.top.col1.receiver = tf.DIV(id="receiver")
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
-        container.top.col1.receiver.data.caption = tf.CAPTION(data.member.display_name)
+        container.top.col1.receiver.data.caption = tf.CAPTION(data.member.name)
         container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.invoice.member))])
 
         container.top.col2.invoice = tf.DIV(id="invoice-details")
         container.top.col2.invoice.details = tf.TABLE(Class="defs")
         container.top.col2.invoice.details.row = tf.TR([tf.TD("Number"), tf.TD(str(data.invoice.id))])
-        container.top.col2.invoice.details.date = tf.TR([tf.TD("Date"), tf.TD(data.invoice.created.strftime('%d %b %Y'))])
+        container.top.col2.invoice.details.date = tf.TR([tf.TD("Date"), tf.TD(commonlib.helpers.date4human(data.invoice.created))])
         container.top.col2.invoice.details.period = tf.TR([tf.TD("Period"),
-            tf.TD(data.invoice.start_time.strftime('%d %b %Y')+" to "+data.invoice.end_time.strftime('%d %b %Y'))])
+            tf.TD(commonlib.helpers.date4human(data.invoice.start_date)+" to "+commonlib.helpers.date4human(data.invoice.end_date))])
         if data.invoice.po_number:
             container.top.col2.invoice.details.po_number = tf.TR([tf.TD("P. O. Number"), tf.TD(data.invoice.po_number)])
 
@@ -82,7 +82,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD(str(usage.resource_name))
             usage_row.td = tf.TD(str(usage.rate))
             usage_row.td = tf.TD(str(usage.quantity))
-            usage_row.td = tf.TD(usage.start_time.strftime('%d %b %Y %I:%M%p')+" - "+usage.end_time.strftime('%d %b %Y %I:%M%p'))
+            usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
             usage_row.td = tf.TD(str(usage.calculated_cost))
             usages.row = usage_row
             sr_no += 1
