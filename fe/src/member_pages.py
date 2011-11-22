@@ -333,11 +333,14 @@ class EditProfile(BasePage):
         
         #Invoices
         invoices = tf.DIV(id="invoices")
+        invoice_summary = tf.DIV(id="invoice_summary")
+        invoice_summary.new_invoice = tf.DIV(tf.Button("New Invoice", type="button", id="new_invoice-btn"))
         invoice_history = tf.FIELDSET()
         invoice_history.legend = tf.LEGEND("Invoice History")
         invoice_history.table = tf.TABLE(id="history_table")
         invoice_history.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
         invoice_history.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
+        invoices.invoice_summary = invoice_summary
         invoices.table = invoice_history
         
         # Profile Tabs
