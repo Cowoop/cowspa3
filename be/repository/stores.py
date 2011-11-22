@@ -144,7 +144,7 @@ class BizPlace(PGStore):
     langs TEXT[],
     tz TEXT,
     holidays smallint[],
-    default_plan INTEGER,
+    default_tariff INTEGER,
     default_taxes BYTEA,
     tax_included BOOLEAN DEFAULT True,
     currency TEXT,

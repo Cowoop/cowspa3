@@ -91,6 +91,8 @@ class Taxes(costlib.Rule):
 rules = [InitialCost()]
 
 def calculate_cost(member_id, resource_id, quantity, starts, ends):
+    starts = commonlib.helpers.iso2datetime(starts)
+    ends = commonlib.helpers.iso2datetime(ends)
     usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends)
     resource = resource_store.get(usage.resource_id)
     if resource.time_based:

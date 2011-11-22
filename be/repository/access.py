@@ -182,7 +182,7 @@ def get_member_plan_id(member_id, bizplace_id, date, default=True):
     if plan_ids:
         return plan_ids[0][0]
     elif default:
-        return bizplace_store.get(bizplace_id, fields=['default_plan'], hashrows=False)
+        return bizplace_store.get(bizplace_id, fields=['default_tariff'], hashrows=False)
 
 def get_member_membership(member_id, bizplace_id, date):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'

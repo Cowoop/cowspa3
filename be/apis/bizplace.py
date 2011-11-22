@@ -72,8 +72,8 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
-    get_attributes = ['default_taxes', 'default_plan']
-    set_attributes = ['default_taxes', 'default_plan']
+    get_attributes = ['default_taxes', 'default_tariff']
+    set_attributes = ['default_taxes', 'default_tariff']
 
     def info(self, bizplace_id):
         """
