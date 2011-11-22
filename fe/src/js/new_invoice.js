@@ -2,20 +2,42 @@ var inv_usages = [];
 var inv_id = null;
 var inv_member_id = null;
 var custom_resource = false;
+var checked_map = {'checked':true, 'on':true, undefined:false};
 
+// Routing
+
+function setup_routing () {
+    var routes = {
+        '/invoicee/:id': get_invoicee_name_and_contact,
+    };
+    Router(routes).configure({ recurse: 'forward' }).init();
+};
+setup_routing ();
+function get_invoicee_name_and_contact(id){
+    $('#inv-start_date-vis').val("");
+    $('#inv-end_date-vis').val("");
+    inv_member_id = parseInt(id);
+    var params = {'member_id': inv_member_id};
+    function on_get_contact_success (response) {
+        var data = response['result'];
+        data.id = inv_member_id;
+        $('#invoicee-info').empty();
+        $('#invoicee-info-tmpl').tmpl(data).appendTo('#invoicee-info');
+        $('#invoicee-info').show();
+    };
+    function on_get_contact_error () {};
+    jsonrpc('member.contact', params, on_get_contact_success, on_get_contact_error);
+    params['attrname'] = "name";
+    function on_get_name_success (response) {
+        $("#invoicee-search").val(response['result']);
+    };
+    function on_get_name_error () {};
+    jsonrpc('member.get', params, on_get_name_success, on_get_name_error);
+}
 $('#invoicee-search').autocomplete({
     source: "/search/members",
     select: function(event, ui) {
-        var params = {member_id: ui.item.id};
-        function success (response) {
-            var data = response['result'];
-            data.id = ui.item.id;
-            inv_member_id = data.id;
-            $('#invoicee-info-tmpl').tmpl(data).appendTo('#invoicee-info');
-            $('#invoicee-info').show();
-        };
-        function error () {};
-        jsonrpc('member.contact', params, success, error);
+        window.location.hash = "#/invoicee/" + ui.item.id;
     }
 });
 
@@ -29,10 +51,35 @@ $('#inv-end_date-vis').datepicker( {
     altField: '#inv-end_date',
     dateFormat: 'M d, yy'
 });
-
+$(".inv-dates").change( function(){
+    if($("#inv-start_date").val() != "" && $("#inv-end_date").val() != ""){
+        get_uninvoiced_usages($("#inv-start_date").val(), $("#inv-end_date").val());
+    }
+});
+function get_uninvoiced_usages(start, end){
+    function on_get_uninvoiced_usages_success(response){
+        var usages = response.result;
+        for(i in usages){
+            usages[i].start_time = to_formatted_datetime(usages[i].start_time);
+            usages[i].end_time = to_formatted_datetime(usages[i].end_time);
+        };
+        $('#usages tr:gt(0)').remove();
+        $('#usage-tmpl').tmpl(usages).appendTo('#usages');
+    };
+    function on_get_uninvoiced_usages_error(){};
+    var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end};
+    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost' ,'rate', 'id'];
+    jsonrpc('usage.find', params, on_get_uninvoiced_usages_success, on_get_uninvoiced_usages_error);
+};
+$(".all_usages-checkbox").click(function(){
+    var select_all = checked_map[$(".all_usages-checkbox:checked").val()];
+    $('.usage-checkbox').each(function(index, item){
+        $(this).attr('checked',select_all);
+    });
+});
 // altFormat does not work with timepicker :-(
 // https://github.com/trentrichardson/jQuery-Timepicker-Addon/issues/94
-
+/*
 $('#new-usage-form #start_time').datetimepicker({
     ampm: true,
     dateFormat: 'M d, yy',
@@ -72,6 +119,20 @@ $('#submit-usage').click( function () {
     });
     $('#new-usage-form').dialog('close');
 });
+//****************************Get Resources*************************************
+function on_get_resources_success(res) {
+    $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_select');
+};
+function on_get_resources_error(){};
+jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Resourcesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$("#custom").click(function(){
+    $("#resource_select").hide();
+    $("#resource_name").show();
+    $(this).hide();
+    custom_resource = true;
+});
+*/
 function on_create_invoice(response) {
     inv_id = response.result;
     $('#inv-action-status').text('Invoice creation successful');
@@ -87,6 +148,7 @@ function on_create_invoice_failure() {
 };
 $('#invoice-save').click( function () {
     var new_usages = [];
+    /*
     $.each(inv_usages, function(idx, v) {
         if(v != undefined){
             var o = v;
@@ -97,7 +159,14 @@ $('#invoice-save').click( function () {
             new_usages.push(o)
         }
     });
-    var params = {issuer: current_ctx, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
+    */
+    var usages  = [];
+    $('.usage-checkbox:checked').each(function(index, item){
+        if(checked_map[$(this).val()]){
+            usages.push(parseInt($(this).parent().parent().attr('id').split("-")[1]));
+        };
+    });
+    var params = {issuer: current_ctx, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), usages: usages, new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};
     jsonrpc('invoice.new', params, on_create_invoice, on_create_invoice_failure);
 });
 $('#invoice-view').click(function () {
@@ -118,18 +187,5 @@ $('#invoice-send').click(function () {
     };
     var params = {invoice_id : inv_id};
     jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);
-});
-//****************************Get Resources*************************************
-function on_get_resources_success(res) {
-    $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_select');
-};
-function on_get_resources_error(){};
-jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Resourcesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-$("#custom").click(function(){
-    $("#resource_select").hide();
-    $("#resource_name").show();
-    $(this).hide();
-    custom_resource = true;
 });
 
