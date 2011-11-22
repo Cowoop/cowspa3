@@ -3,6 +3,7 @@ import be.repository.access as dbaccess
 import be.apis.role as rolelib
 import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
+import be.apis.resource as resourcelib
 import commonlib.shared.static as static
 
 bizplace_store = dbaccess.stores.bizplace_store
@@ -25,8 +26,9 @@ class BizplaceCollection:
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-
         invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id))
+        default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id)
+        bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 
         data = dict(name=name, id=bizplace_id)
         activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)

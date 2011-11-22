@@ -33,7 +33,7 @@ def test_find_bizplace_plans():
         planlib.resource_collection.new(**data)
         env.context.pgcursor.connection.commit()
     plans = bizplacelib.bizplace_resource.plans(test_data.bizplace_id)
-    assert len(plans) == 5
+    assert len(plans) >= 5
 
 def test_members():
     members = membershiplib.memberships.list(test_data.plan_id)

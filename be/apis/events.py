@@ -72,13 +72,6 @@ class PasswordChanged(BaseEvent):
     def _msg_tmpl(self):
         return "Password changed for %(name)s by %(actor_name)s."
 
-class ResourceCreated(BaseEvent):
-    name = "resource_created"
-    category = "resource_management"
-    msg_tmpl = "New resource %(name)s created by %(actor_name)s"
-    def _access(self):
-        return dict(member_ids=[self.actor])
-
 class BizplaceCreated(BaseEvent):
     name = "bizplace_created"
     category = "bizplace_management"
@@ -99,7 +92,15 @@ class ResourceCreated(BaseEvent):
     name = "resource_created"
     category = "resource_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New resource (%(type)s) %(name)s created by %(actor_name)s for %(bizplace_name)s."
+        return make_date_element(self.data.created) + " New resource (%(type)s) <a href='./resources/#/%(id)s/edit/profile'>%(name)s</a> created by %(actor_name)s for %(bizplace_name)s."
+    def _access(self):
+        return dict(member_ids = [self.actor], roles=[(self.data.bizplace_id, 'host'), (self.data.bizplace_id, 'director')])
+
+class TariffCreated(BaseEvent):
+    name = "tariff_created"
+    category = "tariff_management"
+    def _msg_tmpl(self):
+        return make_date_element(self.data.created) + " New tariff %(name)s created by %(actor_name)s for %(bizplace_name)s."
     def _access(self):
         return dict(member_ids = [self.actor], roles=[(self.data.bizplace_id, 'host'), (self.data.bizplace_id, 'director')])
 
@@ -107,7 +108,7 @@ class InvoiceCreated(BaseEvent):
     name = "invoice_created"
     category = "invoice_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./member/edit/#/%(member_id)s/profile'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + " Invoice No.<a href='./invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./member/edit/#/%(member_id)s/profile'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return dict(member_ids=[self.actor])
 

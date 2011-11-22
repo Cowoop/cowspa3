@@ -18,10 +18,16 @@ class ResourceCollection:
         data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
         res_id = resource_store.add(**data)
 
-        data = dict(name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
-        activity_id = activitylib.add('resource_management', 'resource_created', data, created)
+        data = dict(id=res_id, name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
+        if type == 'tariff':
+            activity_id = activitylib.add('tariff_management', 'tariff_created', data, created)
+        else:
+            activity_id = activitylib.add('resource_management', 'resource_created', data, created)
 
         return res_id
+
+    def new_tariff(self, name, short_description, owner, state=None, long_description=None, picture=None):
+        return self.new(name, short_description, 'tariff', owner, state, long_description=long_description, time_based=True, picture=picture)
 
     def delete(self, res_id):
         """
