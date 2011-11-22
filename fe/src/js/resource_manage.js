@@ -275,7 +275,10 @@ function on_resource_pricings(resp) {
     this_res_pricing = resp.result;
     $('#price-tmpl').tmpl(this_res_pricing).appendTo('#current-prices');
     $('#res-pricing-content').show();
-    $('#tariff-option-tmpl').tmpl(this_res_pricing).appendTo('#tariff-select')
+};
+
+function on_tariff_list(resp)  {
+    $('#tariff-option-tmpl').tmpl(resp.result).appendTo('#tariff-select');
 };
 
 function on_tariff_pricings(resp) {
@@ -295,6 +298,8 @@ function get_pricing(id) {
     if (this_res_pricing == null) {
         var params = {'resource_id': id};
         jsonrpc('pricings.by_resource', params, on_resource_pricings, error);
+        var params = {'owner': current_ctx, 'type':'tariff'};
+        jsonrpc('resource.list', params, on_tariff_list, error);
     } else {
         $('#res-pricing-content').show();
     };

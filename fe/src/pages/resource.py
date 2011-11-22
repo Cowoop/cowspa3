@@ -97,7 +97,7 @@ class ResourceManage(BasePage):
         pricing.hr = tf.HR()
 
         pricing.tariff_option = sphc.more.jq_tmpl("tariff-option-tmpl")
-        pricing.tariff_option.li = tf.OPTION("${tariff_name}", value="${tariff_id}", name="tariff")
+        pricing.tariff_option.li = tf.OPTION("${name}", value="${id}", name="tariff")
 
         pricing.tariff_dropdown = tf.DIV(tf.SELECT(tf.OPTION("Select tariff", selected="true", disabled="true"), id="tariff-select").set_required())
         #pricing.tip = tf.DIV(tf.C("Schedule new price"))
