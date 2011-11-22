@@ -31,19 +31,22 @@ def create_invoice_pdf(invoice_id):
 
 class InvoiceCollection:
 
-    def new(self, issuer, member, po_number, new_usages, start_date, end_date, notice, state=0):
-        usage_ids = []
+    def new(self, issuer, member, po_number, start_date, end_date, notice, usages=[], new_usages=[], state=0):
+        """
+        usages --> The list of existing usage_ids
+        new_usages --> The list of usage data which needs to create
+        """
         for usage in new_usages:
             usage['member'] = member
-            usage_ids.append(usagelib.usage_collection.new(**usage))
+            usages.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usage['calculated_cost'] for usage in new_usages]))
-        data = dict(issuer=issuer, member=member, usages=usage_ids, number=None, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        data = dict(issuer=issuer, member=member, usages=usages, number=None, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
-        usage_store.update_many(usage_ids, **mod_data)
+        usage_store.update_many(usages, **mod_data)
 
         data = dict(name=member_store.get(member, ['name']), issuer=bizplace_store.get(issuer, ['name']), invoice_id=invoice_id, member_id=member)
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
