@@ -70,7 +70,7 @@ class New(BasePage):
         usages = tf.TABLE(id='usages', Class="stripped")
         usages.caption = tf.CAPTION("Usages")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in (tf.INPUT(type="checkbox", Class="all_usages-checkbox"), 'Resource', 'Rate', 'Qty', 'Start-End', 'Total', 'Actions')]
+        usages.header.cells = [tf.TH(name) for name in (tf.INPUT(type="checkbox", Class="all_usages-checkbox"), 'Resource', 'Rate', 'Qty', 'Start-End', 'Total')]
 
         content.usages = usages
 
@@ -82,8 +82,8 @@ class New(BasePage):
         usage_tmpl.tr.td = tf.TD('${quantity}')
         usage_tmpl.tr.td = tf.TD('${start_time} - ${end_time}')
         usage_tmpl.tr.td = tf.TD('${cost}')
-        cancel_usage = tf.A('X', title="Remove Usage", href="#", Class="cancel-x cancel-usage", id="cancel_usage-${id}")
-        usage_tmpl.tr.td = tf.TD(cancel_usage)
+        #cancel_usage = tf.A('X', title="Remove Usage", href="#", Class="cancel-x cancel-usage", id="cancel_usage-${id}")
+        #usage_tmpl.tr.td = tf.TD(cancel_usage)
 
         content.usage_tmpl = usage_tmpl
 
