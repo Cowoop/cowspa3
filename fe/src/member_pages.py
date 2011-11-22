@@ -333,12 +333,18 @@ class EditProfile(BasePage):
         
         #Invoices
         invoices = tf.DIV(id="invoices")
+        invoice_history = tf.FIELDSET()
+        invoice_history.legend = tf.LEGEND("Invoice History")
+        invoice_history.table = tf.TABLE(id="history_table")
+        invoice_history.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
+        invoice_history.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
+        invoices.table = invoice_history
         
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile"))
-        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="member_tab_link"))
+        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships"))
         container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing"))
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices"))
