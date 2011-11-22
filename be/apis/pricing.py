@@ -20,16 +20,10 @@ def new(resource_id, tariff_id, starts, amount):
             msg = "Pricing start date should be greater than %s" % starts
             raise be.errors.ErrorWithHint(msg)
         old_pricing_ends = starts - datetime.timedelta(1)
-        pricing_resource.set(old_pricing.id, 'ends', old_pricing_ends)
+        set(old_pricing.id, 'ends', old_pricing_ends)
     return pricing_store.add(plan=tariff_id, resource=resource_id, starts=starts, amount=amount)
 
 def destroy(tariff_id):
-    raise NotImplemented
-
-def list(tariff_id, for_date):
-    """
-    returns list of pricings for the plan
-    """
     raise NotImplemented
 
 def by_resource(resource_id, for_date=None):
@@ -38,6 +32,9 @@ def by_resource(resource_id, for_date=None):
     """
     for_date = for_date or datetime.datetime.now()
     return dbaccess.get_resource_pricings(resource_id, for_date)
+
+def lst(resource_id, tariff_id):
+    return pricing_store.get_by(crit=dict(resource=resource_id, plan=tariff_id), fields=['id', 'starts', 'ends', 'amount'])
 
 
 def get(member_id, resource_id, usage_time=None):
@@ -59,20 +56,22 @@ def member_tariff(member_id, bizplace_id, usage_time=None):
 pricings = applib.Collection()
 pricings.new = new
 pricings.get = get
+pricings.list = lst
 pricings.by_resource = by_resource
+
+settable_attrs = ['starts', 'ends', 'cost']
 
 def info(pricing_id):
     return pricing_store.get(pricing_id)
 
-def update(tariff_id, resource_prices):
-    """
-    resource_prices: a tuple containing resource_id, prices and date from which the pricing will be activated
-    """
-    raise NotImplemented
+def set(pricing_id, attr, value):
+    if attr not in settable_attrs:
+        return
+    pricing_store.update(pricing_id, **{attr: value})
 
 pricing = applib.Resource()
 pricing.info = info
-pricing.update = update
+pricing.set = set
 
 ## Cost calculations
 
