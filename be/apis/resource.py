@@ -2,14 +2,16 @@ import datetime
 import collections
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
+import be.apis.pricing as pricinglib
 import commonlib.shared.constants
 
 resource_store = dbaccess.stores.resource_store
+bizplace_store = dbaccess.stores.bizplace_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, state=None, long_description=None, time_based=False, archived=False, picture=None):
+    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, time_based=False, archived=False, picture=None):
         created = datetime.datetime.now()
         if state is None:
             state = 2 ** commonlib.shared.constants.resource.enabled
@@ -24,9 +26,14 @@ class ResourceCollection:
         else:
             activity_id = activitylib.add('resource_management', 'resource_created', data, created)
 
+        default_tariff_id = bizplace_store.get(owner, fields=['default_tariff'], hashrows=False)
+        if default_tariff_id is None:
+            default_tariff_id = res_id
+        pricinglib.pricings.new(res_id, default_tariff_id, created.date().isoformat(), default_price)
+
         return res_id
 
-    def new_tariff(self, name, short_description, owner, state=None, long_description=None, picture=None):
+    def new_tariff(self, name, short_description, owner, default_price, state=None, long_description=None, picture=None):
         return self.new(name, short_description, 'tariff', owner, state, long_description=long_description, time_based=True, picture=picture)
 
     def delete(self, res_id):

@@ -24,6 +24,7 @@ class ResourceCreate(BasePage):
         time_based.input = tf.INPUT(type='checkbox', id='time_based', name='time_based')
         time_based.label = tf.LABEL('Time Based', FOR="time_based")
         form.add_field("", time_based)
+        form.add_field('Default Price', tf.INPUT(type="text", name='default_price').set_required(), fhelp="Will be added to Guest Tariff. Used in calculating cost of a usage by a person without a membership")
         form.add_field('Picture', tf.INPUT(name="picture", id="picture", type="file", accept="image/*"), "Suggested Image Dimensions : 250x250.")
         form.add_field('Short Description', tf.TEXTAREA( id='short_description', name='short_description'))
         form.add_field('Long Description', tf.TEXTAREA(id='long_description', name='long_description'))
