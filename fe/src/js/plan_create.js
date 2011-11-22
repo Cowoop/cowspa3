@@ -26,7 +26,7 @@ $('#save-btn').click(function () {
     };
     params['owner'] = current_ctx;
     params['type'] = 'tariff';
-    if ($('#save-btn').text === 'Create') {
+    if ($('#save-btn').text() === 'Create') {
         jsonrpc('resource.new', params, success, error);
     } else {
         params['res_id'] = tariff_id;
