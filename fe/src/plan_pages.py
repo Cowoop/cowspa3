@@ -6,26 +6,10 @@ BasePage = fe.bases.CSAuthedPage
 
 def get_tariff_form():
     fields = []
-
-    field = tf.DIV()
-    field.label = tf.LABEL(content = 'Name : ', For='tariff_name')
-    field.input = tf.INPUT(type='text', id='name', name='name')
-    fields.append(field)
-
-    field = tf.DIV()
-    field.label = tf.LABEL(content = 'Description : ', FOR="short_description")
-    field.input = tf.TEXTAREA(id='short_description', name='short_description', rows=2, cols=25)
-    fields.append(field)
-
-    field = tf.DIV()
-    field.save = tf.BUTTON("Save", id='save-btn', type='button')
-    field.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
-    fields.append(field)
-
-    form  = tf.FORM(Class='profile-forms', id="tariff_form", style="display:none")
-    for field in fields:
-        field.line = tf.BR()
-        form.content = field
+    form  = sphc.more.Form(classes=['hform'], id="tariff_form", style="display:none")
+    form.add_field('Name', tf.INPUT(type='text', id='name', name='name'))
+    form.add_field('Description', tf.TEXTAREA(id='short_description', 
+        name='short_description', rows=2, cols=25))
 
     form.msg = tf.SPAN(id="tariff-msg")
 
@@ -56,7 +40,9 @@ class PlanCreate(BasePage):
 
         #                                   New PLAN
         form = get_tariff_form()
+        form.add_buttons(tf.BUTTON("Create", id='save-btn', type="submit"),
+                        tf.BUTTON("Cancel", id='cancel-btn', type='button'))
 
-        container.form = form
-        container.script = tf.SCRIPT(open("fe/src/js/plan_create.js").read(), escape=False, type="text/javascript", language="javascript")
+        container.form = form.build()
+        container.script = sphc.more.script_fromfile("fe/src/js/plan_create.js")
         return container

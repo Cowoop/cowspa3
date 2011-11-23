@@ -6,52 +6,39 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 def get_location_form():
-    form = sphc.more.Form(id='bizplace_form', classes=['hform', 'simple-hform'])
-
-    form.add_field('Name', tf.INPUT(type='text', name='name').set_required())
-    form.add_field('Address', tf.TEXTAREA(id='address', name='address'))
-    form.add_field('City', tf.INPUT(type='text', id='city', name='city'))
-    country_select = tf.SELECT(id='country', name='country')
+    form = sphc.more.Form(id='bizplace_form', classes=['hform'])
+    about = form.add(sphc.more.Fieldset())
+    about.add(sphc.tf.LEGEND('About'))
+    about.add_field('Name', sphc.tf.INPUT(name='name', type='text'))
+    about.add_field('Address', sphc.tf.TEXTAREA(id='address', name='address'))
+    about.add_field('City', sphc.tf.INPUT(type='text', id='city', name='city'))
+    country_select = sphc.tf.SELECT(id='country', name='country')
     country_select.options = fe.src.common.country_options
-    form.add_field('Country', country_select)
+    about.add_field('Country', country_select)
 
-    #tz_select = tf.SELECT(id='tz', name='tz')
+    #tz_select = sphc.tf.SELECT(id='tz', name='tz')
     #tz_select.options = fe.src.common.tz_options
-    #form.add_field('Time zone', tz_select)
+    #about.add_field('Time zone', tz_select)
 
-    form.add_field('Short Description', tf.TEXTAREA( id='short_description', 
-                    name='short_description', rows=2, cols=25))
-    curr_select = tf.SELECT(id='currency', name='currency')
+    about.add_field('Short Description', sphc.tf.TEXTAREA(id='short_description',
+            name='short_description', rows=2, cols=25))
+    curr_select = sphc.tf.SELECT(id='currency', name='currency')
     for currency in data_lists.currencies:
-        curr_select.option = tf.OPTION(currency['label']+" ("+currency['name']+")", 
+        curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")", 
                         value=currency['name'])
-    form.add_field('Currency', curr_select)
+    about.add_field('Currency', curr_select)
 
-    fldset = tf.FIELDSET()
-    fldset.legend = tf.LEGEND('Contact Details ')
+    contact = form.add(sphc.more.Fieldset())
+    contact.add(sphc.tf.LEGEND('Contact Details'))
 
-    fldset.phone = tf.DIV(id='phone')
-    fldset.phone.label = tf.LABEL('Phone ');
-    fldset.phone.fld = tf.INPUT(id='phone', name='phone')
-
-    fldset.fax = tf.DIV(id='fax')
-    fldset.fax.label = tf.LABEL('Fax ');
-    fldset.fax.fld = tf.INPUT(id='fax', name='fax')
-
-    fldset.email = tf.DIV(id='email')
-    fldset.email.label = tf.LABEL('Email ')
-    fldset.email.fld = tf.INPUT(type='email', id='email', name='email').set_required()
-
-    fldset.booking_email = tf.DIV(id='booking_email')
-    fldset.booking_email.label = tf.LABEL('Booking Email ')
-    fldset.booking_email.fld = tf.INPUT(type='email', id='booking_email',
-            name='booking_email')
-
-    fldset.host_email = tf.DIV(id='host_email')
-    fldset.host_email.label = tf.LABEL('Host Email ')
-    fldset.host_email.fld = tf.INPUT(type='email', id='host_email', name='host_email')
-
-    form.add_field('',fldset)
+    contact.add_field('Phone', sphc.tf.INPUT(id='phone', name='phone'))
+    contact.add_field('Fax', sphc.tf.INPUT(id='fax', name='fax'))
+    contact.add_field('Email', sphc.tf.INPUT(type='email', id='email',
+        name='email').set_required())
+    contact.add_field('Booking Email', sphc.tf.INPUT(type='email', id='booking_email',
+            name='booking_email'))
+    contact.add_field('Host Email', sphc.tf.INPUT(type='email', id='host_email',
+        name='host_email'))
 
     return form
 
@@ -98,9 +85,10 @@ class List(BasePage):
         my_loc_tmpl.box.info.my_role.role = tf.LABEL("${roles}")
 
         loc_buttons = tf.DIV(Class="buttons")
-#        loc_buttons.prof_btn = tf.BUTTON("Profile",href='#/${id}', id='myloc_profile-btn', type='button')
-        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff-btn', type='button')
-        loc_buttons.team_btn = tf.BUTTON("Team", id='myloc_team-btn', type='button')
+        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff_btn-${id}',
+                Class='myloc_tariff-btn', type='button')
+        loc_buttons.team_btn = tf.BUTTON("Team", id='myloc_team_btn-${id}',
+                Class='myloc_team-btn', type='button')
         my_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
         my_loc_tmpl.box.btn.buttons = loc_buttons
 
@@ -119,8 +107,8 @@ class List(BasePage):
 
         form = get_location_form()
         buttons = tf.DIV(Class="buttons")
-        buttons.button = tf.BUTTON("Save", id='save-btn', type='submit')
-        buttons.button = tf.BUTTON("Cancel", id='cancel-btn', type='button')
+        buttons.save = tf.BUTTON("Save", id='save-btn', type='submit')
+        buttons.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         form.add_buttons(buttons)
 
         my_locations.form = form.build()
@@ -160,11 +148,11 @@ class List(BasePage):
         all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", 
                 Class='location-description')
 
-        loc_buttons = tf.DIV(Class="buttons")
-#        loc_buttons.prof_btn = tf.BUTTON("Profile", href='#/${id}', id='all_profile-btn', type='button')
-        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='all_tariff-btn', type='button')
+        all_buttons = tf.DIV(Class="buttons")
+        all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}',
+                Class='myloc_tariff-btn', type='button')
         all_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
-        all_loc_tmpl.box.btn.buttons = loc_buttons
+        all_loc_tmpl.box.btn.buttons = all_buttons
 
         all_loc_list.loc_tmpl = all_loc_tmpl
         all_locations.all_loc_list = all_loc_list

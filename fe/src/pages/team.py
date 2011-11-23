@@ -5,7 +5,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 def get_team_form():
-    form = sphc.more.Form(id='team_form', classes=['hform', 'simple-hform'])
+    form = sphc.more.Form(id='team_form', classes=['hform'])
 
     form.add_field('Name', tf.INPUT(type='text', id='member_name',
         name='member_name'))

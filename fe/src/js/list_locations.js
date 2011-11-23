@@ -22,6 +22,7 @@ function show_mylocations() {
     $('#bizplace_form').hide();
     $('#my_loc_list').show();
     $('#location_view_form').hide();
+    //window.location = basepath + '/bizplaces'
     // TODO : Set the URL to ../bizplaces
 }
 
@@ -29,12 +30,23 @@ function show_all_locations() {
     $('#bizplace_form').hide();
     $('#all_loc_list').show();
     $('#all_location_view').hide();
+    //window.location = basepath + '/bizplaces'
     // TODO : Set the URL to ../bizplaces
 }
 
 $('#bizplace_form #cancel-btn').click(show_mylocations);
 $('#location_view_form #cancel-link').click(show_mylocations);
 $('#all_location_view #cancel-link').click(show_all_locations);
+
+function show_tariff() {
+    set_context(parseInt(this.id.split('-')[1]));
+    window.location = basepath + '/tariffs';
+}
+
+function show_team() {
+    set_context(parseInt(this.id.split('-')[1]));
+    window.location = basepath + '/team';
+}
 
 function edit_location(theform) {
     // var loc_id = window.location.split('#').slice(1,1);
@@ -157,6 +169,8 @@ $(document).ready(function() {
 function load_my_locations() {
     function success(resp) {
         $('#my_loc_tmpl').tmpl(resp['result']).appendTo('#my_loc_list');
+        $('.myloc_tariff-btn').click(show_tariff);
+        $('.myloc_team-btn').click(show_team);
     };
 
     function error() {
