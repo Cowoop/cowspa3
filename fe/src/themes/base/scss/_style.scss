@@ -665,11 +665,37 @@ form.vform {
     }
 }
 
-form.simple-hform, form.hform {
+form.hform {
     line-height: 2.5em;
+    input, select, textarea  {
+        width: 80%;
+    }
     textarea {
         height: 9em;
     }
+    .buttons {
+        width: 100%;
+        text-align: center;
+        border-top: 1px solid lighten($main-color, 10%);
+    }
+    input[type="radio"]+label {
+        text-align: left;
+    }
+    input[type="button"], input[type="radio"] {
+        width: auto;
+    }
+    .field-input {
+        display: inline-block; 
+        width: 70%;
+    };
+    .field-label {
+        display: inline-block; 
+        width: 25%;
+        text-align: right;
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 0.5em 0 0;
+    };
     .field-help {
         font-style: italic;
         display: block;
@@ -677,56 +703,12 @@ form.simple-hform, form.hform {
     }
 }
 
-form.simple-hform {
-    label {
-        width: 25%;
-        text-align: right;
-        display: inline-block;
-        vertical-align: top;
-        padding: 0 0.5em 0 0;
-    }
-    input[type="radio"]+label {
-        text-align: left;
-    }
-    input, textarea, select {
-        width: 60%;
-    }
-    input[type="button"], input[type="radio"] {
-        width: auto;
-    }
-    .buttons {
-        width: 100%;
-        text-align: center;
-        border-top: 1px solid lighten($main-color, 10%);
-    }
-}
 .labeled-list {
     .label {
         width: 25%;
         display: inline-block;
         vertical-align: top;
         padding: 0 0.5em 0 0;
-    }
-}
-form.hform {
-    .field-label {
-        width: 25%;
-        text-align: right;
-        display: inline-block;
-        vertical-align: top;
-        padding: 0 0.5em 0 0;
-    }
-    .field-input {
-        width: 60%;
-        display: inline-block;
-    }
-    .input {
-        width: 90%;
-    }
-    .buttons {
-        @include divsizing;
-        @include pad(2, 0);
-        border-top: 1px solid lighten($main-color, 10%);
     }
 }
 
