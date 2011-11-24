@@ -233,7 +233,7 @@ class Pricing(PGStore):
     resource INTEGER NOT NULL,
     starts DATE NOT NULL,
     ends DATE,
-    amount NUMERIC(16, 2),
+    amount NUMERIC(16, 2) NOT NULL,
     state INTEGER default 1 NOT NULL
     """
 
