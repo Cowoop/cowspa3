@@ -19,7 +19,7 @@ def setup():
     commontest.setup_system_context()
 
 def _add_plan(data):
-    plan_id = resourcelib.resource_collection.new(**data)
+    plan_id = resourcelib.resource_collection.new_tariff(**data)
     env.context.pgcursor.connection.commit()
     return plan_id
 
@@ -41,7 +41,7 @@ def test_add_pricing_for_a_plan():
     pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount)
     info = pricinglib.pricing.info(pricing_id)
     env.context.pgcursor.connection.commit()
-    assert pricing_id == 1
+    assert info.resource == test_data.resource_id and isinstance(pricing_id, (int, long))
 
 def test_add_pricing_for_a_plan_with_same_date():
     amount = 20
@@ -86,8 +86,8 @@ def test_get_pricing_for_member_wo_plan():
 
 def test_cost():
     quantity = 10
-    starts = datetime.datetime.now()
-    ends = starts + datetime.timedelta(0, 10*3600)
+    starts = datetime.datetime.now().isoformat()
+    ends = (datetime.datetime.now() + datetime.timedelta(0, 10*3600)).isoformat()
     cost = pricinglib.calculate_cost(test_data.member_w_plan, test_data.resource_id, quantity, starts, ends)
     rate = pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, starts)
     assert cost == (quantity * rate)

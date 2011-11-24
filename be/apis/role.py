@@ -68,10 +68,9 @@ def get_roles(user_id, role_filter=[]):
     returns [{id: 1, label: '<name>', roles: ['<role1>', '<role2>']}, ...]
     """
     ctx_roles = collections.defaultdict(list)
-    # TODO : When i18n is implemented, role.capitalize needs to be replaced
-    # with appropriate call, so that role label is i18n'ed 
+    # TODO : roles should be list dicts containing role names and role labels
     for (role, context) in dbaccess.userrole_store.get_by(dict(user_id=user_id), ['role', 'context'], False):
-        if not role_filter or role in role_filter: ctx_roles[context].append(role.capitalize())
+        if not role_filter or role in role_filter: ctx_roles[context].append(role)
     sorter = lambda d: d['label']
     return sorted((dict(label=dbaccess.oid2name(ctx), id=ctx, roles=roles) for ctx, roles in ctx_roles.items()), key=sorter)
 

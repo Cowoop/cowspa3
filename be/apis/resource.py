@@ -27,6 +27,7 @@ class ResourceCollection:
             activity_id = activitylib.add('resource_management', 'resource_created', data, created)
 
         default_tariff_id = bizplace_store.get(owner, fields=['default_tariff'], hashrows=False)
+        # default_tariff_id would be None when we are creating default_tariff for a new location. This is because we are adding location and there is no default_tariff yet. Now this tariff is a resource so further we need to create pricing for it. In pricing we need to specify some tariff so tariff refers itself as default_tariff.
         if default_tariff_id is None:
             default_tariff_id = res_id
         pricinglib.pricings.new(res_id, default_tariff_id, created.date().isoformat(), default_price)

@@ -38,6 +38,9 @@ def lst(resource_id, tariff_id):
 
 
 def get(member_id, resource_id, usage_time=None):
+    """
+    returns rate
+    """
     # TODO: if resource owner is not bizplace then?
     if not usage_time:
         usage_time = datetime.datetime.now()
@@ -46,6 +49,7 @@ def get(member_id, resource_id, usage_time=None):
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
         return pricing[0].amount
+    return dbaccess.get_default_pricing(resource_id, usage_time)
 
 def member_tariff(member_id, bizplace_id, usage_time=None):
     if not usage_time:

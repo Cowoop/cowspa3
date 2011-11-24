@@ -249,6 +249,11 @@ def get_resource_pricing(plan_id, resource_id, usage_time):
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
     return pricing_store.get_by_clause(clause, values, fields=['id', 'plan', 'starts', 'ends', 'amount'])
 
+def get_default_pricing(resource_id, usage_time):
+    bizplace_id = resource_store.get(resource_id).owner
+    default_tariff_id = bizplace_store.get(bizplace_id).default_tariff
+    return get_resource_pricing(default_tariff_id, resource_id, usage_time)
+
 def get_resource_pricings(resource_id, usage_time):
     # Along with tariff_id we also need tariff_name so we have a join (clause_resource)
     # instead of join if there are 2 independent queries, would it be any faster?

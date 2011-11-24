@@ -30,7 +30,7 @@ def test_find_bizplace_plans():
     for i in range(4):
         data['name'] = test_data.more_plan_data['name'] + str(i)
         data['owner'] = test_data.bizplace_id
-        planlib.resource_collection.new(**data)
+        planlib.resource_collection.new_tariff(**data)
         env.context.pgcursor.connection.commit()
     plans = bizplacelib.bizplace_resource.plans(test_data.bizplace_id)
     assert len(plans) >= 5

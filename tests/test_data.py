@@ -11,8 +11,8 @@ bizplace_id = None
 
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
 plan_id = None
-more_plan_data = dict(name="Plan ", short_description="Not just another plan", type="tariff", default_price=90)
-default_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", type="tariff")
+more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
+default_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
 
 member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', state=dict(enabled=True, hidden=False))
 member_id = None
@@ -38,18 +38,19 @@ more_invoice_data = [
     ]
 
 resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False), default_price=10, time_based=True)
+resource_id = None
 
 more_resources = [dict(name='RES1', short_description='Resource 1', type='Type1', default_price=10),
     dict(name='RES2', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True), default_price=10.10),
     dict(name='RES3', short_description='Resource 3', type='Type1', default_price=11)]
 more_resource_ids = []
 
-usage = dict(resource_id=1, resource_name='RES1', quantity=11, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat())
+usage = dict(resource_name='RES1', quantity=11, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)))
 
 more_usages = [
-    dict(resource_id=2, resource_name='RES2', rate=12, quantity=12, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat()),
-    dict(resource_id=1, resource_name='RES1', rate=14, quantity=14, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat()),
-    dict(resource_id=3, resource_name='RES3', rate=13, quantity=13, calculated_cost=1000, cost=1050, tax_dict=(('VAT', 100)), start_time=datetime.datetime(2011,11,01,12,0,0).isoformat(), end_time=datetime.datetime(2011,11,01,18,0,0).isoformat()),
+    dict(resource_name='RES2', quantity=12, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50))),
+    dict(resource_name='RES1', quantity=14, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50))),
+    dict(resource_name='RES3', quantity=13, cost=1050, tax_dict=(('VAT', 100))),
     ]
 
 invoice_preference_data = [
