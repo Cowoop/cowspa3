@@ -98,7 +98,7 @@ class CSAuthedPage(CSPage):
         ('Bookings', '#', booking_opt),
         ('Invoicing', '#', invoicing_opt),
         ('Resources', '#', resources_opt),
-        ('Locations', '#', locations_opt),
+        ('Admin', '#', locations_opt),
         ('Reports', '#', []),
         ]
     current_nav = '/Dashboard'
