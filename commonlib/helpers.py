@@ -1,6 +1,7 @@
 import datetime
 import collections
 import base64, random, hashlib
+import dateutil.parser
 import wkhtmltox
 import simplejson
 from flask import current_app
@@ -63,10 +64,10 @@ def datetime4human(date):
     return date.strftime("%b %d, %Y %I:%M%p")
 
 def iso2date(iso):
-    return datetime.datetime.strptime(iso, "%Y-%m-%d").date() if iso else None
+    return datetime.datetime.strptime(iso, "%Y-%m-%d").date()
 
 def iso2datetime(iso):
-    return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S") if iso else None
+    return dateutil.parser.parse(iso)
 
 def jsonify(obj):
     dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
