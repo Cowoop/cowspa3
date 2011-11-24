@@ -2,32 +2,25 @@ var tariff_baseurl =  basepath + '/tariffs/';
 var tariff_id = null;
 var action_status = $('#tariff_form .action-status');
 
-$("#tariff_list").hide();
-$("#new-tariff").hide();
-$("#tariff_form #name").val("");
-$("#tariff_form #short_description").val("");
-$("#tariff_form #default_price").val("");
-$('#tariff_form #def_price').show();
-$("#tariff_form").show();
-
-function create_tariff() {
-    var inputs = $('#tariff_form').serializeArray();
+function update_tariff(theform) {
+    var inputs = theform.serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }
     function success() {
-        action_status.text("Tariff Created successfully.").attr('class', 'status-success');
+        action_status.text("Tariff Updated successfully.").attr('class', 'status-success');
         setTimeout(function(){
             window.location = tariff_baseurl;
         }, 1000);
     };
     function error() {
-        action_status.text("Error in Tariff Creation.").attr('class', 'status-fail');
+        action_status.text("Error while Updating Tariff.").attr('class', 'status-fail');
     };
     params['owner'] = current_ctx;
     params['type'] = 'tariff';
-    jsonrpc('resource.new', params, success, error);
+    params['res_id'] = tariff_id;
+    jsonrpc('resource.update', params, success, error);
 }
 
 $("#cancel-btn").click(function (){
@@ -45,8 +38,6 @@ function show_editform(id) {
         tariff = resp['result'];
         $('#tariff_form #name').val(tariff.name);
         $('#tariff_form #short_description').val(tariff.short_description);
-        $('#tariff_form #def_price').hide();
-        $("#tariff_form #save-btn").text("Save");
     };
 
     function error() {
@@ -92,16 +83,13 @@ $(document).ready(function() {
     jsonrpc('resource.list', params, success, error);
 });
 
-$("#tariff_list").hide();
-$("#new-tariff").hide();
-$("#tariff_form #name").val("");
-$("#tariff_form #short_description").val("");
-$("#tariff_form #default_price").val("");
-$("#tariff_form").show();
+$("#new-tariff").click(function (){
+    window.location = basepath + '/tariff/new'
+});
 
 $('#tariff_form').submit(function () {
     var theform = $(this);
     theform.checkValidity();
-    create_tariff();
+    update_tariff(theform);
     return false;
 });

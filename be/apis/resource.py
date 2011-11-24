@@ -35,7 +35,7 @@ class ResourceCollection:
         return res_id
 
     def new_tariff(self, name, short_description, owner, default_price, state=None, long_description=None, picture=None):
-        return self.new(name, short_description, 'tariff', owner, state, long_description=long_description, time_based=True, picture=picture)
+        return self.new(name, short_description, 'tariff', owner, default_price,state, long_description=long_description, time_based=True, picture=picture)
 
     def delete(self, res_id):
         """

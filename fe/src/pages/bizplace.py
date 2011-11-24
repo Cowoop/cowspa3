@@ -9,9 +9,12 @@ def get_location_form():
     form = sphc.more.Form(id='bizplace_form', classes=['hform'])
     about = form.add(sphc.more.Fieldset())
     about.add(sphc.tf.LEGEND('About'))
-    about.add_field('Name', sphc.tf.INPUT(name='name', type='text'))
-    about.add_field('Address', sphc.tf.TEXTAREA(id='address', name='address'))
-    about.add_field('City', sphc.tf.INPUT(type='text', id='city', name='city'))
+    about.add_field('Name', sphc.tf.INPUT(name='name', id='name',
+        type='text').set_required())
+    about.add_field('Address', sphc.tf.TEXTAREA(id='address',
+        name='address'))
+    about.add_field('City', sphc.tf.INPUT(type='text', id='city',
+        name='city').set_required())
     country_select = sphc.tf.SELECT(id='country', name='country')
     country_select.options = fe.src.common.country_options
     about.add_field('Country', country_select)
