@@ -63,10 +63,10 @@ def datetime4human(date):
     return date.strftime("%b %d, %Y %I:%M%p")
 
 def iso2date(iso):
-    return datetime.datetime.strptime(iso, "%Y-%m-%d").date()
+    return datetime.datetime.strptime(iso, "%Y-%m-%d").date() if iso else None
 
 def iso2datetime(iso):
-    return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S").date()
+    return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S") if iso else None
 
 def jsonify(obj):
     dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None

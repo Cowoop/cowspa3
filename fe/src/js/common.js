@@ -124,10 +124,16 @@ if(params['user_id']) {
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
 function to_iso_date(date){
+    if(jQuery.trim(date) == ""){
+        return null;
+    }
     var fdate = new Date(date);
     return  $.datepicker.formatDate('yy-mm-dd', fdate);
 }
 function to_iso_datetime(date){
+    if(jQuery.trim(date) == ""){
+        return null;
+    }
     var fdate = new Date(date);
     var hh = fdate.getHours();
     hh = (hh<10?"0":"") + hh; 
@@ -135,13 +141,19 @@ function to_iso_datetime(date){
     mm = (mm<10?"0":"") + mm;
     var ss = fdate.getSeconds();
     ss = (ss<10?"0":"") + ss;
-    return $.datepicker.formatDate('yy-mm-dd', fdate)+" "+hh+":"+mm+":"+ss;
+    return $.datepicker.formatDate('yy-mm-dd', fdate)+"T"+hh+":"+mm+":"+ss;
 }
 function to_formatted_date(date){
+    if(date==null){
+        return "";
+    }
     var fdate = new Date(date);
     return $.datepicker.formatDate('M dd, yy', fdate);
 }
 function to_formatted_datetime(date){
+    if(date==null){
+        return "";
+    }
     var fdate = new Date(date);
     var hh = fdate.getHours();
     var time = "AM";
