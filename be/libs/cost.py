@@ -16,11 +16,10 @@ class flags:
 
 class Cost(object):
     def __init__(self):
-        self.records = []
+        self.records = [('Start', 0)]
     def last(self):
         rec = self.records[-1:]
         if rec: return rec[0][1]
-        return 0
     def new(self, stage, amount):
         self.records.append((stage, amount))
 
