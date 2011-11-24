@@ -252,7 +252,8 @@ class Usage(PGStore):
     end_time  TIMESTAMP WITHOUT TIME ZONE,
     member INTEGER NOT NULL,
     pricing INTEGER,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    booking INTEGER DEFAULT NULL
     """
     pickle_cols = ['tax_dict']
 
