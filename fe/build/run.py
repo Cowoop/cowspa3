@@ -90,7 +90,7 @@ class JSBuilder(BuilderBase):
 
 prefix = '%(lang)s/%(theme)s/'
 
-pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
+pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(memberlib.MemberCreate, prefix + 'member/new'),
          PageBuilder(pagelib.Login, 'login'),
          PageBuilder(pagelib.Activation, 'activate'),
@@ -101,10 +101,10 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoicing/home'),
          PageBuilder(resourcepages.ResourceManage, prefix + 'resources'),
          PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
          PageBuilder(memberlib.EditProfile, prefix + 'member/edit'),
-         PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoicing/new'),
+         PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoices/new'),
          PageBuilder(pagelib.LogoutPage, 'logout'),
-         PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoicing/preferences'),
-         PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoicing/history'),
+         PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoices/preferences'),
+         PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoices/history'),
          PageBuilder(fe.src.pages.team.List, prefix + 'team')
         ]
 
