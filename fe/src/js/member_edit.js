@@ -485,7 +485,7 @@ function get_uninvoiced_usages(){
     function error(){};
     var params = { 'member_ids' : [parseInt(thismember_id)], 'hashrows':false};
     params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost'];
-    jsonrpc('usage.find', params, success, error);
+    jsonrpc('usages.find', params, success, error);
 };
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Usage Managementxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //********************************Invoices**************************************
