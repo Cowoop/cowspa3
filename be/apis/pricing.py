@@ -49,7 +49,7 @@ def get(member_id, resource_id, usage_time=None):
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
         return pricing[0].amount
-    return dbaccess.get_default_pricing(resource_id, usage_time)
+    return dbaccess.get_default_pricing(resource_id, usage_time).amount
 
 def member_tariff(member_id, bizplace_id, usage_time=None):
     if not usage_time:
@@ -94,9 +94,9 @@ class Taxes(costlib.Rule):
 
 rules = [InitialCost()]
 
-def calculate_cost(member_id, resource_id, quantity, starts, ends):
+def calculate_cost(member_id, resource_id, quantity, starts, ends=None):
     starts = commonlib.helpers.iso2datetime(starts)
-    ends = commonlib.helpers.iso2datetime(ends)
+    ends = commonlib.helpers.iso2datetime(ends) if ends else starts
     usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends)
     resource = resource_store.get(usage.resource_id)
     if resource.time_based:
