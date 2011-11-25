@@ -79,8 +79,7 @@ $(document).ready(function() {
     function error() {
         };
     params['owner'] = current_ctx;
-    params['type'] = 'tariff';
-    jsonrpc('resource.list', params, success, error);
+    jsonrpc('tariffs.list', params, success, error);
 });
 
 $("#new-tariff").click(function (){
