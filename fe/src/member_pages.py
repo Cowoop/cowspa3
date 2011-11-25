@@ -194,7 +194,7 @@ def add_tariffs_section(container):
     change_tariff_section.tmpl = tariff_list_row
     change_tariff_section.form.msg = tf.SPAN(id="Change_Tariff-msg")
     container.change_tarrif = change_tariff_section
-
+    
 def make_buttons():
     container = tf.DIV()
     buttons = tf.DIV(Class="buttons")
@@ -312,21 +312,35 @@ class EditProfile(BasePage):
         
         # Usages
         usages = tf.DIV(id="usages")
-        add_usage = tf.FIELDSET()
+        usages.new = tf.DIV(tf.Button("Create", type="button", id="new_usage-btn"))
+        add_usage = tf.FIELDSET(id="add_usage", Class="hidden")
         add_usage.legend = tf.LEGEND("Add Usage")
         add_usage_form = sphc.more.Form(id='add-usage-form', action='#', Class='profile-edit-form', classes=['hform'])
-        add_usage_form.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', placeholder="Resource name").set_required())
+        add_usage_form.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', Class="input", placeholder="Resource name").set_required())
         add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
         add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
         add_usage_form.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
         add_usage_form.add_field("Cost", tf.INPUT(name='cost', id='cost'))
-        add_usage_form.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"))
+        add_usage_form.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
         add_usage.form = add_usage_form.build()
         usages.add_usage = add_usage
+        
+        edit_usage = tf.FIELDSET(id="edit_usage", Class="hidden")
+        edit_usage.legend = tf.LEGEND("Edit Usage")
+        edit_usage_form = sphc.more.Form(id='edit_usage-form', action='#', Class='profile-edit-form', classes=['hform'])
+        edit_usage_form.add_field("Resource Name", tf.SELECT(id="res_select", name="res_select"), tf.INPUT(name='res_name', id='res_name', Class="field-input",  placeholder="Resource name").set_required())
+        edit_usage_form.add_field("Quantity", tf.INPUT(name='res_quantity', id='res_quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
+        edit_usage_form.add_field("Start", tf.INPUT(name='res_start_time', id='res_start_time', nv_attrs=('required',)))
+        edit_usage_form.add_field("End", tf.INPUT(name='res_end_time', id='res_end_time'), "Optional. Only for time based resources.")
+        edit_usage_form.add_field("Cost", tf.INPUT(name='res_cost', id='res_cost'))
+        edit_usage_form.add_buttons(tf.INPUT(id="recalculate_cost-btn", type="Button", value="Recalculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Save", id='update-usage', Class="big-button"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
+        edit_usage.form = edit_usage_form.build()
+        usages.edit_usage = edit_usage
+        
         usages.resource_select_tmpl = sphc.more.jq_tmpl("resource-tmpl")
         usages.resource_select_tmpl.option = tf.OPTION("${name}", id="resource_${id}", value="${id}")
         
-        uninvoiced = tf.FIELDSET()
+        uninvoiced = tf.FIELDSET(id="uninvoiced_usages")
         uninvoiced.legend = tf.LEGEND("Uninvoiced Usages")
         uninvoiced.table = tf.TABLE(id="usage_table")
         usages.uninvoiced = uninvoiced
@@ -334,7 +348,7 @@ class EditProfile(BasePage):
         #Invoices
         invoices = tf.DIV(id="invoices")
         invoice_summary = tf.DIV(id="invoice_summary")
-        invoice_summary.new_invoice = tf.DIV(tf.Button("New Invoice", type="button", id="new_invoice-btn"))
+        invoice_summary.new_invoice = tf.DIV(tf.Button("New", type="button", id="new_invoice-btn"))
         invoice_history = tf.FIELDSET()
         invoice_history.legend = tf.LEGEND("Invoice History")
         invoice_history.table = tf.TABLE(id="history_table")
@@ -346,11 +360,11 @@ class EditProfile(BasePage):
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
-        container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile"))
-        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships"))
-        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing"))
-        container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages"))
-        container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices"))
+        container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile", Class="profile-tab"))
+        container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="profile-tab"))
+        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab"))
+        container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages", Class="profile-tab"))
+        container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices", Class="profile-tab"))
         container.tabs.profile = profile
         container.tabs.memberships = memberships
         container.tabs.billing = billing

@@ -156,9 +156,9 @@ function to_formatted_datetime(date){
     }
     var fdate = new Date(date);
     var hh = fdate.getHours();
-    var time = "AM";
+    var time = " AM";
     if(hh>=12){
-        time = "PM";
+        time = " PM";
         hh -= 12;
     }
     hh = (hh<10?"0":"") + hh; 
