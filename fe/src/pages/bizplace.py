@@ -101,11 +101,11 @@ class List(BasePage):
 
         # View Location Details
         edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='')
+        edit.link = tf.A("Edit", id='edit-location-link', href='#')
         fields = [edit]
 
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("Back to List", id='cancel-link', href='#')
+        cancel.link = tf.A("List of Locations", id='list-locations-link', href='#')
         fields.append(cancel)
 
         form = get_location_form()
@@ -114,7 +114,8 @@ class List(BasePage):
         buttons.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         form.add_buttons(buttons)
 
-        my_locations.form = form.build()
+        #my_locations.form = form.build()
+        container.form = form.build()
 
         field_data = [('Name', 'name'),
             ('Address', 'address'),
@@ -137,7 +138,8 @@ class List(BasePage):
         view = tf.DIV(id="location_view_form")
         view.fields= fields
 
-        my_locations.view = view
+        #my_locations.view = view
+        container.view = view
 
         # All Locations
         all_loc_list = tf.DIV(id='all_loc_list')
@@ -159,23 +161,6 @@ class List(BasePage):
 
         all_loc_list.loc_tmpl = all_loc_tmpl
         all_locations.all_loc_list = all_loc_list
-
-
-        # View Location Details
-        cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("Back to List", id='cancel-link', href='#')
-        fields = [cancel]
-
-        for label, name in field_data:
-            field = tf.DIV(Class="field-container")
-            field.label = tf.DIV(label, Class="field-name")
-            field.value = tf.DIV(id=name, Class="field-value")
-            fields.append(field)
-
-        all_loc_view = tf.DIV(id="all_location_view")
-        all_loc_view.fields= fields
-
-        all_locations.view = all_loc_view
 
         container.tabs.myloc = my_locations
         container.tabs.all_loc = all_locations
