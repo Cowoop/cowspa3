@@ -48,10 +48,25 @@ class ResourceCollection:
         returns list of resource info dicts
         """
         fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
+        resource_list = dbaccess.list_resources_and_tariffs(owner, fields, type)
+        for res in resource_list:
+            res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
+        return resource_list
+
+    def tariffs(self, owner):
+        return self.list(owner, type=['tariff'])
+    
+    def resources(self, owner, type=None):
+        """
+        type: filter by specified type
+        returns list of resource info dicts
+        """
+        fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
         resource_list = dbaccess.list_resources(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
         return resource_list
+
 
 class ResourceResource:
 
