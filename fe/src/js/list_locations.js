@@ -1,42 +1,52 @@
 // Hide the form to beginwith
 $('#bizplace_form').hide();
 $('#location_view_form').hide();
-$('#all_location_view').hide();
+var locations_title = $('#content-title').text();
 
-// This should be handled via show_editform() below
-// href for edit link needs to be fixed and then 
-// Uncomment entry in setup_routing
-// Till then, following workaround
-$('#location_view_form #edit-link').click(function(){
-    $('#bizplace_form').show();
-    $('#location_view_form').hide();
-    return false;
-  });
-
-// function show_editform(id) {
-//     $('#bizplace_form').show();
-//     alert('Show Edit : ' + id);
-// }
+function show_editform(id) {
+    function success(resp) {
+        loc = resp['result'];
+        $('input[name="name"]').val(loc.name);
+        $('textarea[name="address"]').val(loc.address);
+        $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
+        $('textarea[name="short_description"]').val(loc.short_description);
+        $('input[name="city"]').val(loc.city);
+        $('input[name="email"]').val(loc.email);
+        $('#currency').val(loc.currency);
+        $('input[name="email"]').val(loc.email);
+        $('input[name="host_email"]').val(loc.host_email);
+        $('input[name="booking_email"]').val(loc.booking_email);
+        $('input[name="phone"]').val(loc.phone);
+        $('input[name="fax"]').val(loc.fax);
+        $('#location_view_form').hide();
+        $('#my_loc_list').hide();
+        $('#all_loc_list').hide();
+        $('#bizplace_form').show();
+    };
+    function error() {
+        alert('Error getting location info');
+    };
+    var params = {'bizplace_id': id};
+    jsonrpc('bizplace.info', params, success, error);
+}
 
 function show_mylocations() {
-    $('#bizplace_form').hide();
-    $('#my_loc_list').show();
-    $('#location_view_form').hide();
-    //window.location = basepath + '/bizplaces'
-    // TODO : Set the URL to ../bizplaces
+    window.location = basepath + '/bizplaces/'
 }
 
 function show_all_locations() {
     $('#bizplace_form').hide();
     $('#all_loc_list').show();
-    $('#all_location_view').hide();
-    //window.location = basepath + '/bizplaces'
-    // TODO : Set the URL to ../bizplaces
+    $('#content-title').text(locations_title);
 }
 
-$('#bizplace_form #cancel-btn').click(show_mylocations);
-$('#location_view_form #cancel-link').click(show_mylocations);
-$('#all_location_view #cancel-link').click(show_all_locations);
+$('#bizplace_form #cancel-btn').click(function() {
+    history.back();
+});
+
+$('#list-locations-link').click(function(){
+    window.location = basepath + '/bizplaces/';
+});
 
 function show_tariff() {
     set_context(parseInt(this.id.split('-')[1]));
@@ -59,6 +69,9 @@ function edit_location(theform) {
     }
     function success() {
         action_status.text("Location updated successfully").attr('class', 'status-success');
+        setTimeout(function(){
+            window.location = basepath + '/bizplaces/'
+        }, 1000);
     };
     function error() {
         action_status.text("Error in updating location").attr('class', 'status-fail');
@@ -90,50 +103,28 @@ function location_info(resp) {
 
     selected_tab = $('#location_tabs').tabs('option', 'selected');
 
+    $('#location_tabs').hide();
+    $('#content-title').text(loc.name);
+    $('#location_view_form #name').text(loc.name);
+    $('#location_view_form #currency').text(loc.currency);
+    $('#location_view_form #address').text(loc.address);
+    $('#location_view_form #city').text(loc.city);
+    $('#location_view_form #email').text(loc.email);
+    $('#location_view_form #short_description').text(loc.short_description);
+    $('#location_view_form #country').text(loc.country);
+    $('#location_view_form #phone').text(loc.phone);
+    $('#location_view_form #fax').text(loc.fax);
+    $('#location_view_form #host_email').text(loc.host_email);
+    $('#location_view_form #booking_email').text(loc.booking_email);
     if (selected_tab == 0) {  // My Location
-        $('#location_view_form #name').text(loc.name);
-        $('#location_view_form #currency').text(loc.currency);
-        $('#location_view_form #address').text(loc.address);
-        $('#location_view_form #city').text(loc.city);
-        $('#location_view_form #email').text(loc.email);
-        $('#location_view_form #short_description').text(loc.short_description);
-        $('#location_view_form #country').text(loc.country);
-        $('#location_view_form #phone').text(loc.phone);
-        $('#location_view_form #fax').text(loc.fax);
-        $('#location_view_form #host_email').text(loc.host_email);
-        $('#location_view_form #booking_email').text(loc.booking_email);
-
-        $('input[name="name"]').val(loc.name);
-        $('input[name="address"]').val(loc.address);
-        $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
-        $('textarea[name="short_description"]').val(loc.short_description);
-        $('input[name="city"]').val(loc.city);
-        $('input[name="email"]').val(loc.email);
-        $('#currency').val(loc.currency);
-        $('input[name="email"]').val(loc.email);
-        $('input[name="host_email"]').val(loc.host_email);
-        $('input[name="booking_email"]').val(loc.booking_email);
-        $('input[name="phone"]').val(loc.phone);
-        $('input[name="fax"]').val(loc.fax);
-
-        $('#location_view_form').show();
+        $('#edit-location-link').attr('href',basepath+'/bizplaces/#/'+loc.id+'/edit');
         $('#my_loc_list').hide();
         $('#bizplace_form').hide();
     } else {
-        $('#all_location_view #name').text(loc.name);
-        $('#all_location_view #currency').text(loc.currency);
-        $('#all_location_view #address').text(loc.address);
-        $('#all_location_view #city').text(loc.city);
-        $('#all_location_view #email').text(loc.email);
-        $('#all_location_view #short_description').text(loc.short_description);
-        $('#all_location_view #country').text(loc.country);
-        $('#all_location_view #phone').text(loc.phone);
-        $('#all_location_view #fax').text(loc.fax);
-        $('#all_location_view #host_email').text(loc.host_email);
-        $('#all_location_view #booking_email').text(loc.booking_email);
-        $('#all_location_view').show();
+        $('#edit-location-link').hide();
         $('#all_loc_list').hide();
     }
+    $('#location_view_form').show();
 }
 
 function bizplace_info_error() {
@@ -148,7 +139,7 @@ function act_on_route(id) {
 function setup_routing () {
     var routes = {
         '/:id': {
-            // '/edit': show_editform,
+            '/edit': show_editform,
             on: act_on_route
         },
     };

@@ -1,6 +1,10 @@
 var thismember = null;
 var thismember_id = null;
+var is_get_thismember_usages_done = false;
+var is_get_thismember_invoices_done = false;
 var select_member_box = $('.select-member');
+var usage_table;
+var usage_edit_id = null;
 
 function on_member_profile(resp) {
     thismember = resp.result;
@@ -35,27 +39,56 @@ function on_member_profile(resp) {
 
 function act_on_route(id) {
     if (thismember_id != id) {
-        select_member_box.hide();
         thismember_id = id;
+        is_get_thismember_usages_done = false;
+        is_get_thismember_invoices_done = false;
+        select_member_box.hide();
         var params = {'member_id': id};
         jsonrpc('member.profile', params, on_member_profile, error);
         get_billing_preferences();
         get_billing_pref_details();
-        get_uninvoiced_usages();
-        get_invoice_tab_data();
     };
 };
 
 //********************************Tabs******************************************
 $("#profile_tabs").tabs({
-    collapsible:false
+    collapsible:false,
+});
+$(".profile-tab").click(function(){ 
+    window.location.hash = "#/" + thismember_id + "/" + $(this).attr('href').slice(1);
 });
 //-------------------------------End Tabs---------------------------------------
 function show_profile() { $("#profile_tabs").tabs('select', 0); };
 function show_memberships() { $("#profile_tabs").tabs('select', 1); };
 function show_billing() { $("#profile_tabs").tabs('select', 2); };
-function show_usages() { $("#profile_tabs").tabs('select', 3); };
-function show_invoices() { $("#profile_tabs").tabs('select', 4); };
+function show_usages() {
+    if(!is_get_thismember_usages_done){
+        get_uninvoiced_usages();
+    };
+    $("#profile_tabs").tabs('select', 3);
+    $("#add_usage").hide();
+    $("#edit_usage").hide(); 
+    $("#uninvoiced_usages").show();
+};
+function show_add_usage() {
+    $("#profile_tabs").tabs('select', 3);
+    $("#uninvoiced_usages").hide();
+    $("#edit_usage").hide();
+    $("#add_usage").show();
+};
+function show_edit_usage(id, usage_id) {
+    $("#profile_tabs").tabs('select', 3);
+    $("#uninvoiced_usages").hide();
+    $("#add_usage").hide();
+    $("#edit_usage").show();
+    handle_edit_usage(usage_id);
+};
+function show_invoices() {
+    $("#profile_tabs").tabs('select', 4);
+    if(!is_get_thismember_invoices_done){
+        get_invoice_tab_data();
+    };
+};
 
 function setup_routing () {
     var routes = {
@@ -63,6 +96,8 @@ function setup_routing () {
             '/profile': show_profile,
             '/billing': show_billing,
             '/memberships': show_memberships,
+            '/usages/new' : show_add_usage,
+            '/usages/:usage_id/edit' : show_edit_usage,
             '/usages': show_usages,
             '/invoices': show_invoices,
             on: act_on_route
@@ -70,7 +105,7 @@ function setup_routing () {
     };
     Router(routes).configure({ recurse: 'forward' }).init();
 };
-
+/*
 function on_result_click (data) {
     select_member_box.text("loading ...");
     thismember_id = data['attributes']['id'];
@@ -79,10 +114,8 @@ function on_result_click (data) {
     select_member_box.hide();
     get_billing_preferences();
     get_billing_pref_details();
-    get_uninvoiced_usages()
-    get_invoice_tab_data();
 }; 
-
+*/
 function autocomplete() {
     $('#member-search').autoSuggest("/search/members", {
         selectedItemProp: "name",
@@ -300,7 +333,7 @@ function success1(resp) {
 function error1(){};
 params1['owner'] = current_ctx;
 params1['type'] = 'tariff';
-jsonrpc('resource.list', params1, success1, error1);
+jsonrpc('tariff.list', params1, success1, error1);
     
 //*************************End Next Tariff**************************************
 
@@ -385,7 +418,7 @@ function bind_cancel_and_change_tariff() {
                     $("#Change_Tariff-msg").html("");
                 }
             } 
-        });d
+        });
     });
 };   
 //***********************End Cancel/Change Tariff*******************************
@@ -393,10 +426,12 @@ function bind_cancel_and_change_tariff() {
 //****************************Usage Management********************************** 
 //-----------------------------Get Resources------------------------------------
 function on_get_resources_success(res) {
-    $('#resource-tmpl').tmpl(res['result']).appendTo('#resource_select');
+    $('#resource-tmpl').tmpl(res['result']).appendTo('#add-usage-form #resource_select');
+    $('#resource-tmpl').tmpl(res['result']).appendTo('#edit_usage-form #res_select');
     var custom_resource = [{'id':0, 'name':'Custom'}];
-    $('#resource-tmpl').tmpl(custom_resource).appendTo('#resource_select');
-    $("#resource_name").val($("#resource_select option:first").text());
+    $('#resource-tmpl').tmpl(custom_resource).appendTo('#add-usage-form #resource_select');
+    $('#resource-tmpl').tmpl(custom_resource).appendTo('#edit_usage-form #res_select');
+    $("#resource_name").val($("#add-usage-form #resource_select option:first").text());
 };
 function on_get_resources_error(){};
 jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
@@ -407,12 +442,12 @@ $("#resource_select").change(function(){
 $('#add-usage-form #start_time').datetimepicker({
     ampm: true,
     dateFormat: 'M d, yy',
-    timeFormat: 'hh:mm tt',
+    timeFormat: 'hh:mm TT',
 });
 $('#add-usage-form #end_time').datetimepicker({
     ampm: true,
     dateFormat: 'M d, yy',
-    timeFormat: 'hh:mm tt',
+    timeFormat: 'hh:mm TT',
 });
 $("#calculate_cost-btn").click(function(){
     params = {
@@ -448,16 +483,24 @@ $('#submit-usage').click(function(){
         $("#resource_name").hide();
         $("#submit-usage").attr("disabled", true);
         get_uninvoiced_usages();
+        window.location.hash = "/" + thismember_id + "/usages";
     };
     function on_add_usage_error(){
         action_status.text("Add usage fail.").attr('class', 'status-fail');
     };
     jsonrpc('usage.new', params, on_add_usage_success, on_add_usage_error);
 });
+$("#new_usage-btn").click(function(){
+    window.location.hash = "/" + thismember_id + "/usages/new";
+});
+$(".cancel-usage").click(function(){
+    window.location.hash = "/" + thismember_id + "/usages";
+});
 //-----------------------------Uninvoiced Usages--------------------------------
 function get_uninvoiced_usages(){
     function success(response){
-        $('#usage_table').dataTable({
+        is_get_thismember_usages_done = true;
+        usage_table = $('#usage_table').dataTable({
             "aaData": response['result'],
             "bJQueryUI": true,
             "bAutoWidth": false,
@@ -465,32 +508,125 @@ function get_uninvoiced_usages(){
             "sPaginationType": "full_numbers",
             "aoColumns": [
                 { "sTitle": "Resource Name", "sWidth":"20%" },
-                { "sTitle": "Start Time", "sWidth":"26%",
+                { "sTitle": "Start Time", "sWidth":"20%",
                     "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
                         return to_formatted_datetime(sReturn);
                         }
                 },
-                { "sTitle": "End Time", "sWidth":"26%",
+                { "sTitle": "End Time", "sWidth":"20%",
                     "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
                         return to_formatted_datetime(sReturn);
                         }
                 },
-                { "sTitle": "Quantity", "sWidth":"14%"},
-                { "sTitle": "Cost",  "sWidth":"14%" },
+                { "sTitle": "Quantity", "sWidth":"10%"},
+                { "sTitle": "Cost",  "sWidth":"10%" },
+                { "sTitle": "Manage", "sWidth":"20%",
+                    "fnRender": function(obj) {
+                        var usage_id = obj.aData[obj.iDataColumn];
+                        var data = {'thismember_id':thismember_id, 'usage_id':usage_id};
+                        var edit_link = "<A id='edit_usage-"+usage_id+"' href='#/"+thismember_id+"/usages/"+usage_id+"/edit'>Edit</A>";
+                        var cancel_link = "<A id='cancel_usage-"+usage_id+"' href='#/"+thismember_id+"/usages' class='delete-usage'>X</A>";
+                        return edit_link + "<c> | </c>" + cancel_link;
+                        }
+                },
             ]
         });
+        $(".delete-usage").click(delete_usage);
     };
     function error(){};
     var params = { 'member_ids' : [parseInt(thismember_id)], 'hashrows':false};
-    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost'];
+    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id'];
     jsonrpc('usages.find', params, success, error);
 };
+//---------------------------Edit Usage-----------------------------------------
+$("#res_select").change(function(){
+    $("#res_name").val($("#res_select option:selected").text());
+});
+$('#edit_usage-form #res_start_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm TT',
+});
+$('#edit_usage-form #res_end_time').datetimepicker({
+    ampm: true,
+    dateFormat: 'M d, yy',
+    timeFormat: 'hh:mm TT',
+});
+function handle_edit_usage(usage_id){
+    usage_edit_id = usage_id;
+    function on_get_usage_info_success(response){
+        info = response.result;
+        $('#edit_usage-form #res_select').val(info.resource_id);
+        $("#edit_usage-form #res_name").val(info.resource_name);
+        $("#edit_usage-form #res_quantity").val(info.quantity);
+        $("#edit_usage-form #res_start_time").val(to_formatted_datetime(info.start_time));
+        $("#edit_usage-form #res_end_time").val(to_formatted_datetime(info.end_time));
+        $("#edit_usage-form #res_cost").val(info.cost);        
+    };
+    function on_get_usage_info_error(){
+    };
+    jsonrpc('usage.info', {'usage_id': parseInt(usage_id)}, on_get_usage_info_success, on_get_usage_info_error);
+};
+$("#recalculate_cost-btn").click(function(){
+    params = {
+        'resource_id' : parseInt($("#res_select").val()),
+        'quantity' : parseFloat($("#res_quantity").val()),
+        'member_id' : thismember_id,
+        'starts' : to_iso_datetime($("#res_start_time").val()),
+        'ends' : to_iso_datetime($("#res_end_time").val())
+    };
+    function on_calculate_cost_success(resp){
+       $("#res_cost").val(resp['result']);
+    };
+    function on_calculate_cost_error(){
+        $("#add-usage-form .action-status").text("Cost Calculation fail.").attr('class', 'status-fail');
+    };
+    jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+});
+$('#update-usage').click(function(){
+    var action_status = $('#edit_usage-form .action-status');
+    var params = {
+        'usage_id' : parseInt(usage_edit_id),
+        'resource_id' : parseInt($("#res_select").val()),
+        'resource_name' : $("#res_name").val(),
+        'quantity' : parseFloat($("#res_quantity").val()),
+        'cost' : parseFloat($("#res_cost").val()),
+        'start_time' : to_iso_datetime($("#res_start_time").val()),
+        'end_time' : to_iso_datetime($("#res_end_time").val())
+    };
+    function on_add_usage_success(resp){
+        action_status.text("Update usage is successful.").attr('class', 'status-success');
+        $("#resource_select").show();
+        $("#resource_name").hide();
+        get_uninvoiced_usages();
+        window.location.hash = "/" + thismember_id + "/usages";
+    };
+    function on_add_usage_error(){
+        action_status.text("Update usage fail.").attr('class', 'status-fail');
+    };
+    jsonrpc('usage.update', params, on_add_usage_success, on_add_usage_error);
+});
+//---------------------------Cancel Usage---------------------------------------
+function delete_usage() {
+    var row = $(this).closest("tr").get(0);
+    function on_usage_cancel_success(response){
+        usage_table.fnDeleteRow(usage_table.fnGetPosition(row));
+    };
+    function on_usage_cancel_error(){
+    };
+    if(confirm("Do you want to cancel usage?")){
+        var usage_id = $(this).attr("id").split("-")[1];
+        jsonrpc('usages.delete', {'usage_id': parseInt(usage_id)}, on_usage_cancel_success, on_usage_cancel_error);
+    };
+};
+
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Usage Managementxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //********************************Invoices**************************************
 function get_invoice_tab_data(){
     function get_invoice_history_success(response) {
+        is_get_thismember_invoices_done = true;
         $('#history_table').dataTable({
             "aaData": response['result'],
             "bJQueryUI": true,
@@ -529,7 +665,7 @@ function get_invoice_tab_data(){
 };
 $("#new_invoice-btn").click(function(){
     var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme;
-    window.location = base_url + '/invoicing/new/#/invoicee/' + thismember_id;
+    window.location = base_url + '/invoices/new/#/invoicee/' + thismember_id;
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Invoicesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

@@ -35,7 +35,7 @@ class UsageResource:
         """
         return usage_store.get(usage_id)
 
-    def update(self, usage_id, mod_data):
+    def update(self, usage_id, **mod_data):
         usage_store.update(usage_id, **mod_data)
 
     def get(self, usage_id, attrname):
