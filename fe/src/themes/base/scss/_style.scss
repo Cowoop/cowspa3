@@ -855,6 +855,41 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     width: 80%;
     font-size: 140%;
 }
+#resource-select {
+    font-size: 120%;
+    margin-bottom: 1em;
+}
+
+#pane-resource { width: 25%; float: left; }
+#pane-booking { width: 70%; float: right; }
+#booking-date-inp-vis { 
+    font-size: 80%;
+}
+
+#booking-cal {
+    width: 100%; 
+    .cal-min15 { 
+        border-bottom: 1px dotted; 
+        border-right: 1px solid; 
+        width: 5em;
+        height: 2em;
+    }
+    .hour-end {
+        border-bottom: 1px dashed;
+    }
+    .cal-day, .day-title {
+        display: inline-block;
+        overflow: hidden;
+        text-align: center;
+    }
+    .cal-hour {
+        height: 8em;
+        width: 4em;
+        border-bottom: 1px solid dashed;
+    }
+    .ui-selecting { background: #FECA40; }
+    .ui-selected { background: #F39814; color: white; }
+}
 
 // Hacks goes here
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
