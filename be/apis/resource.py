@@ -55,7 +55,16 @@ class ResourceCollection:
 
     def tariffs(self, owner):
         return self.list(owner, type=['tariff'])
-    
+
+    def available_tariffs(self, owner):
+        available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
+        return resource_store.get_by(crit=dict(owner=owner, state=available_state), fields=['id', 'name'])
+
+    def available(self, owner):
+        available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
+        return [res for res in resource_store.get_by(crit=dict(owner=owner, state=available_state), fields=['id', 'name', 'type']) \
+            if res.type != 'tariff']
+
     def resources(self, owner, type=None):
         """
         type: filter by specified type
