@@ -6,7 +6,7 @@ tf = sphc.TagFactory()
 
 webshims_base = '/js/webshims-1.8.2'
 webshims = [webshims_base + "/extras/modernizr-custom.js", webshims_base + "/polyfiller.js"]
-ctxpath = '/%(lang)s/%(theme)s'
+ctxpath = '/${lang}/${theme}'
 
 class CSPage(sphc.more.HTML5Page):
     jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js', '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js', '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js'] + webshims + ['/js/SS.min.js', '/js/common.js']
@@ -91,7 +91,7 @@ class CSAuthedPage(CSPage):
     top_links = [('Profile_Link', ctxpath + ''), ('Logout', '/logout')]
     # 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic'
     # Ubuntu font link. Better policy would be use Ubuntu only if available. This eliminates one external heavy http req.
-    css_links = ['/themes/%(theme)s/css/main.css']
+    css_links = ['/themes/${theme}/css/main.css']
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
         ('Members', '#', members_opt),
