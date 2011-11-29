@@ -267,8 +267,9 @@ class EditProfile(BasePage):
         # Profile
         profile = tf.DIV(id="profile")
         profile.info = tf.DIV(id="member-info", Class="labeled-list hidden")
-        profile.info.id = [tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")]
-        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")])
+        profile.info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="indivisual")
+        profile.info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
+        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="indivisual")
         profile.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
         profile.info.line = tf.hr(Class="light")
 
@@ -277,15 +278,16 @@ class EditProfile(BasePage):
         profile.about.legend = tf.LEGEND("About")
         profile.about.about_div = tf.DIV(id="about")
         form = sphc.more.Form(id='member-about-edit', Class='profile-edit-form', classes=['hform'])
-        form.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required())
-        form.add_field("Last Name", tf.INPUT(name='last_name', type="text"))
+        form.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required(), container_classes=['indivisual'])
+        form.add_field("Last Name", tf.INPUT(name='last_name', type="text"), container_classes=['indivisual'])
+        form.add_field("Name", tf.INPUT(name='name', type="text"), container_classes=['organization'])
         form.add_field("Short description", tf.INPUT(name='short_description', type="text"))
         form.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
         form.add_buttons(tf.BUTTON("Update", type="submit"))
         profile.about.about_div.form = form.build()
 
         # Account
-        profile.account = tf.FIELDSET()
+        profile.account = tf.FIELDSET(Class="indivisual")
         profile.account.legend = tf.LEGEND("Account")
         profile.account.account_div = tf.DIV(id="account")
         profile.account.account_div.form = account_form().build()
@@ -297,7 +299,7 @@ class EditProfile(BasePage):
         profile.contact.contact_div.form = contact_form().build()
 
         # Preferences
-        profile.preferences = tf.FIELDSET()
+        profile.preferences = tf.FIELDSET(Class="indivisual")
         profile.preferences.legend = tf.LEGEND("Preferences")
         profile.preferences.preferences_div = tf.DIV(id="preferences")
         profile.preferences.preferences_div.form = preferences_form().build()
@@ -362,7 +364,7 @@ class EditProfile(BasePage):
         container.tabs.list = tf.UL()
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile", Class="profile-tab"))
         container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="profile-tab"))
-        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab"))
+        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab indivisual"))
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages", Class="profile-tab"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices", Class="profile-tab"))
         container.tabs.profile = profile

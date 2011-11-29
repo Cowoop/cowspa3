@@ -2,18 +2,30 @@ var thismember = null;
 var thismember_id = null;
 var is_get_thismember_usages_done = false;
 var is_get_thismember_invoices_done = false;
+var is_get_thismember_billingpref_done = false;
 var select_member_box = $('.select-member');
 var usage_table;
 var usage_edit_id = null;
+var mtype = null;
 
 function on_member_profile(resp) {
     thismember = resp.result;
+    mtype = thismember.mtype;
+    if(mtype == "Indivisual"){
+        $(".indivisual").show();
+        $(".organization").hide();
+    }
+    else{
+        $(".indivisual").hide();
+        $(".organization").show();
+    }
     $('.content-title').show();
     $('#content-title').text(thismember.profile.name);
     $('.data-id').text(thismember_id);
     $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="last_name"]').val(thismember.profile.last_name);
+    $('input[name="name"]').val(thismember.profile.name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
     $('input[name="address"]').val(thismember.contact.address);
@@ -42,11 +54,10 @@ function act_on_route(id) {
         thismember_id = id;
         is_get_thismember_usages_done = false;
         is_get_thismember_invoices_done = false;
+        is_get_thismember_billingpref_done = false;
         select_member_box.hide();
         var params = {'member_id': id};
         jsonrpc('member.profile', params, on_member_profile, error);
-        get_billing_preferences();
-        get_billing_pref_details();
     };
 };
 
@@ -60,7 +71,15 @@ $(".profile-tab").click(function(){
 //-------------------------------End Tabs---------------------------------------
 function show_profile() { $("#profile_tabs").tabs('select', 0); };
 function show_memberships() { $("#profile_tabs").tabs('select', 1); };
-function show_billing() { $("#profile_tabs").tabs('select', 2); };
+function show_billing() {
+    if(!is_get_thismember_billingpref_done && mtype!="Organization"){
+        get_billing_preferences();
+        get_billing_pref_details();
+    };
+    if(mtype != "Organization"){
+        $("#profile_tabs").tabs('select', 2);
+    } 
+};
 function show_usages() {
     if(!is_get_thismember_usages_done){
         get_uninvoiced_usages();
@@ -105,35 +124,7 @@ function setup_routing () {
     };
     Router(routes).configure({ recurse: 'forward' }).init();
 };
-/*
-function on_result_click (data) {
-    select_member_box.text("loading ...");
-    thismember_id = data['attributes']['id'];
-    var params = {'member_id': thismember_id};
-    jsonrpc('member.profile', params, on_member_profile, error);
-    select_member_box.hide();
-    get_billing_preferences();
-    get_billing_pref_details();
-}; 
-*/
-function autocomplete() {
-    $('#member-search').autoSuggest("/search/members", {
-        selectedItemProp: "name",
-        selectedValuesProp: "id", 
-        searchObjProps: "name, email, id",
-        minChars: 1,
-        selectionLimit: 0, 
-        startText: "Enter name or email or id",
-        resultClick: function (data) {
-            var id = data['attributes']['id'];
-            var basepath = window.location.pathname.split('/').slice(0,3).join('/');
-            window.location = basepath + "/member/edit/#/" +id+ "/about";
-        }
-    });
-};
-
 setup_routing();
-autocomplete();
 
 function edit_member(theform) {
     var action_status = $('#'+theform.attr('id') + ' .action-status');
@@ -206,7 +197,8 @@ $("#update-billingpref").click(function(){
         case 2 : params['billto'] = billto;
                  break;         
         case 3 : if(parseInt($("input:radio[name='organization_mode']:checked").val()) == 1){
-                    params['org_details'] = {
+                    params['billto'] = null;
+                    params['organization_details'] = {
                         "name" :$("#details_3 #org_name").val(),
                         "address" :$("#details_3 #org_address").val(),
                         "city" :$("#details_3 #org_city").val(),
@@ -237,6 +229,7 @@ function get_billing_preferences(){
         details = resp['result']['details'];
         switch(mode){
             case 0 : $('input:radio[name=mode][value=0]').click();
+                     $('input:radio[name=organization_mode][value=0]').click();
                      break;
             case 1 : $('input:radio[name=mode][value=1]').click();
                      if(details != null){
@@ -249,13 +242,14 @@ function get_billing_preferences(){
                      }
                      $('input:radio[name=organization_mode][value=0]').click();
                      break;
-           case 2 : $('input:radio[name=mode][value=2]').click();
-                    $('input:radio[name=organization_mode][value=0]').click();
-                    break;
-           case 3 : $('input:radio[name=mode][value=3]').click();
-                    $('input:radio[name=organization_mode][value=0]').click();
-                    break;
+            case 2 : $('input:radio[name=mode][value=2]').click();
+                     $('input:radio[name=organization_mode][value=0]').click();
+                     break;
+            case 3 : $('input:radio[name=mode][value=3]').click();
+                     $('input:radio[name=organization_mode][value=0]').click();
+                     break;
         }   
+        is_get_thismember_billingpref_done = true;
     };
     function on_get_billingpref_error(){};
     var params = {'member': thismember_id};
@@ -277,14 +271,14 @@ function get_billing_pref_details(){
 };
 //------------------------Existing Member Search--------------------------------
 $('#details_2 #member').autocomplete({
-    source: "/search/members", 
+    source: "/search/indivisual", 
     select: function (event, ui) {
         billto = ui.item.id;
     } 
 });
 //------------------------Existing Organization Search--------------------------
-$('#details_1 #existing_org').autocomplete({
-    source: "/search/organizations", 
+$('#details_3 #existing_org').autocomplete({
+    source: "/search/organization", 
     select: function (event, ui) {
         billto = ui.item.id;
     } 
@@ -332,8 +326,7 @@ function success1(resp) {
     };
 function error1(){};
 params1['owner'] = current_ctx;
-params1['type'] = 'tariff';
-jsonrpc('tariff.list', params1, success1, error1);
+jsonrpc('tariffs.list', params1, success1, error1);
     
 //*************************End Next Tariff**************************************
 

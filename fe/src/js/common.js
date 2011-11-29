@@ -37,7 +37,7 @@ function jsonrpc(apiname, params, success, error) {
 };
 
 function init_autocomplete() {
-    $('input#search').autoSuggest("/search/members", {
+    $('input#search').autoSuggest("/search/member", {
         selectedItemProp: "name",
         selectedValuesProp: "id", 
         searchObjProps: "name, email, id",
