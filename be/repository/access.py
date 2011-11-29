@@ -109,13 +109,14 @@ def find_activities(member_ids=[], roles=[], limit=15):
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if a_ids else []
 
 def list_resources_and_tariffs(owner, fields, type=None):
-    clause = "owner = %(owner)s ORDER BY name"
+    clause = "owner = %(owner)s"
     clause_values = dict(owner=owner)
     if type:
         clause += " AND type = %(type)s"
-        clause_values[type] = type
+        clause_values['type'] = type
+    clause += " ORDER BY name"
     return resource_store.get_by_clause(clause, clause_values, fields)
-    
+
 def list_resources(owner, fields, type=None):
     clause = "type != 'tariff' AND owner = %(owner)s ORDER BY name"
     if type:
