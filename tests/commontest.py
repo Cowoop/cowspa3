@@ -26,8 +26,12 @@ def setup_test_simple_env():
             pgcursor = cursor_getter()
     builtins.env = env
 
+def load_apis():
+    import be.apps
+    
 def setup_test_env():
     be.bootstrap.start('conf_test')
+    load_apis()
 
 def setup_system_context():
     be.apis.user.set_context(env.config.system_username)
