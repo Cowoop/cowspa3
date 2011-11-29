@@ -6,7 +6,7 @@ import be.apis.activities as activitylib
 import be.apis.user as userlib
 import commonlib.shared.static as data_lists
 import be.apis.invoicepref as invoicepreflib
-import be.apis.billingpref as billingpreflib
+import be.libs.signals as signals
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -15,7 +15,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, username, password, email, first_name, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default"):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default", mtype="Indivisual"):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -24,13 +24,13 @@ class MemberCollection:
         else:
             state = commonlib.shared.constants.member.to_flags(state)
 
-        user_id = userlib.new(username, password, state)
+        user_id = userlib.new(username, password, state) if mtype != "Organization" else dbaccess.OidGenerator.next("Member")
 
         data = dict(member=user_id, language=language, theme=theme)
         memberpref_store.add(**data)
 
         #owner = user_id
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, sip=sip, created=created, state=state, type=mtype)
         member_store.add(**data)
 
         search_d = dict(id=user_id, name=name, short_description=short_description, long_description=long_description, username=username)
@@ -38,7 +38,7 @@ class MemberCollection:
         
         invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
         
-        billingpreflib.billingpref_collection.new(**dict(member=user_id))
+        signals.send_signal('member_created', member=user_id)
 
         data = dict(name=name, id=user_id)
         activity_id = activitylib.add('member_management', 'member_created', data, created)
@@ -60,7 +60,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': False}, limit=5):
+    def search(self, q, options={'mybizplace': False}, limit=5, mtype="member"):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -72,7 +72,7 @@ class MemberCollection:
         return -> list of tuples containing member's display name and member id
         """
         query_parts = q.split()
-        return dbaccess.search_member(query_parts, options, limit)
+        return dbaccess.search_member(query_parts, options, limit, mtype)
 
 class MemberResource:
 
@@ -104,12 +104,13 @@ class MemberResource:
         return info
 
     def details(self, member_id):
+        mtype = member_store.get(member_id, 'type')
         profile = profile_store.get_by(dict(member=member_id))[0]
         contact = contact_store.get_by(dict(id=member_id))[0]
-        account = dict(username=user_store.get(member_id, ['username']), password="")
-        preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0]
+        account = dict(username=user_store.get(member_id, ['username']), password="") if mtype == "Indivisual" else []
+        preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0] if mtype == "Indivisual" else []
         memberships = dbaccess.get_member_current_memberships(member_id)
-        return dict(profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
+        return dict(mtype=mtype, profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
     def contact(self, member_id):
         return contact_store.get_by(dict(id=member_id))[0]

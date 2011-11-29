@@ -63,9 +63,9 @@ class MemberProfile(PGStore):
     table_name = "member_profile"
     create_sql = """
     member INTEGER NOT NULL,
-    first_name TEXT NOT NULL,
+    first_name TEXT,
     last_name TEXT,
-    name TEXT,
+    name TEXT NOT NULL,
     short_description TEXT,
     long_description TEXT,
     interests TEXT[],
@@ -85,7 +85,8 @@ class Member(PGStore):
     create_sql = """
     id INTEGER NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    state INTEGER default 1 NOT NULL
+    state INTEGER default 1 NOT NULL,
+    type TEXT NOT NULL
     """
     parent_stores = [MemberProfile(), Contact()]
 

@@ -228,7 +228,7 @@ def list_invoices(issuer ,limit):
     values = dict(issuer = issuer, limit = limit) 
     return invoice_store.query_exec(query, values, hashrows=False)
     
-def search_member(query_parts, options, limit):
+def search_member(query_parts, options, limit, mtype):
     fields = ['id', 'name']
     query = 'SELECT member.id, member.name, member.email, member.name as label FROM member'
     clause = ""
@@ -241,11 +241,14 @@ def search_member(query_parts, options, limit):
             clause += 'Member.id = %(query_part)s'
         except:
             query_parts[0] = query_parts[0] + "%"
-            clause += '(Member.first_name ILIKE %(query_part)s OR Member.last_name ILIKE %(query_part)s OR Member.email ILIKE %(query_part)s OR Member.organization ILIKE %(query_part)s)'
+            clause += '(Member.first_name ILIKE %(query_part)s OR Member.last_name ILIKE %(query_part)s OR Member.name ILIKE %(query_part)s OR Member.email ILIKE %(query_part)s OR Member.organization ILIKE %(query_part)s)'
         values = dict(query_part=query_parts[0], limit=limit)
     elif len(query_parts) == 2:
         clause += '((Member.first_name ILIKE %(query_part1)s AND Member.last_name ILIKE %(query_part2)s) OR (Member.first_name ILIKE %(query_part2)s AND Member.last_name ILIKE %(query_part1)s))'
         values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
+    if mtype != "member":
+        clause += ' AND type ILIKE %(mtype)s'
+        values['mtype'] = mtype
     query  += ' WHERE '+clause+' LIMIT %(limit)s'
     values['member_id'] =  env.context.user_id
     
