@@ -24,7 +24,7 @@ def test_update_usage():
     old_cost = usagelib.usage_resource.get(1,'cost')
     new_cost = 2000
     mod_data = dict(cost=new_cost)
-    usagelib.usage_resource.update(1, mod_data)
+    usagelib.usage_resource.update(1, **mod_data)
     assert old_cost == test_data.usage['cost']
     assert new_cost == usagelib.usage_resource.info(1)['cost']
 
