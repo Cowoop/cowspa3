@@ -110,9 +110,10 @@ def find_activities(member_ids=[], roles=[], limit=15):
 
 def list_resources_and_tariffs(owner, fields, type=None):
     clause = "owner = %(owner)s ORDER BY name"
+    clause_values = dict(owner=owner)
     if type:
-        clause = "type IN %(type)s AND " + clause
-    clause_values = dict(owner=owner, type=tuple(type))
+        clause += " AND type = %(type)s"
+        clause_values[type] = type
     return resource_store.get_by_clause(clause, clause_values, fields)
     
 def list_resources(owner, fields, type=None):
