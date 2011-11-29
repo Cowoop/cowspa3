@@ -44,7 +44,7 @@ def test_find_by():
     for usage in usages:
         assert usage['start_time'] >= data['start'] and usage['start_time'] <= data['end']
     
-    data = dict(res_owner_refs=[test_data.bizplace_id])
+    data = dict(res_owner_ids=[test_data.bizplace_id])
     usages = usagelib.usage_collection.find(**data)
     assert bool(usages)
     

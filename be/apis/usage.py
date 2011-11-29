@@ -21,11 +21,13 @@ class UsageCollection:
         """
         return usage_store.remove(usage_id)
 
-    def find(self, start=None, end=None, invoice=None, res_owner_refs=[], resource_ids=[], member_ids=[], resource_types=[], fields=None, hashrows=True):
+    def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[]):
         """
-        return list of dicts which contains information of usage, which are sorted on the basis of selected criteria like start time, end time, resource ids, resource owner references, member ids or resource types
+        returns list of usage dicts which are filtered on the basis of specified criteria
+        start end: if specified, usages with start time falling in start-end range would be searched
         """
-        return dbaccess.find_usage(start, end, invoice, res_owner_refs, resource_ids, member_ids, resource_types, fields, hashrows=hashrows)
+        assert (start or end or invoice_id or res_owner_ids or resource_ids or member_ids or resource_types), 'atleast one criteria'
+        return dbaccess.find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types)
 
 class UsageResource:
 

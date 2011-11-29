@@ -167,21 +167,22 @@ def find_tariff_members(plan_ids, fields=['member', 'name'], at_time=None):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start, end, invoice, res_owner_refs, resource_ids, member_ids, resource_types, fields, hashrows):
+def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
     if end: clauses.append('start_time <= %(end_time)s')
-    if invoice: clauses.append('invoice = %(invoice)s')
-    if res_owner_refs: clauses.append('(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_refs)s))')
+    if invoice_id: clauses.append('invoice = %(invoice_id)s')
+    if res_owner_ids: clauses.append('(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_ids)s))')
     if resource_ids: clauses.append('(resource_id IN %(resource_ids)s)')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
 
     clauses_s = ' AND '.join(clauses)
-    clause_values = dict(start_time=start, end_time=end, invoice=invoice, resource_ids=tuple(resource_ids), owner_refs=tuple(res_owner_refs), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
+    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
-    return usage_store.get_by_clause(clauses_s, clause_values, fields=fields, hashrows=hashrows)
+    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id']
+    return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
