@@ -298,8 +298,8 @@ function get_pricing(id) {
     if (this_res_pricing == null) {
         var params = {'resource_id': id};
         jsonrpc('pricings.by_resource', params, on_resource_pricings, error);
-        var params = {'owner': current_ctx, 'type':'tariff'};
-        jsonrpc('resource.list', params, on_tariff_list, error);
+        var params = {'owner': current_ctx};
+        jsonrpc('tariffs.list', params, on_tariff_list, error);
     } else {
         $('#res-pricing-content').show();
     };
