@@ -448,7 +448,8 @@ $("#calculate_cost-btn").click(function(){
         'quantity' : parseFloat($("#quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#start_time").val()),
-        'ends' : to_iso_datetime($("#end_time").val())
+        'ends' : to_iso_datetime($("#end_time").val()),
+        'cost': $('#cost').val()
     };
     function on_calculate_cost_success(resp){
        $("#cost").val(resp['result']);
@@ -493,8 +494,13 @@ $(".cancel-usage").click(function(){
 function get_uninvoiced_usages(){
     function success(response){
         is_get_thismember_usages_done = true;
+        var aaData = [];
+        for (i in response.result) {
+            var item = response.result[i];
+            aaData[i] = [item.resource_name, item.start_time, item.end_time, item.quantity, item.cost];
+        };
         usage_table = $('#usage_table').dataTable({
-            "aaData": response['result'],
+            "aaData": aaData,
             "bJQueryUI": true,
             "bAutoWidth": false,
             "bDestroy": true,
@@ -515,9 +521,9 @@ function get_uninvoiced_usages(){
                 },
                 { "sTitle": "Quantity", "sWidth":"10%"},
                 { "sTitle": "Cost",  "sWidth":"10%" },
-                { "sTitle": "Manage", "sWidth":"20%",
+                { "sTitle": "Manage", "sWidth":"10%",
                     "fnRender": function(obj) {
-                        var usage_id = obj.aData[obj.iDataColumn];
+                        var usage_id = obj.iDataColumn;
                         var data = {'thismember_id':thismember_id, 'usage_id':usage_id};
                         var edit_link = "<A id='edit_usage-"+usage_id+"' href='#/"+thismember_id+"/usages/"+usage_id+"/edit'>Edit</A>";
                         var cancel_link = "<A id='cancel_usage-"+usage_id+"' href='#/"+thismember_id+"/usages' class='delete-usage'>X</A>";
@@ -529,8 +535,7 @@ function get_uninvoiced_usages(){
         $(".delete-usage").click(delete_usage);
     };
     function error(){};
-    var params = { 'member_ids' : [parseInt(thismember_id)], 'hashrows':false};
-    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id'];
+    var params = { 'member_ids' : [parseInt(thismember_id)]};
     jsonrpc('usages.find', params, success, error);
 };
 //---------------------------Edit Usage-----------------------------------------
@@ -568,13 +573,14 @@ $("#recalculate_cost-btn").click(function(){
         'quantity' : parseFloat($("#res_quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#res_start_time").val()),
-        'ends' : to_iso_datetime($("#res_end_time").val())
+        'ends' : to_iso_datetime($("#res_end_time").val()),
+        'cost': $('#res_cost').val()
     };
     function on_calculate_cost_success(resp){
        $("#res_cost").val(resp['result']);
     };
     function on_calculate_cost_error(){
-        $("#add-usage-form .action-status").text("Cost Calculation fail.").attr('class', 'status-fail');
+        $("#add-usage-form .action-status").text("Cost calculation failed").attr('class', 'status-fail');
     };
     jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
 });
@@ -590,7 +596,7 @@ $('#update-usage').click(function(){
         'end_time' : to_iso_datetime($("#res_end_time").val())
     };
     function on_add_usage_success(resp){
-        action_status.text("Update usage is successful.").attr('class', 'status-success');
+        action_status.text("Update usage is successful").attr('class', 'status-success');
         $("#resource_select").show();
         $("#resource_name").hide();
         get_uninvoiced_usages();
@@ -621,7 +627,7 @@ function get_invoice_tab_data(){
     function get_invoice_history_success(response) {
         is_get_thismember_invoices_done = true;
         $('#history_table').dataTable({
-            "aaData": response['result'],
+            "aaData": response.result,
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
             "aoColumns": [
@@ -653,7 +659,7 @@ function get_invoice_tab_data(){
         //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
     function get_invoice_history_error(){};
-    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id), 'hashrows' : false};
+    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id)};
     jsonrpc('invoice.by_member', params, get_invoice_history_success, get_invoice_history_error);
 };
 $("#new_invoice-btn").click(function(){

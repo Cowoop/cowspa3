@@ -10,7 +10,7 @@ class UsageCollection:
 
         created = datetime.datetime.now()
         if not end_time: end_time = start_time
-        calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time))
+        calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost))
         data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
         usage_id = usage_store.add(**data)
         return usage_id

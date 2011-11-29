@@ -22,6 +22,8 @@ class Cost(object):
         if rec: return rec[0][1]
     def new(self, stage, amount):
         self.records.append((stage, amount))
+    def __repr__(self):
+        return repr(self.records)
 
 class Rule(object):
     name = "Base Rule"

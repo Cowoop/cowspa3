@@ -79,9 +79,22 @@ pricing.set = set
 
 ## Cost calculations
 
+class CustomResource(costlib.Rule):
+    name = 'Custom Resource'
+    def apply(self, env, usage, cost):
+        print usage
+        if not usage.resource_id:
+            assert usage.cost is not None, "Cost is mandatory for Custom Resource"
+            cost.new(self.name, usage.cost)
+            return costlib.flags.stop
+        return costlib.flags.proceed
+
 class InitialCost(costlib.Rule):
     name = 'Initial Cost'
     def apply(self, env, usage, cost):
+        resource = resource_store.get(usage.resource_id)
+        if resource.time_based:
+            usage['quantity'] = costlib.to_decimal((usage.ends - usage.starts).seconds / 3600.0)
         rate = pricings.get(usage.member_id, usage.resource_id, usage.starts)
         amount = rate * usage.quantity
         cost.new(self.name, amount)
@@ -92,14 +105,11 @@ class Taxes(costlib.Rule):
     def apply(self, env, usage, cost):
         raise NotImplemented
 
-rules = [InitialCost()]
+rules = [CustomResource(), InitialCost()]
 
-def calculate_cost(member_id, resource_id, quantity, starts, ends=None):
+def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=None):
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
-    usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends)
-    resource = resource_store.get(usage.resource_id)
-    if resource.time_based:
-        quantity = (ends - starts).seconds / 3600.0
+    usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends, cost=cost)
     processor = costlib.Processor(usage, rules)
     return processor.run()
