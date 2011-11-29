@@ -54,7 +54,7 @@ class ResourceCollection:
         return resource_list
 
     def tariffs(self, owner):
-        return self.list(owner, type=['tariff'])
+        return self.list(owner, type='tariff')
 
     def available_tariffs(self, owner):
         available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
