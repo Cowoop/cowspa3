@@ -6,7 +6,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 min2str = lambda m: "%02d:%02d" % ((m / 60), (m % 60))
-min15 = lambda day, minute: tf.DIV(Class='cal-min15', id="slot_%s-%s" % (day, min2str(minute)))
+min15 = lambda day, minute: tf.DIV(Class='cal-min15', id="slot_%s-%s.%s" % (day, min2str(minute), min2str(minute+15)))
 
 def hourrange(start, end):
     return ((((hr or 12) if hr < 12 else ((hr - 12) or hr)), ('AM' if hr < 12 else 'PM')) for hr in range(start, end))
@@ -30,8 +30,8 @@ def week():
 
 def booking_form():
     form = sphc.more.Form(id='booking-form', Class='vform')
-    form.add(tf.DIV(Class='heading3 data-resource-name'))
-    form.add(tf.HR())
+    #form.add(tf.DIV(Class='heading3 data-resource-name'))
+    #form.add(tf.HR())
     form.add(tf.DIV(id="new-booking-date"))
     form.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
     form.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900", value="19:00"))

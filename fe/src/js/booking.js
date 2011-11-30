@@ -65,8 +65,8 @@ set_day_titles();
 function id2datetime(id) {
     var slot_no = id.split('_')[1];
     var day_no = parseInt(slot_no.split('-')[0]);
-    var time = slot_no.split('-')[1];
-    return [day_no, time]
+    var [start, end] = slot_no.split('-')[1].split('.');
+    return [day_no, start, end]
 };
 
 function on_select_slots(ev, ui) {
@@ -75,30 +75,19 @@ function on_select_slots(ev, ui) {
         selected.push($(this).attr('id'));
     });
     var start = selected[0];
-    var end = start;
-    var booking_day_no = id2datetime(start)[0];
-    var start_time = id2datetime(start)[1];
-    if (selected.length > 1) {
-        end = selected.pop();
-    };
-
-    // arrghhh... javascript
-    console.log(end);
-    var end_time = new Date('2011-12-31T' + id2datetime(end)[1] + ':00')
-    console.log(end_time);
-    var end_time = new Date(end_time.getTime() + (15*60*1000))
-    console.log(end_time);
-    var end_time = to_iso_datetime(end_time).slice(-8,-3)
-    console.log(end_time);
+    var end = selected.pop();
+    var [booking_day_no, start_time] = id2datetime(start);
+    var end_time = id2datetime(end)[2];
 
     var booking_date = add_days(get_selected_date(),  (-3 + booking_day_no))
-    $('.data-resource-name').text(resource_map[$('#resource-select').val()]);
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', get_selected_date()));
+    var resource_name = resource_map[$('#resource-select').val()];
+    $('.data-resource-name').text(resource_name);
+    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', booking_date));
     $('#new-starts').val(start_time);
     $('#new-ends').val(end_time);
     $('#new-ends').attr('min', start_time);
     $('#booking-form').dialog({
-        title: "New booking", 
+        title: resource_name,
         width: 500,
         height: 500
     });
