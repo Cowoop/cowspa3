@@ -5,7 +5,7 @@ import be.repository.access as dbaccess
 member_store = dbaccess.stores.member_store
 
 def make_date_element(date):
-    return "<c class='date'>%s</c>" % commonlib.helpers.date4human(date)
+    return "<c class='date'>%s</c> " % commonlib.helpers.date4human(date)
 
 
 class BaseEvent(object):
@@ -124,7 +124,7 @@ class BillingprefUpdated(BaseEvent):
     name = "billingpref_updated"
     category = "billingpref_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/edit/#/%(id)s/profile'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/edit/#/%(member_id)s/profile'>%(name)s</a> by %(actor_name)s."
 
 class Categories(dict):
     """
