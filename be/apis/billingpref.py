@@ -22,7 +22,7 @@ class BillingprefResource:
     def update(self, member, **mod_data):
         
         if mod_data['mode'] == modes.organization and not mod_data['billto']:
-            mod_data['organization_details']['mtype'] = "Organization"
+            mod_data['organization_details']['mtype'] = "organization"
             mod_data['billto'] = memberlib.member_collection.new(**mod_data['organization_details'])
             del mod_data['organization_details']
         billingpref_store.update_by(dict(member=member), **mod_data)

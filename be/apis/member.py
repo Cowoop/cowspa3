@@ -15,7 +15,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default", mtype="Indivisual"):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, sip=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None ,theme="default", mtype="individual"):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -24,7 +24,7 @@ class MemberCollection:
         else:
             state = commonlib.shared.constants.member.to_flags(state)
 
-        user_id = userlib.new(username, password, state) if mtype != "Organization" else dbaccess.OidGenerator.next("Member")
+        user_id = userlib.new(username, password, state) if mtype != "organization" else dbaccess.OidGenerator.next("Member")
 
         data = dict(member=user_id, language=language, theme=theme)
         memberpref_store.add(**data)
@@ -107,8 +107,8 @@ class MemberResource:
         mtype = member_store.get(member_id, 'type')
         profile = profile_store.get_by(dict(member=member_id))[0]
         contact = contact_store.get_by(dict(id=member_id))[0]
-        account = dict(username=user_store.get(member_id, ['username']), password="") if mtype == "Indivisual" else []
-        preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0] if mtype == "Indivisual" else []
+        account = dict(username=user_store.get(member_id, ['username']), password="") if mtype == "individual" else []
+        preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0] if mtype == "individual" else []
         memberships = dbaccess.get_member_current_memberships(member_id)
         return dict(mtype=mtype, profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 

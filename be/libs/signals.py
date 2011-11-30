@@ -1,6 +1,5 @@
 # Based on http://amix.dk/blog/post/19390
 # We can add a bit more later
-#import be.apis.billingpref as billinglib
 
 SIGNALS = {}
 

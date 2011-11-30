@@ -28,7 +28,6 @@ def search(entity):
         userlib.set_context_by_session(auth_token)
     q = request.args.get('q') or request.args.get('term')
     params = {"jsonrpc": "2.0", "method": "members.search", "params": {'q':q, 'mtype':entity}, "id": 1}
-    print entity
     data = cowspa.mapper(params)
     cowspa.tr_complete()
     if 'result' in data:
