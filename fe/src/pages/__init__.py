@@ -81,9 +81,14 @@ class Dashboard(BasePage):
 
     def content(self):
         container = tf.DIV()
-        container.ul = tf.UL(id="activities", name="activities")
+        container.activities_pane = tf.UL(id="activities", name="activities")
         container.script = tf.SCRIPT(open("fe/src/js/dashboard.js").read(), escape=False, type="text/javascript", language="javascript")
         return container
+
+    def sidebar(self):
+        content = tf.DIV(tf.DIV("Getting started", Class="title"))
+        content.action = tf.A("Add your Coworking place", href="/${lang}/${theme}/bizplace/new", Class="big-button")
+        return content
 
 class GettingStarted(BasePage):
     current_nav = 'Dashboard'

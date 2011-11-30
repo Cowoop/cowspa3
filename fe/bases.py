@@ -161,9 +161,16 @@ class CSAuthedPage(CSPage):
             title_classes = "content-title"
         else:
             title_classes = "content-title hidden"
-        main.contentbox.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
-        main.contentbox.content = self.content()
+        sidebar = self.sidebar()
+        main.contentbox.pane1 = tf.DIV(Class=("pane1" if sidebar else "full"))
+        main.contentbox.pane1.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
+        main.contentbox.pane1.content = self.content()
+        if sidebar:
+            main.contentbox.sidebar = tf.DIV(sidebar, Class="sidebar", style="display: none;")
         return main
+
+    def sidebar(self):
+        return ''
 
     def search(self):
         container = tf.DIV()
