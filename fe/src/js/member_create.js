@@ -12,6 +12,7 @@ $('#createmember_form').submit(function () {
     function error() {
         $('.action-status').text("Error in Member Creation").addClass('status-fail');
     };
+    $('.action-status').text("").removeClass('status-fail status-success');
     jsonrpc('member.new', params, success, error);
     return false
 });

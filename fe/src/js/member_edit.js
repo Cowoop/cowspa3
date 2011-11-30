@@ -11,12 +11,12 @@ var mtype = null;
 function on_member_profile(resp) {
     thismember = resp.result;
     mtype = thismember.mtype;
-    if(mtype == "Indivisual"){
-        $(".indivisual").show();
+    if(mtype == "individual"){
+        $(".individual").show();
         $(".organization").hide();
     }
     else{
-        $(".indivisual").hide();
+        $(".individual").hide();
         $(".organization").show();
     }
     $('.content-title').show();
@@ -24,8 +24,8 @@ function on_member_profile(resp) {
     $('.data-id').text(thismember_id);
     $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
-    $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="name"]').val(thismember.profile.name);
+    $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
     $('input[name="address"]').val(thismember.contact.address);
@@ -156,8 +156,12 @@ $("#billing_pref #mode").click(function(){
     $("#details_1").hide();
     $("#details_2").hide();
     $("#details_3").hide();
+    $("#billing_details").show();
     mode = $(this).val();
     $("#details_"+mode).show();
+    if(mode == "0"){
+        $("#billing_details").hide();
+    }
 });
 $("#organization_mode0").click(function(){
     $('#details_3 #org_name').attr('disabled', 'disabled');
@@ -271,7 +275,7 @@ function get_billing_pref_details(){
 };
 //------------------------Existing Member Search--------------------------------
 $('#details_2 #member').autocomplete({
-    source: "/search/indivisual", 
+    source: "/search/individual", 
     select: function (event, ui) {
         billto = ui.item.id;
     } 
@@ -452,13 +456,19 @@ $("#calculate_cost-btn").click(function(){
         'cost': $('#cost').val()
     };
     function on_calculate_cost_success(resp){
-       $("#cost").val(resp['result']);
-       $("#submit-usage").removeAttr("disabled"); 
+        $("#cost").val(resp['result']);
+        $("#submit-usage").removeAttr("disabled"); 
+        $("#add-usage-form .action-status").text("").removeClass('status-fail status-success');
     };
     function on_calculate_cost_error(){
-        $("#add-usage-form .action-status").text("Cost Calculation fail.").attr('class', 'status-fail');
+        $("#add-usage-form .action-status").text("Cost Calculation fail.").addClass('status-fail');
     };
-    jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+    if($('#add-usage-form').checkValidity()){
+        jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+    }
+    else{
+        $("#add-usage-form .action-status").text("Fill the all required fields.").addClass('status-fail');
+    }
 });
 $('#submit-usage').click(function(){
     var action_status = $('#add-usage-form .action-status');
@@ -472,23 +482,31 @@ $('#submit-usage').click(function(){
         'end_time' : to_iso_datetime($("#end_time").val())
     };
     function on_add_usage_success(resp){
-        action_status.text("Add usage is successful.").attr('class', 'status-success');
+        action_status.text("Add usage is successful.").addClass('status-success');
         $("#resource_select").show();
         $("#resource_name").hide();
         $("#submit-usage").attr("disabled", true);
         get_uninvoiced_usages();
         window.location.hash = "/" + thismember_id + "/usages";
+        action_status.text("").removeClass('status-fail status-success');
     };
     function on_add_usage_error(){
-        action_status.text("Add usage fail.").attr('class', 'status-fail');
+        action_status.text("Add usage fail.").addClass('status-fail');
     };
-    jsonrpc('usage.new', params, on_add_usage_success, on_add_usage_error);
+    if($('#add-usage-form').checkValidity()){
+        jsonrpc('usage.new', params, on_add_usage_success, on_add_usage_error);
+    }
+    else{
+        $("#add-usage-form .action-status").text("Fill the all required fields.").addClass('status-fail');
+    }
 });
 $("#new_usage-btn").click(function(){
     window.location.hash = "/" + thismember_id + "/usages/new";
 });
 $(".cancel-usage").click(function(){
     window.location.hash = "/" + thismember_id + "/usages";
+    $('#add-usage-form .action-status').text("").removeClass('status-fail status-success');
+    $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
 });
 //-----------------------------Uninvoiced Usages--------------------------------
 function get_uninvoiced_usages(){
@@ -497,7 +515,7 @@ function get_uninvoiced_usages(){
         var aaData = [];
         for (i in response.result) {
             var item = response.result[i];
-            aaData[i] = [item.resource_name, item.start_time, item.end_time, item.quantity, item.cost];
+            aaData[i] = [item.resource_name, item.start_time, item.end_time, item.quantity, item.cost, item.id];
         };
         usage_table = $('#usage_table').dataTable({
             "aaData": aaData,
@@ -523,7 +541,7 @@ function get_uninvoiced_usages(){
                 { "sTitle": "Cost",  "sWidth":"10%" },
                 { "sTitle": "Manage", "sWidth":"10%",
                     "fnRender": function(obj) {
-                        var usage_id = obj.iDataColumn;
+                        var usage_id = obj.aData[obj.iDataColumn];
                         var data = {'thismember_id':thismember_id, 'usage_id':usage_id};
                         var edit_link = "<A id='edit_usage-"+usage_id+"' href='#/"+thismember_id+"/usages/"+usage_id+"/edit'>Edit</A>";
                         var cancel_link = "<A id='cancel_usage-"+usage_id+"' href='#/"+thismember_id+"/usages' class='delete-usage'>X</A>";
@@ -578,11 +596,17 @@ $("#recalculate_cost-btn").click(function(){
     };
     function on_calculate_cost_success(resp){
        $("#res_cost").val(resp['result']);
+       $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
     };
     function on_calculate_cost_error(){
-        $("#add-usage-form .action-status").text("Cost calculation failed").attr('class', 'status-fail');
+        $("#edit_usage-form .action-status").text("Cost calculation failed").addClass('status-fail');
     };
-    jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+    if($('#edit_usage-form').checkValidity()){
+        jsonrpc('pricing.calculate_cost', params, on_calculate_cost_success, on_calculate_cost_error);
+    }
+    else{
+        $("#edit_usage-form .action-status").text("Fill the all required fields.").addClass('status-fail');
+    }
 });
 $('#update-usage').click(function(){
     var action_status = $('#edit_usage-form .action-status');
@@ -595,17 +619,23 @@ $('#update-usage').click(function(){
         'start_time' : to_iso_datetime($("#res_start_time").val()),
         'end_time' : to_iso_datetime($("#res_end_time").val())
     };
-    function on_add_usage_success(resp){
-        action_status.text("Update usage is successful").attr('class', 'status-success');
+    function on_edit_usage_success(resp){
+        action_status.text("Update usage is successful").addClass('status-success');
         $("#resource_select").show();
         $("#resource_name").hide();
         get_uninvoiced_usages();
         window.location.hash = "/" + thismember_id + "/usages";
+        $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
     };
-    function on_add_usage_error(){
-        action_status.text("Update usage fail.").attr('class', 'status-fail');
+    function on_edit_usage_error(){
+        action_status.text("Update usage fail.").addClass('status-fail');
     };
-    jsonrpc('usage.update', params, on_add_usage_success, on_add_usage_error);
+    if($('#edit_usage-form').checkValidity()){
+        jsonrpc('usage.update', params, on_edit_usage_success, on_edit_usage_error);
+    }
+    else{
+        $("#edit_usage-form .action-status").text("Fill the all required fields.").addClass('status-fail');
+    }
 });
 //---------------------------Cancel Usage---------------------------------------
 function delete_usage() {

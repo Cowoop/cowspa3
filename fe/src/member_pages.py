@@ -48,7 +48,7 @@ def preferences_form():
     return form
 
 def billing_pref_form():
-    billing_pref_form = tf.form(id="billing_pref", Class="simple-hform")
+    billing_pref_form = tf.form(id="billing_pref", Class="hform")
     
     billing_pref_form.mode = tf.FIELDSET()
     billing_pref_form.mode.legend = tf.LEGEND("Billing mode")
@@ -65,31 +65,19 @@ def billing_pref_form():
     billing_pref_form.mode.radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")
     billing_pref_form.mode.radio4.label = tf.label("Organization")
     
-    billing_pref_form.details = tf.FIELDSET()
+    billing_pref_form.details = tf.FIELDSET(id="billing_details")
     
     billing_pref_form.details.legend = tf.LEGEND("Billing Details")
     
     billing_pref_form.details.custom = tf.DIV(id="details_1", Class="hidden")
-    billing_pref_form.details.custom.form = tf.FORM(id="custom_details-form")
-    billing_pref_form.details.custom.form.name = tf.DIV()
-    billing_pref_form.details.custom.form.name.label = tf.LABEL(content = 'Name', For="custom_name")
-    billing_pref_form.details.custom.form.name.input = tf.INPUT(type='text', id='custom_name', name='custom_name')        
-    billing_pref_form.details.custom.form.address = tf.DIV()
-    billing_pref_form.details.custom.form.address.label = tf.LABEL(content = 'Address', FOR="custom_address")
-    billing_pref_form.details.custom.form.address.input = tf.TEXTAREA(id='custom_address', name='custom_address')
-    billing_pref_form.details.custom.form.city = tf.DIV()
-    billing_pref_form.details.custom.form.city.label = tf.LABEL(content = 'City', FOR="self_city")
-    billing_pref_form.details.custom.form.city.input = tf.INPUT(id='custom_city', name='custom_city', type="text")
-    billing_pref_form.details.custom.form.country = tf.DIV()
-    billing_pref_form.details.custom.form.country.label = tf.LABEL(content = 'Country', FOR="custom_country")
-    billing_pref_form.details.custom.form.country.input = tf.SELECT(id='custom_country', name='custom_country')
-    billing_pref_form.details.custom.form.country.input.options = fe.src.common.country_options
-    billing_pref_form.details.custom.form.phone = tf.DIV()
-    billing_pref_form.details.custom.form.phone.label = tf.LABEL(content = 'Phone', FOR='custom_phone')
-    billing_pref_form.details.custom.form.phone.input = tf.INPUT(type='text', id='custom_phone', name='custom_phone')
-    billing_pref_form.details.custom.form.email = tf.DIV()
-    billing_pref_form.details.custom.form.email.label = tf.LABEL(content = 'Email', FOR='custom_email')
-    billing_pref_form.details.custom.form.email.input = tf.INPUT(type='email', id='custom_email', name='custom_email')
+    custom_form = sphc.more.Form(id="custom_details-form", Class='hform')
+    custom_form.add_field('Name', tf.INPUT(type='text', id='custom_name', name='custom_name'))
+    custom_form.add_field('Address', tf.TEXTAREA(id='custom_address', name='custom_address'))
+    custom_form.add_field('City', tf.INPUT(id='custom_city', name='custom_city', type="text"))
+    custom_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='custom_country', name='custom_country'))
+    custom_form.add_field('Phone', tf.INPUT(type='text', id='custom_phone', name='custom_phone'))
+    custom_form.add_field('Email', tf.INPUT(type='email', id='custom_email', name='custom_email'))
+    billing_pref_form.details.custom.form = custom_form.build()
     
     billing_pref_form.details.member = tf.DIV(id="details_2", Class="hidden")
     billing_pref_form.details.member.label = tf.LABEL("Bill To Existing Member")
@@ -103,27 +91,14 @@ def billing_pref_form():
     billing_pref_form.details.organization.radio2 = tf.DIV(id="organization_radio_field2")
     billing_pref_form.details.organization.radio2.value = tf.INPUT(id="organization_mode1", name="organization_mode", type="radio", value="1")
     billing_pref_form.details.organization.radio2.label = tf.label("Add New Organization")
-    billing_pref_form.details.organization.form = tf.FORM(id="new_org-form")
-    billing_pref_form.details.organization.form.name = tf.DIV()
-    billing_pref_form.details.organization.form.name.label = tf.LABEL(content = 'Organization Name', For="org_name")
-    billing_pref_form.details.organization.form.name.input = tf.INPUT(type='text', id='org_name', name='org_name')        
-    billing_pref_form.details.organization.form.address = tf.DIV()
-    billing_pref_form.details.organization.form.address.label = tf.LABEL(content = 'Address', FOR="org_address")
-    billing_pref_form.details.organization.form.address.input = tf.TEXTAREA(id='org_address', name='org_address')
-    billing_pref_form.details.organization.form.city = tf.DIV()
-    billing_pref_form.details.organization.form.city.label = tf.LABEL(content = 'City', FOR="org_city")
-    billing_pref_form.details.organization.form.city.input = tf.INPUT(id='org_city', name='org_city', type="text")
-    billing_pref_form.details.organization.form.country = tf.DIV()
-    billing_pref_form.details.organization.form.country.label = tf.LABEL(content = 'Country', FOR="org_country")
-    billing_pref_form.details.organization.form.country.input = tf.SELECT(id='org_country', name='org_country')
-    billing_pref_form.details.organization.form.country.input.options = fe.src.common.country_options
-    billing_pref_form.details.organization.form.phone = tf.DIV()
-    billing_pref_form.details.organization.form.phone.label = tf.LABEL(content = 'Phone', FOR='org_phone')
-    billing_pref_form.details.organization.form.phone.input = tf.INPUT(type='text', id='org_phone', name='org_phone')
-    billing_pref_form.details.organization.form.email = tf.DIV()
-    billing_pref_form.details.organization.form.email.label = tf.LABEL(content = 'Email', FOR='org_email')
-    billing_pref_form.details.organization.form.email.input = tf.INPUT(type='email', id='org_email', name='org_email')
-    
+    organization_form = sphc.more.Form(id="new_org-form")
+    organization_form.add_field('Organization Name', tf.INPUT(type='text', id='org_name', name='org_name'))
+    organization_form.add_field('Address', tf.TEXTAREA(id='org_address', name='org_address'))
+    organization_form.add_field('City', tf.INPUT(id='org_city', name='org_city', type="text"))
+    organization_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='org_country', name='org_country'))
+    organization_form.add_field('Phone', tf.INPUT(type='text', id='org_phone', name='org_phone'))
+    organization_form.add_field('Email', tf.INPUT(type='email', id='org_email', name='org_email'))
+    billing_pref_form.details.organization.form = organization_form.build()
     billing_pref_form.msg = tf.SPAN(id="billing_pref-msg")
     
     billing_pref_form.buttons = tf.DIV(Class="buttons")
@@ -208,52 +183,42 @@ class MemberCreate(BasePage):
     title = 'New Member'
     def content(self):
         container = tf.DIV()
-
-        form  = tf.FORM(Class='hform simple-hform', id="createmember_form", method="POST")
+        
+        form  = sphc.more.Form(Class='hform simple-hform', id="createmember_form", method="POST")
 
         sections = []
 
-        section = tf.FIELDSET()
-        section.legend = tf.LEGEND("About")
-        section.label = tf.LABEL(content = 'First Name', For="first_name")
-        section.input = tf.INPUT(type='text', id='first_name', name='first_name').set_required()
-
-        section.label = tf.LABEL(content = 'Last Name', FOR="last_name")
-        section.input = tf.INPUT(type='text', id='last_name', name='last_name')
-
-        section.label = tf.LABEL(content = 'Username', FOR="user_name")
-        section.input = tf.INPUT(type='text', id='username', name='username').set_required()
-
-        section.label = tf.LABEL(content = 'Password', FOR="password")
-        section.input = tf.INPUT(type='password', id='password', name='password').set_required()
-
-        section.label = tf.LABEL('Language', FOR='language')
-        section.lang = tf.SELECT(id='language', name='language')
-        section.lang.options = [tf.OPTION(language['label'], value=language['name']) for language in data_lists.languages]
-
+        section = sphc.more.Fieldset()
+        section.add(tf.LEGEND("About"))
+        section.add_field('First Name',tf.INPUT(type='text', id='first_name', name='first_name').set_required())
+        section.add_field('Last Name', tf.INPUT(type='text', id='last_name', name='last_name'))
+        section.add_field('Username', tf.INPUT(type='text', id='username', name='username').set_required())
+        section.add_field('Password',tf.INPUT(type='password', id='password', name='password').set_required())
+        lang_options = [tf.OPTION(language['label'], value=language['name']) for language in data_lists.languages]
+        section.add_field('Language', tf.SELECT(lang_options, id='language', name='language'))         
         sections.append(section)
 
-        section = tf.FIELDSET()
-        section.legend = tf.LEGEND("Contact")
-
-        section.fields = contact_form().fields
-
-        #section.label = tf.LABEL('Country', FOR='country')
-        #section.input = tf.SELECT(id='country', name='country')
-        #section.input.options = fe.src.common.country_options
-        #section.label = tf.LABEL(content = 'Email', FOR='email')
-        #section.input = tf.INPUT(type='email', id='email', name='email').set_required()
-
+        section = sphc.more.Fieldset()  
+        section.add(tf.LEGEND("Contact"))
+        section.add_field("Address", tf.TEXTAREA(name='address', type="text"))
+        section.add_field("City", tf.INPUT(name='city', type="text"))
+        section.add_field("Country", tf.SELECT(fe.src.common.country_options, id='country', name='country'))
+        section.add_field("Pincode/Zip", tf.INPUT(name='pincode', type="text"))
+        section.add_field("Phone", tf.INPUT(name='phone', type="text"))
+        section.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
+        section.add_field("Fax", tf.INPUT(name='mobile', type="text"))
+        section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
+        section.add_field("Skype", tf.INPUT(name='skype', type="text"))
+        section.add_field("Sip", tf.INPUT(name='sip', type="text"))
         sections.append(section)
 
-        form.sections = sections
-        form.status = tf.DIV(Class="action-status")
-        #field = tf.DIV(Class="submit-btns")
-        form.button = tf.BUTTON("Create", id='save-btn', type='submit')
-
-        container.form = form
+        for section in sections:
+            form.add(section.build())
+        form.add_buttons(tf.BUTTON("Create", id='save-btn', type='submit'))
+        
+        container.form = form.build()
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
-
+        
         return container
 
 class EditProfile(BasePage):
@@ -267,27 +232,26 @@ class EditProfile(BasePage):
         # Profile
         profile = tf.DIV(id="profile")
         profile.info = tf.DIV(id="member-info", Class="labeled-list hidden")
-        profile.info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="indivisual")
+        profile.info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
         profile.info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
-        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="indivisual")
+        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
         profile.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
         profile.info.line = tf.hr(Class="light")
 
         # About
-        profile.about = tf.FIELDSET()
-        profile.about.legend = tf.LEGEND("About")
-        profile.about.about_div = tf.DIV(id="about")
-        form = sphc.more.Form(id='member-about-edit', Class='profile-edit-form', classes=['hform'])
-        form.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required(), container_classes=['indivisual'])
-        form.add_field("Last Name", tf.INPUT(name='last_name', type="text"), container_classes=['indivisual'])
-        form.add_field("Name", tf.INPUT(name='name', type="text"), container_classes=['organization'])
-        form.add_field("Short description", tf.INPUT(name='short_description', type="text"))
-        form.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
-        form.add_buttons(tf.BUTTON("Update", type="submit"))
-        profile.about.about_div.form = form.build()
+        about_form = sphc.more.Form(id='about', Class='profile-edit-form', classes=['hform'])
+        about = about_form.add(sphc.more.Fieldset())
+        about.add(tf.LEGEND("About"))
+        about.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required(), container_classes=['individual'])
+        about.add_field("Last Name", tf.INPUT(name='last_name', type="text"), container_classes=['individual'])
+        about.add_field("Name", tf.INPUT(name='name', type="text"), container_classes=['organization'])
+        about.add_field("Short description", tf.INPUT(name='short_description', type="text"))
+        about.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
+        about.add_buttons(tf.BUTTON("Update", type="submit"))
+        profile.about = about_form.build()
 
         # Account
-        profile.account = tf.FIELDSET(Class="indivisual")
+        profile.account = tf.FIELDSET(Class="individual")
         profile.account.legend = tf.LEGEND("Account")
         profile.account.account_div = tf.DIV(id="account")
         profile.account.account_div.form = account_form().build()
@@ -299,7 +263,7 @@ class EditProfile(BasePage):
         profile.contact.contact_div.form = contact_form().build()
 
         # Preferences
-        profile.preferences = tf.FIELDSET(Class="indivisual")
+        profile.preferences = tf.FIELDSET(Class="individual")
         profile.preferences.legend = tf.LEGEND("Preferences")
         profile.preferences.preferences_div = tf.DIV(id="preferences")
         profile.preferences.preferences_div.form = preferences_form().build()
@@ -314,18 +278,17 @@ class EditProfile(BasePage):
         
         # Usages
         usages = tf.DIV(id="usages")
-        usages.new = tf.DIV(tf.Button("Create", type="button", id="new_usage-btn"))
-        add_usage = tf.FIELDSET(id="add_usage", Class="hidden")
-        add_usage.legend = tf.LEGEND("Add Usage")
+        usages.new = tf.DIV(tf.Button("New", type="button", id="new_usage-btn"))
         add_usage_form = sphc.more.Form(id='add-usage-form', action='#', Class='profile-edit-form', classes=['hform'])
-        add_usage_form.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', Class="input", placeholder="Resource name").set_required())
-        add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
-        add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
-        add_usage_form.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
-        add_usage_form.add_field("Cost", tf.INPUT(name='cost', id='cost'))
-        add_usage_form.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
-        add_usage.form = add_usage_form.build()
-        usages.add_usage = add_usage
+        add_usage = add_usage_form.add(sphc.more.Fieldset(id="add_usage", Class="hidden"))
+        add_usage.add(tf.LEGEND("Add Usage"))
+        add_usage.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', Class="field-input", placeholder="Resource name").set_required())
+        add_usage.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
+        add_usage.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
+        add_usage.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
+        add_usage.add_field("Cost", tf.INPUT(name='cost', id='cost'))
+        add_usage.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
+        usages.add_usage = add_usage_form.build()
         
         edit_usage = tf.FIELDSET(id="edit_usage", Class="hidden")
         edit_usage.legend = tf.LEGEND("Edit Usage")
@@ -364,7 +327,7 @@ class EditProfile(BasePage):
         container.tabs.list = tf.UL()
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile", Class="profile-tab"))
         container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="profile-tab"))
-        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab indivisual"))
+        container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab individual"), CLass="individual")
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages", Class="profile-tab"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices", Class="profile-tab"))
         container.tabs.profile = profile
@@ -374,6 +337,6 @@ class EditProfile(BasePage):
         container.tabs.invoices = invoices
 
         container.script = sphc.more.script_fromfile("fe/src/js/member_edit.js")
-
+        
         return container
 
