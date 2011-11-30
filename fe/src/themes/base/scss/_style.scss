@@ -80,6 +80,7 @@ nav {
         .current { 
             color: $main-color;
             background: $other-text-color;
+            border-left: 1px solid;
         }
     }
 
@@ -337,19 +338,34 @@ button#new-tariff, button#new_invoice-btn, button#new_usage-btn {float: right; m
 }
 
 div[role="main"] {   
-    @include columns(11);
-    @include omega;
     @include divsizing;
     .content {
-        @include columns(11,11);
-        @include omega;
+        // @include columns(11,11);
+        // @include omega;
         @include divsizing;
+        width: 100%;
         padding: 1em;
         border: 1px solid $main-color;
         background: lighten($page-background, 1%);
         margin-bottom: 1em;
         padding-bottom: 0.3em;
         float: left;
+        .full { width: 100%; }
+        .pane1 {
+            width: 70%;
+            display: inline-block;
+        }
+        .sidebar {
+            display: inline-block;
+            width: 25%;
+            float: right;
+            border-left: 1px solid;
+            margin: 0.5em;
+            padding: 1em;
+            .title {
+                border-bottom: 1px solid;
+            }
+        }
     }
 }
 
@@ -527,6 +543,10 @@ button, input[type="button"] {
     @extend button;
     font-size: 1.2em;
     margin: 1em;
+    text-shadow: none;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
 }
 
 .submit-btns {
