@@ -1,10 +1,12 @@
 import sphc
+import sphc.more
 import fe.bases
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
-min15 = lambda x, y: tf.DIV(Class='cal-min15', id="slot_%s-%s" % (x,y))
+min2str = lambda m: "%02d:%02d" % ((m / 60), (m % 60))
+min15 = lambda day, minute: tf.DIV(Class='cal-min15', id="slot_%s-%s" % (day, min2str(minute)))
 
 def hourrange(start, end):
     return ((((hr or 12) if hr < 12 else ((hr - 12) or hr)), ('AM' if hr < 12 else 'PM')) for hr in range(start, end))
@@ -13,7 +15,7 @@ def timecolumn(start, end):
     return tf.DIV([tf.DIV('%d %s' % hr, Class='cal-hour') for hr in hourrange(start, end)], Class='cal-day')
 
 def day(day_no):
-    slots = [min15(day_no, i) for i in range(24*4)] # 4 15mins * 24 hours
+    slots = [min15(day_no, (i*15)) for i in range(24*4)] # 4 15mins * 24 hours
     for i, slot in enumerate(slots):
         remainder = (i%4)
         if not remainder:
@@ -25,6 +27,17 @@ def day(day_no):
 
 def week():
     return [tf.DIV([timecolumn(0, 24)] + [day(i) for i in range(7)], Class='cal-week')]
+
+def booking_form():
+    form = sphc.more.Form(id='booking-form', Class='vform')
+    form.add(tf.DIV(Class='heading3 data-resource-name'))
+    form.add(tf.HR())
+    form.add(tf.DIV(id="new-booking-date"))
+    form.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
+    form.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900", value="19:00"))
+    form.add_field("Quantity", tf.INPUT(type="text"), "Not applicable for time based resources")
+    form.add_buttons(tf.INPUT(type="submit", value="Add booking"))
+    return form.build()
 
 class Booking(BasePage):
     current_nav = 'Bookings'
@@ -42,6 +55,8 @@ class Booking(BasePage):
 
         booking_pane = tf.DIV(id="pane-booking")
         booking_pane.topbar = tf.DIV(id="booking-menu")
+        booking_pane.new_booking = tf.DIV(id="new-booking", Class="hidden")
+        booking_pane.new_booking.form = booking_form()
         booking_pane.calendar = tf.DIV(id="booking-cal")
 
         calendar = booking_pane.calendar
