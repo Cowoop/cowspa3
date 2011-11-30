@@ -536,6 +536,7 @@ button, input[type="button"] {
     color: $other-text-color;
     background: $main-color;
     border: 1px solid $page-background;
+    font-size: 1em;
     @include box-shadow(0 0 6px rgba(0,0,0,0.5));
 }
 
@@ -920,4 +921,4 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
 #signup-box.ui-widget-content label{color:$other-text-color;}
 .ui-icon { display: inline-block; }
-.ui-state-default, .ui-widget-header { background: none; } // removes background images behind jqui tabs
+.ui-state-default, .ui-widget-header { background: none; font-size: 110%; border: none; border-bottom: 1px solid;} // removes background images behind jqui tabs
