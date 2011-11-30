@@ -21,7 +21,7 @@ function login() {
 };
 
 function signup() {
-    signup_form.dialog({ title: "Get ready", width: 500});
+    signup_form.dialog({ title: "Get ready", width: 500, height: 350});
 };
 
 function register() {
