@@ -36,6 +36,24 @@ def by_resource(resource_id, for_date=None):
 def lst(resource_id, tariff_id):
     return pricing_store.get_by(crit=dict(resource=resource_id, plan=tariff_id), fields=['id', 'starts', 'ends', 'amount'])
 
+def by_tariff(tariff_id):
+    return pricing_store.get_by(crit=dict(plan=tariff_id))
+
+def by_location(owner):
+    """
+    returns pricing for ALL the resources for each tariff defined for this
+    location
+    """
+    result = dbaccess.list_resources_and_tariffs(owner, ['id','name'], type='tariff')
+    for rec in result:
+        prices = pricing_store.get_by(crit=dict(plan=rec['id']), fields=['id','resource','amount'])
+        price_per_resource = {}
+        for p in prices :
+            price_per_resource[p['resource']] = p
+            del p['resource']
+        rec['pricings'] = price_per_resource
+    return result
+
 
 def get(member_id, resource_id, usage_time=None):
     """
@@ -62,6 +80,8 @@ pricings.new = new
 pricings.get = get
 pricings.list = lst
 pricings.by_resource = by_resource
+pricings.by_tariff = by_tariff
+pricings.by_location = by_location
 
 settable_attrs = ['starts', 'ends', 'cost']
 

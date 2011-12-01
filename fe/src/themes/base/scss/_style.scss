@@ -254,6 +254,22 @@ button#new-tariff, button#new_invoice-btn, button#new_usage-btn {float: right; m
     }
 }
 
+#tariff_container {
+    padding: 1em;
+    display: inline-block;
+    .title {
+       font-size: 110%;
+       font-weight: bold;
+       padding: 0.25em;
+    }
+    .resource_column {
+        display: inline-block;
+    }
+    #tariff_columns {
+        display: inline-block;
+    }
+}
+
 #tariff_list {
     padding: 1em;
     .tariff-box {

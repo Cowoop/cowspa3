@@ -114,7 +114,6 @@ class List(BasePage):
         buttons.cancel = tf.BUTTON("Cancel", id='cancel-btn', type='button')
         form.add_buttons(buttons)
 
-        #my_locations.form = form.build()
         container.form = form.build()
 
         field_data = [('Name', 'name'),
@@ -138,7 +137,6 @@ class List(BasePage):
         view = tf.DIV(id="location_view_form")
         view.fields= fields
 
-        #my_locations.view = view
         container.view = view
 
         # All Locations
@@ -155,12 +153,36 @@ class List(BasePage):
 
         all_buttons = tf.DIV(Class="buttons")
         all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}',
-                Class='myloc_tariff-btn', type='button')
+                Class='loc_tariff-btn', type='button')
         all_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
         all_loc_tmpl.box.btn.buttons = all_buttons
 
         all_loc_list.loc_tmpl = all_loc_tmpl
         all_locations.all_loc_list = all_loc_list
+
+        # All Locations Tariff List
+        tariff_container = tf.DIV(id='tariff_container')
+        tariff_container.resource = tf.DIV(id='resource_column')
+
+        resource_tmpl = sphc.more.jq_tmpl('resource_tmpl')
+        resource_tmpl.reslist = tf.DIV("${name}", Class='title')
+        #Empty first row. Other columns will contain tariff name in first row
+        tariff_container.resource.empty = tf.DIV("", Class='title')
+        tariff_container.resource.cur_price = tf.DIV("Current Price", Class='title')
+        tariff_container.resource.tmpl = resource_tmpl
+
+        tariff_container.tariffs = tf.DIV(id='tariff_columns')
+        tariff_col_tmpl = sphc.more.jq_tmpl('tariff_col_tmpl')
+        tariff_col_tmpl.tariff_column = tf.DIV(id='tariff_column')
+        tariff_col_tmpl.tariff_column.name = tf.DIV("${name}", Class='title')
+        tariff_col_tmpl.tariff_column.currprice = tf.DIV("${curr_price}", Class='amount')
+        tariff_col_tmpl.tariff_column.res_prices = "{{each prices}} \
+                                          <div class='amount'>${$value}</div> \
+                                      {{/each}}"
+
+        tariff_container.tariffs.tmpl = tariff_col_tmpl
+
+        all_locations.tariff_container = tariff_container
 
         container.tabs.myloc = my_locations
         container.tabs.all_loc = all_locations

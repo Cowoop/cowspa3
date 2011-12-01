@@ -1,5 +1,6 @@
 // Hide the form to beginwith
 $('#bizplace_form').hide();
+$('#tariff_container').hide();
 $('#location_view_form').hide();
 var locations_title = $('#content-title').text();
 
@@ -51,6 +52,52 @@ $('#list-locations-link').click(function(){
 function show_tariff() {
     set_context(parseInt(this.id.split('-')[1]));
     window.location = basepath + '/tariffs';
+}
+
+function show_tariff_details() {
+    var params = {};
+    var resource_map =  {}
+    function resource_success(resp) {
+
+        function pricing_success(resp) {
+            resp['result'].forEach(function(rec) {
+                var display_data = [];
+                var tempObj = {};
+                tempObj['name'] = rec['name'];
+                tempObj['curr_price'] = 0 //To be updated later
+                tempObj['prices'] = [];
+                for (var res in resource_map) {
+                    var amount = '-';
+                    if (res in rec['pricings']) {
+                        amount = rec['pricings'][res]['amount'];
+                    }
+                    tempObj['prices'].push(amount);
+                };
+                display_data.push(tempObj);
+                $('#tariff_col_tmpl').tmpl(display_data).appendTo('#tariff_columns');
+            });
+        }
+
+        function pricing_error() {
+            alert('Error getting pricing');
+        }
+
+        $('#all_loc_list').hide();
+        $('#tariff_container').show();
+        var newparams = {};
+        resp['result'].forEach(function(item) {
+            resource_map[item['id']] = item['name'];
+        });
+        $('#resource_tmpl').tmpl(resp['result']).appendTo('#resource_column');
+        newparams['owner'] = location_id;
+        jsonrpc('pricings.by_location', newparams, pricing_success, pricing_error);
+    }
+    function resource_error() {
+        alert('Error getting resources');
+    }
+    var location_id = parseInt(this.id.split('-')[1]);
+    params['owner'] = location_id;
+    jsonrpc('resource.list', params, resource_success, resource_error);
 }
 
 function show_team() {
@@ -180,6 +227,7 @@ function load_my_locations() {
 function load_all_locations() {
     function success(resp) {
         $('#all_loc_tmpl').tmpl(resp['result']).appendTo('#all_loc_list');
+        $('.loc_tariff-btn').click(show_tariff_details);
     };
 
     function error() {
