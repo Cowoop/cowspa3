@@ -64,6 +64,8 @@ nav {
         display: block;
         text-decoration: none; 
         color: inherit;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
     }
     a:active {background: gray;}
 
@@ -93,8 +95,7 @@ nav {
         display: inline-block;
         text-decoration: none;
         padding: 0em;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
+
         color: $other-text-color;
         background: $main-color;
         a {
