@@ -173,7 +173,7 @@ class List(BasePage):
 
         tariff_container.tariffs = tf.DIV(id='tariff_columns')
         tariff_col_tmpl = sphc.more.jq_tmpl('tariff_col_tmpl')
-        tariff_col_tmpl.tariff_column = tf.DIV(id='tariff_column')
+        tariff_col_tmpl.tariff_column = tf.DIV(Class='tariff_column')
         tariff_col_tmpl.tariff_column.name = tf.DIV("${name}", Class='title')
         tariff_col_tmpl.tariff_column.currprice = tf.DIV("${curr_price}", Class='amount')
         tariff_col_tmpl.tariff_column.res_prices = "{{each prices}} \
