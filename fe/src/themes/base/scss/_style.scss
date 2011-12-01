@@ -896,7 +896,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         border-bottom: 1px dotted; 
         border-right: 1px solid; 
         width: 5em;
-        height: 2em;
+        height: 1em;
     }
     .hour-end {
         border-bottom: 1px dashed;
@@ -910,12 +910,13 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         font-size: 120%;
     }
     .cal-hour {
-        height: 8em;
+        height: 4em;
         width: 4em;
         border-bottom: 1px solid dashed;
     }
     .ui-selecting { background: #FECA40; }
     .ui-selected { background: #F39814; color: white; }
+    .slot-unavailable { @include reverse-colors; }
 }
 
 // Hacks goes here

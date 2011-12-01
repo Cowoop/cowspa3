@@ -6,7 +6,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 min2str = lambda m: "%02d:%02d" % ((m / 60), (m % 60))
-min15 = lambda day, minute: tf.DIV(Class='cal-min15', id="slot_%s-%s.%s" % (day, min2str(minute), min2str(minute+15)))
+min15 = lambda day, minute: tf.DIV(Class='cal-min15 slot-available', id="slot_%s-%s.%s" % (day, min2str(minute), min2str(minute+15)))
 
 def hourrange(start, end):
     return ((((hr or 12) if hr < 12 else ((hr - 12) or hr)), ('AM' if hr < 12 else 'PM')) for hr in range(start, end))
@@ -49,15 +49,15 @@ class Booking(BasePage):
         resource_pane = tf.DIV(id="pane-resource")
         resource_pane.resource_opt = sphc.more.jq_tmpl('resource-opt')
         resource_pane.resource_opt.opt = tf.OPTION("${name}", value="${id}")
-        resource_pane.date = tf.SPAN(type="text", id="booking-date-inp")
         resource_pane.select = tf.SELECT(id='resource-select')
         resource_pane.select.option = tf.OPTION("Select a resource", disabled="true", selected="selected")
+        resource_pane.date = tf.SPAN(type="text", id="booking-date-inp")
 
         booking_pane = tf.DIV(id="pane-booking")
         booking_pane.topbar = tf.DIV(id="booking-menu")
         booking_pane.new_booking = tf.DIV(id="new-booking", Class="hidden")
         booking_pane.new_booking.form = booking_form()
-        booking_pane.calendar = tf.DIV(id="booking-cal")
+        booking_pane.calendar = tf.DIV(id="booking-cal", Class="opaq")
 
         calendar = booking_pane.calendar
         calendar.week = week()
