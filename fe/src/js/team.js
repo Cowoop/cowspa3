@@ -10,7 +10,7 @@ $('#new-team').click(function() {
 
 
 function search_members_autocomplete() {
-    $('input#member_name').autoSuggest("/search/members", {
+    $('input#member_name').autoSuggest("/search/member", {
         selectedItemProp: "name",
         selectedValuesProp: "id", 
         searchObjProps: "name, email, id",
