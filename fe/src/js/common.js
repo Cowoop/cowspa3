@@ -20,7 +20,11 @@ $.jsonRPC.setup({
 
 function set_context(ctx) {
     current_ctx = ctx;
-    $.cookie("current_ctx", ctx);
+    if (ctx == null) {
+        $.cookie("current_ctx", ctx, { expires: -1, path: '/' });
+    } else {
+        $.cookie("current_ctx", ctx, { path: '/' });
+    };
 };
 
 function set_userid(uid) {
@@ -84,27 +88,43 @@ function init_nav() {
 };
 //******************************Load List of Bizplaces**************************************************
 
-function success(resp) {
-    if(resp['result'].length == 0) {
+function on_roles_list(resp) {
+    var result = resp.result;
+    $(document).ready( function() {
+        on_roles(result)
+    }); // calling on_roles hook which might be defined (only once) at some other js
+    if(result.length == 0) {
         $("#context-select").hide();
         $("#context-single").hide();
         $('#menu-item_2').hide();
         $('#menu-item_3').hide();
         $('#menu-item_4').hide();
+        set_context(null);
     } 
-    else if(resp['result'].length == 1) {
+    else if(result.length == 1) {
         $("#context-select").hide();
         $("#context-single").text(resp.result[0].label);
-        set_context(resp.result[0].id);
+        set_context(result[0].id);
     }
     else {
         $("#context-single").hide();
         $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
+
         if (current_ctx) {
-            $("#context-select").val(current_ctx);
+            var valid_bizplaces = [];
+            for (idx in resp.result) {
+                valid_bizplaces.push(resp.result[idx].id);
+            };
+            if (valid_bizplaces.indexOf(current_ctx) == -1) {
+                var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
+                set_context(ctx);
+            } else {
+                $("#context-select").val(current_ctx);
+            };
         } else {
             set_context($("#context-select").val());
         };
+
         $('#context-select').change(function() {
             set_context($('#context-select').val());
             window.location.reload();
@@ -112,13 +132,15 @@ function success(resp) {
     };
 };
 
+function on_roles(roles) {}; // HOOK
+
 function error(){ };
 
 // TODO : Update role_filter when additional roles like accountant are added
 
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
 if(params['user_id']) {
-    jsonrpc('roles.list', params, success, error); 
+    jsonrpc('roles.list', params, on_roles_list, error); 
 };
      
 //******************************************End**********************************************************
