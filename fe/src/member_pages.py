@@ -48,28 +48,31 @@ def preferences_form():
     return form
 
 def billing_pref_form():
-    billing_pref_form = tf.form(id="billing_pref", Class="hform")
+    billing_pref_form = sphc.more.Form(id="billing_pref", Class="hform")
     
-    billing_pref_form.mode = tf.FIELDSET()
-    billing_pref_form.mode.legend = tf.LEGEND("Billing mode")
-    billing_pref_form.mode.radio1 = tf.DIV(id="radio_field1")
-    billing_pref_form.mode.radio1.value = tf.INPUT(id="mode", name="mode", type="radio", value="0")
-    billing_pref_form.mode.radio1.label = tf.label("Profile")
-    billing_pref_form.mode.radio2 = tf.DIV(id="radio_field2")
-    billing_pref_form.mode.radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
-    billing_pref_form.mode.radio2.label = tf.label("Use custom billing details")
-    billing_pref_form.mode.radio3 = tf.DIV(id="radio_field3")
-    billing_pref_form.mode.radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
-    billing_pref_form.mode.radio3.label = tf.label("Another Member")
-    billing_pref_form.mode.radio4 = tf.DIV(id="radio_field4")
-    billing_pref_form.mode.radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")
-    billing_pref_form.mode.radio4.label = tf.label("Organization")
+    mode = billing_pref_form.add(sphc.more.Fieldset())
+    mode.add(tf.LEGEND("Billing mode"))
+    radio1 = tf.DIV(id="radio_field1")
+    radio1.value = tf.INPUT(id="mode", name="mode", type="radio", value="0")
+    radio1.label = tf.label("Profile")
+    mode.add(radio1)
+    radio2 = tf.DIV(id="radio_field2")
+    radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
+    radio2.label = tf.label("Use custom billing details")
+    mode.add(radio2)
+    radio3 = tf.DIV(id="radio_field3")
+    radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
+    radio3.label = tf.label("Another Member")
+    mode.add(radio3)
+    radio4 = tf.DIV(id="radio_field4")
+    radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")
+    radio4.label = tf.label("Organization")
+    mode.add(radio4)
     
-    billing_pref_form.details = tf.FIELDSET(id="billing_details")
+    details = billing_pref_form.add(sphc.more.Fieldset(id="billing_details"))
+    details.add(tf.LEGEND("Billing Details"))
     
-    billing_pref_form.details.legend = tf.LEGEND("Billing Details")
-    
-    billing_pref_form.details.custom = tf.DIV(id="details_1", Class="hidden")
+    custom = tf.DIV(id="details_1", Class="hidden")
     custom_form = sphc.more.Form(id="custom_details-form", Class='hform')
     custom_form.add_field('Name', tf.INPUT(type='text', id='custom_name', name='custom_name'))
     custom_form.add_field('Address', tf.TEXTAREA(id='custom_address', name='custom_address'))
@@ -77,20 +80,23 @@ def billing_pref_form():
     custom_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='custom_country', name='custom_country'))
     custom_form.add_field('Phone', tf.INPUT(type='text', id='custom_phone', name='custom_phone'))
     custom_form.add_field('Email', tf.INPUT(type='email', id='custom_email', name='custom_email'))
-    billing_pref_form.details.custom.form = custom_form.build()
+    custom.form = custom_form.build()
+    details.add(custom)
     
-    billing_pref_form.details.member = tf.DIV(id="details_2", Class="hidden")
-    billing_pref_form.details.member.label = tf.LABEL("Bill To Existing Member")
-    billing_pref_form.details.member.value = tf.INPUT(id="member", type="text")
+    member = tf.DIV(id="details_2", Class="hidden")
+    member.label = tf.LABEL("Bill To Existing Member")
+    member.value = tf.INPUT(id="member", type="text")
+    details.add(member)
     
-    billing_pref_form.details.organization = tf.DIV(id="details_3", Class="hidden")
-    billing_pref_form.details.organization.radio1 = tf.DIV(id="organization_radio_field1")
-    billing_pref_form.details.organization.radio1.value = tf.INPUT(id="organization_mode0", name="organization_mode", type="radio", value="0")
-    billing_pref_form.details.organization.radio1.label = tf.label("Bill To Existing")
-    billing_pref_form.details.organization.radio1.input = tf.INPUT(type="text", id="existing_org")
-    billing_pref_form.details.organization.radio2 = tf.DIV(id="organization_radio_field2")
-    billing_pref_form.details.organization.radio2.value = tf.INPUT(id="organization_mode1", name="organization_mode", type="radio", value="1")
-    billing_pref_form.details.organization.radio2.label = tf.label("Add New Organization")
+    organization = tf.DIV(id="details_3", Class="hidden")
+    organization.radio1 = tf.DIV(id="organization_radio_field1")
+    organization.radio1.value = tf.INPUT(id="organization_mode0", name="organization_mode", type="radio", value="0")
+    organization.radio1.label = tf.label("Bill To Existing")
+    organization.radio1.input = tf.INPUT(type="text", id="existing_org")
+    organization.radio2 = tf.DIV(id="organization_radio_field2")
+    organization.radio2.value = tf.INPUT(id="organization_mode1", name="organization_mode", type="radio", value="1")
+    organization.radio2.label = tf.label("Add New Organization")
+    
     organization_form = sphc.more.Form(id="new_org-form")
     organization_form.add_field('Organization Name', tf.INPUT(type='text', id='org_name', name='org_name'))
     organization_form.add_field('Address', tf.TEXTAREA(id='org_address', name='org_address'))
@@ -98,13 +104,12 @@ def billing_pref_form():
     organization_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='org_country', name='org_country'))
     organization_form.add_field('Phone', tf.INPUT(type='text', id='org_phone', name='org_phone'))
     organization_form.add_field('Email', tf.INPUT(type='email', id='org_email', name='org_email'))
-    billing_pref_form.details.organization.form = organization_form.build()
-    billing_pref_form.msg = tf.SPAN(id="billing_pref-msg")
-    
-    billing_pref_form.buttons = tf.DIV(Class="buttons")
-    billing_pref_form.buttons.update = tf.INPUT(id="update-billingpref", type="button", value="Update")
+    organization.form = organization_form.build()
+    details.add(organization)
 
-    return billing_pref_form
+    billing_pref_form.add_buttons(tf.INPUT(id="update-billingpref", type="button", value="Update"))
+
+    return billing_pref_form.build()
 
 def add_tariffs_section(container):
     tariff_box = tf.DIV()
@@ -126,9 +131,9 @@ def add_tariffs_section(container):
     tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
     tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
     cell = tf.TD()
-    cell.a = tf.A("Change", href="#memberships", Class="change-sub", id="change_sub-${id}")
+    cell.a = tf.A("Change", href="#/${member_id}/memberships", Class="change-sub", id="change_sub-${id}")
     cell.c = tf.C(" | ")
-    cell.a = tf.A('X', title="Cancel tariff", href="#cancel-sub", Class="cancel-sub", id="cancel_sub-${id}")    
+    cell.a = tf.A('X', title="Cancel tariff", href="#/${member_id}/memberships", Class="cancel-sub", id="cancel_sub-${id}")    
     tariff_row.tr.td = cell
     
     tariff_load_history = tf.DIV()
@@ -152,10 +157,10 @@ def add_tariffs_section(container):
     next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
     next_tariff_form.add_field("", tf.INPUT(id='start', type="hidden"))
     next_tariff_form.add_field("Start", tf.INPUT(name='start-vis', id='start-vis').set_required())
+    next_tariff_form.add_buttons(tf.BUTTON(id="save-btn"), tf.BUTTON(id='cancel-btn'))
     next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
     next_tariff_section.form = next_tariff_form.build()
     next_tariff_section.tmpl = tariff_list_row
-    next_tariff_section.form.msg = tf.SPAN(id="Next_Tariff-msg")
     container.next_tarrif = next_tariff_section
     
     change_tariff_form = sphc.more.Form(id='change-tariff-form', classes=['vform'])
@@ -164,10 +169,10 @@ def add_tariffs_section(container):
     change_tariff_form.add_field("Start", tf.INPUT(name='starts-vis', id='starts-vis'))
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='ends'))
     change_tariff_form.add_field("End", tf.INPUT(name='ends-vis', id='ends-vis'))
+    change_tariff_form.add_buttons(tf.INPUT(value="Save", id="save-btn" ,type="button"), tf.INPUT(value="Cancel", id='cancel-btn' ,type="button"))
     change_tariff_section = tf.DIV(id='change-tariff-section', Class='hidden')
     change_tariff_section.form = change_tariff_form.build()
     change_tariff_section.tmpl = tariff_list_row
-    change_tariff_section.form.msg = tf.SPAN(id="Change_Tariff-msg")
     container.change_tarrif = change_tariff_section
     
 def make_buttons():
@@ -283,7 +288,7 @@ class EditProfile(BasePage):
         add_usage = add_usage_form.add(sphc.more.Fieldset(id="add_usage", Class="hidden"))
         add_usage.add(tf.LEGEND("Add Usage"))
         add_usage.add_field("Resource Name", tf.SELECT(id="resource_select", name="resource_select"), tf.INPUT(name='resource_name', id='resource_name', Class="field-input", placeholder="Resource name").set_required())
-        add_usage.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
+        add_usage.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
         add_usage.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
         add_usage.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
         add_usage.add_field("Cost", tf.INPUT(name='cost', id='cost'))
@@ -294,7 +299,7 @@ class EditProfile(BasePage):
         edit_usage.legend = tf.LEGEND("Edit Usage")
         edit_usage_form = sphc.more.Form(id='edit_usage-form', action='#', Class='profile-edit-form', classes=['hform'])
         edit_usage_form.add_field("Resource Name", tf.SELECT(id="res_select", name="res_select"), tf.INPUT(name='res_name', id='res_name', Class="field-input",  placeholder="Resource name").set_required())
-        edit_usage_form.add_field("Quantity", tf.INPUT(name='res_quantity', id='res_quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
+        edit_usage_form.add_field("Quantity", tf.INPUT(name='res_quantity', id='res_quantity', placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
         edit_usage_form.add_field("Start", tf.INPUT(name='res_start_time', id='res_start_time', nv_attrs=('required',)))
         edit_usage_form.add_field("End", tf.INPUT(name='res_end_time', id='res_end_time'), "Optional. Only for time based resources.")
         edit_usage_form.add_field("Cost", tf.INPUT(name='res_cost', id='res_cost'))
