@@ -9,7 +9,7 @@ function create_bizplace() {
     }
     function success() {
         action_status.text("Location created successfully").attr('class', 'status-success');
-        window.location.reload();
+        window.location = basepath + '/dashboard';
     };
     function error() {
         action_status.text("Error in creating location").attr('class', 'status-fail');
