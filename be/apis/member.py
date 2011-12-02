@@ -41,7 +41,9 @@ class MemberCollection:
         signals.send_signal('member_created', member=user_id)
 
         data = dict(name=name, id=user_id)
-        activity_id = activitylib.add('member_management', 'member_created', data, created)
+        member_activities = dict(individual=dict(category='member_management', name='member_created'),\
+                                 organization=dict(category='organization_management', name='organization_created'))
+        activity_id = activitylib.add(member_activities[mtype]['category'], member_activities[mtype]['name'], data, created)
 
         return user_id
 
@@ -94,9 +96,11 @@ class MemberResource:
         else:
             member_store.update(member_id, **mod_data)
 
-        name = member_store.get(member_id, fields=['name'])
+        name, mtype = member_store.get(member_id, fields=['name', 'type'], hashrows=False)
         data = dict(id=member_id, name=name, attrs=', '.join(attr for attr in mod_data))
-        activity_id = activitylib.add('member_management', 'member_updated', data)
+        member_activities = dict(individual=dict(category='member_management', name='member_updated'),\
+                                 organization=dict(category='organization_management', name='organization_updated'))
+        activity_id = activitylib.add(member_activities[mtype]['category'], member_activities[mtype]['name'], data)
 
     def info(self, member_id):
         info = member_store.get(member_id, ['id', 'state', 'name'])

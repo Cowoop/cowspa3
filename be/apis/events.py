@@ -66,6 +66,21 @@ class MemberDeleted(BaseEvent):
     def _msg_tmpl(self):
         return "%(name)s account is removed by %(actor_name)s."
 
+class OrganizationCreated(BaseEvent):
+    name = "organization_created"
+    category = "organization_management"
+    def _msg_tmpl(self):
+        return make_date_element(self.data.created) + " New organization <a href='./member/edit/#/%(id)s/profile'>%(name)s</a> created by %(actor_name)s."
+
+class OrganizationUpdated(BaseEvent):
+    name = "organization_updated"
+    category = "organization_management"
+    def _msg_tmpl(self):
+        tmpl = "%(actor_name)s has updated %(name)s's profile."
+        return make_date_element(self.data.created) + tmpl
+    def _access(self):
+        return dict(member_ids=[self.actor])
+
 class PasswordChanged(BaseEvent):
     name = "password_changed"
     category = "security"
@@ -151,13 +166,16 @@ role_categories = dict(
         member_management = ['member_created', 'member_updated'],
         bizplace_management = ['bizplace_created', 'bizplace_updated'],
         security = [],
-        resource_management = ['resource_created'] ),
+        resource_management = ['resource_created'],
+        organization_management = ['organization_created', 'organization_updated'] ),
     host = dict(
         member_management = ['member_created', 'member_updated'],
         bizplace_management = ['bizplace_created'],
         security = [],
-        resource_management = ['resource_created'] ),
+        resource_management = ['resource_created'],
+        organization_management = ['organization_created', 'organization_updated'] ),
     member = dict(
         member_management = ['member_updated'],
-        security = ['password_changed'])
+        security = ['password_changed'],
+        organization_management = ['organization_created', 'organization_updated'])
     )
