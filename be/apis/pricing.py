@@ -67,7 +67,7 @@ def get(member_id, resource_id, usage_time=None):
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
     if pricing:
         return pricing[0].amount
-    return dbaccess.get_default_pricing(resource_id, usage_time).amount
+    return dbaccess.get_default_pricing(resource_id, usage_time)[0].amount
 
 def member_tariff(member_id, bizplace_id, usage_time=None):
     if not usage_time:
@@ -102,7 +102,6 @@ pricing.set = set
 class CustomResource(costlib.Rule):
     name = 'Custom Resource'
     def apply(self, env, usage, cost):
-        print usage
         if not usage.resource_id:
             assert usage.cost is not None, "Cost is mandatory for Custom Resource"
             cost.new(self.name, usage.cost)

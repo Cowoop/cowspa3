@@ -95,7 +95,7 @@ class CSAuthedPage(CSPage):
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
         ('Members', '#', members_opt),
-        ('Bookings', '#', booking_opt),
+        ('Bookings', '/${lang}/${theme}/booking', []),
         ('Invoicing', '#', invoicing_opt),
         ('Resources', '#', resources_opt),
         ('Admin', '#', locations_opt),

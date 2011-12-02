@@ -1,8 +1,8 @@
 function success(resp) {
-    $.cookie('authcookie', null);
-    $.cookie('roles', null);
-    $.cookie('user_id', null);
-    $.cookie('member_name', null);
+    delete_cookie('authcookie');
+    delete_cookie('roles');
+    delete_cookie('user_id');
+    delete_cookie('member_name');
     window.location = "/login";
 };
 function error() {};
