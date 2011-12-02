@@ -9,10 +9,6 @@ def get_tariff_form():
     form.add_field('Name', tf.INPUT(type='text', id='name',
         name='name').set_required())
     form.add_field('Description', tf.TEXTAREA(id='short_description', name='short_description'))
-#    defprice = tf.DIV(id='def_price') #Need to hide when editing hence separate DIV
-#    defprice.label = tf.LABEL('Default Price')
-#    defprice.fld =  tf.INPUT(id='default_price', name='default_price').set_required()
-#    form.add(defprice)
 
     return form
 
@@ -38,6 +34,7 @@ class ListTariff(BasePage):
 
         new_tariff = tf.BUTTON("New Tariff", id="new-tariff", type='button')
         container.button = new_tariff
+        container.newline = sphc.more.clear()
 
         tariffs = tf.DIV(id="tariff_list")
         tariff_tmpl = sphc.more.jq_tmpl('tariff_tmpl')
