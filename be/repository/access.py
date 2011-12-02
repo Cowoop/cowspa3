@@ -217,13 +217,16 @@ def get_member_current_memberships(member_id, bizplace_ids=[]):
     values = dict(member_id=member_id, date=date, bizplace_ids=bizplace_ids)
     return membership_store.get_by_clause(clause, values)
 
-def get_member_memberships(member_id, bizplace_ids=[], since=None):
+def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=False):
+    current_date = datetime.datetime.now()
     if not since:
-        since = datetime.datetime.now() - datetime.timedelta(365)
-    clause = '(member_id = %(member_id)s) AND (ends >= %(since)s)'
+        since =  current_date - datetime.timedelta(365)
+    clause = '(member_id = %(member_id)s) AND (ends >= %(since)s OR ends IS null)'
+    if not_current:
+        clause += ' AND ((starts > %(current_date)s) OR (ends < %(current_date)s))'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
-    values = dict(member_id=member_id, since=since, bizplace_ids=bizplace_ids)
+    values = dict(member_id=member_id, since=since, bizplace_ids=bizplace_ids, current_date=current_date)
     return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):

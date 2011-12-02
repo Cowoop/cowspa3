@@ -59,13 +59,13 @@ def list_by_tariff(tariff_id):
         member_list.append(m_dict)
     return member_list
 
-def list_for_member(member_id):
-    return dbaccess.get_member_memberships(member_id)
+def list_for_member(member_id, not_current=False):
+    return dbaccess.get_member_memberships(member_id=member_id, not_current=not_current)
 
-def list_memberships(by_tariff=None, for_member=None):
+def list_memberships(by_tariff=None, for_member=None, not_current=False):
     if by_tariff:
         return list_by_tariff(by_tariff)
-    return list_for_member(for_member)
+    return list_for_member(for_member, not_current)
 
 memberships.new = new
 memberships.bulk_new = bulk_new
