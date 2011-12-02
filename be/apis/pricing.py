@@ -21,6 +21,8 @@ def new(resource_id, tariff_id, starts, amount):
             raise be.errors.ErrorWithHint(msg)
         old_pricing_ends = starts - datetime.timedelta(1)
         set(old_pricing.id, 'ends', old_pricing_ends)
+    else: # if there is no existing pricing ignore starts
+        starts = datetime.date(1970, 1, 1)
     return pricing_store.add(plan=tariff_id, resource=resource_id, starts=starts, amount=amount)
 
 def destroy(tariff_id):

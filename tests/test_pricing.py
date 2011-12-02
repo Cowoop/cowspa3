@@ -23,21 +23,16 @@ def _add_plan(data):
     env.context.pgcursor.connection.commit()
     return plan_id
 
-def test_add_default_tariff():
-    plan_data = test_data.default_tariff_data
+def test_add_new_tariff():
+    plan_data = test_data.new_tariff_data
     plan_data['owner'] = test_data.bizplace_id
     plan_id =_add_plan(plan_data)
-    test_data.default_tariff_id = plan_id
+    test_data.new_tariff_id = plan_id
     assert test_data.plan_id != plan_id
-
-def test_set_default_tariff():
-    bizplacelib.bizplace_resource.set(test_data.bizplace_id, 'default_tariff', test_data.default_tariff_id)
-    env.context.pgcursor.connection.commit()
-    assert bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'default_tariff') == test_data.default_tariff_id
 
 def test_add_pricing_for_a_plan():
     amount = 20
-    starts = datetime.date(2011,8,1).isoformat()
+    starts = datetime.date(2011,8,1).isoformat() # this starts is ignored
     pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount)
     info = pricinglib.pricing.info(pricing_id)
     env.context.pgcursor.connection.commit()
@@ -47,6 +42,7 @@ def test_add_pricing_for_a_plan_with_same_date():
     amount = 20
     test_data.price_w_plan = amount
     starts = datetime.date(2011,8,1).isoformat()
+    pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount) # adding this pricing must work not next
     assert_raises(be.errors.ErrorWithHint, pricinglib.pricings.new, test_data.resource_id, test_data.plan_id, starts, amount)
 
 def test_add_pricing_for_default_tariff():

@@ -230,7 +230,7 @@ def list_invoices(issuer ,limit):
     query = "SELECT invoice.id, member.name, invoice.cost, invoice.created as created, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit) 
     return invoice_store.query_exec(query, values, hashrows=False)
-    
+
 def search_member(query_parts, options, limit, mtype):
     fields = ['id', 'name']
     query = 'SELECT member.id, member.name, member.email, member.name as label FROM member'

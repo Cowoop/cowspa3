@@ -18,6 +18,9 @@ def test_add_bizplace():
     test_data.bizplace_id = bizplace_id
     assert dbaccess.OidGenerator.get_otype(bizplace_id) == "BizPlace"
     test_data.bizplace_id = bizplace_id
+    default_tariff = bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'default_tariff')
+    test_data.default_tariff_id = default_tariff
+    assert bool(int(test_data.default_tariff_id))
 
 def test_bizplace_info():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)

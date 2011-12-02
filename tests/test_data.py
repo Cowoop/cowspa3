@@ -12,7 +12,7 @@ bizplace_id = None
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
 plan_id = None
 more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
-default_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
+new_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
 
 member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', state=dict(enabled=True, hidden=False))
 member_id = None
