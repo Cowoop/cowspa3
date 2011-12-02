@@ -1,6 +1,7 @@
 var tariff_baseurl =  basepath + '/tariffs/';
 var tariff_id = null;
 var action_status = $('#tariff_form .action-status');
+var tariffs_title = $('#content-title').text();
 
 function update_tariff(theform) {
     var inputs = theform.serializeArray();
@@ -27,6 +28,7 @@ $("#cancel-btn").click(function (){
     $("#tariff_form").hide();
     $("#new-tariff").show();
     $("#tariff_list").show();
+    $('#content-title').text(tariffs_title);
     window.location = tariff_baseurl;
 });
 
@@ -36,6 +38,7 @@ function show_editform(id) {
 
     function success(resp) {
         tariff = resp['result'];
+        $('#content-title').text(tariff.name);
         $('#tariff_form #name').val(tariff.name);
         $('#tariff_form #short_description').val(tariff.short_description);
     };
