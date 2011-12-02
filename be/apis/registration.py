@@ -25,7 +25,7 @@ def new(first_name, last_name, email):
 def activate(key, username, password):
     reg_info = info(key)
     userlib.set_context(env.config.system_username)
-    member_id = memberlib.member_collection.new(username, password, reg_info.email, reg_info.first_name, last_name=reg_info.last_name)
+    member_id = memberlib.member_collection.new(reg_info.email, username, password, reg_info.first_name, last_name=reg_info.last_name)
     registered_store.remove_by(dict(activation_key=key))
     return member_id
 
