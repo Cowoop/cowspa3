@@ -95,8 +95,9 @@ def list_activities_by_roles(roles, limit=15):
 def find_activities(member_ids=[], roles=[], limit=15):
     clause = ''
     if member_ids:
-        clause += "(member_id = %s) OR "
+        clause += "(member_id = %s) "
     if roles:
+        clause += ' OR '
         role_clauses = ["(role_ctx = %s AND role_name = %s)" for role in roles]
         clause += ' OR '.join(role_clauses)
         clause += ' ORDER BY a_id DESC limit %s' % limit
@@ -104,7 +105,9 @@ def find_activities(member_ids=[], roles=[], limit=15):
     for role in roles:
         clause_values.extend(role)
     a_ids = tuple(row[0] for row in activityaccess_store.get_by_clause(clause, clause_values, fields=['a_id'], hashrows=False))
-    clause = '(id IN %(a_ids)s) ORDER BY created DESC limit %(limit)s'
+    if a_ids:
+        clause = '(id IN %(a_ids)s) '
+    clause += ' ORDER BY created DESC limit %(limit)s'
     clause_values = dict(a_ids = a_ids, limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if a_ids else []
 
