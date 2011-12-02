@@ -105,7 +105,8 @@ class List(BasePage):
         fields = [edit]
 
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("List of Locations", id='list-locations-link', href='#')
+        cancel.link = tf.A("List of Locations", id='list-locations-link',
+                href='/${lang}/${theme}/bizplaces/')
         fields.append(cancel)
 
         form = get_location_form()
@@ -162,6 +163,10 @@ class List(BasePage):
 
         # All Locations Tariff List
         tariff_container = tf.DIV(id='tariff_container')
+        tariff_container.all_loc = tf.DIV(Class="edit-link-box")
+        tariff_container.all_loc.link = tf.A("List of Locations",
+                id='all-list-locations-link',
+                href='/${lang}/${theme}/bizplaces#all-locations')
         tariff_container.resource = tf.DIV(id='resource_column')
 
         resource_tmpl = sphc.more.jq_tmpl('resource_tmpl')

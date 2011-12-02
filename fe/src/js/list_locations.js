@@ -49,6 +49,10 @@ $('#list-locations-link').click(function(){
     window.location = basepath + '/bizplaces/';
 });
 
+$('#all-list-locations-link').click(function(){
+    window.location = basepath + '/bizplaces#all-locations';
+});
+
 function show_tariff() {
     set_context(parseInt(this.id.split('-')[1]));
     window.location = basepath + '/tariffs';
