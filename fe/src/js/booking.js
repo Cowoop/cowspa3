@@ -50,7 +50,7 @@ function mark_slot(usage) {
             break;
         };
     };
-    var matched_day_idx = i;
+    var matched_day_idx = i-1;
     var day_id = 'day_' + matched_day_idx;
 
     var matched_slots = [];
@@ -63,7 +63,7 @@ function mark_slot(usage) {
         this_time.setMinutes(this_mm);
         this_time.setSeconds(0);
         this_time.setMilliseconds(0);
-        if ((this_time >= start_time) && (this_time <= end_time)) {
+        if ((this_time >= start_time) && (this_time < end_time)) {
             $(this).addClass('slot-unavailable');
             $(this).removeClass('slot-available');
             matched_slots.push(this);

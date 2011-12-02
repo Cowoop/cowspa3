@@ -12,7 +12,7 @@ def hourrange(start, end):
     return ((((hr or 12) if hr < 12 else ((hr - 12) or hr)), ('AM' if hr < 12 else 'PM')) for hr in range(start, end))
 
 def timecolumn(start, end):
-    return tf.DIV([tf.DIV('%d %s' % hr, Class='cal-hour') for hr in hourrange(start, end)], Class='cal-day')
+    return tf.DIV([tf.DIV('%d %s' % hr, Class='cal-hour') for hr in hourrange(start, end)], Class='time-column')
 
 def day(day_no):
     slots = [min15(day_no, (i*15)) for i in range(24*4)] # 4 15mins * 24 hours
