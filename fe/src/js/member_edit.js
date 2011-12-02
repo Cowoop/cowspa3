@@ -307,7 +307,7 @@ $('#next_tariff-btn').click(function() {
         width: 500, 
     });
 });
-$("#tariff_save-btn").click(function() { 
+function save_next_tariff() { 
     var params = {}
     function success(resp) {
         $("#next-tariff-form").dialog("close"); 
@@ -321,12 +321,12 @@ $("#tariff_save-btn").click(function() {
     params['tariff_id'] = $("#next-tariff-form #tariff").val();
     params['starts'] = to_iso_date($("#next-tariff-form #start").val());
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
-    if($("#next-tariff-form").checkValidity()){
-        jsonrpc('memberships.new', params, success, error);
-    }
-    else{
-        $("#next-tariff-form .action-status").text("Please, fill out all required fields.").addClass("status-fail");
-    }
+    jsonrpc('memberships.new', params, success, error);
+};
+$("#next-tariff-form").submit(function () {
+    $(this).checkValidity();
+    save_next_tariff();
+    return false;
 });
 $("#tariff_cancel-btn").click(function() { 
     $("#next-tariff-form").dialog("close"); 
@@ -342,6 +342,7 @@ params1['owner'] = current_ctx;
 jsonrpc('tariffs.list', params1, success1, error1);
     
 //*************************End Next Tariff**************************************
+
 
 //**************************Tariff History**************************************
 $('#load-tariff-history').attr("href", "#/"+thismember_id+"/memberships");
@@ -397,6 +398,9 @@ function bind_cancel_and_change_tariff() {
         if($("#tariff_row-"+membership_id+" #ends").text()!=""){
             date = to_formatted_date($("#tariff_row-"+membership_id+" #ends").text());
             $('#change-tariff-form #ends-vis').datepicker("setDate", date);
+        }
+        else{
+            $('#change-tariff-form #ends-vis').datepicker("setDate", null);
         }
         $("#change-tariff-form #tariff option:contains('" + $("#tariff_row-"+membership_id+" #tariff_name").text() + "')").attr('selected', 'selected');
         $('#change-tariff-form').dialog({ 
