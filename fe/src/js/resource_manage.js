@@ -74,6 +74,7 @@ function on_list_resources(resp) {
         on_resource_data(result[i]);
     };
     view_resource_list();
+    $("#rtype_room").click();
 };
 
 if (window.location.hash == '') {

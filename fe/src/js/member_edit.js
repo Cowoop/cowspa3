@@ -566,7 +566,7 @@ function get_uninvoiced_usages(){
         $(".delete-usage").click(delete_usage);
     };
     function error(){};
-    var params = { 'member_ids' : [thismember_id]};
+    var params = { 'member_ids' : [thismember_id], 'uninvoiced':true};
     jsonrpc('usages.find', params, success, error);
 };
 //---------------------------Edit Usage-----------------------------------------
@@ -702,7 +702,7 @@ function get_invoice_tab_data(){
         //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
     function get_invoice_history_error(){};
-    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id)};
+    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id), 'hashrows':false};
     jsonrpc('invoice.by_member', params, get_invoice_history_success, get_invoice_history_error);
 };
 $("#new_invoice-btn").click(function(){

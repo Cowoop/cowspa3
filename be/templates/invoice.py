@@ -83,7 +83,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD(str(usage.rate))
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
-            usage_row.td = tf.TD(str(usage.calculated_cost))
+            usage_row.td = tf.TD(str(usage.cost))
             usages.row = usage_row
             sr_no += 1
         usage_row = tf.TR()

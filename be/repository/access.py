@@ -168,7 +168,7 @@ def find_tariff_members(plan_ids, fields=['member', 'name'], at_time=None):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types):
+def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced=False):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
@@ -178,11 +178,12 @@ def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, 
     if resource_ids: clauses.append('(resource_id IN %(resource_ids)s)')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
-
+    if uninvoiced: clauses.append('invoice IS null')
+    
     clauses_s = ' AND '.join(clauses)
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
-    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id']
+    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'rate']
     return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
@@ -253,7 +254,6 @@ def search_member(query_parts, options, limit, mtype):
         clause += '((Member.first_name ILIKE %(query_part1)s AND Member.last_name ILIKE %(query_part2)s) OR (Member.first_name ILIKE %(query_part2)s AND Member.last_name ILIKE %(query_part1)s))'
         values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
     if mtype != "member":
-        clause += ' AND type = %(mtype)s'
         values['mtype'] = mtype
     query  += ' WHERE '+clause+' LIMIT %(limit)s'
     values['member_id'] =  env.context.user_id

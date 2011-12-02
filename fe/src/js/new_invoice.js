@@ -67,9 +67,8 @@ function get_uninvoiced_usages(start, end){
         $('#usage-tmpl').tmpl(usages).appendTo('#usages');
     };
     function on_get_uninvoiced_usages_error(){};
-    var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end};
-    params['fields'] = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost' ,'rate', 'id'];
-    jsonrpc('usage.find', params, on_get_uninvoiced_usages_success, on_get_uninvoiced_usages_error);
+    var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end, 'uninvoiced':true};
+    jsonrpc('usages.find', params, on_get_uninvoiced_usages_success, on_get_uninvoiced_usages_error);
 };
 $(".all_usages-checkbox").click(function(){
     var select_all = checked_map[$(".all_usages-checkbox:checked").val()];
