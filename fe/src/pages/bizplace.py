@@ -145,16 +145,12 @@ class List(BasePage):
         all_loc_tmpl = sphc.more.jq_tmpl('all_loc_tmpl')
         all_loc_tmpl.box = tf.DIV(Class='location-box')
         all_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
-        all_loc_tmpl.box.info.link = tf.A("${name}", id='edit-link_${id}', 
-                href='#/${id}', Class='location-title')
-        all_loc_tmpl.box.info.city = tf.LABEL("${city}, ${country}", 
-                Class='location-info')
-        all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", 
-                Class='location-description')
+        all_loc_tmpl.box.info.link = tf.A("${name}", id='edit-link_${id}', href='#/${id}', Class='location-title')
+        all_loc_tmpl.box.info.city = tf.LABEL("${city}, ${country}", Class='location-info')
+        all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", Class='location-description')
 
         all_buttons = tf.DIV(Class="buttons")
-        all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}',
-                Class='loc_tariff-btn', type='button')
+        all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}', Class='loc_tariff-btn', type='button')
         all_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
         all_loc_tmpl.box.btn.buttons = all_buttons
 
@@ -164,28 +160,25 @@ class List(BasePage):
         # All Locations Tariff List
         tariff_container = tf.DIV(id='tariff_container')
         tariff_container.all_loc = tf.DIV(Class="edit-link-box")
-        tariff_container.all_loc.link = tf.A("List of Locations",
-                id='all-list-locations-link',
+        tariff_container.all_loc.link = tf.A("List of Locations", id='all-list-locations-link',
                 href='/${lang}/${theme}/bizplaces#all-locations')
-        tariff_container.resource = tf.DIV(id='resource_column')
+        tariff_container.clear = sphc.more.clear()
+        tariff_container.tariff_box = tf.DIV(id='tariff-box')
+        tariff_container.tariff_box.resource = tf.DIV(id='resource_column')
 
-        resource_tmpl = sphc.more.jq_tmpl('resource_tmpl')
-        resource_tmpl.reslist = tf.DIV("${name}", Class='title')
+        tariff_container.resource_tmpl = sphc.more.jq_tmpl('resource_tmpl')
+        tariff_container.resource_tmpl.reslist = tf.DIV("${name}", Class='resource-name')
         #Empty first row. Other columns will contain tariff name in first row
-        tariff_container.resource.empty = tf.DIV("", Class='title')
-        tariff_container.resource.cur_price = tf.DIV("Current Price", Class='title')
-        tariff_container.resource.tmpl = resource_tmpl
+        tariff_container.tariff_box.resource.empty = tf.DIV("", Class='')
+        tariff_container.tariff_box.resource.cur_price = tf.DIV(Class='tariff-price')
 
-        tariff_container.tariffs = tf.DIV(id='tariff_columns')
         tariff_col_tmpl = sphc.more.jq_tmpl('tariff_col_tmpl')
         tariff_col_tmpl.tariff_column = tf.DIV(Class='tariff_column')
         tariff_col_tmpl.tariff_column.name = tf.DIV("${name}", Class='title')
-        tariff_col_tmpl.tariff_column.currprice = tf.DIV("${curr_price}", Class='amount')
-        tariff_col_tmpl.tariff_column.res_prices = "{{each prices}} \
-                                          <div class='amount'>${$value}</div> \
-                                      {{/each}}"
+        tariff_col_tmpl.tariff_column.currprice = tf.DIV("${curr_price}", Class='tariff-price')
+        tariff_col_tmpl.tariff_column.res_prices = "{{each prices}} <div class='resource-price'>${$value}</div> {{/each}}"
 
-        tariff_container.tariffs.tmpl = tariff_col_tmpl
+        tariff_container.tariff_col_tmpl = tariff_col_tmpl
 
         all_locations.tariff_container = tariff_container
 

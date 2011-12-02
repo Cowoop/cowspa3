@@ -92,7 +92,7 @@ function show_tariff_details() {
                     tempObj['prices'].push(amount);
                 };
                 display_data.push(tempObj);
-                $('#tariff_col_tmpl').tmpl(display_data).appendTo('#tariff_columns');
+                $('#tariff_col_tmpl').tmpl(display_data).appendTo('#tariff-box');
             });
         }
 
