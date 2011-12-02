@@ -552,7 +552,7 @@ function get_uninvoiced_usages(){
                 },
                 { "sTitle": "Quantity", "sWidth":"10%"},
                 { "sTitle": "Cost",  "sWidth":"10%" },
-                { "sTitle": "Manage", "sWidth":"10%",
+                { "sTitle": "Manage", "bSortable": false, "sWidth":"10%",
                     "fnRender": function(obj) {
                         var usage_id = obj.aData[obj.iDataColumn];
                         var data = {'thismember_id':thismember_id, 'usage_id':usage_id};
@@ -682,7 +682,7 @@ function get_invoice_tab_data(){
                         return to_formatted_date(sReturn);
                         }   
                 },
-                { "sTitle": "Link",
+                { "sTitle": "Link", "bSortable": false,
                 "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
                         return "<A id='"+sReturn+"' href='#' class='invoice-view'>View</A>";

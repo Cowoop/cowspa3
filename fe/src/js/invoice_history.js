@@ -14,7 +14,7 @@ function success(response) {
                     return to_formatted_date(sReturn);
                     }   
             },
-            { "sTitle": "Link",
+            { "sTitle": "Link", "bSortable": false,
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
                     return "<A id='"+sReturn+"' href='#' class='invoice-view'>View</A>";
