@@ -181,12 +181,21 @@ function location_info(resp) {
     $('#location_view_form #fax').text(loc.fax);
     $('#location_view_form #host_email').text(loc.host_email);
     $('#location_view_form #booking_email').text(loc.booking_email);
+    // Originally, href for edit link was set only if selected tab was 0
+    // See additional details in else block
+    $('#edit-location-link').attr('href',basepath+'/bizplaces/#/'+loc.id+'/edit');
     if (selected_tab == 0) {  // My Location
-        $('#edit-location-link').attr('href',basepath+'/bizplaces/#/'+loc.id+'/edit');
+        // $('#edit-location-link').attr('href',basepath+'/bizplaces/#/'+loc.id+'/edit');
         $('#my_loc_list').hide();
         $('#bizplace_form').hide();
     } else {
-        $('#edit-location-link').hide();
+        // Edit link was hidden because current user may not have permission 
+        // to edit ANY location.
+        // This aspect will be dealt later when roles/permissions are addressed
+        // uniformly thru-out the application. Till then allow edit
+        // unconditionally
+
+        // $('#edit-location-link').hide();
         $('#all_loc_list').hide();
     }
     $('#location_view_form').show();
