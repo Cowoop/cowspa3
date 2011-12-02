@@ -1,5 +1,5 @@
 // Globals
-var current_ctx = parseInt($.cookie("current_ctx"));
+var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx")):null;
 var current_userid = parseInt($.cookie("user_id"));
 var member_name = $.cookie("member_name");
 var basepath = window.location.pathname.split('/').slice(0,3).join('/');
@@ -13,6 +13,16 @@ $.webshims.setOptions('forms', {
 //or load only a specific feature with $.webshims.polyfill('feature-name');
 $.webshims.polyfill();// forms-ext');
 
+// Cookies
+var cookie_opts = { path : '/'};
+function set_cookie(cookie_name, value) {
+    return $.cookie(cookie_name, value, cookie_opts);
+};
+function delete_cookie(cookie_name) {
+    return $.cookie(cookie_name, null, cookie_opts);
+};
+//
+
 $.jsonRPC.setup({
     endPoint: '/app',
     namespace: ''
@@ -21,15 +31,15 @@ $.jsonRPC.setup({
 function set_context(ctx) {
     current_ctx = ctx;
     if (ctx == null) {
-        $.cookie("current_ctx", ctx, { expires: -1, path: '/' });
+        delete_cookie("current_ctx");
     } else {
-        $.cookie("current_ctx", ctx, { path: '/' });
+        set_cookie("current_ctx", ctx);
     };
 };
 
 function set_userid(uid) {
     current_userid = uid;
-    $.cookie("user_id", uid);
+    set_cookie("user_id", uid);
 };
 
 function jsonrpc(apiname, params, success, error) {
@@ -108,12 +118,11 @@ function on_roles_list(resp) {
     }
     else {
         $("#context-single").hide();
-        $('#context-opt-tmpl').tmpl(resp.result).appendTo('#context-select');
-
+        $('#context-opt-tmpl').tmpl(result).appendTo('#context-select');
         if (current_ctx) {
             var valid_bizplaces = [];
-            for (idx in resp.result) {
-                valid_bizplaces.push(resp.result[idx].id);
+            for (idx in result) {
+                valid_bizplaces.push(result[idx].id);
             };
             if (valid_bizplaces.indexOf(current_ctx) == -1) {
                 var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
