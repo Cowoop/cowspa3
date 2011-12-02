@@ -91,7 +91,7 @@ class BizplaceCreated(BaseEvent):
     name = "bizplace_created"
     category = "bizplace_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New place <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by %(actor_name)s."
+        return make_date_element(self.data.created) + " New place <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/profile'>%(actor_name)s</a>."
 
 class BizplaceUpdated(BaseEvent):
     name = "bizplace_updated"
