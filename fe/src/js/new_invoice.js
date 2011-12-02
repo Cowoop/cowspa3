@@ -35,7 +35,7 @@ function get_invoicee_name_and_contact(id){
     jsonrpc('member.get', params, on_get_name_success, on_get_name_error);
 }
 $('#invoicee-search').autocomplete({
-    source: "/search/members",
+    source: "/search/member",
     select: function(event, ui) {
         window.location.hash = "#/invoicee/" + ui.item.id;
     }

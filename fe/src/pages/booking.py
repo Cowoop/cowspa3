@@ -29,13 +29,15 @@ def week():
     return [tf.DIV([timecolumn(0, 24)] + [day(i) for i in range(7)], Class='cal-week')]
 
 def booking_form():
-    form = sphc.more.Form(id='booking-form', Class='vform')
+    form = sphc.more.Form(id='new-booking-form', Class='vform')
     #form.add(tf.DIV(Class='heading3 data-resource-name'))
     #form.add(tf.HR())
     form.add(tf.DIV(id="new-booking-date"))
+    form.add(tf.INPUT(id="for-member", type="hidden"))
+    form.add_field("Member name", tf.INPUT(id="for-member-search"), "Type to autocomplete member name")
     form.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
     form.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900", value="19:00"))
-    form.add_field("Quantity", tf.INPUT(type="text"), "Not applicable for time based resources")
+    form.add_field("Quantity", tf.INPUT(id="new-quantity", type="text"), "Not applicable for time based resources")
     form.add_buttons(tf.INPUT(type="submit", value="Add booking"))
     return form.build()
 
