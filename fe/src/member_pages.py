@@ -157,7 +157,7 @@ def add_tariffs_section(container):
     next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
     next_tariff_form.add_field("", tf.INPUT(id='start', type="hidden"))
     next_tariff_form.add_field("Start", tf.INPUT(name='start-vis', id='start-vis').set_required())
-    next_tariff_form.add_buttons(tf.INPUT(value="Save", id="tariff_save-btn", type="button"), tf.INPUT(value="Cancel", id='tariff_cancel-btn', type="button"))
+    next_tariff_form.add_buttons(tf.BUTTON("Save", id="tariff_save-btn", type="submit"), tf.BUTTON("Cancel", id='tariff_cancel-btn', type="button"))
     next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
     next_tariff_section.form = next_tariff_form.build()
     next_tariff_section.tmpl = tariff_list_row
