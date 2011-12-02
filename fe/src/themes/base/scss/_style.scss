@@ -37,12 +37,7 @@ $total-cols: 14;
 html { 
     margin: 0; padding: 0;
     background: $page-background;
-    // background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);
 }
-
-// body { font-size: 1.1em; left-margin: 0em; right-margin: 0em; top-margin: 0em; bottom-margin: 0em; line-height: 1.8em; 
-//    font-family: sans-serif;
-// }
 
 body { 
     line-height: 140%;
@@ -254,21 +249,42 @@ button#new-tariff, button#new_invoice-btn, button#new_usage-btn {float: right; m
     }
 }
 
-#tariff_container {
-    padding: 1em;
-    display: inline-block;
+#tariff-box{
+    margin: 1em;
+    text-align: center;
+    padding: 0;
     .title {
-       font-size: 140%;
-       padding: 0.25em;
+        font-size: 120%;
+        padding: 0.25em;
+        color: $other-text-color;
+        background: lighten($main-color, 15%);
+        width: 5em;
+        height: 3em;
     }
-    #resource_column, .tariff_column {
+    .tariff-price {
+        font-size: 160%;
+        font-weight: bold;
+        border-bottom: 1px solid;
+        padding: 0.5em;
+    }
+    #resource_column {
         display: inline-block;
-        border: 1px solid;
-        margin: 0.5em;
+        .resource-name { border-bottom: 1px dotted; }
+        .tariff-price { border: 0; }
     }
-    #tariff_columns {
+    .tariff_column {
         display: inline-block;
+        border: 1px solid lighten($main-color, 25%);
+        border-right: 0;
     }
+    .resource-name {
+        padding: 0.3em;
+    }
+    .resource-price {
+        border-bottom: 1px solid lighten($main-color, 25%);
+        padding: 0.3em;
+    }
+    .tariff_column:last-child { border-right: 1px solid lighten($main-color, 25%); }
 }
 
 #tariff_list {
