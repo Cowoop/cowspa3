@@ -44,8 +44,14 @@ def by_location(owner):
     returns pricing for ALL the resources for each tariff defined for this
     location
     """
+
+    default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
     result = dbaccess.list_resources_and_tariffs(owner, ['id','name'], type='tariff')
     for rec in result:
+        if rec['id'] == default_tariff_id :
+            rec['is_guest_tariff'] = 1
+        else:
+            rec['is_guest_tariff'] = 0
         prices = pricing_store.get_by(crit=dict(plan=rec['id']), fields=['id','resource','amount'])
         price_per_resource = {}
         for p in prices :
@@ -53,7 +59,6 @@ def by_location(owner):
             del p['resource']
         rec['pricings'] = price_per_resource
     return result
-
 
 def get(member_id, resource_id, usage_time=None):
     """

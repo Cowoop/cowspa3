@@ -47,10 +47,12 @@ $('#bizplace_form #cancel-btn').click(function() {
 
 $('#list-locations-link').click(function(){
     window.location = basepath + '/bizplaces/';
+    window.location.reload();
 });
 
 $('#all-list-locations-link').click(function(){
     window.location = basepath + '/bizplaces#all-locations';
+    window.location.reload();
 });
 
 function show_tariff() {
@@ -62,13 +64,25 @@ function show_tariff_details() {
     var params = {};
     var resource_map =  {}
     function resource_success(resp) {
+        var guest_tariff = null;
+
+        function set_guest_tariff(tariff_data) {
+            for(var index in tariff_data) {
+                if (tariff_data[index]['is_guest_tariff'] == 1) {
+                    guest_tariff = tariff_data[index];
+                    break;
+                }
+            }
+        }
 
         function pricing_success(resp) {
+            set_guest_tariff(resp['result']);
+
             resp['result'].forEach(function(rec) {
                 var display_data = [];
                 var tempObj = {};
                 tempObj['name'] = rec['name'];
-                tempObj['curr_price'] = 0 //To be updated later
+                tempObj['curr_price'] = guest_tariff['pricings'][rec['id']]['amount']
                 tempObj['prices'] = [];
                 for (var res in resource_map) {
                     var amount = '-';
