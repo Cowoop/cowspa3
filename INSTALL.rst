@@ -19,7 +19,7 @@ Development env setup
 ::
 
     git clone git@github.com:shon/cowspa3.git # Writable
-    git clone git://github.com/shon/cowspa.git # Read only
+    git clone git://github.com/shon/cowspa3.git # Read only
     virtualenv cowspa3
     cd cowspa3
     . ./bin/activate

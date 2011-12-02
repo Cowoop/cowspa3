@@ -2,7 +2,6 @@ import commontest
 import test_data
 
 import be.apis.bizplace as bizplacelib
-import be.apis.plan as planlib
 import be.apis.member as memberlib
 import be.apis.user as userlib
 import be.repository.access as dbaccess
