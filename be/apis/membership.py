@@ -5,6 +5,7 @@ import commonlib.helpers
 import bases.app as applib
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
+import be.apis.usage as usagelib
 
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -19,14 +20,19 @@ def new(tariff_id, member_id, starts=None):
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     old_sub = dbaccess.get_member_membership(member_id, bizplace.id, starts)
-    starts =  commonlib.helpers.iso2date(starts) if starts else datetime.date.today()
+    if starts:
+        starts_dt = commonlib.helpers.iso2date(starts)
+    else:
+        starts_dt = datetime.date.today()
+        starts =  starts_dt.isoformat()
     if old_sub:
-        ends = starts - datetime.timedelta(1)
-        if ends <= old_sub.starts:
+        ends = starts_dt - datetime.timedelta(1)
+        if ends <= old_sub.starts_dt:
             raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
-    membership_store.add(tariff_id=tariff_id, starts=starts, member_id=member_id, bizplace_id=tariff.owner, \
+    membership_store.add(tariff_id=tariff_id, starts=starts_dt, member_id=member_id, bizplace_id=tariff.owner, \
         bizplace_name=bizplace.name, tariff_name=tariff.name)
+    usagelib.usage_collection.new(tariff_id, tariff.name, member_id, starts)
     # find old membership
     # set end date to it
     return True
