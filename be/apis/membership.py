@@ -27,7 +27,7 @@ def new(tariff_id, member_id, starts=None):
         starts =  starts_dt.isoformat()
     if old_sub:
         ends = starts_dt - datetime.timedelta(1)
-        if ends <= old_sub.starts_dt:
+        if ends <= old_sub.starts:
             raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, member_id=member_id, bizplace_id=tariff.owner, \
