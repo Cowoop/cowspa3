@@ -64,6 +64,24 @@ nav {
     }
     a:active {background: gray;}
 
+    #ctx-switcher-title {
+        cursor: pointer;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+    }
+    #ctx-switcher, #ctx-menu {
+        float: left;
+        text-align: left;
+    }
+
+    #ctx-menu {
+        border: 1px solid;
+        padding: 0.5em;
+    }
+    #ctx-opts {
+        border-bottom: 1px solid;
+    }
+
     #context-select, #context-single {
         float: left;
         width: 25%;
@@ -739,7 +757,7 @@ form.hform {
     input[type="radio"]+label {
         text-align: left;
     }
-    input[type="button"], input[type="radio"] {
+    input[type="button"], input[type="radio"], input[type="checkbox"], input[type="submit"] {
         width: auto;
     }
     .field-input {
@@ -758,6 +776,7 @@ form.hform {
         font-style: italic;
         display: block;
         margin-left: 25%;
+        font-size: medium;
     }
 }
 
@@ -914,18 +933,18 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     font-size: 140%;
 }
 #resource-select {
-    font-size: 120%;
     margin-top: 1em;
     margin-bottom: 1em;
 }
 
-#pane-resource { width: 25%; float: left; }
-#pane-booking { width: 70%; float: right; }
+#pane-resource { width: 20%; float: left; }
+#pane-booking { width: 75%; float: right; }
 #booking-date-inp { font-size: 80%; }
 
 #booking-cal {
     width: 100%; 
     text-align: center;
+    .cal-week { overflow: hidden; }
     .cal-min15 { 
         border-bottom: 1px dotted; 
         border-right: 1px solid; 
@@ -935,9 +954,10 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     .hour-end {
         border-bottom: 1px dashed;
     }
-    .cal-day, .day-title, .time-column {
+    .cal-day, .time-column {
         display: inline-block;
         overflow: hidden;
+        vertical-align: top;
     }
     .day-title {
         text-align: center;

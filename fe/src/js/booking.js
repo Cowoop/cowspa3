@@ -58,7 +58,9 @@ function mark_slot(usage) {
     var this_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate())
     $('#' + day_id + ' .cal-min15').each( function () {
         var this_id = $(this).attr('id');
-        var [this_hh, this_mm] = this_id.split('-')[1].split('.')[0].split(':');
+        var hh_mm = this_id.split('-')[1].split('.')[0].split(':');
+        var this_hh = hh_mm[0];
+        var this_mm = hh_mm[1];
         this_time.setHours(this_hh);
         this_time.setMinutes(this_mm);
         this_time.setSeconds(0);
@@ -100,7 +102,9 @@ set_day_titles();
 function id2datetime(id) {
     var slot_no = id.split('_')[1];
     var day_no = parseInt(slot_no.split('-')[0]);
-    var [start, end] = slot_no.split('-')[1].split('.');
+    var start_end = slot_no.split('-')[1].split('.');
+    var start = start_end[0];
+    var end = start_end[1];
     return [day_no, start, end]
 };
 
@@ -111,7 +115,9 @@ function on_select_slots(ev, ui) {
     });
     var start = selected[0];
     var end = selected.pop();
-    var [booking_day_no, start_time] = id2datetime(start);
+    var no_start = id2datetime(start);
+    var booking_day_no = no_start[0];
+    var start_time = no_start[1];
     var end_time = id2datetime(end)[2];
 
     new_booking_date = add_days(get_selected_date(),  (-3 + booking_day_no))
@@ -163,13 +169,17 @@ function make_booking() {
     params.resource_name = resource_map[params.resource_id];
 
     var start_time = new Date(new_booking_date.getTime());
-    var [hrs, mins] = $('#new-starts').val().split(':');
+    var hrs_mins = $('#new-starts').val().split(':');
+    var hrs = hrs_mins[0];
+    var mins = hrs_mins[1];
     start_time.setHours(hrs);
     start_time.setMinutes(mins);
     params.start_time = to_iso_datetime(start_time)
 
     var end_time = new Date(new_booking_date.getTime());
-    var [hrs, mins] = $('#new-ends').val().split(':');
+    var hrs_mins = $('#new-ends').val().split(':');
+    var hrs = hrs_mins[0];
+    var mins = hrs_mins[1];
     end_time.setHours(hrs);
     end_time.setMinutes(mins);
     params.end_time = to_iso_datetime(end_time)
