@@ -103,6 +103,7 @@ function show_tariff_details() {
         }
 
         $('#all_loc_list').hide();
+        $('#location_tabs').hide();
         $('#tariff_container').show();
         var newparams = {};
         resp['result'].forEach(function(item) {
@@ -115,8 +116,10 @@ function show_tariff_details() {
     function resource_error() {
         alert('Error getting resources');
     }
-    var location_id = parseInt(this.id.split('-')[1]);
+    var tariff_info = this.id.split('-');
+    var location_id = parseInt(tariff_info[1]);
     params['owner'] = location_id;
+    $('#content-title').text(tariff_info[2]);
     jsonrpc('resource.list', params, resource_success, resource_error);
 }
 

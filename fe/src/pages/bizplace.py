@@ -153,7 +153,7 @@ class List(BasePage):
         all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", Class='location-description')
 
         all_buttons = tf.DIV(Class="buttons")
-        all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}', Class='loc_tariff-btn', type='button')
+        all_buttons.tariff_btn = tf.BUTTON("Tariff", id='allloc_tariff_btn-${id}-${name}', Class='loc_tariff-btn', type='button')
         all_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
         all_loc_tmpl.box.btn.buttons = all_buttons
 
@@ -183,7 +183,7 @@ class List(BasePage):
 
         tariff_container.tariff_col_tmpl = tariff_col_tmpl
 
-        all_locations.tariff_container = tariff_container
+        container.tariff_container = tariff_container
 
         container.tabs.myloc = my_locations
         container.tabs.all_loc = all_locations
