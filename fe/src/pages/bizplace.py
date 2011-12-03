@@ -27,11 +27,10 @@ def get_location_form():
             name='short_description', rows=2, cols=25))
     curr_select = sphc.tf.SELECT(id='currency', name='currency')
     for currency in data_lists.currencies:
-        curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")", 
+        curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")",
                         value=currency['name'])
     about.add_field('Currency', curr_select)
-    about.add_field('Tax Included', sphc.tf.INPUT(name='tax_included',
-            id='tax_included', type='checkbox'))
+    #about.add_field('Tax Included', sphc.tf.INPUT(name='tax_included', id='tax_included', type='checkbox'))
 
     contact = form.add(sphc.more.Fieldset())
     contact.add(sphc.tf.LEGEND('Contact Details'))
