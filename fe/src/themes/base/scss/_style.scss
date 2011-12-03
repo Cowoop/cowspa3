@@ -959,20 +959,29 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         display: inline-block;
         overflow: hidden;
         vertical-align: top;
+        .day-title {
+            color: $main-color;
+            background: none;
+        }
     }
-    .day-title {
+    .time-column {
+        @include divsizing;
+        vertical-align: bottom;
+        overflow: hidden;
+        border-right: 1px solid;
+    }
+    .day-title, .time-title {
         text-align: center;
         font-size: 120%;
         width: 100%;
         font-weight: lighter;
-        border-bottom: 1px solid;
+        height: 1.5em;
     }
+    .day-title { border-bottom: 1px solid; }
     .cal-hour {
         font-size: 160%;
         height: 2.5em; // 4em if font-size is 100%
         font-weight: lighter;
-        width: 4em;
-        border-bottom: 1px solid dashed;
     }
     .ui-selecting { background: #FECA40; }
     .ui-selected { background: #F39814; color: white; }

@@ -98,47 +98,56 @@ function init_nav() {
 };
 //******************************Load List of Bizplaces**************************************************
 
+function set_0_locations_menu() {
+    $("#context-select").hide();
+    $("#context-single").hide();
+    $('#menu-item_2').hide();
+    $('#menu-item_3').hide();
+    $('#menu-item_4').hide();
+    set_context(null);
+};
+
 function on_roles_list(resp) {
     var result = resp.result;
     $(document).ready( function() {
         on_roles(result)
     }); // calling on_roles hook which might be defined (only once) at some other js
+
+    var ctx_label = 'Location options';
     if(result.length == 0) {
-        $("#context-select").hide();
-        $("#context-single").hide();
-        $('#menu-item_2').hide();
-        $('#menu-item_3').hide();
-        $('#menu-item_4').hide();
-        set_context(null);
-    } 
+        $('#ctx-switcher-title').tmpl({ctx_label: ctx_label});
+        $('#ctx-menu').show();
+        set_0_locations_menu();
+    }
     else if(result.length == 1) {
-        $("#context-select").hide();
-        $("#context-single").text(resp.result[0].label);
+        ctx_label = result[0].label;
         set_context(result[0].id);
     }
     else {
-        $("#context-single").hide();
-        $('#context-opt-tmpl').tmpl(result).appendTo('#context-select');
+        $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         if (current_ctx) {
             var valid_bizplaces = [];
-            for (idx in result) {
-                valid_bizplaces.push(result[idx].id);
-            };
+            for (idx in result) { valid_bizplaces.push(result[idx].id); };
             if (valid_bizplaces.indexOf(current_ctx) == -1) {
                 var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
                 set_context(ctx);
-            } else {
-                $("#context-select").val(current_ctx);
             };
+            for (idx in result) {
+                if (result[idx].id == current_ctx) {
+                    ctx_label = result[idx].label;
+                    break;
+                };
+            }; 
         } else {
-            set_context($("#context-select").val());
+            ctx_label = result[0].label;
+            set_context(result[0].id);
         };
-
-        $('#context-select').change(function() {
-            set_context($('#context-select').val());
-            window.location.reload();
-        });
     };
+    $('#ctx-switcher-title').text(ctx_label + " ▼");
+    $('#ctx-switcher-title').click( function () {
+        $('#ctx-menu').show();
+    });
+
 };
 
 function on_roles(roles) {}; // HOOK
