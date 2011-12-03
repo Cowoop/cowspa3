@@ -43,19 +43,19 @@ function get_usages(resource_id) {
 };
 
 function mark_slot(usage) {
-    var start_time = new Date(usage.start_time);
-    var end_time = new Date(usage.end_time);
+    var start_time = iso2date(usage.start_time);
+    var end_time = iso2date(usage.end_time);
     for (i in shown_dates) {
         if (shown_dates[i] >= start_time) {
             break;
         };
     };
-    var matched_day_idx = i-1;
+    var matched_day_idx = i;
     var day_id = 'day_' + matched_day_idx;
 
     var matched_slots = [];
 
-    var this_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate())
+    var this_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate());
     $('#' + day_id + ' .cal-min15').each( function () {
         var this_id = $(this).attr('id');
         var hh_mm = this_id.split('-')[1].split('.')[0].split(':');
@@ -89,9 +89,7 @@ function on_available_resources(resp) {
 };
 
 $('#resource-select').change( function () {
-    var resource_id = $(this).val();
-    get_usages(resource_id);
-    init_cal();
+    refresh_cal();
 });
 
 var params = {'owner': current_ctx};
@@ -185,7 +183,6 @@ function make_booking() {
     params.end_time = to_iso_datetime(end_time)
 
     params.quantity = $('#new-quantity').val() || 1;
-
     params.member = $('#for-member').val();
 
     jsonrpc('usage.new', params, on_new_booking, error);
