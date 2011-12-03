@@ -18,7 +18,7 @@ function set_day_titles() {
 };
 
 $('#booking-date-inp').datepicker( {
-    onSelect: set_day_titles
+    onSelect: refresh_cal
 });
 
 function get_selected_date() {
@@ -46,11 +46,11 @@ function mark_slot(usage) {
     var start_time = iso2date(usage.start_time);
     var end_time = iso2date(usage.end_time);
     for (i in shown_dates) {
-        if (shown_dates[i] >= start_time) {
+        if (shown_dates[i] > start_time) {
             break;
         };
     };
-    var matched_day_idx = i;
+    var matched_day_idx = i-1;
     var day_id = 'day_' + matched_day_idx;
 
     var matched_slots = [];
@@ -141,12 +141,16 @@ function init_cal() {
 };
 
 function refresh_cal() {
+    set_day_titles();
     $(".cal-day").selectable('destroy');
     $('.slot-unavailable').each( function () {
         $(this).removeClass('slot-unavailable');
         $(this).removeClass('slot-available');
     });
-    get_usages(parseInt($('#resource-select').val()));
+    var resource_id = parseInt($('#resource-select').val());
+    if (resource_id) {
+        get_usages(resource_id);
+    };
 };
 
 $('#for-member-search').autocomplete({
