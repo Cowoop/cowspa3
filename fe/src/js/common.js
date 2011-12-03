@@ -154,6 +154,17 @@ if(params['user_id']) {
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
+function iso2date(iso) {
+    var yy = parseInt(iso.slice(0, 4));
+    var mm = parseInt(iso.slice(5, 7)-1);
+    var dd = parseInt(iso.slice(8, 10));
+    var hh = parseInt(iso.slice(11, 13));
+    var mi = parseInt(iso.slice(14, 16));
+    var ss = parseInt(iso.slice(17, 19));
+    var dt = new Date(yy, mm, dd, hh, mi, ss);
+    return dt;
+};
+
 function to_iso_date(date){
     if(jQuery.trim(date) == ""){
         return null;
