@@ -65,13 +65,14 @@ function init_autocomplete() {
     });
 };
 
+function hide_submenu() {
+    $('.submenu-box').hide();
+    $('#main .content').removeClass('opaq');
+    $('nav').removeClass('simple-box');
+    $('#main .content').addClass('simple-box');
+};
+
 function init_nav() {
-    function hide_submenu() {
-        $('.submenu-box').hide();
-        $('#main .content').removeClass('opaq');
-        $('nav').removeClass('simple-box');
-        $('#main .content').addClass('simple-box');
-    };
     $('.menu-item').click( function () {
         $('#main .content').addClass('opaq');
         hide_submenu();
@@ -82,64 +83,92 @@ function init_nav() {
         if(submenu) {
             $('#submenu_' + m_id).slideDown('fast');
             $('#main .content').addClass('opaq');
-            $('nav').addClass('simple-box');
+            $('.submenu-container').addClass('simple-box');
         };
     });
     $('.submenu-item').click( function() {
         hide_submenu();
     });
-    $(document).click( function (e) {
-        var t = $(e.target).parent();
-        if (!(t.hasClass('menu-item') | t.hasClass('submenu-item')) ) {
-            hide_submenu();
-        };
-    });
     $('#main .content').addClass('simple-box');
 };
 //******************************Load List of Bizplaces**************************************************
+
+function set_0_locations_menu() {
+    $("#context-select").hide();
+    $("#context-single").hide();
+    $('#menu-item_2').hide();
+    $('#menu-item_3').hide();
+    $('#menu-item_4').hide();
+    set_context(null);
+};
+
+function hide_ctx_menu() {
+    $('#main .content').removeClass('opaq');
+    $('#ctx-menu').hide();
+    $('#main .content').addClass('simple-box');
+};
+
+function toggle_ctx_menu() {
+    $('#main .content').toggleClass('opaq');
+    $('#ctx-menu').toggle();
+    $('#main .content').toggleClass('simple-box');
+};
 
 function on_roles_list(resp) {
     var result = resp.result;
     $(document).ready( function() {
         on_roles(result)
     }); // calling on_roles hook which might be defined (only once) at some other js
+
+    var ctx_label = 'Location options';
     if(result.length == 0) {
-        $("#context-select").hide();
-        $("#context-single").hide();
-        $('#menu-item_2').hide();
-        $('#menu-item_3').hide();
-        $('#menu-item_4').hide();
-        set_context(null);
-    } 
+        $('#ctx-menu').show();
+        set_0_locations_menu();
+    }
     else if(result.length == 1) {
-        $("#context-select").hide();
-        $("#context-single").text(resp.result[0].label);
+        ctx_label = result[0].label;
         set_context(result[0].id);
     }
     else {
-        $("#context-single").hide();
-        $('#context-opt-tmpl').tmpl(result).appendTo('#context-select');
+        $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         if (current_ctx) {
             var valid_bizplaces = [];
-            for (idx in result) {
-                valid_bizplaces.push(result[idx].id);
-            };
+            for (idx in result) { valid_bizplaces.push(result[idx].id); };
             if (valid_bizplaces.indexOf(current_ctx) == -1) {
                 var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
                 set_context(ctx);
-            } else {
-                $("#context-select").val(current_ctx);
             };
+            for (idx in result) {
+                if (result[idx].id == current_ctx) {
+                    ctx_label = result[idx].label;
+                    break;
+                };
+            }; 
         } else {
-            set_context($("#context-select").val());
+            ctx_label = result[0].label;
+            set_context(result[0].id);
         };
-
-        $('#context-select').change(function() {
-            set_context($('#context-select').val());
-            window.location.reload();
-        });
     };
+    $('#ctx-switcher-title').text(ctx_label + " ▼");
+    $('#ctx-switcher-title').click( function () {
+        toggle_ctx_menu();
+    });
+    $('.ctx-opt').click( function () {
+        var ctx_id = $(this).attr('id').split('_')[1];
+        set_context(ctx_id);
+        toggle_ctx_menu();
+        window.location.reload();
+    });
 };
+
+$(document).click( function (e) {
+    var t = $(e.target);
+    var p = $(e.target).parent()
+    if (!( t.hasClass('ctx-title') | p.hasClass('menu-item') | p.hasClass('submenu-item'))) {
+        hide_ctx_menu();
+        hide_submenu();
+    };
+});
 
 function on_roles(roles) {}; // HOOK
 

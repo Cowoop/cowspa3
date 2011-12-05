@@ -45,110 +45,124 @@ body {
     font-size: 105%;
 }
 
-nav {
-    line-height: 2em;
-    width: auto;
-    border: 1px solid $main-color;
-    padding: 0;
+#ctx-menu {
+    cursor: pointer;
+    text-align: middle;
+    margin-top: 2em;
     z-index: 100;
-    background: $page-background;
-    width: inherit;
     position: absolute;
-    text-align: right;
-    a {
-        display: block;
-        text-decoration: none; 
-        color: inherit;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-    }
-    a:active {background: gray;}
-
-    #ctx-switcher-title {
-        cursor: pointer;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-    }
-    #ctx-switcher, #ctx-menu {
-        float: left;
+    border: 1px solid $main-color;
+    background: $page-background;
+    @include box-shadow($main-color 3px 3px 3px);
+    margin-left: 0.3em;
+    .ctx-opt { 
         text-align: left;
-    }
-
-    #ctx-menu {
-        border: 1px solid;
         padding: 0.5em;
+        border-top: 1px solid lighten($main-color, 20%);
+        &:hover { @include reverse-colors; } 
     }
-    #ctx-opts {
-        border-bottom: 1px solid;
-    }
-
-    #context-select, #context-single {
-        float: left;
-        width: 25%;
-        border: none;
-        border-left: 1px solid;
-        height: 100%;
-        width: 25%;
-    }
-    
-    .menu {
-        display: inline-block;
-        .current { 
+    #ctx-more { 
+        border-top: 1px solid;
+        text-align: left;
+        .ctx-more-item {
             color: $main-color;
-            background: $other-text-color;
-            border-left: 1px solid;
+            padding: 0.5em;
+            text-decoration: none; 
+            width: 100%;
+            display: inline-block;
+            &:hover { @include reverse-colors; }
         }
     }
+}
 
-    
-    .menu-item { 
-        cursor: pointer;
-        border: 0;
-        border-right: 1px outset $main-color;
-        display: inline-block;
-        text-decoration: none;
-        padding: 0em;
-
-        color: $other-text-color;
-        background: $main-color;
-        a {
-            // font-weight: bold;
-            text-decoration: none;
-            text-shadow: none;
-        }
-    }
-
-    .submenu-container {
-        border-top: 1px solid $main-color;
+#navbar {
+    cursor: pointer;
+    line-height: 2em;
+    nav {
+        width: auto;
+        padding: 0;
+        z-index: 100;
+        background: $page-background;
         text-align: right;
-    }
-
-    .submenu-box {
-        column-count: 3;
-        column-gap: 1em;
-        column-rule: 1px solid lighten($main-color, 20%);
-        column-width: auto;
-        -moz-column-count: 3;
-        -moz-column-gap: 1em;
-        -moz-column-rule: 1px solid lighten($main-color, 20%);
-        -moz-column-width: auto;
-        -webkit-column-count: 3;
-        -webkit-column-gap: 1em;
-        -webkit-column-rule: 1px solid lighten($main-color, 20%);
-        -webkit-column-width: auto;
-        display: none;
-        float: right;
-        padding: 0.5em;
-        width: 50%;
-    }
-
-    .submenu-item {
-        padding: 0 1em;
-        white-space: nowrap;
-        .current { text-decoration: underline; }
+        float: left;
+        position: relative;
         a {
-            display: inline;
+            display: block;
+            text-decoration: none; 
+            color: inherit;
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+        a:active {background: gray;}
+    
+        #context-select, #context-single {
+            float: left;
+            width: 25%;
+            border: none;
+            border-left: 1px solid;
+            height: 100%;
+            width: 25%;
+        }
+        
+        .menu {
+            .current { 
+                color: $main-color;
+                background: $other-text-color;
+                border: 1px solid;
+            }
+        }
+    
+        
+        .menu-item { 
+            cursor: pointer;
+            border: 0;
+            border: 1px outset $main-color;
+            display: inline-block;
             text-decoration: none;
+            padding: 0em;
+            color: $other-text-color;
+            background: $main-color;
+            a {
+                text-decoration: none;
+                text-shadow: none;
+            }
+        }
+    
+        .submenu-container {
+            text-align: right;
+            width: 100%;
+            position: absolute;
+            background: $page-background;
+        }
+    
+        .submenu-box {
+            column-count: 3;
+            column-gap: 1em;
+            column-rule: 1px solid lighten($main-color, 20%);
+            column-width: auto;
+            -moz-column-count: 3;
+            -moz-column-gap: 1em;
+            -moz-column-rule: 1px solid lighten($main-color, 20%);
+            -moz-column-width: auto;
+            -webkit-column-count: 3;
+            -webkit-column-gap: 1em;
+            -webkit-column-rule: 1px solid lighten($main-color, 20%);
+            -webkit-column-width: auto;
+            display: none;
+            float: right;
+            padding: 0.5em;
+            width: 100%;
+            border: 1px solid $main-color;
+        }
+    
+        .submenu-item {
+            padding: 0 1em;
+            white-space: nowrap;
+            .current { text-decoration: underline; }
+            a {
+                display: inline;
+                text-decoration: none;
+            }
         }
     }
 }
@@ -200,12 +214,20 @@ legend {
     font-size: 0.8em;
     overflow: hidden; // stops generating browser horizontal scrollbar when it's really not required
     a {text-decoration: none; padding: 1em; color: $other-text-color;}
-    .logo {float: left; display: inline; color: $other-text-color;}
+    #ctx-switcher-title {
+        margin-left: 0.3em;
+        letter-spacing: 0.3em;
+        float: left;
+        display: inline;
+        cursor: pointer;
+        color: $other-text-color;
+        font-size: 120%;
+    }
 }
 .container {
     @include container;
     // @include susy-grid-background;
-    margin-top: 3em;
+    margin-top: 2em;
     width: 73em;
     @include divsizing;
 }
@@ -410,6 +432,7 @@ div[role="main"] {
         }
         .sidebar {
             display: inline-block;
+            background: darken($page-background, 10%);
             width: 25%;
             float: right;
             border-left: 1px solid;
@@ -428,15 +451,13 @@ div[role="main"] {
     width: 100%;
     vertical-align: middle;
     margin-top: 1em;
-    .search-label { 
-        @include columns(4, 11);
-    }
     .search-input {
         height: 100%;
-        width: 40%;
+        width: 15em;
         display: inline-block;
         text-align: left;
         border: 0;
+        margin-bottom: 1em;
     }
 }
 

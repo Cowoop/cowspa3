@@ -70,10 +70,8 @@ resources_opt = [
     ]
 
 locations_opt = [
-    tf.A("New Location", href=ctxpath + '/bizplace/new'),
     tf.A("Team", href=ctxpath + '/team'),
     tf.A("Tariffs", href=ctxpath + '/tariffs'),
-    tf.A("List Locations", href=ctxpath + '/bizplaces')
     ]
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
@@ -107,7 +105,7 @@ class CSAuthedPage(CSPage):
 
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
-        product_name = tf.DIV('c o w s p a', Class='logo')
+        #product_name = tf.DIV('c o w s p a', Class='logo')
         links = []
         for label, link in self.top_links[:-1]:
             links.append(tf.A(label, href=link, id=label.lower()))
@@ -115,19 +113,25 @@ class CSAuthedPage(CSPage):
         last_link = self.top_links[-1]
         links.append(tf.A(last_link[0], href=last_link[1]))
 
-        topbar.logo = product_name
-        topbar.bizplaces = tf.SELECT(id="bizplaces", name="bizplaces", style="display:none")
+        topbar.ctx = tf.DIV("", id='ctx-switcher-title', Class="ctx-title")
+        topbar.ctx_menu = self.ctx_switcher()
         topbar.links = links
         return topbar
 
+    def ctx_switcher(self):
+        menu = tf.DIV(id="ctx-menu", Class="hidden")
+        menu.opts = tf.DIV(id="ctx-opts")
+        menu.more = tf.DIV(id="ctx-more")
+        menu.more.manage = tf.A("Find locations", href="/${lang}/${theme}/bizplaces", Class='ctx-more-item')
+        menu.more.new = tf.A("Create New +", href="/${lang}/${theme}/bizplace/new", Class='ctx-more-item')
+        menu.menu_tmpl = sphc.more.jq_tmpl("ctx-tmpl")
+        menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
+
+        return menu
+
     def nav(self):
         if not self.nav_menu: return ''
-        nav = tf.NAV()
-        nav.context_opt = sphc.more.jq_tmpl("context-opt-tmpl")
-        nav.context_opt.opt = tf.OPTION("${label}", value="${id}")
-        nav.context_box = tf.SPAN()
-        nav.context_box.selector = tf.SELECT(id="context-select")
-        nav.context_box.single_context = tf.SPAN(id="context-single")
+
         menu = tf.DIV(Class="menu")
         submenu_container = tf.DIV(Class="submenu-container")
         for m_id, (label, url, submenu) in enumerate(self.nav_menu):
@@ -144,13 +148,18 @@ class CSAuthedPage(CSPage):
                     submenu_box.smi_box = smi_box
                 submenu_container.submenu_box = submenu_box
             menu.item = menu_item
-        nav.menu = menu
-        nav.submenu = submenu_container
-        return nav
+
+        navbar = tf.DIV(id="navbar")
+        #navbar.ctx_switcher = self.ctx_switcher()
+        navbar.nav = tf.NAV()
+        navbar.nav.menu = menu
+        navbar.nav.submenu = submenu_container
+
+        return navbar
 
     def main(self):
         main = tf.DIV()
-        main.clear = sphc.more.clear()
+        #main.clear = sphc.more.clear()
         #main.clear = tf.C('.', style="opacity:0;")
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
