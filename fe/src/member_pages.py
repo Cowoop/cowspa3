@@ -23,7 +23,6 @@ def contact_form():
     form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
     form.add_field("Email", tf.INPUT(name='email', type="email").set_required())
     form.add_field("Skype", tf.INPUT(name='skype', type="text"))
-    form.add_field("Sip", tf.INPUT(name='sip', type="text"))
     form.add_buttons(tf.BUTTON("Update", type="submit"))
     return form
 
@@ -214,7 +213,6 @@ class MemberCreate(BasePage):
         section.add_field("Fax", tf.INPUT(name='mobile', type="text"))
         section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
         section.add_field("Skype", tf.INPUT(name='skype', type="text"))
-        section.add_field("Sip", tf.INPUT(name='sip', type="text"))
         sections.append(section)
 
         for section in sections:

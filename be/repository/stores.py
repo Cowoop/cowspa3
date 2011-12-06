@@ -35,8 +35,7 @@ class Contact(PGStore):
     mobile TEXT,
     fax TEXT,
     email TEXT NOT NULL,
-    skype TEXT,
-    sip TEXT
+    skype TEXT
     """
 
 class MemberPref(PGStore):
