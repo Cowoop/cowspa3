@@ -17,7 +17,7 @@ def contact_form():
     select = tf.SELECT(id='country', name='country')
     select.options = fe.src.common.country_options
     form.add_field("Country", select)
-    form.add_field("Pincode/Zip", tf.INPUT(name='pincode', type="text"))
+    form.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
     form.add_field("Phone", tf.INPUT(name='phone', type="text"))
     form.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
     form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
@@ -207,7 +207,7 @@ class MemberCreate(BasePage):
         section.add_field("Address", tf.TEXTAREA(name='address', type="text"))
         section.add_field("City", tf.INPUT(name='city', type="text"))
         section.add_field("Country", tf.SELECT(fe.src.common.country_options, id='country', name='country'))
-        section.add_field("Pincode/Zip", tf.INPUT(name='pincode', type="text"))
+        section.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
         section.add_field("Phone", tf.INPUT(name='phone', type="text"))
         section.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
         section.add_field("Fax", tf.INPUT(name='mobile', type="text"))
