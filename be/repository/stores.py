@@ -147,6 +147,7 @@ class BizPlace(PGStore):
     default_tariff INTEGER,
     default_taxes BYTEA,
     tax_included BOOLEAN DEFAULT True,
+    taxation_num TEXT,
     currency TEXT,
     logo TEXT
     """

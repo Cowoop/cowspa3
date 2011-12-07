@@ -15,6 +15,8 @@ function show_editform(id) {
         $('input[name="city"]').val(loc.city);
         $('input[name="email"]').val(loc.email);
         $('#currency').val(loc.currency);
+        $('#taxation_num').val(loc.taxation_num);
+        $('#website').val(loc.website);
         $("#tax_included").attr('checked', loc.tax_included);
         $('input[name="email"]').val(loc.email);
         $('input[name="host_email"]').val(loc.host_email);
@@ -176,6 +178,8 @@ function location_info(resp) {
     $('#content-title').text(loc.name);
     $('#location_view_form #name').text(loc.name);
     $('#location_view_form #currency').text(loc.currency);
+    $('#location_view_form #website').text(loc.website);
+    $('#location_view_form #taxation_num').text(loc.taxation_num);
     if (loc.tax_included)
         $("#location_view_form #tax_included").text("Yes");
     else
