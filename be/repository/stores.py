@@ -145,23 +145,10 @@ class BizPlace(PGStore):
     tz TEXT,
     holidays smallint[],
     default_tariff INTEGER,
-    default_taxes BYTEA,
-    tax_included BOOLEAN DEFAULT True,
-    taxation_num TEXT,
     currency TEXT,
     logo TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
-    pickle_cols = ['default_taxes']
-
-class Organization(PGStore):
-    create_sql = """
-    id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    state INTEGER default 1 NOT NULL,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
-    """
-    parent_stores = [Contact()]
 
 class Request(PGStore):
     create_sql = """
@@ -197,15 +184,11 @@ class Resource(PGStore):
     long_description TEXT,
     time_based BOOLEAN DEFAULT True,
     picture TEXT,
-    archived BOOLEAN DEFAULT False
+    archived BOOLEAN DEFAULT False,
+    follow_owner_taxes BOOLEAN DEFAULT True,
+    default_taxes BYTEA
     """
-
-class ResourceTax(PGStore):
-    create_sql = """
-    resource INTEGER NOT NULL,
-    tax_name INTEGER NOT NULL,
-    tax REAL NOT NULL
-    """
+    pickle_cols = ['default_taxes']
 
 class Membership(PGStore):
     create_sql = """
@@ -288,8 +271,12 @@ class InvoicePref(PGStore):
     due_date INTEGER,
     bcc_email TEXT,
     bank_details TEXT,
-    logo TEXT
+    logo TEXT,
+    tax_included BOOLEAN DEFAULT True,
+    default_taxes BYTEA,
+    taxation_num TEXT
     """
+    pickle_cols = ['default_taxes']
 
 class Activity(PGStore):
     create_sql = """
