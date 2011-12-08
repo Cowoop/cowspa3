@@ -3,7 +3,6 @@ $('#bizplace_form').hide();
 $('#tariff_container').hide();
 $('#location_view_form').hide();
 var locations_title = $('#content-title').text();
-var checked_map = {'checked':true, 'on':true, undefined:false};
 
 function show_editform(id) {
     function success(resp) {
@@ -15,9 +14,7 @@ function show_editform(id) {
         $('input[name="city"]').val(loc.city);
         $('input[name="email"]').val(loc.email);
         $('#currency').val(loc.currency);
-        $('#taxation_num').val(loc.taxation_num);
         $('#website').val(loc.website);
-        $("#tax_included").attr('checked', loc.tax_included);
         $('input[name="email"]').val(loc.email);
         $('input[name="host_email"]').val(loc.host_email);
         $('input[name="booking_email"]').val(loc.booking_email);
@@ -137,7 +134,6 @@ function edit_location(theform) {
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }
-    params['tax_included'] = checked_map[$("#tax_included:checked").val()];
     function success() {
         action_status.text("Location updated successfully").attr('class', 'status-success');
         setTimeout(function(){
@@ -179,11 +175,6 @@ function location_info(resp) {
     $('#location_view_form #name').text(loc.name);
     $('#location_view_form #currency').text(loc.currency);
     $('#location_view_form #website').text(loc.website);
-    $('#location_view_form #taxation_num').text(loc.taxation_num);
-    if (loc.tax_included)
-        $("#location_view_form #tax_included").text("Yes");
-    else
-        $("#location_view_form #tax_included").text("No");
     $('#location_view_form #address').text(loc.address);
     $('#location_view_form #city').text(loc.city);
     $('#location_view_form #email').text(loc.email);

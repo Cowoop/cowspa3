@@ -31,8 +31,6 @@ def get_location_form():
         curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")",
                         value=currency['name'])
     about.add_field('Currency', curr_select)
-    about.add_field('Tax Included', sphc.tf.INPUT(name='tax_included', id='tax_included', type='checkbox'))
-    about.add_field('Taxation Number', sphc.tf.INPUT(name='taxation_num', id='taxation_num'))
 
     contact = form.add(sphc.more.Fieldset())
     contact.add(sphc.tf.LEGEND('Contact Details'))
@@ -127,8 +125,6 @@ class List(BasePage):
             ('Short description', 'short_description'),
             ('Website', 'website'),
             ('Currency', 'currency'),
-            ('Tax Included', 'tax_included'),
-            ('Taxation Number', 'taxation_num'),
             ('Phone','phone'),
             ('Fax','fax'),
             ('Email', 'email'),

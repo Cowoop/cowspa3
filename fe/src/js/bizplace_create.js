@@ -1,5 +1,4 @@
 var theform = $('#bizplace_form');
-var checked_map = {'checked':true, 'on':true, undefined:false};
 
 function create_bizplace() {
     var inputs = theform.serializeArray();
@@ -8,7 +7,6 @@ function create_bizplace() {
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }
-    params['tax_included'] = checked_map[$("#tax_included:checked").val()];
     function success() {
         action_status.text("Location created successfully").attr('class', 'status-success');
         window.location = basepath + '/dashboard';
