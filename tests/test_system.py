@@ -18,5 +18,6 @@ def test_setup():
     assert type(system_id) in (int, long)
     assert admin_id > system_id
     assert test_data.admin_user['username'] == user_store.get(admin_id, 'username')
+    test_data.admin = admin_id
     # TODO: Important that below assrt works
     # assert rolelib.get_user_roles(admin_id)['global'] == ["Admin"]

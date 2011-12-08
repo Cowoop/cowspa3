@@ -226,7 +226,6 @@ class Usage(PGStore):
     id SERIAL NOT NULL UNIQUE,
     resource_id INTEGER,
     resource_name TEXT,
-    rate REAL,
     quantity REAL,
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
@@ -235,9 +234,11 @@ class Usage(PGStore):
     start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time  TIMESTAMP WITHOUT TIME ZONE,
     member INTEGER NOT NULL,
+    created_by INTEGER NOT NULL,
     pricing INTEGER,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    booking INTEGER DEFAULT NULL
+    booking INTEGER DEFAULT NULL,
+    cancelled_against INTEGER DEFAULT NULL
     """
     pickle_cols = ['tax_dict']
 

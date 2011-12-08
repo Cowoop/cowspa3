@@ -1,6 +1,7 @@
 import datetime
 
 admin_user = dict(username='admin', password='x', email='admin@localhost.localdmain', first_name='Admin')
+admin = None
 
 #country code 466 for "Mali"
 

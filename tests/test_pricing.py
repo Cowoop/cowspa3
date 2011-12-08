@@ -59,7 +59,8 @@ def test_add_member_w_plan_subscription():
     data = test_data.even_more_members[0]
     member_id = test_member.test_create_member(data)
     starts = datetime.date.today().isoformat()
-    assert membershiplib.memberships.new(test_data.plan_id, member_id, starts) == True
+    created_by = test_data.admin
+    assert membershiplib.memberships.new(test_data.plan_id, member_id, created_by, starts) == True
     test_data.member_w_plan = member_id
     env.context.pgcursor.connection.commit()
 

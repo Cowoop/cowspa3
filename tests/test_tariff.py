@@ -21,7 +21,7 @@ def test_add_plan():
 
 def test_add_members():
     starts = datetime.date(2011, 1, 1).isoformat()
-    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, starts)
+    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, test_data.admin, starts)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():

@@ -14,7 +14,7 @@ membership_store = dbaccess.stores.membership_store
 membership = applib.Resource()
 memberships = applib.Collection()
 
-def new(tariff_id, member_id, starts=None):
+def new(tariff_id, member_id, created_by, starts=None):
     """
     """
     tariff = resource_store.get(tariff_id)
@@ -32,18 +32,18 @@ def new(tariff_id, member_id, starts=None):
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, member_id=member_id, bizplace_id=tariff.owner, \
         bizplace_name=bizplace.name, tariff_name=tariff.name)
-    usagelib.usage_collection.new(tariff_id, tariff.name, member_id, starts)
+    usagelib.usage_collection.new(tariff_id, tariff.name, member_id, starts, created_by)
     # find old membership
     # set end date to it
     return True
 
-def bulk_new(tariff_id, member_ids, starts):
+def bulk_new(tariff_id, member_ids, created_by, starts):
     """
     """
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     for member_id in member_ids:
-        new(tariff_id, member_id, starts)
+        new(tariff_id, member_id, created_by, starts)
     return True
 
 def list_by_tariff(tariff_id):

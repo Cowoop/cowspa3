@@ -6,23 +6,37 @@ usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 
-    def new(self, resource_id, resource_name, member, start_time, end_time=None, quantity=None, cost=None, tax_dict={}, invoice=None):
+    def new(self, resource_id, resource_name, member, start_time, created_by, end_time=None, quantity=None, cost=None, tax_dict={}, invoice=None, cancelled_against=None, pricing=None, booking=None, calculated_cost=None):
 
         if not quantity: quantity = 1
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-        calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost))
+        
+        if not cancelled_against:
+            calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost))
         if not cost: cost = calculated_cost
-        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created=created)
-        usage_id = usage_store.add(**data)
-        return usage_id
+        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=created_by, created=created, cancelled_against=cancelled_against, pricing=pricing)
+        return usage_store.add(**data)
 
     def delete(self, usage_id):
         """
         Delete a usage.
         """
         return usage_store.remove(usage_id)
+
+    def cancel(self, usage_id, cancelled_by):
+        data = usage_store.get(usage_id)
+        data['created_by'] = cancelled_by
+        data['cancelled_against'] = usage_id
+        data['cost'] = -data['cost']
+        del(data['id'])
+        del(data['created'])
+        del(data['invoice'])
+        return self.new(**data)
+        
+    def delete_or_cancel(self, usage_id, cancelled_by):
+        return self.cancel(usage_id, cancelled_by) if usage_store.get(usage_id, 'invoice') else self.delete(usage_id) 
 
     def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False):
         """

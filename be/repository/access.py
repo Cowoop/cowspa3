@@ -186,7 +186,7 @@ def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, 
     clauses_s = ' AND '.join(clauses)
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
-    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'rate']
+    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id']
     return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):

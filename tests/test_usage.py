@@ -16,6 +16,8 @@ def test_add_usage():
     data['resource_id'] = test_data.resource_id
     data['start_time'] = datetime.datetime.now().isoformat()
     data['end_time'] = datetime.datetime.now().isoformat()
+    data['created_by'] = test_data.admin
+    data['invoice'] = 1
     test_data.usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert isinstance(test_data.usage_id, (int, long))
@@ -28,12 +30,19 @@ def test_update_usage():
     assert old_cost == test_data.usage['cost']
     assert new_cost == usagelib.usage_resource.info(test_data.usage_id)['cost']
 
+def test_delete_or_cancel_usage(): 
+    usage_id = usagelib.usage_collection.delete_or_cancel(test_data.usage_id, test_data.admin)
+    assert usagelib.usage_resource.get(usage_id, 'cancelled_against') == test_data.usage_id
+    assert usagelib.usage_resource.get(usage_id, 'cost') == -usagelib.usage_resource.get(test_data.usage_id, 'cost')    
+    assert usagelib.usage_collection.delete_or_cancel(usage_id, test_data.admin) == True
+    
 def test_add_more_usage():
     for data in test_data.more_usages:
         data['member'] = test_data.member_id
         data['resource_id'] = test_data.resource_id
         data['start_time'] = datetime.datetime.now().isoformat()
         data['end_time'] = datetime.datetime.now().isoformat()
+        data['created_by'] = test_data.admin
         usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
 
