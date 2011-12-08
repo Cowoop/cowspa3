@@ -32,9 +32,13 @@ def new(tariff_id, member_id, created_by, starts=None):
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, member_id=member_id, bizplace_id=tariff.owner, \
         bizplace_name=bizplace.name, tariff_name=tariff.name)
+    # find start, end dates for every months month in start-end and create that many usages
+    # ex. starts: 3 Jan 2021 ends: 5 Apr 2021
+    # usage 1: 3 Jan - 31 Jan 2021
+    # usage 2: 1 Feb - 28 Feb 2021
+    # usage 3: 1 Mar - 31 Mar 2021
+    # usage 4: 1 Apr - 05 Apr 2021
     usagelib.usage_collection.new(tariff_id, tariff.name, member_id, starts, created_by)
-    # find old membership
-    # set end date to it
     return True
 
 def bulk_new(tariff_id, member_ids, created_by, starts):
