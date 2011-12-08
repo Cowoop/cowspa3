@@ -19,9 +19,9 @@ def get_location_form():
     country_select.options = fe.src.common.country_options
     about.add_field('Country', country_select)
 
-    #tz_select = sphc.tf.SELECT(id='tz', name='tz')
-    #tz_select.options = fe.src.common.tz_options
-    #about.add_field('Time zone', tz_select)
+    tz_select = sphc.tf.SELECT(id='tz', name='tz')
+    tz_select.options = fe.src.common.tz_options
+    about.add_field('Time zone', tz_select)
 
     about.add_field('Short Description', sphc.tf.TEXTAREA(id='short_description',
             name='short_description', rows=2, cols=25))
@@ -122,6 +122,7 @@ class List(BasePage):
             ('Address', 'address'),
             ('City', 'city'),
             ('Country', 'country'),
+            ('Timezone', 'tz'),
             ('Short description', 'short_description'),
             ('Website', 'website'),
             ('Currency', 'currency'),
