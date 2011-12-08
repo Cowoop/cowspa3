@@ -10,7 +10,10 @@ fi
 google_repo="http://wkhtmltopdf.googlecode.com/files/"
 tox_src="libwkhtmltox-0.10.0_rc2-"$arch_spec".tar.bz2"
 pdf_src="wkhtmltopdf-0.10.0_rc2-static-amd64.tar.bz2"
+lib_name="libwkhtmltox.so"
+lib_dst=`pwd`"/lib"
 
+mkdir -p $lib_dst
 mkdir -p $download_dir
 cd $download_dir
 
@@ -24,8 +27,13 @@ tar jxvf $pdf_src
 
 C_INCLUDE_PATH=`pwd`/include
 export C_INCLUDE_PATH
-sudo cp -v lib/*.so* /usr/lib64
-sudo ldconfig
+# Uncomment lines below for system wide install
+#sudo cp -v lib/*.so* /usr/lib64
+#sudo ldconfig
+# Comment lines below not needed in system wide install
+cp -v lib/$lib_name $lib_dst
+ln -s $lib_dst/$lib_name $lib_dst/$lib_name.0
+export LIBRARY_PATH=$lib_dst
 
 cd py-wkhtmltox
 python setup.py install
