@@ -8,7 +8,7 @@ jsonrpc2
 correct_pycountry
 sphc
 turbomail
-python-dateutil
+python-dateutil==1.5
 #pytz
 # cssutils
 # cssprefixer is not installable atm by package name
