@@ -3,8 +3,6 @@ import datetime
 admin_user = dict(username='admin', password='x', email='admin@localhost.localdmain', first_name='Admin')
 
 #country code 466 for "Mali"
-biz = dict(name='My Coworking Biz', address='118, Lotus road', city='Timbaktu', country='466', email='me@example.com', short_description='Social Innovators')
-biz_id = None
 
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
 bizplace_id = None

@@ -13,7 +13,7 @@ class BizplaceCollection:
             long_description=None, tags=None, website=None, blog=None,
             twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
             skype=None, mobile=None, currency=None, host_email=None,
-            booking_email=None, default_taxes=None, tax_included=True,taxation_num=None):
+            booking_email=None, tz='UTC'):
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
         data = dict(id=bizplace_id, name=name, created=created,
@@ -22,8 +22,7 @@ class BizplaceCollection:
                 blog=blog, twitter=twitter, facebook=facebook, address=address,
                 city=city, country=country, email=email, phone=phone, fax=fax,
                 skype=skype, mobile=mobile, currency=currency,
-                host_email=host_email, booking_email=booking_email, 
-                default_taxes=default_taxes, taxation_num=taxation_num)
+                host_email=host_email, booking_email=booking_email, tz=tz)
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
@@ -75,8 +74,8 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
-    get_attributes = ['default_taxes', 'default_tariff']
-    set_attributes = ['default_taxes', 'default_tariff']
+    get_attributes = ['name', 'city', 'email', 'default_tariff']
+    set_attributes = ['name', 'city', 'email', 'default_tariff']
 
     def info(self, bizplace_id):
         """

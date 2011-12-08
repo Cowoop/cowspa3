@@ -3,7 +3,6 @@ $('#bizplace_form').hide();
 $('#tariff_container').hide();
 $('#location_view_form').hide();
 var locations_title = $('#content-title').text();
-var checked_map = {'checked':true, 'on':true, undefined:false};
 
 function show_editform(id) {
     function success(resp) {
@@ -11,13 +10,12 @@ function show_editform(id) {
         $('input[name="name"]').val(loc.name);
         $('textarea[name="address"]').val(loc.address);
         $('#country option:contains("' +loc.country+ '")').attr('selected','selected');
+        $('#tz option:contains("' +loc.tz+ '")').attr('selected','selected');
         $('textarea[name="short_description"]').val(loc.short_description);
         $('input[name="city"]').val(loc.city);
         $('input[name="email"]').val(loc.email);
         $('#currency').val(loc.currency);
-        $('#taxation_num').val(loc.taxation_num);
         $('#website').val(loc.website);
-        $("#tax_included").attr('checked', loc.tax_included);
         $('input[name="email"]').val(loc.email);
         $('input[name="host_email"]').val(loc.host_email);
         $('input[name="booking_email"]').val(loc.booking_email);
@@ -137,7 +135,6 @@ function edit_location(theform) {
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }
-    params['tax_included'] = checked_map[$("#tax_included:checked").val()];
     function success() {
         action_status.text("Location updated successfully").attr('class', 'status-success');
         setTimeout(function(){
@@ -179,16 +176,12 @@ function location_info(resp) {
     $('#location_view_form #name').text(loc.name);
     $('#location_view_form #currency').text(loc.currency);
     $('#location_view_form #website').text(loc.website);
-    $('#location_view_form #taxation_num').text(loc.taxation_num);
-    if (loc.tax_included)
-        $("#location_view_form #tax_included").text("Yes");
-    else
-        $("#location_view_form #tax_included").text("No");
     $('#location_view_form #address').text(loc.address);
     $('#location_view_form #city').text(loc.city);
     $('#location_view_form #email').text(loc.email);
     $('#location_view_form #short_description').text(loc.short_description);
     $('#location_view_form #country').text(loc.country);
+    $('#location_view_form #tz').text(loc.tz);
     $('#location_view_form #phone').text(loc.phone);
     $('#location_view_form #fax').text(loc.fax);
     $('#location_view_form #host_email').text(loc.host_email);

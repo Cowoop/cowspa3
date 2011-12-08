@@ -26,9 +26,9 @@ def test_bizplace_info():
     assert (d['short_description'], d['email']) == (test_data.bizplace['short_description'], test_data.bizplace['email'])
 
 def test_bizplace_update():
-    taxes = (('VAT', 19), ('Service Tax', 10.5))
-    bizplacelib.bizplace_resource.update(test_data.bizplace_id, default_taxes=taxes)
-    assert bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'default_taxes') == taxes
+    city = 'Pune'
+    bizplacelib.bizplace_resource.update(test_data.bizplace_id, city=city)
+    assert bizplacelib.bizplace_resource.get(test_data.bizplace_id, 'city') == city
 
 def test_list_bizplaces_list():
     d = bizplacelib.bizplace_resource.info(test_data.bizplace_id)
