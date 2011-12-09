@@ -3,7 +3,10 @@ import glob
 import os
 from pytz import common_timezones
 
-resource_types = [dict(name='room', label='Room'), dict(name='tariff', label='Tariff'), dict(name='phone', label='Phone'), dict(name='printer', label='Printer'), dict(name='hotdesk', label='Hotdesk'), dict(name='other', label='Other')]
+#TODO : Static list of resources won't work for long. Need a way for users to
+#       create own resource types apart from system default
+resource_types = [dict(name='room', label='Room'), dict(name='phone', label='Phone'), 
+        dict(name='printer', label='Printer'), dict(name='other', label='Other')]
 
 language_map = dict((lang.name, lang.alpha2) for lang in pycountry.languages if hasattr(lang, 'alpha2'))
 languages = [dict(label='English',name=language_map['English']), dict(label='German', name=language_map['German'])]
