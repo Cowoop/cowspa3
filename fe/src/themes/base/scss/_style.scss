@@ -649,7 +649,7 @@ button[disabled], button[disabled]:hover {
     -webkit-border-top-left-radius: 8px;
     -webkit-border-top-right-radius: 8px;
     -moz-border-radius: 8px 8px 0 0; border-radius: 8px 8px 0 0;
-    a {text-decoration: none; color: $other-text-color; padding: 1em;}
+    a {text-decoration: none; color: $other-text-color; padding-left: 1em; padding-right: 1em;}
 }
 
 .inverse-box {
@@ -999,6 +999,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         height: 1.5em;
     }
     .day-title { border-bottom: 1px solid; }
+    .day-title.today { border: 1px dashed red; }
     .cal-hour {
         font-size: 160%;
         height: 2.5em; // 4em if font-size is 100%

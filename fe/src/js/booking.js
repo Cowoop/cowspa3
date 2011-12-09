@@ -13,6 +13,11 @@ function set_day_titles() {
         var date_next = add_days(date_selected, (idx - 3));
         var date_text = $.datepicker.formatDate('D d', date_next)
         $(this).text(date_text);
+        if (idx == 3) {
+            $(this).addClass('today');
+        } else {
+            $(this).removeClass('today');
+        };
         shown_dates[idx] = date_next;
     });
 };
@@ -128,8 +133,13 @@ function on_select_slots(ev, ui) {
     $('#new-booking').dialog({
         title: resource_name,
         width: 500,
-        height: 500
+        height: 500,
+        close: on_close_booking_form
     });
+};
+
+function on_close_booking_form() {
+    $('.ui-selected').removeClass('ui-selected');
 };
 
 function init_cal() {
@@ -188,6 +198,7 @@ function make_booking() {
 
     params.quantity = $('#new-quantity').val() || 1;
     params.member = $('#for-member').val();
+    params.created_by = current_userid;
 
     jsonrpc('usage.new', params, on_new_booking, error);
 };

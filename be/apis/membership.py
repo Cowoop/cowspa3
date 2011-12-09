@@ -40,7 +40,7 @@ def new(tariff_id, member_id, created_by, starts, ends):
         if starts_dt.month == ends_dt.month:
             new_ends_dt = ends_dt
         else:
-            new_ends_dt = starts_dt + datetime.timedelta(calendar.monthrange(starts_dt.year, starts_dt.month)[1]-starts_dt.day)
+            new_ends_dt = datetime.date(starts_dt.year, starts_dt.month, calendar.monthrange(starts_dt.year, starts_dt.month)[1])
         data = dict(resource_id=tariff_id, resource_name=tariff.name, member=member_id, start_time=starts_dt.isoformat(), end_time=new_ends_dt.isoformat(), created_by=created_by)
         usagelib.usage_collection.new(**data)
         starts_dt = new_ends_dt + datetime.timedelta(1)
