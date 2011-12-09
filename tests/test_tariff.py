@@ -21,7 +21,8 @@ def test_add_plan():
 
 def test_add_members():
     starts = datetime.date(2011, 1, 1).isoformat()
-    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, test_data.admin, starts)
+    ends = datetime.date(2011, 3, 5).isoformat()
+    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, test_data.admin, starts, ends)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():
@@ -36,7 +37,7 @@ def test_find_bizplace_plans():
     assert len(plans) >= 5
 
 def test_members():
-    members = membershiplib.memberships.list(test_data.plan_id)
+    members = membershiplib.memberships.list(by_tariff=test_data.plan_id, at_time=datetime.date(2011, 1, 15).isoformat())
     assert len(members) == len(test_data.more_member_ids)
 
 def test_plan_info():

@@ -1,5 +1,6 @@
 import datetime
 import collections
+import calendar
 
 import commonlib.helpers
 import bases.app as applib
@@ -14,51 +15,55 @@ membership_store = dbaccess.stores.membership_store
 membership = applib.Resource()
 memberships = applib.Collection()
 
-def new(tariff_id, member_id, created_by, starts=None):
+def new(tariff_id, member_id, created_by, starts, ends):
     """
     """
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     old_sub = dbaccess.get_member_membership(member_id, bizplace.id, starts)
-    if starts:
-        starts_dt = commonlib.helpers.iso2date(starts)
-    else:
-        starts_dt = datetime.date.today()
-        starts =  starts_dt.isoformat()
+    starts_dt = commonlib.helpers.iso2date(starts)
+    ends_dt = commonlib.helpers.iso2date(ends)
     if old_sub:
         ends = starts_dt - datetime.timedelta(1)
         if ends <= old_sub.starts:
             raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
-    membership_store.add(tariff_id=tariff_id, starts=starts_dt, member_id=member_id, bizplace_id=tariff.owner, \
-        bizplace_name=bizplace.name, tariff_name=tariff.name)
+    membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
+                         bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     # find start, end dates for every months month in start-end and create that many usages
     # ex. starts: 3 Jan 2021 ends: 5 Apr 2021
     # usage 1: 3 Jan - 31 Jan 2021
     # usage 2: 1 Feb - 28 Feb 2021
     # usage 3: 1 Mar - 31 Mar 2021
     # usage 4: 1 Apr - 05 Apr 2021
-    usagelib.usage_collection.new(tariff_id, tariff.name, member_id, starts, created_by)
+    while starts_dt <= ends_dt:
+        if starts_dt.month == ends_dt.month:
+            new_ends_dt = ends_dt
+        else:
+            new_ends_dt = starts_dt + datetime.timedelta(calendar.monthrange(starts_dt.year, starts_dt.month)[1]-starts_dt.day)
+        data = dict(resource_id=tariff_id, resource_name=tariff.name, member=member_id, start_time=starts_dt.isoformat(), end_time=new_ends_dt.isoformat(), created_by=created_by)
+        starts_dt = new_ends_dt + datetime.timedelta(1)
     return True
 
-def bulk_new(tariff_id, member_ids, created_by, starts):
+def bulk_new(tariff_id, member_ids, created_by, starts, ends):
     """
     """
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     for member_id in member_ids:
-        new(tariff_id, member_id, created_by, starts)
+        new(tariff_id, member_id, created_by, starts, ends)
     return True
 
-def list_by_tariff(tariff_id):
+def list_by_tariff(tariff_id, at_time=None):
     """
     returns list of member dicts.
     Subscriber Dict keys include following
     - member id
     - display name
     """
+    at_time = commonlib.helpers.iso2date(at_time) if at_time else at_time
     member_list = []
-    for m_dict in dbaccess.find_tariff_members([tariff_id]):
+    for m_dict in dbaccess.find_tariff_members([tariff_id], at_time):
         m_dict['id'] = m_dict.pop('member')
         member_list.append(m_dict)
     return member_list
@@ -66,9 +71,9 @@ def list_by_tariff(tariff_id):
 def list_for_member(member_id, not_current=False):
     return dbaccess.get_member_memberships(member_id=member_id, not_current=not_current)
 
-def list_memberships(by_tariff=None, for_member=None, not_current=False):
+def list_memberships(by_tariff=None, for_member=None, not_current=False, at_time=None):
     if by_tariff:
-        return list_by_tariff(by_tariff)
+        return list_by_tariff(by_tariff, at_time)
     return list_for_member(for_member, not_current)
 
 memberships.new = new

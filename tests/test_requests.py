@@ -1,5 +1,6 @@
 import commontest
 import test_data
+import datetime
 import be.apis.request as requestlib
 
 def setup():
@@ -10,7 +11,7 @@ def test_new_req():
     requestor_id = test_data.member_id
     request_name = 'membership'
     request_api = 'memberships.new'
-    request_params = dict(tariff_id=test_data.plan_id, member_id=test_data.more_member_ids[0], created_by=test_data.admin)
+    request_params = dict(tariff_id=test_data.plan_id, member_id=test_data.more_member_ids[0], created_by=test_data.admin, starts=datetime.date(2011, 3, 1).isoformat(), ends=datetime.date(2011, 3, 31).isoformat())
     req_id = requestlib.new(request_name, requestor_id, request_api, request_params)
     test_data.request_id = req_id
     env.context.pgcursor.connection.commit()

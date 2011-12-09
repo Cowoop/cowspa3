@@ -163,7 +163,7 @@ def list_bizplaces(ids):
 def list_all_bizplaces():
     return bizplace_store.get_all(fields=bizplace_info_fields)
 
-def find_tariff_members(plan_ids, fields=['member', 'name'], at_time=None):
+def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     plan_ids = tuple(plan_ids)
     if not at_time: at_time = datetime.datetime.now()
     clause = 'member IN (SELECT member_id FROM membership WHERE tariff_id IN %(plan_ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL))'
