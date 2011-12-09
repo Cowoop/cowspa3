@@ -19,7 +19,7 @@ be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
 import commonlib.helpers as helpers
-        
+
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
@@ -72,11 +72,21 @@ def api_dispatch():
     cowspa.tr_complete()
     return helpers.jsonify(data)
 
-app = SharedDataMiddleware(app, {
-        '/': static_root,
-}, fallback_mimetype="text/html", cache=True, cache_timeout=31536000)
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run cowspa webserver.')
+    parser.add_argument('-d', '--dev', action="store_true", default=False, help='Development mode. Caching turned off')
+    args = parser.parse_args()
+    if args.dev :
+        print 'Development mode ON. Caching turned OFF'
+    else:
+        print 'Production mode ON. Caching turned ON'
+
+    app = SharedDataMiddleware(app, {
+            '/': static_root,
+        }, fallback_mimetype="text/html", cache=not args.dev, cache_timeout=31536000)
+
     if env.config.threaded:
         app.run('0.0.0.0',debug=False)
 
