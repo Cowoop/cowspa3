@@ -19,7 +19,7 @@ class UsageCollection:
         data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=created_by, created=created, cancelled_against=cancelled_against, pricing=pricing)
         return usage_store.add(**data)
 
-    def delete(self, usage_id):
+    def _delete(self, usage_id):
         """
         Delete a usage.
         """
@@ -35,8 +35,8 @@ class UsageCollection:
         del(data['invoice'])
         return self.new(**data)
         
-    def delete_or_cancel(self, usage_id, cancelled_by):
-        return self.cancel(usage_id, cancelled_by) if usage_store.get(usage_id, 'invoice') else self.delete(usage_id) 
+    def delete(self, usage_id, cancelled_by):
+        return self.cancel(usage_id, cancelled_by) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id) 
 
     def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False):
         """
