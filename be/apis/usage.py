@@ -25,7 +25,7 @@ class UsageCollection:
         """
         return usage_store.remove(usage_id)
 
-    def cancel(self, usage_id, cancelled_by):
+    def cancel(self, usage_id, cancelled_by, amount=None):
         data = usage_store.get(usage_id)
         data['created_by'] = cancelled_by
         data['cancelled_against'] = usage_id
@@ -33,10 +33,11 @@ class UsageCollection:
         del(data['id'])
         del(data['created'])
         del(data['invoice'])
+        if amount: usage_store.update(usage_id, cost=amount)
         return self.new(**data)
         
-    def delete(self, usage_id, cancelled_by):
-        return self.cancel(usage_id, cancelled_by) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id) 
+    def delete(self, usage_id, cancelled_by, amount=None):
+        return self.cancel(usage_id, cancelled_by, amount) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id) 
 
     def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False):
         """

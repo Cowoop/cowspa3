@@ -31,9 +31,12 @@ def test_update_usage():
     assert new_cost == usagelib.usage_resource.info(test_data.usage_id)['cost']
 
 def test_delete_or_cancel_usage(): 
-    usage_id = usagelib.usage_collection.delete(test_data.usage_id, test_data.admin)
+    new_amount = 1000
+    old_amount = usagelib.usage_resource.get(test_data.usage_id, 'cost')
+    usage_id = usagelib.usage_collection.delete(test_data.usage_id, test_data.admin, new_amount)
+    assert usagelib.usage_resource.get(test_data.usage_id, 'cost') == new_amount
     assert usagelib.usage_resource.get(usage_id, 'cancelled_against') == test_data.usage_id
-    assert usagelib.usage_resource.get(usage_id, 'cost') == -usagelib.usage_resource.get(test_data.usage_id, 'cost')    
+    assert usagelib.usage_resource.get(usage_id, 'cost') == -old_amount    
     assert usagelib.usage_collection.delete(usage_id, test_data.admin) == True
     
 def test_add_more_usage():
