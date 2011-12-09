@@ -300,6 +300,11 @@ $('#next-tariff-form #start-vis').datepicker( {
     altField: '#start',
     dateFormat: 'M d, yy'
 });
+$('#next-tariff-form #end-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#end',
+    dateFormat: 'M d, yy'
+});
 $('#next_tariff-btn').click(function() {
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
     $('#next-tariff-form').dialog({ 
@@ -320,6 +325,9 @@ function save_next_tariff() {
     params['member_id'] = thismember_id;
     params['tariff_id'] = $("#next-tariff-form #tariff").val();
     params['starts'] = to_iso_date($("#next-tariff-form #start").val());
+    params['ends'] = to_iso_date($("#next-tariff-form #end").val());
+    params['ends'] = to_iso_date($("#next-tariff-form #end").val());
+    params['created_by'] = current_userid;
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
     jsonrpc('memberships.new', params, success, error);
 };
@@ -496,7 +504,8 @@ $('#submit-usage').click(function(){
         'cost' : parseFloat($("#cost").val()),
         'member' : thismember_id,
         'start_time' : to_iso_datetime($("#start_time").val()),
-        'end_time' : to_iso_datetime($("#end_time").val())
+        'end_time' : to_iso_datetime($("#end_time").val()),
+        'created_by' : current_userid
     };
     function on_add_usage_success(resp){
         action_status.text("Add usage is successful.").addClass('status-success');
@@ -663,8 +672,10 @@ function delete_usage() {
     function on_usage_cancel_error(){
     };
     if(confirm("Do you want to cancel usage?")){
-        var usage_id = $(this).attr("id").split("-")[1];
-        jsonrpc('usages.delete', {'usage_id': parseInt(usage_id)}, on_usage_cancel_success, on_usage_cancel_error);
+        var params = {};
+        params['usage_id'] = parseInt($(this).attr("id").split("-")[1]);
+        params['cancelled_by'] = current_userid;
+        jsonrpc('usages.delete', params, on_usage_cancel_success, on_usage_cancel_error);
     };
 };
 
