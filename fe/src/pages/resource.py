@@ -9,7 +9,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class ResourceCreate(BasePage):
-    current_tab = 'Resources'
+    current_nav = 'Resources'
     title = 'New Resource'
     def content(self):
         container = tf.DIV()
@@ -34,7 +34,7 @@ class ResourceCreate(BasePage):
         return container
 
 class ResourceManage(BasePage):
-    current_tab = 'Resources'
+    current_nav = 'Resources'
     title = 'Manage resources'
     def content(self):
         container = tf.DIV()
