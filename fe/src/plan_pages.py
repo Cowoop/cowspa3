@@ -13,8 +13,8 @@ def get_tariff_form():
     return form
 
 class CreateTariff(BasePage):
-    #current_tab = 'new'
     title = 'New Tariff'
+    current_nav = 'Admin'
     def content(self):
         container = tf.DIV()
 
@@ -27,14 +27,11 @@ class CreateTariff(BasePage):
         return container
 
 class ListTariff(BasePage):
-    #current_tab = 'new'
     title = 'Tariffs'
+    current_nav = 'Admin'
+    content_menu = [tf.A('Create New +', href="/${lang}/${theme}/tariff/new", Class="item big-button")]
     def content(self):
         container = tf.DIV()
-
-        new_tariff = tf.BUTTON("New Tariff", id="new-tariff", type='button')
-        container.button = new_tariff
-        container.newline = sphc.more.clear()
 
         tariffs = tf.DIV(id="tariff_list")
         tariff_tmpl = sphc.more.jq_tmpl('tariff_tmpl')

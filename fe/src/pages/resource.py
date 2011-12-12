@@ -36,6 +36,7 @@ class ResourceCreate(BasePage):
 class ResourceManage(BasePage):
     current_nav = 'Resources'
     title = 'Manage resources'
+    content_menu = [tf.A('+ Create New', href="/${lang}/${theme}/resource/new", Class="item")]
     def content(self):
         container = tf.DIV()
 

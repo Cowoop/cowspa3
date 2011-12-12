@@ -42,35 +42,48 @@ html {
 body { 
     line-height: 140%;
     font-family: 'Ubuntu', 'Ubuntu Beta', UbuntuBeta, Ubuntu, 'Bitstream Vera Sans', 'DejaVu Sans', Tahoma, sans-serif;
-    font-size: 105%;
+    font-size: 100%;
 }
 
-#ctx-menu {
+.current-ctx:before { content: "✓ ";}
+#ctx-switcher {
     cursor: pointer;
     text-align: middle;
-    margin-top: 2em;
-    z-index: 100;
-    position: absolute;
     border: 1px solid $main-color;
-    background: $page-background;
-    @include box-shadow($main-color 3px 3px 3px);
+    float: left;
     margin-left: 0.3em;
-    .ctx-opt { 
-        text-align: left;
-        padding: 0.5em;
-        border-top: 1px solid lighten($main-color, 20%);
-        &:hover { @include reverse-colors; } 
+    color: $other-text-color;
+    #ctx-switcher-title {
+        margin-left: 0.3em;
+        letter-spacing: 0.3em;
+        display: inline;
+        cursor: pointer;
+        color: $other-text-color;
+        font-size: 120%;
     }
-    #ctx-more { 
-        border-top: 1px solid;
-        text-align: left;
-        .ctx-more-item {
-            color: $main-color;
+    #ctx-menu {
+        z-index: 100;
+        position: absolute;
+        background: $page-background;
+        @include box-shadow($main-color 3px 3px 3px);
+        border: 1px solid;
+        .ctx-opt { 
+            text-align: left;
             padding: 0.5em;
-            text-decoration: none; 
-            width: 100%;
-            display: inline-block;
-            &:hover { @include reverse-colors; }
+            border-top: 1px solid lighten($main-color, 20%);
+            &:hover { @include reverse-colors; } 
+        }
+        #ctx-more { 
+            border-top: 1px solid;
+            text-align: left;
+            .ctx-more-item {
+                color: $main-color;
+                padding: 0.5em;
+                text-decoration: none; 
+                width: 100%;
+                display: inline-block;
+                &:hover { @include reverse-colors; }
+            }
         }
     }
 }
@@ -192,7 +205,8 @@ option {
 
 
 a { text-shadow: 1px 0px 2px $other-text-color;
-    // font-family:  sans-serif;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
 }
 
 fieldset {
@@ -207,23 +221,15 @@ legend {
 }
 
 .topbar {
+    color: $main-color;
     text-align: right; 
     width: 100%; 
     @include reverse-colors;
     top: 0; left: 0; right: 0;
-    font-size: 0.8em;
     overflow: hidden; // stops generating browser horizontal scrollbar when it's really not required
     a {text-decoration: none; padding: 1em; color: $other-text-color;}
-    #ctx-switcher-title {
-        margin-left: 0.3em;
-        letter-spacing: 0.3em;
-        float: left;
-        display: inline;
-        cursor: pointer;
-        color: $other-text-color;
-        font-size: 120%;
-    }
 }
+
 .container {
     @include container;
     // @include susy-grid-background;
@@ -611,13 +617,12 @@ button, input[type="button"] {
     background: $main-color;
     border: 1px solid $page-background;
     font-size: 1em;
-    @include box-shadow(0 0 6px rgba(0,0,0,0.5));
+    @include box-shadow(0 0 3px rgba(0,0,0,0.5));
 }
 
 .big-button {
     @extend button;
     font-size: 1.2em;
-    margin: 1em;
     text-shadow: none;
     display: inline-block;
     text-decoration: none;
@@ -683,15 +688,36 @@ button[disabled], button[disabled]:hover {
 
 .edit-link-box { text-align: right; }
 
-.content-title {
-    font-size: 2.2em;
-    text-align: left;
-    padding-top: 0.3em;
-    padding-bottom: 0.3em;
-    margin-bottom: 0.3em;
-    @include full;
-    border-bottom: 1px solid;
-    #content-subtitle { font-size: 50%; }
+.content-bar {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    padding: 1em 0;
+    border: 1px solid;
+    .title {
+        display: inline-block;
+        width: 40%;
+        font-size: 2.2em;
+        text-align: left;
+        padding-right: 1em;
+        @include full;
+        #content-subtitle { font-size: 50%; }
+    }
+    .menu {
+        display: inline-block;
+        width: 50%;
+        padding: 0.3em 0.5em 0;
+        float: right;
+        text-align: right;
+        .item { margin-right: 2em; margin-left: 2em; }
+        a { // needed?
+            @extend button;
+            color: $main-color;
+            background: $other-text-color;
+            border: 1px solid $main-color;
+            padding: 0.5em;
+        }
+
+    }
 }
 
 table.stripped {
@@ -999,7 +1025,11 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         height: 1.5em;
     }
     .day-title { border-bottom: 1px solid; }
-    .day-title.today { border: 1px dashed red; }
+    .day-title.today { 
+        // border: 2px dashed; 
+        overflow: hidden;
+        font-weight: normal;
+    }
     .cal-hour {
         font-size: 160%;
         height: 2.5em; // 4em if font-size is 100%

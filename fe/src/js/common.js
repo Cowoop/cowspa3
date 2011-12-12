@@ -35,6 +35,8 @@ function set_context(ctx) {
     } else {
         set_cookie("current_ctx", ctx);
     };
+    $('.ctx-opt').removeClass('current-ctx');
+    $('#ctx_' + ctx).addClass('current-ctx');
 };
 
 function set_userid(uid) {
@@ -104,13 +106,17 @@ function set_0_locations_menu() {
 
 function hide_ctx_menu() {
     $('#main .content').removeClass('opaq');
-    $('#ctx-menu').hide();
+    $('#ctx-menu').slideUp();
+    $('#ctx-switcher').removeClass('open');
+    // $('#ctx-switcher-title').removeClass('open');
     $('#main .content').addClass('simple-box');
 };
 
 function toggle_ctx_menu() {
     $('#main .content').toggleClass('opaq');
-    $('#ctx-menu').toggle();
+    $('#ctx-menu').slideToggle();
+    $('#ctx-switcher').toggleClass('open');
+    // $('#ctx-switcher-title').toggleClass('open');
     $('#main .content').toggleClass('simple-box');
 };
 
@@ -127,6 +133,7 @@ function on_roles_list(resp) {
     }
     else if(result.length == 1) {
         ctx_label = result[0].label;
+        $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         set_context(result[0].id);
     }
     else {
