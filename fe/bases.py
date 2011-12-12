@@ -81,7 +81,7 @@ member_nav = new_nav + [
     ('Invoicing', '#', invoicing_opt), ]
 host_nav = member_nav + [
     ('Locations', '#', locations_opt),
-    ('Resources', '#', resources_opt),
+    ('Resources', '#', []),
     ('Reports', '#', []), ]
 
 
@@ -95,13 +95,14 @@ class CSAuthedPage(CSPage):
         ('Members', '#', members_opt),
         ('Bookings', '/${lang}/${theme}/booking', []),
         ('Invoicing', '#', invoicing_opt),
-        ('Resources', '#', resources_opt),
+        ('Resources', '/${lang}/${theme}/resources', []),
         ('Admin', '#', locations_opt),
         ('Reports', '#', []),
         ]
     current_nav = '/Dashboard'
     content_title = ''
     content_subtitle = ''
+    content_menu = ''
 
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
@@ -113,21 +114,23 @@ class CSAuthedPage(CSPage):
         last_link = self.top_links[-1]
         links.append(tf.A(last_link[0], href=last_link[1]))
 
-        topbar.ctx = tf.DIV("", id='ctx-switcher-title', Class="ctx-title")
         topbar.ctx_menu = self.ctx_switcher()
         topbar.links = links
         return topbar
 
     def ctx_switcher(self):
+        switcher = tf.DIV(id="ctx-switcher")
+        switcher.ctx = tf.DIV("", id='ctx-switcher-title', Class="ctx-title")
         menu = tf.DIV(id="ctx-menu", Class="hidden")
         menu.opts = tf.DIV(id="ctx-opts")
         menu.more = tf.DIV(id="ctx-more")
-        menu.more.manage = tf.A("Find locations", href="/${lang}/${theme}/bizplaces", Class='ctx-more-item')
-        menu.more.new = tf.A("Create New +", href="/${lang}/${theme}/bizplace/new", Class='ctx-more-item')
+        menu.more.manage = tf.A("Explore locations", href="/${lang}/${theme}/bizplaces", Class='ctx-more-item')
+        menu.more.new = tf.A("+ Create New", href="/${lang}/${theme}/bizplace/new", Class='ctx-more-item')
         menu.menu_tmpl = sphc.more.jq_tmpl("ctx-tmpl")
         menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
+        switcher.menu = menu
 
-        return menu
+        return switcher
 
     def nav(self):
         if not self.nav_menu: return ''
@@ -163,16 +166,19 @@ class CSAuthedPage(CSPage):
         #main.clear = tf.C('.', style="opacity:0;")
         main.searchbox = tf.DIV(Class="searchbox")
         main.searchbox.content = self.search()
-        main.contentbox = tf.DIV(Class="content")
+        main.bar = tf.DIV(Class="content-bar")
         title = self.content_title or self.title or ''
         if title:
             title += ' '
-            title_classes = "content-title"
+            title_classes = "title"
         else:
-            title_classes = "content-title hidden"
+            title_classes = "title hidden"
+        main.bar.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
+        main.bar.menu = tf.DIV(Class="menu")
+        main.bar.menu.content = self.content_menu
+        main.contentbox = tf.DIV(Class="content")
         sidebar = self.sidebar()
         main.contentbox.pane1 = tf.DIV(Class=("pane1" if sidebar else "full"))
-        main.contentbox.pane1.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
         main.contentbox.pane1.content = self.content()
         if sidebar:
             main.contentbox.sidebar = tf.DIV(sidebar, Class="sidebar", style="display: none;")
