@@ -6,14 +6,13 @@ path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from flask import Flask, url_for, session, redirect, request
+from flask import Flask, request
 from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 static_root = 'pub'
 import be.apis.user as userlib
-import be.apis.member as memberlib
 import be.bootstrap
 be.bootstrap.start('conf_test')
 import be.apps
@@ -23,17 +22,10 @@ import commonlib.helpers as helpers
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
-    cowspa.tr_start()
-    if auth_token:
-        userlib.set_context_by_session(auth_token)
     q = request.args.get('q') or request.args.get('term')
     params = {"jsonrpc": "2.0", "method": "members.search", "params": {'q':q, 'mtype':entity}, "id": 1}
-    data = cowspa.mapper(params)
-    cowspa.tr_complete()
-    if 'result' in data:
-        return helpers.jsonify(data['result'])
-    else:
-        return helpers.jsonify(data)
+    data = cowspa.dispatch(auth_token, params)
+    return helpers.jsonify(data['result'])
 
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoices(oid, format):
@@ -46,30 +38,9 @@ def get_invoices(oid, format):
 
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
-    params = request.json
-    auth_token = request.cookies.get('authcookie')
-    cowspa.tr_start()
-    if auth_token:
-        try:
-            userlib.set_context_by_session(auth_token)
-        except:
-            cowspa.tr_abort()
-    try:
-        data = cowspa.mapper(params)
-        #params = rpc({"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1})
-        if params['method'] == 'login' and 'result' in data:
-            auth_token = data['result']
-            data['result'] = userlib.get_user_preferences()
-            resp = helpers.jsonify(data)
-            resp.set_cookie('authcookie',value=auth_token)
-            resp.set_cookie('user_id',value=env.context.user_id)
-            resp.set_cookie('roles',value=env.context.roles)
-            resp.set_cookie('member_name', value=memberlib.member_resource.get(env.context.user_id, 'name'))
-            cowspa.tr_complete()
-            return resp
-    except:
-        cowspa.tr_abort()
-    cowspa.tr_complete()
+    auth_token = request.cookies.get('authcookie') if request.json.get('method') != 'login' else None
+    # ex. request.json: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
+    data = cowspa.dispatch(auth_token, request.json)
     return helpers.jsonify(data)
 
 
@@ -79,9 +50,9 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dev', action="store_true", default=False, help='Development mode. Caching turned off')
     args = parser.parse_args()
     if args.dev :
-        print 'Development mode ON. Caching turned OFF'
+        print('Development mode ON. Caching turned OFF')
     else:
-        print 'Production mode ON. Caching turned ON'
+        print('Production mode ON. Caching turned ON')
 
     app = SharedDataMiddleware(app, {
             '/': static_root,

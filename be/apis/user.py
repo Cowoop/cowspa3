@@ -7,6 +7,7 @@ import be.apis.role as rolelib
 
 user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
+member_store = dbaccess.stores.member_store
 
 def encrypt(phrase):
     return commonlib.helpers.encrypt(phrase, env.config.random_str)
@@ -49,7 +50,8 @@ def login(username, password):
     if authenticate(username, password):
         auth_token = get_or_create_session(username)
         set_context(username)
-        return auth_token
+        return dict(auth_token=auth_token, \
+            id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
     raise errors.ErrorWithHint('Authentication failed')
 
 def set_context(id_or_username):
@@ -90,5 +92,5 @@ def create_system_account():
     rolelib.new_roles(user_id, ['admin'], 0)
     return user_id
 
-def get_user_preferences():
-    return dbaccess.stores.memberpref_store.get_by(dict(member=env.context.user_id), ['theme', 'language'])[0]
+def get_user_preferences(user_id):
+    return dbaccess.stores.memberpref_store.get_by(dict(member=user_id), ['theme', 'language'])[0]

@@ -47,6 +47,7 @@ class APIExecutor(object):
 class Application(object):
     mapper = None
     APIExecutor = APIExecutor
+    context_setter = lambda x: None
 
     def __init__(self):
         self.on_startup = []
@@ -85,3 +86,22 @@ class Application(object):
     def tr_abort(self):
         for f in self.on_tr_abort:
             f()
+    def dispatch(self, auth_token, params):
+        """
+        params: eg. {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
+        """
+        self.tr_start()
+        set_context_successful = False
+        data = {}
+        if auth_token:
+            try:
+                self.context_setter(auth_token)
+                set_context_successful = True
+            except Exception, err:
+                print (err)
+                self.tr_abort()
+        if (auth_token and set_context_successful) or not auth_token:
+            data = self.mapper(params) # Assumption this does not raise exception
+        # else return jsonrpc unauthenticated code
+        self.tr_complete()
+        return data

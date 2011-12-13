@@ -10,8 +10,12 @@ function login() {
     };
     function success(resp) {
         action_status.text("Login is successful.").attr('class', 'status-success');
+        set_cookie('authcookie', resp.result.auth_token)
+        set_cookie('user_id', resp.result.id)
+        set_cookie('roles', resp.result.roles)
+        set_cookie('member_name', resp.result.name)
         set_cookie("member_name", $.cookie("member_name").replace(/"/g, ""));
-        window.location = "/" + resp.result.language + "/" + resp.result.theme + "/dashboard";
+        window.location = "/" + resp.result.pref.language + "/" + resp.result.pref.theme + "/dashboard";
     };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');

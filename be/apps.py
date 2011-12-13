@@ -34,6 +34,7 @@ class CowspaApp(applib.Application):
     on_tr_abort = [pg_tr_abort]
 
 cowspa = CowspaApp()
+cowspa.context_setter = userlib.set_context_by_session # ugly
 cowspa.connect(systemlib.setup)
 cowspa.connect(userlib.login)
 cowspa.connect(userlib.logout)
