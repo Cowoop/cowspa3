@@ -22,7 +22,7 @@ def test_add_plan():
 def test_add_members():
     starts = datetime.date(2011, 1, 1).isoformat()
     ends = datetime.date(2011, 3, 5).isoformat()
-    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, test_data.admin, starts, ends)
+    membershiplib.memberships.bulk_new(test_data.plan_id, test_data.more_member_ids, starts, ends)
     env.context.pgcursor.connection.commit()
 
 def test_find_bizplace_plans():

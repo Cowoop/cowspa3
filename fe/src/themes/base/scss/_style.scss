@@ -1046,3 +1046,11 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #signup-box.ui-widget-content label{color:$other-text-color;}
 .ui-icon { display: inline-block; }
 .ui-state-default, .ui-widget-header { background: none; font-size: 110%; border: none; border-bottom: 1px solid;} // removes background images behind jqui tabs
+.tax-name, .tax-value {
+        display: inline-block;
+        width: 45%;
+    }
+.tax-delete {
+        display: inline-block;
+        width: 10%;
+    }

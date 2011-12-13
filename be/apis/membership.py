@@ -11,18 +11,19 @@ import be.apis.usage as usagelib
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
 membership_store = dbaccess.stores.membership_store
+stoppedmembership_store = dbaccess.stoppedmembership_store
 
 membership = applib.Resource()
 memberships = applib.Collection()
 
-def new(tariff_id, member_id, created_by, starts, ends):
+def new(tariff_id, member_id, starts, ends):
     """
     """
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
-    old_sub = dbaccess.get_member_membership(member_id, bizplace.id, starts)
     starts_dt = commonlib.helpers.iso2date(starts)
     ends_dt = commonlib.helpers.iso2date(ends)
+    old_sub = dbaccess.get_member_membership(member_id, bizplace.id, starts_dt)
     if old_sub:
         ends = starts_dt - datetime.timedelta(1)
         if ends <= old_sub.starts:
@@ -30,29 +31,32 @@ def new(tariff_id, member_id, created_by, starts, ends):
         membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
+    return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, member_id)
+
+def create_membership_usages(starts, ends, tariff_id, tariff_name, member):
     # find start, end dates for every months month in start-end and create that many usages
     # ex. starts: 3 Jan 2021 ends: 5 Apr 2021
     # usage 1: 3 Jan - 31 Jan 2021
     # usage 2: 1 Feb - 28 Feb 2021
     # usage 3: 1 Mar - 31 Mar 2021
     # usage 4: 1 Apr - 05 Apr 2021
-    while starts_dt <= ends_dt:
-        if starts_dt.month == ends_dt.month:
-            new_ends_dt = ends_dt
+    while starts <= ends:
+        if starts.month == ends.month:
+            new_ends = ends
         else:
-            new_ends_dt = datetime.date(starts_dt.year, starts_dt.month, calendar.monthrange(starts_dt.year, starts_dt.month)[1])
-        data = dict(resource_id=tariff_id, resource_name=tariff.name, member=member_id, start_time=starts_dt.isoformat(), end_time=new_ends_dt.isoformat(), created_by=created_by)
+            new_ends = datetime.date(starts.year, starts.month, calendar.monthrange(starts.year, starts.month)[1])
+        data = dict(resource_id=tariff_id, resource_name=tariff_name, member=member, start_time=starts.isoformat(), end_time=new_ends.isoformat())
         usagelib.usage_collection.new(**data)
-        starts_dt = new_ends_dt + datetime.timedelta(1)
+        starts = new_ends + datetime.timedelta(1)
     return True
-
-def bulk_new(tariff_id, member_ids, created_by, starts, ends):
+    
+def bulk_new(tariff_id, member_ids, starts, ends):
     """
     """
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     for member_id in member_ids:
-        new(tariff_id, member_id, created_by, starts, ends)
+        new(tariff_id, member_id, starts, ends)
     return True
 
 def list_by_tariff(tariff_id, at_time=None):
@@ -90,20 +94,53 @@ def stop(membership_id, ends):
     """
     marks a membership to stop given date and as necessary cancels/removes/chnages tariff usages associated with this membership
     """
+    membership = info(membership_id)
+    # Update current usage
+    end_date = commonlib.helpers.iso2date(ends)
+    usage = usagelib.usage_collection.find(start=datetime.date(end_date.year, end_date.month, 1), end=ends, member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)[0]
+    usagelib.usage_collection.delete(usage['id'])
+    del(usage['id'])
+    usage['end_time'] = ends
+    usage['start_time'] = usage['start_time'].isoformat()
+    usage['member'] = membership['member_id']
+    usagelib.usage_collection.new(**usage)
     # Remove extra uninvoiced usages
-    return membership_store.update(membership_id, ends=ends)
+    usages = usagelib.usage_collection.find(start=ends, member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)
+    usagelib.usage_collection.bulk_delete([usage.id for usage in usages])
+    membership_store.update(membership_id, ends=ends)
+    
+    data = dict(member=membership['member_id'], membership=membership_id, stopped_date=end_date, created=datetime.datetime.now())
+    return stoppedmembership_store.add(**data)
 
 def update(membership_id, **mod_data):
     """
     """
+    old_data = info(membership_id)
+    usages = usagelib.usage_collection.find(start=old_data['starts'], end=old_data['ends'], member_ids=[old_data['member_id']], resource_ids=[old_data['tariff_id']], only_non_cancelled=True)
+    starts = commonlib.helpers.iso2date(mod_data['starts']) if 'starts' in mod_data else old_data['starts']
+    ends = commonlib.helpers.iso2date(mod_data['ends']) if 'ends' in mod_data else old_data['ends']
+    for i in range(len(usages)-1, -1, -1):
+        if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > ends:
+            usagelib.usage_collection.delete(usages[i]['id'])
+            del(usages[i])
+    if len(usages) == 0:
+        create_membership_usages(starts, ends, membership['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+    else:
+        if starts != usages[0]['start_time'].date():
+            create_membership_usages(starts, (usages[0]['start_time']-datetime.timedelta(1)).date(), old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+        if ends != usages[-1]['end_time'].date():
+            create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+    
     return membership_store.update(membership_id, **mod_data)
 
 def delete(membership_id):
     """
     """
-    # Check if there are invoiced tariff usages
+    membership = info(membership_id)
+    usages = usagelib.usage_collection.find(start=membership['starts'], end=membership['ends'], member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)
+    usagelib.usage_collection.bulk_delete([usage.id for usage in usages])
     return membership_store.remove(membership_id)
-
+    
 membership.info = info
 membership.delete = delete
 membership.stop = stop

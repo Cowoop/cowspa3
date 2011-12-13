@@ -32,6 +32,7 @@ activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 billingpref_store = stores_mod.BillingPref()
 oidgen_store = stores_mod.OidGen()
+stoppedmembership_store = stores_mod.StoppedMemberships()
 
 class RStore(object): pass
 
@@ -171,7 +172,7 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced=False):
+def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced=False, only_non_cancelled=False):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
@@ -182,11 +183,12 @@ def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, 
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
     if uninvoiced: clauses.append('invoice IS null')
+    if only_non_cancelled: clauses.append('cancelled_against IS null')
     
-    clauses_s = ' AND '.join(clauses)
+    clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
-    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id']
+    fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id']
     return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):

@@ -168,6 +168,13 @@ class Preferences(BasePage):
         edit_section.msg = tf.SPAN(id="edit_invoicepref-msg")
         container.edit_form = edit_section
         
+        tax_edit_template = sphc.more.jq_tmpl(id="tax_edit_template")
+        tax_edit_template.field = tf.DIV(Class="field", id="tax-${id}")
+        tax_edit_template.field.name = tf.DIV(tf.INPUT(id="tax_name-${id}" , type="text"), Class="tax-name")
+        tax_edit_template.field.value = tf.DIV(tf.INPUT(id="tax_value-${id}", type="text"), Class="tax-value")
+        tax_edit_template.field.value = tf.DIV(tf.A("X", id="tax_delete-${id}", href="#"), Class="tax-delete")
+        container.tax_edit_template = tax_edit_template
+        
         container.script = tf.SCRIPT(open("fe/src/js/invoice_preferences.js").read(), escape=False)
         
         return container

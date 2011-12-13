@@ -201,6 +201,15 @@ class Membership(PGStore):
     bizplace_id INTEGER NOT NULL,
     bizplace_name TEXT
     """
+    
+class StoppedMemberships(PGStore):
+    create_sql = """
+    member INTEGER NOT NULL,
+    membership INTEGER NOT NULL,
+    stopped_date DATE NOT NULL,
+    stopped_by INTEGER NOT NULL,
+    created TIMESTAMP NOT NULL
+    """
 
 class ResourceRelation(PGStore):
     # resourceA --relation--> resourceB

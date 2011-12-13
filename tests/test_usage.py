@@ -9,6 +9,7 @@ import test_resources
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
+    commontest.setup_system_context()
 
 def test_add_usage():
     data = test_data.usage
@@ -16,7 +17,6 @@ def test_add_usage():
     data['resource_id'] = test_data.resource_id
     data['start_time'] = datetime.datetime.now().isoformat()
     data['end_time'] = datetime.datetime.now().isoformat()
-    data['created_by'] = test_data.admin
     data['invoice'] = 1
     test_data.usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
@@ -33,11 +33,11 @@ def test_update_usage():
 def test_delete_or_cancel_usage(): 
     new_amount = 1000
     old_amount = usagelib.usage_resource.get(test_data.usage_id, 'cost')
-    usage_id = usagelib.usage_collection.delete(test_data.usage_id, test_data.admin, new_amount)
+    usage_id = usagelib.usage_collection.delete(test_data.usage_id, new_amount)
     assert usagelib.usage_resource.get(test_data.usage_id, 'cost') == new_amount
     assert usagelib.usage_resource.get(usage_id, 'cancelled_against') == test_data.usage_id
     assert usagelib.usage_resource.get(usage_id, 'cost') == -old_amount    
-    assert usagelib.usage_collection.delete(usage_id, test_data.admin) == True
+    assert usagelib.usage_collection.delete(usage_id, env.context.user_id) == True
     
 def test_add_more_usage():
     for data in test_data.more_usages:
@@ -45,7 +45,6 @@ def test_add_more_usage():
         data['resource_id'] = test_data.resource_id
         data['start_time'] = datetime.datetime.now().isoformat()
         data['end_time'] = datetime.datetime.now().isoformat()
-        data['created_by'] = test_data.admin
         usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
 

@@ -165,7 +165,6 @@ def add_tariffs_section(container):
     container.next_tarrif = next_tariff_section
     
     change_tariff_form = sphc.more.Form(id='change-tariff-form', classes=['vform'])
-    change_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='starts'))
     change_tariff_form.add_field("Start", tf.INPUT(name='starts-vis', id='starts-vis'))
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='ends'))
@@ -175,6 +174,12 @@ def add_tariffs_section(container):
     change_tariff_section.form = change_tariff_form.build()
     change_tariff_section.tmpl = tariff_list_row
     container.change_tarrif = change_tariff_section
+    
+    stop_membership_form = sphc.more.Form(id='stop_membership', classes=['hform'])
+    stop_membership_form.add_field("End Date", tf.INPUT(id="stop_date", type="text").set_required())
+    stop_membership_form.add_field("", tf.INPUT(type="hidden", id='stops'))
+    stop_membership_form.add_buttons(tf.INPUT(id="stop-btn", value="Stop", type="submit"))
+    container.stop_membership = stop_membership_form.build()
     
 def make_buttons():
     container = tf.DIV()
@@ -216,12 +221,13 @@ class MemberCreate(BasePage):
         section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
         section.add_field("Skype", tf.INPUT(name='skype', type="text"))
         sections.append(section)
-
+        
         for section in sections:
             form.add(section.build())
         form.add_buttons(tf.BUTTON("Create", id='save-btn', type='submit'))
         
         container.form = form.build()
+        
         container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
         
         return container

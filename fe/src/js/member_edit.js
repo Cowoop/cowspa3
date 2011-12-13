@@ -327,7 +327,6 @@ function save_next_tariff() {
     params['starts'] = to_iso_date($("#next-tariff-form #start").val());
     params['ends'] = to_iso_date($("#next-tariff-form #end").val());
     params['ends'] = to_iso_date($("#next-tariff-form #end").val());
-    params['created_by'] = current_userid;
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
     jsonrpc('memberships.new', params, success, error);
 };
@@ -410,7 +409,7 @@ function bind_cancel_and_change_tariff() {
         else{
             $('#change-tariff-form #ends-vis').datepicker("setDate", null);
         }
-        $("#change-tariff-form #tariff option:contains('" + $("#tariff_row-"+membership_id+" #tariff_name").text() + "')").attr('selected', 'selected');
+        //$("#change-tariff-form #tariff option:contains('" + $("#tariff_row-"+membership_id+" #tariff_name").text() + "')").attr('selected', 'selected');
         $('#change-tariff-form').dialog({ 
             title: "Change Tariff", 
             width: 500, 
@@ -418,8 +417,8 @@ function bind_cancel_and_change_tariff() {
         $("#change-tariff-form #save-btn").unbind('click');
         $("#change-tariff-form #save-btn").click(function() { 
             var params = {'membership_id':membership_id};
-            params['tariff_id'] = $("#change-tariff-form #tariff").val();
-            params['tariff_name'] = $("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text();
+            //params['tariff_id'] = $("#change-tariff-form #tariff").val();
+            //params['tariff_name'] = $("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text();
             params['starts'] = to_iso_date($('#change-tariff-form #starts').val());
             if($('#change-tariff-form #end').val() != ""){
                 params['ends'] = to_iso_date($('#change-tariff-form #ends').val());
@@ -444,7 +443,21 @@ function bind_cancel_and_change_tariff() {
     });
 };   
 //***********************End Cancel/Change Tariff*******************************
-
+//-------------------------Stop Membership--------------------------------------
+$('#stop_date').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#stops',
+    dateFormat: 'M d, yy'
+});
+$("#stop_membership").submit(function(){
+    function on_stop_membership_success(res) {
+        };
+    function on_stop_membership_error(){};
+    var params = {'membership_id':thismember.memberships[0].id, 'ends':to_iso_date($('#stops').val())};
+    jsonrpc('membership.stop', params, on_stop_membership_success, on_stop_membership_error);
+    return false;
+});
+//------------------------End Stop Membership-----------------------------------
 //****************************Usage Management********************************** 
 //-----------------------------Get Resources------------------------------------
 function on_get_resources_success(res) {
@@ -504,8 +517,7 @@ $('#submit-usage').click(function(){
         'cost' : parseFloat($("#cost").val()),
         'member' : thismember_id,
         'start_time' : to_iso_datetime($("#start_time").val()),
-        'end_time' : to_iso_datetime($("#end_time").val()),
-        'created_by' : current_userid
+        'end_time' : to_iso_datetime($("#end_time").val())
     };
     function on_add_usage_success(resp){
         action_status.text("Add usage is successful.").addClass('status-success');
@@ -674,7 +686,6 @@ function delete_usage() {
     if(confirm("Do you want to cancel usage?")){
         var params = {};
         params['usage_id'] = parseInt($(this).attr("id").split("-")[1]);
-        params['cancelled_by'] = current_userid;
         jsonrpc('usages.delete', params, on_usage_cancel_success, on_usage_cancel_error);
     };
 };
