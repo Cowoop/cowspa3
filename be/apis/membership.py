@@ -11,7 +11,6 @@ import be.apis.usage as usagelib
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
 membership_store = dbaccess.stores.membership_store
-stoppedmembership_store = dbaccess.stoppedmembership_store
 
 membership = applib.Resource()
 memberships = applib.Collection()
@@ -23,12 +22,14 @@ def new(tariff_id, member_id, starts, ends):
     bizplace = bizplace_store.get(tariff.owner)
     starts_dt = commonlib.helpers.iso2date(starts)
     ends_dt = commonlib.helpers.iso2date(ends)
-    old_sub = dbaccess.get_member_membership(member_id, bizplace.id, starts_dt)
-    if old_sub:
-        ends = starts_dt - datetime.timedelta(1)
-        if ends <= old_sub.starts:
-            raise Exception("Start date must be greater than %s" % (old_sub.starts + datetime.timedelta(1)))
-        membership_store.update_by(crit=dict(member_id=member_id, tariff_id=old_sub.tariff_id, starts=old_sub.starts), ends=ends)
+    overlapping_membership = dbaccess.get_member_membership(member_id, bizplace.id, starts_dt)
+    if starts_dt > ends_dt:
+        raise Exception("End date should be greater than start date.")
+    if overlapping_membership:
+        raise Exception("Start date is overlapping with another membership.")
+    overlapping_membership = dbaccess.get_member_membership(member_id, bizplace.id, ends_dt)
+    if overlapping_membership:
+        raise Exception("End date is overlapping with another membership.")
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, member_id)
@@ -94,24 +95,8 @@ def stop(membership_id, ends):
     """
     marks a membership to stop given date and as necessary cancels/removes/chnages tariff usages associated with this membership
     """
-    membership = info(membership_id)
-    # Update current usage
-    end_date = commonlib.helpers.iso2date(ends)
-    usage = usagelib.usage_collection.find(start=datetime.date(end_date.year, end_date.month, 1), end=ends, member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)[0]
-    usagelib.usage_collection.delete(usage['id'])
-    del(usage['id'])
-    usage['end_time'] = ends
-    usage['start_time'] = usage['start_time'].isoformat()
-    usage['member'] = membership['member_id']
-    usagelib.usage_collection.new(**usage)
-    # Remove extra uninvoiced usages
-    usages = usagelib.usage_collection.find(start=ends, member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)
-    usagelib.usage_collection.bulk_delete([usage.id for usage in usages])
-    membership_store.update(membership_id, ends=ends)
+    return update(membership_id, ends=ends, stopped=True)
     
-    data = dict(member=membership['member_id'], membership=membership_id, stopped_date=end_date, created=datetime.datetime.now())
-    return stoppedmembership_store.add(**data)
-
 def update(membership_id, **mod_data):
     """
     """
@@ -119,17 +104,36 @@ def update(membership_id, **mod_data):
     usages = usagelib.usage_collection.find(start=old_data['starts'], end=old_data['ends'], member_ids=[old_data['member_id']], resource_ids=[old_data['tariff_id']], only_non_cancelled=True)
     starts = commonlib.helpers.iso2date(mod_data['starts']) if 'starts' in mod_data else old_data['starts']
     ends = commonlib.helpers.iso2date(mod_data['ends']) if 'ends' in mod_data else old_data['ends']
-    for i in range(len(usages)-1, -1, -1):
+    
+    #Checking that new starts & ends are valid or not
+    if starts > ends:
+        raise Exception("End date should be greater than start date.")
+    overlapping_membership = dbaccess.get_member_membership(old_data['member_id'], old_data['bizplace_id'], starts,\
+     [membership_id])
+    if overlapping_membership:
+        raise Exception("Start date is overlapping with another membership.")
+    overlapping_membership = dbaccess.get_member_membership(old_data['member_id'], old_data['bizplace_id'], ends,\
+     [membership_id])
+    if overlapping_membership:
+        raise Exception("End date is overlapping with another membership.")
+        
+    #Deleting usages which are out of starts<->ends
+    rev_usages = range(len(usages)-1, -1, -1)
+    for i in rev_usages:
         if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > ends:
             usagelib.usage_collection.delete(usages[i]['id'])
             del(usages[i])
-    if len(usages) == 0:
-        create_membership_usages(starts, ends, membership['tariff_id'], old_data['tariff_name'], old_data['member_id'])
-    else:
+            
+    #Creating new membership usages
+    if usages:
         if starts != usages[0]['start_time'].date():
-            create_membership_usages(starts, (usages[0]['start_time']-datetime.timedelta(1)).date(), old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+            create_membership_usages(starts, (usages[0]['start_time']-datetime.timedelta(1)).date(),\
+             old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
         if ends != usages[-1]['end_time'].date():
-            create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+            create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), ends,\
+             old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+    else:
+        create_membership_usages(starts, ends, membership['tariff_id'], old_data['tariff_name'], old_data['member_id'])
     
     return membership_store.update(membership_id, **mod_data)
 

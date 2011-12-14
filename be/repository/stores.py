@@ -199,16 +199,8 @@ class Membership(PGStore):
     starts DATE NOT NULL,
     ends DATE NOT NULL,
     bizplace_id INTEGER NOT NULL,
-    bizplace_name TEXT
-    """
-    
-class StoppedMemberships(PGStore):
-    create_sql = """
-    member INTEGER NOT NULL,
-    membership INTEGER NOT NULL,
-    stopped_date DATE NOT NULL,
-    stopped_by INTEGER NOT NULL,
-    created TIMESTAMP NOT NULL
+    bizplace_name TEXT,
+    stopped BOOLEAN DEFAULT False
     """
 
 class ResourceRelation(PGStore):

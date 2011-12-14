@@ -32,7 +32,6 @@ activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 billingpref_store = stores_mod.BillingPref()
 oidgen_store = stores_mod.OidGen()
-stoppedmembership_store = stores_mod.StoppedMemberships()
 
 class RStore(object): pass
 
@@ -73,7 +72,6 @@ class Resource(object):
         deps = self.store.get(self.id, ['contains', 'contains_opt', 'requires', 'suggests', 'contained_by', 'required_by', 'suggested_by'])
         dep_ids = list(itertools.chain(*deps.values()))
         return resource_store.get_many(dep_ids, self.info_fields)
-
 
 def list_activities_by_categories(catesgories, from_date, to_date, limit=20):
     clause = '( category IN %(categories)s) AND created >= %(from_date)s AND created <= %(to_date)s ORDER BY created DESC LIMIT %(limit)s'
@@ -200,9 +198,15 @@ def get_member_plan_id(member_id, bizplace_id, date, default=True):
     elif default:
         return bizplace_store.get(bizplace_id, fields=['default_tariff'], hashrows=False)
 
-def get_member_membership(member_id, bizplace_id, date):
-    clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
-    values = dict(member_id=member_id, date=date, bizplace_id=bizplace_id)
+def get_member_membership(member_id, bizplace_id, date, exclude_ids=[]):
+    """
+    exclude_ids = list of membership ids which we want to exclude from result
+    """
+    clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND ends >= %(date)s'
+    if exclude_ids: 
+        clause += " AND id NOT IN %(exclude_ids)s"
+        exclude_ids = tuple(exclude_ids)
+    values = dict(member_id=member_id, date=date, bizplace_id=bizplace_id, exclude_ids=exclude_ids)
     memberships = membership_store.get_by_clause(clause, values)
     if memberships:
         return memberships[0]
@@ -232,6 +236,7 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
         clause += ' AND ((starts > %(current_date)s) OR (ends < %(current_date)s))'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
+    clause += ' ORDER BY starts DESC'
     values = dict(member_id=member_id, since=since, bizplace_ids=bizplace_ids, current_date=current_date)
     return membership_store.get_by_clause(clause, values)
 
