@@ -198,7 +198,6 @@ function make_booking() {
 
     params.quantity = $('#new-quantity').val() || 1;
     params.member = $('#for-member').val();
-    params.created_by = current_userid;
 
     jsonrpc('usage.new', params, on_new_booking, error);
 };
