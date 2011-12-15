@@ -20,6 +20,9 @@ function create_resource () {
     params.time_based = checked_map[params.time_based];
     function success() {
         action_status.text("Resource created successfully").attr('class', 'status-success');
+        setTimeout(function(){
+            window.location = basepath + '/resources';
+        }, 1000);
     };
     function error() {
         action_status.text("Error in creating resource").attr('class', 'status-fail');
