@@ -9,15 +9,21 @@ resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
 
+class CalcMode:
+
+    quantity_based = 0
+    time_based = 1
+    monthly = 2
+    
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, time_based=False, archived=False, picture=None):
+    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, calc_mode=CalcMode.quantity_based, archived=False, picture=None):
         created = datetime.datetime.now()
         if state is None:
             state = 2 ** commonlib.shared.constants.resource.enabled
         else:
             state = commonlib.shared.constants.resource.to_flags(state)
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, time_based=time_based, archived=archived, picture=picture)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, calc_mode=calc_mode, archived=archived, picture=picture)
         res_id = resource_store.add(**data)
 
         data = dict(id=res_id, name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
@@ -36,7 +42,7 @@ class ResourceCollection:
         return res_id
 
     def new_tariff(self, name, short_description, owner, default_price, state=None, long_description=None, picture=None):
-        return self.new(name, short_description, 'tariff', owner, default_price, state, long_description=long_description, time_based=True, picture=picture)
+        return self.new(name, short_description, 'tariff', owner, default_price, state, long_description=long_description, calc_mode=CalcMode.monthly, picture=picture)
 
     def delete(self, res_id):
         """
@@ -48,7 +54,7 @@ class ResourceCollection:
         type: filter by specified type
         returns list of resource info dicts
         """
-        fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
+        fields=['id', 'name', 'short_description', 'long_description', 'calc_mode', 'type', 'state', 'picture', 'archived']
         resource_list = dbaccess.list_resources_and_tariffs(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
@@ -71,7 +77,7 @@ class ResourceCollection:
         type: filter by specified type
         returns list of resource info dicts
         """
-        fields=['id', 'name', 'short_description', 'long_description', 'time_based', 'type', 'state', 'picture', 'archived']
+        fields=['id', 'name', 'short_description', 'long_description', 'calc_mode', 'type', 'state', 'picture', 'archived']
         resource_list = dbaccess.list_resources(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
@@ -80,14 +86,14 @@ class ResourceCollection:
 
 class ResourceResource:
 
-    get_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'time_based', 'archived', 'picture']
-    set_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'time_based', 'archived', 'picture']
+    get_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'calc_mode', 'archived', 'picture']
+    set_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'calc_mode', 'archived', 'picture']
 
     def info(self, res_id):
         """
         returns dict containing essential information of specified business
         """
-        info_attributes = ['name', 'owner', 'short_description', 'state', 'id', 'time_based']
+        info_attributes = ['name', 'owner', 'short_description', 'state', 'id', 'calc_mode']
         info = resource_store.get(res_id, info_attributes)
         # TODO change owner ref to name
         info['owner_id'] = info['owner']

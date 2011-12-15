@@ -21,7 +21,7 @@ class ResourceCreate(BasePage):
             resource_types.option = tf.OPTION(rtype['label'], value = rtype['name'])
         form.add_field('Type', resource_types)
         time_based = tf.SPAN()
-        time_based.input = tf.INPUT(type='checkbox', id='time_based', name='time_based')
+        time_based.input = tf.INPUT(type='checkbox', id='calc_mode', name='calc_mode')
         time_based.label = tf.LABEL('Time Based', FOR="time_based")
         form.add_field("", time_based)
         form.add_field('Default Price', tf.INPUT(type="text", name='default_price').set_required(), fhelp="Will be added to Guest Tariff. Used in calculating cost of a usage by a person without a membership")

@@ -4,6 +4,7 @@ import be.repository.access as dbaccess
 import be.errors
 import commonlib.helpers
 import be.libs.cost as costlib
+import be.libs.signals as signals
 
 odict = commonlib.helpers.odict
 
@@ -119,7 +120,7 @@ class InitialCost(costlib.Rule):
     name = 'Initial Cost'
     def apply(self, env, usage, cost):
         resource = resource_store.get(usage.resource_id)
-        if resource.time_based:
+        if resource.calc_mode == 1:
             usage['quantity'] = costlib.to_decimal((usage.ends - usage.starts).seconds / 3600.0)
         rate = pricings.get(usage.member_id, usage.resource_id, usage.starts)
         amount = rate * usage.quantity

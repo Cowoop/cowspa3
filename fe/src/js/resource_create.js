@@ -1,12 +1,12 @@
 //*****************************Global Section***********************************
 var picture = null;
 var image_size_limit = 256000;//256kb
-var checked_map = {'checked':true, 'on':true, undefined:false};
+var checked_map = {'checked':1, 'on':1, undefined:0};
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************Save Resource*************************************
 var create_resource_form = $('#createresource_form');
-$("#time_based").click();
+$("#calc_mode").click();
 function create_resource () {
     var action_status = $('#createresource_form .action-status');
     action_status.text("Creating resource ...");
@@ -17,7 +17,7 @@ function create_resource () {
     }
     params.owner = current_ctx;    
     params.picture = picture;
-    params.time_based = checked_map[params.time_based];
+    params.calc_mode = checked_map[params.calc_mode];
     function success() {
         action_status.text("Resource created successfully").attr('class', 'status-success');
         setTimeout(function(){

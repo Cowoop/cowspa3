@@ -3,6 +3,8 @@ var picture = null;
 var resource_list = {};
 var state = 0;
 var checked_map = {'checked':true, 'on':true, undefined:false};
+var time_based_map = {'checked':1, 'on':1, undefined:0};
+var calc_map = {'time_based':1, 'quantity_based':0};
 var states = {'enabled':1, 'host_only':2, 'repairs':4};
 var image_size_limit = 256000;//256kb
 var res_id = null;
@@ -62,7 +64,7 @@ function on_resource_data(resource) {
     resource.flag |= resource.state.host_only?2:0;
     resource.flag |= resource.state.repairs?4:0;
     resource_list[resource.id] = resource;
-    if(!resource.time_based) {
+    if(resource.calc == calc_map.quantity_based) {
         $("#clock_"+resource.id).hide();
     };
 };
@@ -210,13 +212,13 @@ $("#resource_edit_form #update_resource-btn").click(function(){
         resource_list[res_id].flag = resource_list[res_id].state['enabled']?1:0;
         resource_list[res_id].flag |= resource_list[res_id].state['host_only']?2:0;
         resource_list[res_id].flag |= resource_list[res_id].state['repairs']?4:0;
-        resource_list[res_id]['time_based'] = params['time_based'];
+        resource_list[res_id]['calc_mode'] = params['calc_mode'];
         if(picture){
             resource_list[res_id]['picture'] = picture;
             $("#picture_"+res_id).show();
             $("#picture_"+res_id).attr('src', picture);
         }
-        if(resource_list[res_id]['time_based'])
+        if(resource_list[res_id].calc_mode==calc_map.time_based)
             $("#clock_"+res_id).show();
         else
             $("#clock_"+res_id).hide();
@@ -245,7 +247,7 @@ $("#resource_edit_form #update_resource-btn").click(function(){
     params['type'] = $("#type").val();
     params['short_description'] = $("#short_desc").val();
     params['long_description'] = $("#long_desc").val();
-    params['time_based'] = checked_map[$("#time_based:checked").val()];
+    params['calc_mode'] = time_based_map[$("#time_based:checked").val()];
     params.state = {};
     params.state['enabled'] = checked_map[$("#state_enabled:checked").val()];
     params.state['host_only'] = checked_map[$("#state_host_only:checked").val()];
@@ -266,7 +268,7 @@ function resource_editing() {
     $("#type option[value='" + this_resource.type + "']").attr('selected', 'selected');
     $("#short_desc").val(this_resource.short_description);
     $("#long_desc").val(this_resource.long_description);
-    $("#time_based").attr('checked', this_resource.time_based);
+    $("#time_based").attr('checked', this_resource.calc_mode==calc_map.time_based);
     $("#state_enabled").attr('checked', this_resource.state.enabled);
     $("#state_host_only").attr('checked', this_resource.state.host_only);
     $("#state_repairs").attr('checked', this_resource.state.repairs);

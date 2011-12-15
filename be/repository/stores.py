@@ -182,7 +182,7 @@ class Resource(PGStore):
     owner INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
-    time_based BOOLEAN DEFAULT True,
+    calc_mode INTEGER,
     picture TEXT,
     archived BOOLEAN DEFAULT False,
     follow_owner_taxes BOOLEAN DEFAULT True,

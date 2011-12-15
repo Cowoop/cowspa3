@@ -114,7 +114,7 @@ def add_tariffs_section(container):
     tariff_box = tf.DIV()
 
     new = tf.DIV(Class="right-action")
-    new.button = tf.BUTTON("Next Tariff", id="next_tariff-btn", name="next_tarrif-btn", type="button")
+    new.button = tf.BUTTON("New", id="next_tariff-btn", name="next_tarrif-btn", type="button")
 
     header = tf.TR()
     header.th = tf.TH("Place")
