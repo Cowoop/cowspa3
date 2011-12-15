@@ -56,7 +56,7 @@ class Template(sphc.more.HTML5Page):
         for name, group in itertools.groupby(data.usages, itemgetter('resource_name')):
             usage_row = tf.TR()
             usage_row.td = tf.TD(name)
-            usage_row.td = tf.TD(str(sum([usage.calculated_cost for usage in group])))
+            usage_row.td = tf.TD(str(sum([usage.cost for usage in group])))
             usages.row = usage_row
         usage_row = tf.TR()
         usage_row.td = tf.TD("Sub Total")
