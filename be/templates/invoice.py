@@ -74,13 +74,12 @@ class Template(sphc.more.HTML5Page):
         usages = tf.TABLE(id='usages_details', Class="stripped")
         usages.caption = tf.CAPTION("Usage Details")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in ('Sr. No.', 'Resource', 'Rate', 'Quantity', 'Duration', 'Amount')]
+        usages.header.cells = [tf.TH(name) for name in ('Sr. No.', 'Resource', 'Quantity', 'Duration', 'Amount')]
         sr_no = 1
         for usage in data.usages:
             usage_row = tf.TR()
             usage_row.td = tf.TD(str(sr_no))
             usage_row.td = tf.TD(str(usage.resource_name))
-            usage_row.td = tf.TD(str(usage.rate))
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
             usage_row.td = tf.TD(str(usage.cost))
