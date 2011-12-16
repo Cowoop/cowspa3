@@ -182,6 +182,7 @@ class CSAuthedPage(CSPage):
         main.contentbox.pane1.content = self.content()
         if sidebar:
             main.contentbox.sidebar = tf.DIV(sidebar, Class="sidebar", style="display: none;")
+        main.initscript = sphc.more.script_fromfile("fe/src/js/init.js")
         return main
 
     def sidebar(self):

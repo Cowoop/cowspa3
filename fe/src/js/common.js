@@ -247,10 +247,14 @@ function to_formatted_datetime(date){
     time = hh + ":" +  mm + time
     return $.datepicker.formatDate('M dd, yy', fdate) + " " + time;
 }
-//*******************************************************************************************************
-$(document).ready(function() {
-    $("#profile_link").text(member_name);
-    $("#profile_link").attr('href', basepath + "/member/edit/#/" +current_userid+ "/profile");
-    init_autocomplete();
-    init_nav();
-});    
+
+function set_member_name(name) {
+    set_cookie('member_name', name);
+    set_cookie("member_name", $.cookie("member_name").replace(/"/g, ""));
+    member_name = name;
+    var profile_link = $('#profile_link');
+    if (profile_link) {
+        profile_link.text(member_name);
+        profile_link.attr('href', basepath + "/member/edit/#/" +current_userid+ "/profile");
+    };
+};

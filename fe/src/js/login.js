@@ -13,8 +13,7 @@ function login() {
         set_cookie('authcookie', resp.result.auth_token)
         set_cookie('user_id', resp.result.id)
         set_cookie('roles', resp.result.roles)
-        set_cookie('member_name', resp.result.name)
-        set_cookie("member_name", $.cookie("member_name").replace(/"/g, ""));
+        set_member_name(resp.result.name);
         window.location = "/" + resp.result.pref.language + "/" + resp.result.pref.theme + "/dashboard";
     };
     function error() {
