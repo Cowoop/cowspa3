@@ -45,10 +45,21 @@ function set_userid(uid) {
 };
 
 function jsonrpc(apiname, params, success, error) {
+    var waiting_ele = $('div#main');
+    waiting_ele.addClass('waiting');
+    if (!error) { function error(resp) { alert('Remote error: ' + resp.result.message); }; }
+    function cs_success(args) {
+        success(args);
+        waiting_ele.removeClass('waiting');
+    };
+    function cs_error(args) {
+        error(args);
+        waiting_ele.removeClass('waiting');
+    };
     $.jsonRPC.request(apiname, {
         params: params,
-        success: success,
-        error: error
+        success: cs_success,
+        error: cs_error
     });
 };
 
@@ -221,6 +232,20 @@ function to_iso_datetime(date){
     ss = (ss<10?"0":"") + ss;
     return $.datepicker.formatDate('yy-mm-dd', fdate)+"T"+hh+":"+mm+":"+ss;
 }
+function date2iso(date, exclude_sec){
+    if(jQuery.trim(date) == ""){
+        return null;
+    }
+    var fdate = new Date(date);
+    var hh = fdate.getHours();
+    hh = (hh<10?"0":"") + hh; 
+    var mm = fdate.getMinutes();
+    mm = (mm<10?"0":"") + mm;
+    var ss = fdate.getSeconds();
+    ss = (ss<10?"0":"") + ss;
+    return (exclude_sec) ? hh+':'+mm : hh+":"+mm+":"+ss;
+}
+
 function to_formatted_date(date){
     if(date==null){
         return "";
