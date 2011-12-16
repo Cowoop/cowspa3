@@ -2,8 +2,7 @@ var day_miliseconds = 24 * 60 * 60 * 1000;
 var resource_map = {};
 var shown_dates = [];
 var new_booking_date = null;
-var new_booking_start_time = null;
-var new_booking_end_time = null;
+var dropped_slot = null;
 
 function error(resp) {
     alert('Remote error: ' + resp.result.message);
@@ -82,8 +81,8 @@ function mark_slot(usage) {
     });
 
     var this_booking_slot = 'booking_' + booking_id;
-    $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '"></DIV>');
-    $('#' + this_booking_slot).draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move'});
+    $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '" class="booking"></DIV>');
+    $('#' + this_booking_slot).draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
 };
 
 function on_drop_booking(event, ui ) {
@@ -91,8 +90,7 @@ function on_drop_booking(event, ui ) {
     var current_booking_id = parseInt(draggable.attr('id').split('_')[1]);
     var date_start_end = id2datetime($(this).attr('id'));
     new_booking_date = date_start_end[0]; // global
-    new_booking_start_time = date_start_end[1];
-    new_booking_end_time = date_start_end[2];
+    dropped_slot = date_start_end[1];
     get_booking_info(current_booking_id);
     // TODO: we are editing not creating
 };
@@ -112,6 +110,10 @@ function mark_slots(usages) {
         mark_slot(usages[i]);
     };
     $('.slot-available').droppable({drop: on_drop_booking});
+    $('.booking').click( function () {
+        var booking_id = parseInt($(this).attr('id').split('_')[1]);
+        get_booking_info(booking_id);
+    });
 };
 
 function on_available_resources(resp) {
@@ -157,12 +159,27 @@ function open_booking_form(resource_name, new_booking_date, start_time, end_time
 };
 
 function open_edit_booking_form(booking) {
+    $('#for-member').val((booking.member).toString());
     $('#booking-id').val((booking.id).toString());
     $('#for-member-search').val(booking.member_name);
     $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
-    $('#new-starts').val(new_booking_start_time);
-    $('#new-ends').val(new_booking_end_time);
-    $('#new-ends').attr('min', new_booking_start_time);
+    var booking_duration = (new Date(booking.end_time)) - (new Date(booking.start_time));
+    var upper_slots_time = booking_duration / 2;
+    var dropped_slot_time = (dropped_slot.split(':')[0] * 60 * 60 * 1000) + (dropped_slot.split(':')[1] * 60 * 1000);
+    if (dropped_slot_time > upper_slots_time) {
+        var offset = (dropped_slot_time - upper_slots_time);
+        var start_time = new Date(new_booking_date.getTime() + offset);
+        var end_time = new Date(start_time.getTime() + booking_duration);
+        var start_iso = date2iso(start_time, true);
+        var end_iso = date2iso(end_time, true);
+    } else {
+        var start_iso = '00:00';
+        var end_time = new Date(new_booking_date.getTime() + booking_duration);
+        var end_iso = date2iso(end_time, true);
+    };
+    $('#new-starts').val(start_iso);
+    $('#new-ends').val(end_iso);
+    $('#new-ends').attr('min', start_iso);
     $('#new-booking').dialog({
         title: booking.resource_name,
         width: 500,
