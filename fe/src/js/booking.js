@@ -2,6 +2,12 @@ var day_miliseconds = 24 * 60 * 60 * 1000;
 var resource_map = {};
 var shown_dates = [];
 var new_booking_date = null;
+var new_booking_start_time = null;
+var new_booking_end_time = null;
+
+function error(resp) {
+    alert('Remote error: ' + resp.result.message);
+};
 
 function add_days(adate, days) {
     return new Date(adate.getTime() + (days * day_miliseconds))
@@ -30,10 +36,6 @@ function get_selected_date() {
     return new Date($('#booking-date-inp').val());
 };
 
-function error(resp) {
-    alert('Remote error: ' + resp.result.message);
-};
-
 function on_get_usages(resp) {
     mark_slots(resp.result);
     init_cal();
@@ -48,6 +50,7 @@ function get_usages(resource_id) {
 };
 
 function mark_slot(usage) {
+    var booking_id = usage.id;
     var start_time = iso2date(usage.start_time);
     var end_time = iso2date(usage.end_time);
     for (i in shown_dates) {
@@ -75,13 +78,40 @@ function mark_slot(usage) {
             $(this).removeClass('slot-available');
             matched_slots.push(this);
         };
+        // $(this).draggable({containment: 'window', snap: 'window'});
     });
+
+    var this_booking_slot = 'booking_' + booking_id;
+    $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '"></DIV>');
+    $('#' + this_booking_slot).draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move'});
+};
+
+function on_drop_booking(event, ui ) {
+    var draggable = ui.draggable;
+    var current_booking_id = parseInt(draggable.attr('id').split('_')[1]);
+    var date_start_end = id2datetime($(this).attr('id'));
+    new_booking_date = date_start_end[0]; // global
+    new_booking_start_time = date_start_end[1];
+    new_booking_end_time = date_start_end[2];
+    get_booking_info(current_booking_id);
+    // TODO: we are editing not creating
+};
+
+function get_booking_info(booking_id) {
+    var params = {usage_id: booking_id};
+    jsonrpc('usage.info', params, on_booking_info, error);
+};
+
+function on_booking_info(resp) {
+    var booking = resp.result;
+    open_edit_booking_form(booking);
 };
 
 function mark_slots(usages) {
     for (i in usages) {
         mark_slot(usages[i]);
     };
+    $('.slot-available').droppable({drop: on_drop_booking});
 };
 
 function on_available_resources(resp) {
@@ -105,27 +135,15 @@ set_day_titles();
 function id2datetime(id) {
     var slot_no = id.split('_')[1];
     var day_no = parseInt(slot_no.split('-')[0]);
+    var thedate = add_days(get_selected_date(),  (-3 + day_no));
     var start_end = slot_no.split('-')[1].split('.');
     var start = start_end[0];
     var end = start_end[1];
-    return [day_no, start, end]
+    return [thedate, start, end];
 };
 
-function on_select_slots(ev, ui) {
-    var selected = [];
-    $( ".ui-selected", this ).each( function () {
-        selected.push($(this).attr('id'));
-    });
-    var start = selected[0];
-    var end = selected.pop();
-    var no_start = id2datetime(start);
-    var booking_day_no = no_start[0];
-    var start_time = no_start[1];
-    var end_time = id2datetime(end)[2];
-
-    new_booking_date = add_days(get_selected_date(),  (-3 + booking_day_no))
-    var resource_name = resource_map[$('#resource-select').val()];
-    $('.data-resource-name').text(resource_name);
+function open_booking_form(resource_name, new_booking_date, start_time, end_time) {
+    $('#booking_id').val('0'); // important
     $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
     $('#new-starts').val(start_time);
     $('#new-ends').val(end_time);
@@ -136,6 +154,37 @@ function on_select_slots(ev, ui) {
         height: 500,
         close: on_close_booking_form
     });
+};
+
+function open_edit_booking_form(booking) {
+    $('#booking-id').val((booking.id).toString());
+    $('#for-member-search').val(booking.member_name);
+    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+    $('#new-starts').val(new_booking_start_time);
+    $('#new-ends').val(new_booking_end_time);
+    $('#new-ends').attr('min', new_booking_start_time);
+    $('#new-booking').dialog({
+        title: booking.resource_name,
+        width: 500,
+        height: 500,
+        close: on_close_booking_form
+    });
+};
+
+function on_select_slots(ev, ui) {
+    var selected = [];
+    $( ".ui-selected", this ).each( function () {
+        selected.push($(this).attr('id'));
+    });
+    var start = selected[0];
+    var end = selected.pop();
+    var date_start_end = id2datetime(start);
+    new_booking_date = date_start_end[0]; // global
+    var start_time = date_start_end[1];
+    var end_time = id2datetime(end)[2];
+
+    var resource_name = resource_map[$('#resource-select').val()];
+    open_booking_form(resource_name, new_booking_date, start_time, end_time);
 };
 
 function on_close_booking_form() {
@@ -176,7 +225,9 @@ function on_new_booking() {
 };
 
 function make_booking() {
+    
     var params = {};
+
     params.resource_id = parseInt($('#resource-select').val());
     params.resource_name = resource_map[params.resource_id];
 
@@ -196,10 +247,17 @@ function make_booking() {
     end_time.setMinutes(mins);
     params.end_time = to_iso_datetime(end_time)
 
-    params.quantity = $('#new-quantity').val() || 1;
+    // params.quantity = $('#new-quantity').val() || 1;
     params.member = $('#for-member').val();
 
-    jsonrpc('usage.new', params, on_new_booking, error);
+    var usage_id = $('#booking-id').val();
+
+    if (usage_id == 0) {
+        jsonrpc('usage.new', params, on_new_booking, error);
+    } else {
+        params.usage_id = usage_id;
+        jsonrpc('usage.update', params, on_new_booking, error);
+    };
 };
 
 $('#new-booking-form').submit( function () {
