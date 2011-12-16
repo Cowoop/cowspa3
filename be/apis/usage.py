@@ -58,7 +58,9 @@ class UsageResource:
         """
         return dict containg information of usage
         """
-        return usage_store.get(usage_id)
+        usage = usage_store.get(usage_id)
+        usage['member_name'] = dbaccess.oid2name(usage.member)
+        return usage
 
     def update(self, usage_id, **mod_data):
         usage_store.update(usage_id, **mod_data)
