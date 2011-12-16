@@ -1004,7 +1004,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     }
     .cal-day, .time-column {
         display: inline-block;
-        overflow: hidden;
+        // overflow: hidden; // draggables won't work with this
         vertical-align: top;
         .day-title {
             color: $main-color;
