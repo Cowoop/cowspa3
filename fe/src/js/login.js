@@ -14,7 +14,13 @@ function login() {
         set_cookie('user_id', resp.result.id)
         set_cookie('roles', resp.result.roles)
         set_member_name(resp.result.name);
-        window.location = "/" + resp.result.pref.language + "/" + resp.result.pref.theme + "/dashboard";
+        var lang = resp.result.pref.language.split('_')[0];
+        // Following is hacked temporarily till we support build for more langs
+        if ($.inArray(lang, ['en','de']) == -1 ) {
+            lang = 'en'; // Build for this lang not available, return English as default
+        }
+//        var lang = resp.result.pref.language
+        window.location = "/" + lang + "/" + resp.result.pref.theme + "/dashboard";
     };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');
