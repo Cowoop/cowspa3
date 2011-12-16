@@ -3,7 +3,7 @@ import sphc.more
 import commonlib.helpers
 import itertools
 from operator import itemgetter
-
+from babel.numbers import get_currency_symbol, format_currency
 odict = commonlib.helpers.odict
 tf = sphc.TagFactory()
 
@@ -17,6 +17,10 @@ class Template(sphc.more.HTML5Page):
 
     def main(self):
         data = odict(self.data)
+
+        def show_currency(num):
+            return str(format_currency(num,data.bizplace.currency,locale=data.memberpref[0].language))
+
         container = tf.DIV()
         container.title = tf.DIV("I N V O I C E", id="invoice-header")
 
@@ -56,11 +60,11 @@ class Template(sphc.more.HTML5Page):
         for name, group in itertools.groupby(data.usages, itemgetter('resource_name')):
             usage_row = tf.TR()
             usage_row.td = tf.TD(name)
-            usage_row.td = tf.TD(str(sum([usage.cost for usage in group])))
+            usage_row.td = tf.TD(show_currency(sum([usage.cost for usage in group])))
             usages.row = usage_row
         usage_row = tf.TR()
         usage_row.td = tf.TD("Sub Total")
-        usage_row.td = tf.TD(str(data.invoice.cost))
+        usage_row.td = tf.TD(show_currency(data.invoice.cost))
         usages.row = usage_row
         usage_summary.table = usages
         container.usage_summary = usage_summary
@@ -82,16 +86,15 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD(str(usage.resource_name))
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
-            usage_row.td = tf.TD(str(usage.cost))
+            usage_row.td = tf.TD(show_currency(usage.cost))
             usages.row = usage_row
             sr_no += 1
         usage_row = tf.TR()
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
-        usage_row.td = tf.TD()
         usage_row.td = tf.TH("Total")
-        usage_row.td = tf.TD(str(data.invoice.cost))
+        usage_row.td = tf.TD(show_currency(data.invoice.cost))
         usages.row = usage_row
         usage_details.table = usages
 

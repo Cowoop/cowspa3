@@ -14,14 +14,17 @@ usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
 bizplace_store = dbaccess.stores.bizplace_store
 invoicepref_store = dbaccess.stores.invoicepref_store
+memberpref_store = dbaccess.stores.memberpref_store
 
 def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
     usages = usage_store.get_many(invoice.usages)
     bizplace = bizplace_store.get(invoice.issuer)
     member = member_store.get(invoice.member)
+    memberpref = memberpref_store.get_by(dict(member=invoice.member))
     invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
-    data = dict(invoice=invoice, usages=usages, bizplace=bizplace, member=member, invoicepref=invoicepref)
+    data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
+            member=member, invoicepref=invoicepref, memberpref=memberpref)
     html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
     pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
     be.templates.invoice.Template(data).write(html_path)

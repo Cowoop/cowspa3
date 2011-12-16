@@ -10,6 +10,8 @@ sphc
 turbomail
 python-dateutil==1.5
 pytz
+simplejson
+babel
 # cssutils
 # cssprefixer is not installable atm by package name
 http://pypi.python.org/packages/source/c/cssprefixer/cssprefixer-1.3.tar.gz#md5=28c1b425bc7f8a5a18cd307d4b6ed4e6

@@ -42,7 +42,7 @@ def preferences_form():
     languages = tf.SELECT(id="language", name="language")
     for ob in data_lists.languages:
         languages.option = tf.OPTION(ob['label'], value=ob['name'])
-    form.add_field("Languages", languages)
+    form.add_field("Language", languages)
     form.add_buttons(tf.BUTTON("Update", type="submit"))
     return form
 
