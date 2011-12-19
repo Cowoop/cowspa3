@@ -47,7 +47,7 @@ function set_userid(uid) {
 function jsonrpc(apiname, params, success, error) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
-    if (!error) { function error(resp) { alert('Remote error: ' + resp.result.message); }; }
+    if (!error) { function error(resp) { alert('Remote error: ' + resp.error.message); }; }
     function cs_success(args) {
         success(args);
         waiting_ele.removeClass('waiting');
