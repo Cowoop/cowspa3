@@ -576,7 +576,12 @@ function get_uninvoiced_usages(){
                         }
                 },
                 { "sTitle": "Quantity", "sWidth":"10%"},
-                { "sTitle": "Cost",  "sWidth":"10%" },
+                { "sTitle": "Cost",  "sWidth":"10%",
+                    "fnRender": function(obj) {
+                            var sReturn = formatCurrency(obj.aData[ obj.iDataColumn ]);
+                            return sReturn;
+                    }
+                },
                 { "sTitle": "Manage", "bSortable": false, "sWidth":"10%",
                     "fnRender": function(obj) {
                         var usage_id = obj.aData[obj.iDataColumn];

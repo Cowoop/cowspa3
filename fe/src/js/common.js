@@ -3,6 +3,11 @@ var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx")):null
 var current_userid = parseInt($.cookie("user_id"));
 var member_name = $.cookie("member_name");
 var basepath = window.location.pathname.split('/').slice(0,3).join('/');
+var localeData = {
+                    currencySymbol:'$',
+                    decimal_sep:'.',
+                    group_sep:','
+                 }; //default values
 //
 
 $.webshims.setOptions('forms', {
@@ -21,6 +26,16 @@ function set_cookie(cookie_name, value) {
 function delete_cookie(cookie_name) {
     return $.cookie(cookie_name, null, cookie_opts);
 };
+function formatCurrency(num) {
+
+    return accounting.formatMoney(num,
+              {
+                symbol: localeData.currencySymbol,
+                thousand: localeData.group_sep,
+                decimal:localeData.decimal_sep
+              }
+           );
+}
 //
 
 $.jsonRPC.setup({
@@ -29,6 +44,15 @@ $.jsonRPC.setup({
 });
 
 function set_context(ctx) {
+    function success(resp) {
+        localeData.currencySymbol = resp['result'].symbol
+        localeData.decimal_sep = resp['result'].decimal
+        localeData.group_sep = resp['result'].group
+    }
+    function error() {
+    }
+    var params = {'bizplace_id': ctx, 'user_id': current_userid};
+    jsonrpc('bizplace.currency', params, success, error);
     current_ctx = ctx;
     if (ctx == null) {
         delete_cookie("current_ctx");

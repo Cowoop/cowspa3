@@ -5,6 +5,7 @@ import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.resource as resourcelib
 import commonlib.shared.static as static
+from babel.numbers import get_currency_symbol, get_decimal_symbol, get_group_symbol
 
 bizplace_store = dbaccess.stores.bizplace_store
 
@@ -104,6 +105,12 @@ class BizplaceResource:
         data = dict(id=bizplace_id, name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
         activity_id = activitylib.add('bizplace_management', 'bizplace_updated', data)
 
+    def currency(self,bizplace_id,user_id):
+        symbol=get_currency_symbol(bizplace_store.get(bizplace_id,fields=['currency']))
+        user_locale = dbaccess.stores.memberpref_store.get_by(dict(member=user_id), ['language'])[0]['language']
+        decimal=get_decimal_symbol(user_locale)
+        group=get_group_symbol(user_locale)
+        return dict(symbol=symbol, decimal=decimal, group=group)
 
     def get(self, bizplace_id, attrname):
         if not attrname in self.get_attributes: return
