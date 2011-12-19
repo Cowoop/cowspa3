@@ -29,16 +29,16 @@ class BaseStore(object):
             return self.get_one_by(crit, fields, hashrows)
         except Exception as err:
             pass
-    def get_many(self, oids, fields=None, hashrows=True):
+    def get_many(self, oids, fields=None, hashrows=True, order_by=None):
         """
         returns list of dicts keyed by field names
         """
         raise NotImplemented
-    def get_all(self, fields=None, hashrows=True):
+    def get_all(self, fields=None, hashrows=True, order_by=None):
         """
         returns list of dicts keyed by field names
         """
-    def get_by(self, crit, fields=None, hashrows=True):
+    def get_by(self, crit, fields=None, hashrows=True, order_by=None):
         """
         @crit: criteria dict. all records matching with crit field key-values are returned
         returns list of dicts keyed by field names
@@ -231,7 +231,7 @@ class PGStore(BaseStore):
             ret = ret[0]
         return ret
 
-    def get_by(self, crit, fields=[], hashrows=True, limit=None):
+    def get_by(self, crit, fields=[], hashrows=True, limit=None, order_by=None):
         """
         crit: eg. name='Joe', lang='en'
         -> odict
@@ -241,6 +241,7 @@ class PGStore(BaseStore):
         crit_keys_s = ' AND '.join(('%s = %%(%s)s' if v is not None else '%s is %%(%s)s') % (k,k) for k,v in crit.items())
         table_name = self.table_name
         q = 'SELECT %(cols_str)s FROM %(table_name)s WHERE %(crit_keys_s)s' % locals()
+        if order_by: q = q + ' ORDER BY ' + order_by
         if limit: q = q + ' LIMIT %d' % limit
         return self.query_exec(q, crit, hashrows=hashrows)
 
@@ -259,21 +260,23 @@ class PGStore(BaseStore):
         except Exception as err:
             pass
 
-    def get_many(self, oids, fields=[], hashrows=True):
+    def get_many(self, oids, fields=[], hashrows=True, order_by=None):
         """
         returns list of dicts keyed by field names
         """
         cursor = self.cursor_getter()
         clause = "id IN %s"
+        if order_by: clause += ' ORDER BY ' + order_by
         clause_values = (tuple(oids),)
         return self.get_by_clause(clause, clause_values, fields, hashrows)
 
-    def get_all(self, fields=[], hashrows=True):
+    def get_all(self, fields=[], hashrows=True, order_by=None):
         """
         returns list of dicts keyed by field names
         """
         cols_str = self.fields2cols(fields)
         q = "SELECT %(cols_str)s FROM %(table_name)s" %dict(table_name=self.table_name, cols_str=cols_str)
+        if order_by: q += ' ORDER BY ' + order_by
         return self.query_exec(q, hashrows=hashrows)
 
     def get_by_clause(self, clause, clause_values, fields=[], hashrows=True):
