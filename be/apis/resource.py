@@ -14,16 +14,20 @@ class CalcMode:
     quantity_based = 0
     time_based = 1
     monthly = 2
-    
+
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, calc_mode=CalcMode.quantity_based, archived=False, picture=None):
+    def new(self, name, short_description, type, owner, default_price,
+            state=None, long_description=None, calc_mode=CalcMode.quantity_based,
+            archived=False, picture=None, accnt_code=None):
         created = datetime.datetime.now()
         if state is None:
             state = 2 ** commonlib.shared.constants.resource.enabled
         else:
             state = commonlib.shared.constants.resource.to_flags(state)
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, state=state, long_description=long_description, type=type, calc_mode=calc_mode, archived=archived, picture=picture)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description,
+                state=state, long_description=long_description, type=type, calc_mode=calc_mode,
+                archived=archived, picture=picture, accnt_code=accnt_code)
         res_id = resource_store.add(**data)
 
         data = dict(id=res_id, name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
@@ -54,7 +58,8 @@ class ResourceCollection:
         type: filter by specified type
         returns list of resource info dicts
         """
-        fields=['id', 'name', 'short_description', 'long_description', 'calc_mode', 'type', 'state', 'picture', 'archived']
+        fields=['id', 'name', 'short_description', 'long_description',
+                'calc_mode', 'type', 'state', 'picture', 'archived', 'accnt_code']
         resource_list = dbaccess.list_resources_and_tariffs(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
@@ -77,7 +82,8 @@ class ResourceCollection:
         type: filter by specified type
         returns list of resource info dicts
         """
-        fields=['id', 'name', 'short_description', 'long_description', 'calc_mode', 'type', 'state', 'picture', 'archived']
+        fields=['id', 'name', 'short_description', 'long_description',
+                'calc_mode', 'type', 'state', 'picture', 'archived', 'accnt_code']
         resource_list = dbaccess.list_resources(owner, fields, type)
         for res in resource_list:
             res['state'] = commonlib.shared.constants.resource.to_dict(res['state'])
@@ -86,8 +92,10 @@ class ResourceCollection:
 
 class ResourceResource:
 
-    get_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'calc_mode', 'archived', 'picture']
-    set_attributes = ['name', 'short_description', 'type', 'owner', 'state', 'long_description', 'calc_mode', 'archived', 'picture']
+    get_attributes = ['name', 'short_description', 'type', 'owner', 'state',
+            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code']
+    set_attributes = ['name', 'short_description', 'type', 'owner', 'state',
+            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code']
 
     def info(self, res_id):
         """
