@@ -106,10 +106,19 @@ class ResourceManage(BasePage):
         #pricing.tip = tf.DIV(tf.C("Schedule new price"))
         pricing.pricing_tmpl = sphc.more.jq_tmpl("old-pricing-tmpl")
         pricing.pricing_tmpl.pricing = tf.DIV(Class="pricing")
-        pricing.pricing_tmpl.pricing.starts = tf.SPAN("${starts}", Class="pricing-date")
-        pricing.pricing_tmpl.pricing.amount = tf.SPAN("${amount}")
-        pricing.pricing_tmpl.pricing.edit = tf.SPAN(tf.A("Edit"))
-        pricing.pricing_tmpl.pricing.cancel = tf.SPAN(tf.A("X", id="pricing_${id}", Class="cancel-x"))
+        view_pricing = tf.DIV(id="pricing-${id}")
+        view_pricing.starts = tf.SPAN("${starts}", Class="pricing-date", id="pricing_date-${id}")
+        view_pricing.amount = tf.SPAN("${amount}", id="pricing_amount-${id}")
+        view_pricing.edit = tf.SPAN(tf.A("Edit", id="pedit-${id}", Class="pricing_edit-link"))
+        view_pricing.cancel = tf.SPAN(tf.A("X", id="pricing_${id}", Class="cancel-x"))
+        edit_pricing = tf.FORM(id="edit_pricing-${id}", Class="edit-pricing hidden", method="POST")
+        edit_pricing.start_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='edit_starts_vis-${id}').set_required())
+        edit_pricing.starts = tf.INPUT(id='edit_starts-${id}', type="hidden", value="-")
+        edit_pricing.amount = tf.SPAN(tf.INPUT(type="text", id='edit_amount-${id}', value="${amount}").set_required())
+        edit_pricing.save = tf.SPAN(tf.BUTTON("Save", type="submit"))
+        edit_pricing.cancel = tf.SPAN(tf.BUTTON("Cancel", type="button", Class="edit-cancel", id="cancel_edit-${id}"))
+        pricing.pricing_tmpl.pricing.view = view_pricing
+        pricing.pricing_tmpl.pricing.edit = edit_pricing
 
         pricing.new = tf.FORM(id="new-pricing", method="POST", Class="hidden")
         pricing.new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis'))

@@ -42,8 +42,12 @@ def test_add_pricing_for_a_plan_with_same_date():
     amount = 20
     test_data.price_w_plan = amount
     starts = datetime.date(2011,8,1).isoformat()
-    pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount) # adding this pricing must work not next
-    assert_raises(be.errors.ErrorWithHint, pricinglib.pricings.new, test_data.resource_id, test_data.plan_id, starts, amount)
+    try:
+        pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount) # adding this pricing must work not next
+    except Exception, err:
+        assert isinstance(err, be.errors.ErrorWithHint)
+    else:
+        assert False 
 
 def test_add_pricing_for_default_tariff():
     amount = 50

@@ -217,7 +217,7 @@ class Pricing(PGStore):
     id SERIAL NOT NULL UNIQUE,
     plan INTEGER NOT NULL,
     resource INTEGER NOT NULL,
-    starts DATE NOT NULL,
+    starts DATE,
     ends DATE,
     amount NUMERIC(16, 2) NOT NULL,
     state INTEGER default 1 NOT NULL

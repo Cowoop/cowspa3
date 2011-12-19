@@ -202,6 +202,8 @@ if(params['user_id']) {
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
 function iso2date(iso) {
+    if(iso=="" || iso==null)
+        return "";
     var yy = parseInt(iso.slice(0, 4));
     var mm = parseInt(iso.slice(5, 7)-1);
     var dd = parseInt(iso.slice(8, 10));
@@ -247,14 +249,14 @@ function date2iso(date, exclude_sec){
 }
 
 function to_formatted_date(date){
-    if(date==null){
+    if(date==null || date==""){
         return "";
     }
     var fdate = new Date(date);
     return $.datepicker.formatDate('M dd, yy', fdate);
 }
 function to_formatted_datetime(date){
-    if(date==null){
+    if(date==null || date==""){
         return "";
     }
     var fdate = new Date(date);

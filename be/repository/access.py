@@ -170,7 +170,7 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced=False, only_non_cancelled=False):
+def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
@@ -270,11 +270,14 @@ def search_member(query_parts, options, limit, mtype):
     
     return member_store.query_exec(query, values)
 
-def get_resource_pricing(plan_id, resource_id, usage_time):
-    clause = 'plan = %(plan)s AND resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
-    values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time)
-    return pricing_store.get_by_clause(clause, values, fields=['id', 'plan', 'starts', 'ends', 'amount'])
-
+def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
+    clause = 'plan = %(plan)s AND resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends IS NULL)'
+    if exclude_pricings: clause += ' AND id NOT IN %(exclude_pricings)s'
+    clause += ' ORDER BY ends DESC'
+    values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time, exclude_pricings=tuple(exclude_pricings))
+    pricing = pricing_store.get_by_clause(clause, values,  fields=['id', 'plan', 'starts', 'ends', 'amount'])
+    return pricing[0] if pricing else None 
+           
 def get_default_pricing(resource_id, usage_time):
     bizplace_id = resource_store.get(resource_id).owner
     default_tariff_id = bizplace_store.get(bizplace_id).default_tariff
@@ -359,3 +362,4 @@ class OidGenerator(object):
     @staticmethod
     def get_otype(oid):
         return oidgen_store.get(oid, fields=['type'])
+

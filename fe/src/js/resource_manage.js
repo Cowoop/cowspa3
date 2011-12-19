@@ -291,6 +291,12 @@ function on_tariff_pricings(resp) {
     $('.pricing-date').each( function() {
         $(this).text(to_formatted_date($(this).text()));
     });
+    $(".pricing .cancel-x").attr('href', window.location.hash);
+    $(".pricing .cancel-x").click(delete_pricing);
+    $(".pricing_edit-link").attr('href', window.location.hash);
+    $(".pricing_edit-link").click(edit_pricing);
+    $(".edit-cancel").click(cancel_edit_pricing);
+    $(".edit-pricing").submit(save_edited_pricing);
 };
 
 function error(resp) {
@@ -336,5 +342,53 @@ $('#new-pricing').submit(function () {
     add_new_pricing();
     return false;
 });
-
+function edit_pricing(){
+    var pricing_id = $(this).attr('id').split('-')[1];
+    $('#edit_starts_vis-'+pricing_id).datepicker( {
+        altFormat: 'yy-mm-dd',
+        altField: '#edit_starts-'+pricing_id,
+        dateFormat: 'M d, yy'
+    });
+    var date = $("#pricing_date-"+pricing_id).text();
+    if(date==""){
+        $('#edit_starts_vis-'+pricing_id).replaceWith("<span id='#edit_starts-"+pricing_id+"'>-</span>");
+    }
+    else{
+        $('#edit_starts_vis-'+pricing_id).datepicker("setDate", date);
+    }
+    $("#edit_amount-"+pricing_id).val($("#pricing_amount-"+pricing_id).text());
+    $("#pricing-"+pricing_id).hide();
+    $("#edit_pricing-"+pricing_id).show();
+};
+function cancel_edit_pricing(){
+    var pricing_id = $(this).attr('id').split('-')[1];
+    $("#pricing-"+pricing_id).show();
+    $("#edit_pricing-"+pricing_id).hide();
+};
+function save_edited_pricing(){
+    var pricing_id = parseInt($(this).attr('id').split('-')[1]);
+    $(this).checkValidity();
+    function on_edit_error(resp) {
+        alert('error updating pricings: ' + resp.error.message);
+    };
+    function on_edit_success () {
+        load_tariff_pricings();
+    };
+    var params = {"pricing_id":pricing_id, "amount":$("#edit_amount-"+pricing_id).val()};
+    var starts = $("#edit_starts-"+pricing_id).val();
+    if(starts!="-")
+        params['starts'] = starts;
+    jsonrpc("pricing.update", params, on_edit_success, on_edit_error);
+    return false;
+};
+function delete_pricing(){
+    var pricing_id = $(this).attr('id').split('_')[1];
+    function on_delete_pricing_error(resp) {
+        alert('error deleting pricings: ' + resp.error.message);
+    };
+    function on_delete_pricing_success () {
+        load_tariff_pricings();
+    };
+    jsonrpc("pricings.delete", {"pricing_id":pricing_id}, on_delete_pricing_success, on_delete_pricing_error);
+};
 setup_routing();
