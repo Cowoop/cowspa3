@@ -28,6 +28,7 @@ class ResourceCreate(BasePage):
         form.add_field('Picture', tf.INPUT(name="picture", id="picture", type="file", accept="image/*"), "Suggested Image Dimensions : 250x250.")
         form.add_field('Short Description', tf.TEXTAREA( id='short_description', name='short_description'))
         form.add_field('Long Description', tf.TEXTAREA(id='long_description', name='long_description'))
+        form.add_field('Accounting Code', tf.INPUT(type='text', id='accnt_code', name='accnt_code'))
         form.add_buttons(tf.BUTTON("Save", type='submit'))
         container.form = form.build()
         container.script = sphc.more.script_fromfile("fe/src/js/resource_create.js")

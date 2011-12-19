@@ -186,7 +186,8 @@ class Resource(PGStore):
     picture TEXT,
     archived BOOLEAN DEFAULT False,
     follow_owner_taxes BOOLEAN DEFAULT True,
-    default_taxes BYTEA
+    default_taxes BYTEA,
+    accnt_code TEXT
     """
     pickle_cols = ['default_taxes']
 
