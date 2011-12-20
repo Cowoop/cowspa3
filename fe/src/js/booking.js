@@ -5,7 +5,7 @@ var new_booking_date = null;
 var dropped_slot = null;
 
 function error(resp) {
-    alert('Remote error: ' + resp.result.message);
+    alert('Remote error: ' + resp.error.message);
 };
 
 function add_days(adate, days) {
@@ -41,11 +41,18 @@ function on_get_usages(resp) {
 };
 
 function get_usages(resource_id) {
-    params = {'resource_ids': [resource_id],
+    var params = {'resource_ids': [resource_id],
         'start': to_iso_date(add_days(get_selected_date(), -3)),
         'end': to_iso_date(add_days(get_selected_date(), 3))
     };
     jsonrpc("usages.find", params, on_get_usages, error);
+};
+
+function get_bookings(start, end, bizplace_id) {
+    var params = { res_owner_ids: current_ctx,
+        start: null, // TODO
+        end: null // TODO
+    };
 };
 
 function mark_slot(usage) {

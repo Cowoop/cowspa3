@@ -170,7 +170,7 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False):
+def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False, calc_mode=[]):
     clauses = []
 
     if start: clauses.append('start_time >= %(start_time)s')
@@ -182,7 +182,8 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
     if uninvoiced: clauses.append('invoice IS null')
     if only_non_cancelled: clauses.append('cancelled_against IS null')
-    
+    if calc_mode: clauses.append('calc_mode IN %(calc_mode)s')
+
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
@@ -267,7 +268,7 @@ def search_member(query_parts, options, limit, mtype):
         values['mtype'] = mtype
     query  += ' WHERE '+clause+' LIMIT %(limit)s'
     values['member_id'] =  env.context.user_id
-    
+
     return member_store.query_exec(query, values)
 
 def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
@@ -362,4 +363,3 @@ class OidGenerator(object):
     @staticmethod
     def get_otype(oid):
         return oidgen_store.get(oid, fields=['type'])
-

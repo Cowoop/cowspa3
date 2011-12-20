@@ -1,6 +1,8 @@
 import datetime
+import itertools
 import be.repository.access as dbaccess
 import be.apis.pricing as pricinglib
+import be.apis.resource as resourcelib
 
 usage_store = dbaccess.stores.usage_store
 
@@ -12,7 +14,7 @@ class UsageCollection:
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-        
+
         if not cancelled_against:
             calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost))
         if not cost: cost = calculated_cost
@@ -35,22 +37,27 @@ class UsageCollection:
         del(data['invoice'])
         if amount: usage_store.update(usage_id, cost=amount)
         return self.new(**data)
-        
+
     def delete(self, usage_id, amount=None):
-        return self.cancel(usage_id, amount) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id) 
+        return self.cancel(usage_id, amount) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id)
 
     def bulk_delete(self, usage_ids, amount=None):
         for usage_id in usage_ids:
             self.delete(usage_id, amount)
-        return True    
-    
-    def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False):
+        return True
+
+    def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False, calc_mode=[]):
         """
         returns list of usage dicts which are filtered on the basis of specified criteria
         start end: if specified, usages with start time falling in start-end range would be searched
         """
         assert (start or end or invoice_id or res_owner_ids or resource_ids or member_ids or resource_types), 'atleast one criteria'
-        return dbaccess.find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced, only_non_cancelled)
+        return dbaccess.find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced, only_non_cancelled, calc_mode)
+
+    def find_by_date(self, *args, **kw):
+        bookings = self.find(*args, **kw)
+        grouper = lambda b: b.start_time.date()
+        return [dict(date=date, bookings=tuple(g)) for date, g in itertools.groupby(bookings, grouper)]
 
 class UsageResource:
 
