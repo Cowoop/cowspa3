@@ -5,11 +5,18 @@ import be.errors
 import commonlib.helpers
 import be.libs.cost as costlib
 import be.libs.signals as signals
+import calendar
 
 odict = commonlib.helpers.odict
 
 resource_store = dbaccess.resource_store
 pricing_store = dbaccess.pricing_store
+
+class CalcMode:
+
+    quantity_based = 0
+    time_based = 1
+    monthly = 2
 
 def new(resource_id, tariff_id, starts, amount, ends=None):
 
@@ -164,11 +171,13 @@ class InitialCost(costlib.Rule):
     name = 'Initial Cost'
     def apply(self, env, usage, cost):
         resource = resource_store.get(usage.resource_id)
-        if resource.calc_mode == 1:
-            usage['quantity'] = costlib.to_decimal((usage.ends - usage.starts).seconds / 3600.0)
-        rate = pricings.get(usage.member_id, usage.resource_id, usage.starts)
+        if resource.calc_mode == CalcMode.time_based:
+            usage['quantity'] = (usage.ends - usage.starts).total_seconds() / 3600.0
+        elif resource.calc_mode == CalcMode.monthly:
+            usage['quantity'] = ((usage.ends - usage.starts).days + 1) / float(calendar.monthrange(usage.starts.year, usage.starts.month)[1])
+        rate = float(pricings.get(usage.member_id, usage.resource_id, usage.starts))
         amount = rate * usage.quantity
-        cost.new(self.name, amount)
+        cost.new(self.name, costlib.to_decimal(amount))
         return costlib.flags.proceed
 
 class Taxes(costlib.Rule):

@@ -7,6 +7,7 @@ import bases.app as applib
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 import be.apis.usage as usagelib
+import be.apis.resource as resourcelib
 
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
