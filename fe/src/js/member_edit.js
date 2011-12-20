@@ -318,6 +318,7 @@ function save_next_tariff() {
         $("#next-tariff-form").dialog("close"); 
         window.location.reload();
         $("#next-tariff-form .action-status").text("").removeClass('status-fail');
+        is_get_thismember_usages_done = false;
     };
     function error(resp) {
         $("#next-tariff-form .action-status").text(resp.error.data).addClass("status-fail");
@@ -390,7 +391,8 @@ function bind_cancel_and_change_tariff() {
     $('.cancel-sub').click(function(){
         var params = {'membership_id': $(this).attr('id').split("-")[1]};
         function success(response) {
-            $("#tariff_row-"+params['membership_id']).hide();     
+            $("#tariff_row-"+params['membership_id']).hide();
+            is_get_thismember_usages_done = false; 
         };
         function error(){};
         if(confirm("Do you want to remove?")){
@@ -429,6 +431,7 @@ function bind_cancel_and_change_tariff() {
                 $("#tariff_row-"+membership_id+" #tariff_name").text($("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text());
                 $("#change-tariff-form .action-status").text("").removeClass("status-success status-fail");
                 $('#change-tariff-form').dialog("close");
+                is_get_thismember_usages_done = false;
             };
             function error() {
                 $("#change-tariff-form .action-status").text("Error in Changing Tariff. Try again").addClass("status-fail");
@@ -451,7 +454,8 @@ $('#stop_date').datepicker( {
 });
 $("#stop_membership").submit(function(){
     function on_stop_membership_success(res) {
-        };
+        is_get_thismember_usages_done = false;
+    };
     function on_stop_membership_error(){};
     var params = {'membership_id':thismember.memberships[0].id, 'ends':to_iso_date($('#stops').val())};
     jsonrpc('membership.stop', params, on_stop_membership_success, on_stop_membership_error);
