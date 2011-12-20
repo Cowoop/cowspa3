@@ -73,6 +73,7 @@ class ResourceManage(BasePage):
         resource_edit_form.add_field("Picture", tf.INPUT(id="picture", type="file"), "Suggested Image Dimensions : 250x250.")
         resource_edit_form.add_field("Short Description", tf.TEXTAREA(id="short_desc"))
         resource_edit_form.add_field("Long Description", tf.TEXTAREA(id="long_desc"))
+        resource_edit_form.add_field('Accounting Code', tf.INPUT(type='text', id='accnt_code', name='accnt_code'))
         resource_states = tf.DIV()
         resource_states.state1 = tf.INPUT(id="state_enabled", type="checkbox")
         resource_states.label1 = tf.C("Enabled")
