@@ -73,12 +73,12 @@ function jsonrpc(apiname, params, success, error) {
     waiting_ele.addClass('waiting');
     if (!error) { function error(resp) { alert('Remote error: ' + resp.error.message); }; }
     function cs_success(args) {
-        success(args);
         waiting_ele.removeClass('waiting');
+        success(args);
     };
     function cs_error(args) {
-        error(args);
         waiting_ele.removeClass('waiting');
+        error(args);
     };
     $.jsonRPC.request(apiname, {
         params: params,
@@ -225,15 +225,25 @@ if(params['user_id']) {
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
+function format_date(thedate, format) {
+    // http://docs.jquery.com/UI/Datepicker/formatDate
+    return $.datepicker.formatDate(format, thedate);
+};
 function iso2date(iso) {
     if(iso=="" || iso==null)
         return "";
     var yy = parseInt(iso.slice(0, 4));
     var mm = parseInt(iso.slice(5, 7)-1);
     var dd = parseInt(iso.slice(8, 10));
-    var hh = parseInt(iso.slice(11, 13));
-    var mi = parseInt(iso.slice(14, 16));
-    var ss = parseInt(iso.slice(17, 19));
+    if (iso.length > 11) { // this won't work after year 9999 or before year 1000
+        var hh = parseInt(iso.slice(11, 13));
+        var mi = parseInt(iso.slice(14, 16));
+        var ss = parseInt(iso.slice(17, 19));
+    } else {
+        var hh = 0;
+        var mi = 0;
+        var ss = 0;
+    };
     var dt = new Date(yy, mm, dd, hh, mi, ss);
     return dt;
 };

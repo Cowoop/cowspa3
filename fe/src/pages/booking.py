@@ -42,10 +42,16 @@ def booking_form():
     form.add_buttons(tf.INPUT(type="submit", value="Add booking"))
     return form.build()
 
-class Booking(BasePage):
+class BookingPage(BasePage):
     current_nav = 'Bookings'
-    title = 'Booking'
+    title = 'Bookings'
+    content_menu = [tf.A('+ New', href="/${lang}/${theme}/booking/new", Class="item"),
+        tf.C('|', Class="item-w"),
+        tf.C('Agenda', Class="item"),
+        tf.A("Week", href="/${lang}/${theme}/booking/week", Class="item"),
+        tf.A("Month", href="/${lang}/${theme}/booking/month", Class="item")]
 
+class Booking(BookingPage):
     def content(self):
         container = tf.DIV()
 
@@ -69,5 +75,28 @@ class Booking(BasePage):
         container.booking_pane = booking_pane
 
         container.script = sphc.more.script_fromfile("fe/src/js/booking.js")
+
+        return container
+
+class WeekAgenda(BookingPage):
+    def content(self):
+        container = tf.DIV(id="agenda")
+
+        bookings_tmpl = sphc.more.jq_tmpl('bookings-tmpl')
+        bookings_tmpl.aday = tf.DIV(Class="aday")
+        bookings_tmpl.aday.date = tf.DIV(Class="date")
+        bookings_tmpl.aday.date.month = tf.SPAN("${format_date(iso2date(date), 'MM')}", Class="month")
+        bookings_tmpl.aday.date.day = tf.SPAN("${iso2date(date).getDate()}", Class="day")
+        bookings_tmpl.aday.date.year = tf.SPAN("${format_date(iso2date(date), 'DD')}", Class="year")
+        bookings_tmpl.aday.bookings = tf.DIV(Class="data")
+        bookings_tmpl.aday.bookings.loop_start = "{{each bookings}}"
+        bookings_tmpl.aday.bookings.booking = tf.DIV(Class="booking")
+        bookings_tmpl.aday.bookings.booking.name = tf.DIV("${resource_name}", Class="name")
+        bookings_tmpl.aday.bookings.booking.timw = tf.DIV("${start_time} - ${end_time}")
+        bookings_tmpl.aday.bookings.booking.member = tf.DIV("${member_name}", Class="member-name")
+        bookings_tmpl.aday.bookings.loop_end = "{{/each}}"
+
+        container.bookings_tmpl = bookings_tmpl
+        container.script = sphc.more.script_fromfile("fe/src/js/booking_agenda.js")
 
         return container

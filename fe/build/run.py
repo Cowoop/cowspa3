@@ -107,7 +107,8 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(pagelib.LogoutPage, 'logout'),
          PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoices/preferences'),
          PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoices/history'),
-         PageBuilder(bookingpages.Booking, prefix + 'booking'),
+         PageBuilder(bookingpages.Booking, prefix + '/booking/new'),
+         PageBuilder(bookingpages.WeekAgenda, prefix + '/booking/week'),
          PageBuilder(fe.src.pages.team.List, prefix + 'team')
         ]
 
