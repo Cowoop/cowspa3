@@ -85,9 +85,9 @@ class WeekAgenda(BookingPage):
         bookings_tmpl = sphc.more.jq_tmpl('bookings-tmpl')
         bookings_tmpl.aday = tf.DIV(Class="aday")
         bookings_tmpl.aday.date = tf.DIV(Class="date")
-        bookings_tmpl.aday.date.month = tf.SPAN("${format_date(iso2date(date), 'MM')}", Class="month")
-        bookings_tmpl.aday.date.day = tf.SPAN("${iso2date(date).getDate()}", Class="day")
         bookings_tmpl.aday.date.year = tf.SPAN("${format_date(iso2date(date), 'DD')}", Class="year")
+        bookings_tmpl.aday.date.day = tf.SPAN("${iso2date(date).getDate()}", Class="day")
+        bookings_tmpl.aday.date.month = tf.SPAN("${format_date(iso2date(date), 'MM')}", Class="month")
         bookings_tmpl.aday.bookings = tf.DIV(Class="data")
         bookings_tmpl.aday.bookings.loop_start = "{{each bookings}}"
         bookings_tmpl.aday.bookings.booking = tf.DIV(Class="booking")

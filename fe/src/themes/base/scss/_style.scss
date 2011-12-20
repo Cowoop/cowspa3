@@ -697,7 +697,8 @@ button[disabled], button[disabled]:hover {
     border: 1px solid;
     .title {
         display: inline-block;
-        width: 40%;
+        width: auto;
+        line-height: 1em;
         font-size: 2.2em;
         text-align: left;
         padding-right: 1em;
@@ -706,7 +707,7 @@ button[disabled], button[disabled]:hover {
     }
     .menu {
         display: inline-block;
-        width: 50%;
+        width: auto;
         padding: 0.3em 0.5em 0;
         float: right;
         text-align: right;
