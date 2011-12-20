@@ -134,7 +134,7 @@ def update(membership_id, **mod_data):
             create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), ends,\
              old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
     else:
-        create_membership_usages(starts, ends, membership['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+        create_membership_usages(starts, ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
     
     return membership_store.update(membership_id, **mod_data)
 
