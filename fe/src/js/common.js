@@ -43,24 +43,23 @@ $.jsonRPC.setup({
     namespace: ''
 });
 
+function set_locale(resp) {
+    localeData.currencySymbol = resp.result.symbol;
+    localeData.decimal_sep = resp.result.decimal;
+    localeData.group_sep = resp.result.group;
+};
+
 function set_context(ctx) {
-    function success(resp) {
-        localeData.currencySymbol = resp['result'].symbol
-        localeData.decimal_sep = resp['result'].decimal
-        localeData.group_sep = resp['result'].group
-    }
-    function error() {
-    }
-    var params = {'bizplace_id': ctx, 'user_id': current_userid};
-    jsonrpc('bizplace.currency', params, success, error);
     current_ctx = ctx;
     if (ctx == null) {
         delete_cookie("current_ctx");
     } else {
+        var params = {'bizplace_id': ctx, 'user_id': current_userid};
+        jsonrpc('bizplace.currency', params, set_locale);
         set_cookie("current_ctx", ctx);
+        $('.ctx-opt').removeClass('current-ctx');
+        $('#ctx_' + ctx).addClass('current-ctx');
     };
-    $('.ctx-opt').removeClass('current-ctx');
-    $('#ctx_' + ctx).addClass('current-ctx');
 };
 
 function set_userid(uid) {
