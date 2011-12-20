@@ -209,6 +209,7 @@ $("#resource_edit_form #update_resource-btn").click(function(){
         $("#short_description_"+params['res_id']).text(params['short_description']);
         resource_list[res_id].state = params.state
         resource_list[res_id]['long_description'] = params['long_description'];
+        resource_list[res_id]['accnt_code'] = params['accnt_code'];
         resource_list[res_id].flag = resource_list[res_id].state['enabled']?1:0;
         resource_list[res_id].flag |= resource_list[res_id].state['host_only']?2:0;
         resource_list[res_id].flag |= resource_list[res_id].state['repairs']?4:0;
@@ -247,6 +248,7 @@ $("#resource_edit_form #update_resource-btn").click(function(){
     params['type'] = $("#type").val();
     params['short_description'] = $("#short_desc").val();
     params['long_description'] = $("#long_desc").val();
+    params['accnt_code'] = $("#accnt_code").val();
     params['calc_mode'] = time_based_map[$("#time_based:checked").val()];
     params.state = {};
     params.state['enabled'] = checked_map[$("#state_enabled:checked").val()];
@@ -268,6 +270,7 @@ function resource_editing() {
     $("#type option[value='" + this_resource.type + "']").attr('selected', 'selected');
     $("#short_desc").val(this_resource.short_description);
     $("#long_desc").val(this_resource.long_description);
+    $("#accnt_code").val(this_resource.accnt_code);
     $("#time_based").attr('checked', this_resource.calc_mode==calc_map.time_based);
     $("#state_enabled").attr('checked', this_resource.state.enabled);
     $("#state_host_only").attr('checked', this_resource.state.host_only);
