@@ -175,11 +175,11 @@ def add_tariffs_section(container):
     change_tariff_section.tmpl = tariff_list_row
     container.change_tarrif = change_tariff_section
     
-    stop_membership_form = sphc.more.Form(id='stop_membership', classes=['hform'])
-    stop_membership_form.add_field("End Date", tf.INPUT(id="stop_date", type="text").set_required())
-    stop_membership_form.add_field("", tf.INPUT(type="hidden", id='stops'))
-    stop_membership_form.add_buttons(tf.INPUT(id="stop-btn", value="Stop", type="submit"))
-    container.stop_membership = stop_membership_form.build()
+    #stop_membership_form = sphc.more.Form(id='stop_membership', classes=['hform'])
+    #stop_membership_form.add_field("End Date", tf.INPUT(id="stop_date", type="text").set_required())
+    #stop_membership_form.add_field("", tf.INPUT(type="hidden", id='stops'))
+    #stop_membership_form.add_buttons(tf.INPUT(id="stop-btn", value="Stop", type="submit"))
+    #container.stop_membership = stop_membership_form.build()
     
 def make_buttons():
     container = tf.DIV()
