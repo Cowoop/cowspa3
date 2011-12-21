@@ -3,8 +3,8 @@ var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx")):null
 var current_userid = parseInt($.cookie("user_id"));
 var member_name = $.cookie("member_name");
 var basepath = window.location.pathname.split('/').slice(0,3).join('/');
-var localeData = {
-                    currencySymbol:'$',
+var locale_data = {
+                    currency_symbol:'$',
                     decimal_sep:'.',
                     group_sep:','
                  }; //default values
@@ -26,13 +26,13 @@ function set_cookie(cookie_name, value) {
 function delete_cookie(cookie_name) {
     return $.cookie(cookie_name, null, cookie_opts);
 };
-function formatCurrency(num) {
+function format_currency(num) {
 
     return accounting.formatMoney(num,
               {
-                symbol: localeData.currencySymbol,
-                thousand: localeData.group_sep,
-                decimal:localeData.decimal_sep
+                symbol: locale_data.currency_symbol,
+                thousand: locale_data.group_sep,
+                decimal:locale_data.decimal_sep
               }
            );
 }
@@ -44,18 +44,21 @@ $.jsonRPC.setup({
 });
 
 function set_locale(resp) {
-    localeData.currencySymbol = resp.result.symbol;
-    localeData.decimal_sep = resp.result.decimal;
-    localeData.group_sep = resp.result.group;
+    locale_data.currency_symbol = resp.result.symbol;
+    locale_data.decimal_sep = resp.result.decimal;
+    locale_data.group_sep = resp.result.group;
 };
 
 function set_context(ctx) {
+    function error() {
+        alert('Error setting locale data');
+    }
     current_ctx = ctx;
     if (ctx == null) {
         delete_cookie("current_ctx");
     } else {
         var params = {'bizplace_id': ctx, 'user_id': current_userid};
-        jsonrpc('bizplace.currency', params, set_locale);
+        jsonrpc('bizplace.currency', params, set_locale, error);
         set_cookie("current_ctx", ctx);
         $('.ctx-opt').removeClass('current-ctx');
         $('#ctx_' + ctx).addClass('current-ctx');

@@ -2,12 +2,6 @@ var tariff_baseurl =  basepath + '/tariffs/';
 var tariff_id = null;
 var action_status = $('#tariff_form .action-status');
 
-$("#tariff_form #name").val("");
-$("#tariff_form #short_description").val("");
-$("#tariff_form #default_price").val("");
-$('#tariff_form #def_price').show();
-$("#tariff_form").show();
-
 function create_tariff() {
     var inputs = $('#tariff_form').serializeArray();
     var params = {}
@@ -33,10 +27,13 @@ $("#cancel-btn").click(function (){
     window.location = tariff_baseurl;
 });
 
-$("#tariff_form #name").val("");
-$("#tariff_form #short_description").val("");
-$("#tariff_form #default_price").val("");
-$("#tariff_form").show();
+$(document).ready(function() {
+    $("#tariff_form #name").val("");
+    $("#tariff_form #short_description").val("");
+    $("#tariff_form #default_price").val("");
+    $("#tariff_form [for='default_price']").text($("#tariff_form [for='default_price']").text() + ' (' + locale_data.currency_symbol + ')')
+    $("#tariff_form").show();
+});
 
 $('#tariff_form').submit(function () {
     var theform = $(this);

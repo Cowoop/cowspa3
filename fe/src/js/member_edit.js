@@ -582,7 +582,7 @@ function get_uninvoiced_usages(){
                 { "sTitle": "Quantity", "sWidth":"10%"},
                 { "sTitle": "Cost",  "sWidth":"10%",
                     "fnRender": function(obj) {
-                            var sReturn = formatCurrency(obj.aData[ obj.iDataColumn ]);
+                            var sReturn = format_currency(obj.aData[ obj.iDataColumn ]);
                             return sReturn;
                     }
                 },
@@ -626,7 +626,8 @@ function handle_edit_usage(usage_id){
         $("#edit_usage-form #res_quantity").val(info.quantity);
         $("#edit_usage-form #res_start_time").val(to_formatted_datetime(info.start_time));
         $("#edit_usage-form #res_end_time").val(to_formatted_datetime(info.end_time));
-        $("#edit_usage-form #res_cost").val(info.cost);        
+        $("#edit_usage-form #res_cost").val(info.cost);
+        $("[for='res_cost']").text($("[for='res_cost']").text()+' (' +locale_data.currency_symbol+')')
     };
     function on_get_usage_info_error(){
     };
