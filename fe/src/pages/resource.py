@@ -109,7 +109,7 @@ class ResourceManage(BasePage):
         pricing.pricing_tmpl.pricing = tf.DIV(Class="pricing")
         view_pricing = tf.DIV(id="pricing-${id}")
         view_pricing.starts = tf.SPAN("${starts}", Class="pricing-date", id="pricing_date-${id}")
-        view_pricing.amount = tf.SPAN("${amount}", id="pricing_amount-${id}")
+        view_pricing.amount = tf.SPAN("${amount}", Class="pricing-amt", id="pricing_amount-${id}")
         view_pricing.edit = tf.SPAN(tf.A("Edit", id="pedit-${id}", Class="pricing_edit-link"))
         view_pricing.cancel = tf.SPAN(tf.A("X", id="pricing_${id}", Class="cancel-x"))
         edit_pricing = tf.FORM(id="edit_pricing-${id}", Class="edit-pricing hidden", method="POST")

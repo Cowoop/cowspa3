@@ -294,6 +294,9 @@ function on_tariff_pricings(resp) {
     $('.pricing-date').each( function() {
         $(this).text(to_formatted_date($(this).text()));
     });
+    $('.pricing-amt').each( function() {
+        $(this).text(format_currency($(this).text()));
+    });
     $(".pricing .cancel-x").attr('href', window.location.hash);
     $(".pricing .cancel-x").click(delete_pricing);
     $(".pricing_edit-link").attr('href', window.location.hash);
@@ -359,7 +362,7 @@ function edit_pricing(){
     else{
         $('#edit_starts_vis-'+pricing_id).datepicker("setDate", date);
     }
-    $("#edit_amount-"+pricing_id).val($("#pricing_amount-"+pricing_id).text());
+    $("#edit_amount-"+pricing_id).val(accounting.unformat($("#pricing_amount-"+pricing_id).text()));
     $("#pricing-"+pricing_id).hide();
     $("#edit_pricing-"+pricing_id).show();
 };

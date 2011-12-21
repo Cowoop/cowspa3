@@ -711,7 +711,12 @@ function get_invoice_tab_data(){
             "sPaginationType": "full_numbers",
             "aoColumns": [
                 { "sTitle": "Id" },
-                { "sTitle": "Cost" },
+                { "sTitle": "Cost",
+                    "fnRender": function(obj) {
+                            var sReturn = format_currency(obj.aData[ obj.iDataColumn ]);
+                            return sReturn;
+                    }
+                },
                 { "sTitle": "Date",
                 "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
