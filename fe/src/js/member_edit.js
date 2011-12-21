@@ -446,7 +446,7 @@ function bind_cancel_and_change_tariff() {
     });
 };   
 //***********************End Cancel/Change Tariff*******************************
-//-------------------------Stop Membership--------------------------------------
+/*-------------------------Stop Membership--------------------------------------
 $('#stop_date').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#stops',
@@ -461,7 +461,7 @@ $("#stop_membership").submit(function(){
     jsonrpc('membership.stop', params, on_stop_membership_success, on_stop_membership_error);
     return false;
 });
-//------------------------End Stop Membership-----------------------------------
+//------------------------End Stop Membership-----------------------------------*/
 //****************************Usage Management********************************** 
 //-----------------------------Get Resources------------------------------------
 function on_get_resources_success(res) {
