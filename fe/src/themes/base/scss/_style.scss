@@ -1047,11 +1047,12 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 
 .tax-name, .tax-value {
         display: inline-block;
-        width: 45%;
+        width: 36%;
     }
 .tax-delete {
         display: inline-block;
         width: 10%;
+        text-align: center;
     }
 
 #agenda {

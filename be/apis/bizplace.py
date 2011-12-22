@@ -14,7 +14,7 @@ class BizplaceCollection:
             long_description=None, tags=None, website=None, blog=None,
             twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
             skype=None, mobile=None, currency=None, host_email=None,
-            booking_email=None, tz='UTC'):
+            booking_email=None, tz='UTC', tax_included=True, default_taxes=None):
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
         data = dict(id=bizplace_id, name=name, created=created,
@@ -27,7 +27,7 @@ class BizplaceCollection:
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id))
+        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, tax_included=tax_included, default_taxes=default_taxes))
         default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
         bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 

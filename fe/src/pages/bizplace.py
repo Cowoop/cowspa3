@@ -44,6 +44,21 @@ def get_location_form():
     contact.add_field('Host Email', sphc.tf.INPUT(type='email', id='host_email',
         name='host_email'))
 
+    taxes = form.add(sphc.more.Fieldset(id="tax_fields"))
+    taxes.add(sphc.tf.LEGEND('Taxes'))
+    taxes.add_field("",tf.DIV([tf.INPUT(id="taxes_included", type="checkbox", Class="taxes"), tf.label("Taxes are included")], Class="taxes"))
+    add_tax = tf.DIV(id="add_tax")
+    add_tax.name = tf.DIV(tf.INPUT(placeholder="Tax name", type="text", id='new_tax', Class="taxes"), Class='tax-name')
+    add_tax.value = tf.DIV(tf.INPUT(placeholder="Value", type="text", id='new_value', Class="taxes"), Class='tax-value')
+    add_tax.action = tf.DIV(tf.BUTTON("Add", type="button", id="add_tax-btn"), Class="tax-delete")    
+    taxes.add_field("", tf.DIV(add_tax, id="taxes_list", Class="taxes"))
+    
+    tax_template = form.add(sphc.more.jq_tmpl('tax_tmpl'))
+    tax_template.new_tax = tf.DIV(Class="new-tax")
+    tax_template.new_tax.name = tf.DIV(tf.INPUT(type="text", value="${name}", Class="taxes new-name").set_required(), Class='tax-name')
+    tax_template.new_tax.value = tf.DIV(tf.INPUT(type="text", value="${value}", Class="taxes new-value").set_required(), Class='tax-value')
+    tax_template.new_tax.delete = tf.DIV(tf.A("X", type="button", href="#"), Class="tax-delete remove-tax")
+    
     return form
 
 class Create(BasePage):
