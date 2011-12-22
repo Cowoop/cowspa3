@@ -290,7 +290,8 @@ function to_formatted_date(date){
     }
     var fdate = new Date(date);
     return $.datepicker.formatDate('M dd, yy', fdate);
-}
+};
+
 function to_formatted_datetime(date){
     if(date==null || date==""){
         return "";
@@ -309,7 +310,18 @@ function to_formatted_datetime(date){
     //ss = (ss<10?"0":"") + ss;
     time = hh + ":" +  mm + time
     return $.datepicker.formatDate('M dd, yy', fdate) + " " + time;
-}
+};
+
+function get_week_range(adate, start) {
+    // http://stackoverflow.com/a/8381494/84513
+    start = start || 0;
+    var day = adate.getDay() - start;
+    var date = adate.getDate() - day;
+
+    var start = new Date(adate.setDate(date));
+    var end = new Date(adate.setDate(date + 6));
+    return [start, end];
+};
 
 function set_member_name(name) {
     set_cookie('member_name', name);
