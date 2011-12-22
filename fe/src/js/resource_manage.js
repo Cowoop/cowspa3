@@ -280,6 +280,9 @@ function resource_editing() {
 function on_resource_pricings(resp) {
     this_res_pricing = resp.result;
     $('#price-tmpl').tmpl(this_res_pricing).appendTo('#current-prices');
+    $('.text-xl').each( function() {
+        $(this).text(format_currency($(this).text()));
+    });
     $('#res-pricing-content').show();
 };
 
