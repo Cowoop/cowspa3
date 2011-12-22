@@ -171,23 +171,30 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
 
 
 def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False, calc_mode=[]):
-    clauses = []
 
+    clauses = []
+    if resource_ids: clauses.append('(id IN %(resource_ids)s)')
+    if res_owner_ids: clauses.append('(owner IN %(owner_ids)s)')
+    if resource_types: clauses.append('(type IN %(resource_types)s)')
+    if calc_mode: clauses.append('calc_mode IN %(calc_mode)s')
+    clauses_s = ' AND '.join(clauses)
+    clause_values = dict(resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types), calc_mode=tuple(calc_mode))
+    resource_rows = resource_store.get_by_clause(clauses_s, clause_values, fields=['id'], hashrows=False)
+    resource_filter = tuple(row[0] for row in resource_rows)
+
+    clauses = []
+    if resource_ids: clauses.append('resource_id IN %(resource_filter)s')
     if start: clauses.append('start_time >= %(start_time)s')
     if end: clauses.append('start_time <= %(end_time)s')
     if invoice_id: clauses.append('invoice = %(invoice_id)s')
-    if res_owner_ids: clauses.append('(resource_id IN (SELECT id FROM resource WHERE owner IN %(owner_ids)s))')
-    if resource_ids: clauses.append('(resource_id IN %(resource_ids)s)')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
-    if resource_types: clauses.append('(resource_id IN (SELECT id FROM resource WHERE type IN %(resource_types)s))')
     if uninvoiced: clauses.append('invoice IS null')
     if only_non_cancelled: clauses.append('cancelled_against IS null')
-    if calc_mode: clauses.append('calc_mode IN %(calc_mode)s')
 
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
-    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types))
 
     fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id']
+    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids))
     return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
