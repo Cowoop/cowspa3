@@ -1055,6 +1055,11 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     }
 
 #agenda {
+    #month-picker {
+        border: none;
+        border-bottom: 1px solid $main-color; 
+        background: none;
+    }
     .aday {
         margin-bottom: 0.5em;
         border-bottom: 1px dotted;
@@ -1064,7 +1069,8 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
             margin: 0.5em;
             padding: 0.2em;
             font-style: normal;
-            width: 10%;
+            width: 8em;
+            text-align: center;
             .month {
                 display: block;
                 font-size: 90%;
@@ -1076,6 +1082,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
             .day {
                 font-size: 2.5em;
                 line-height: 1em;
+                font-weight: bold;
             }
             .year {
                 display: block;
@@ -1105,4 +1112,3 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #signup-box.ui-widget-content label{color:$other-text-color;}
 .ui-icon { display: inline-block; }
 .ui-state-default, .ui-widget-header { background: none; font-size: 110%; border: none; border-bottom: 1px solid;} // removes background images behind jqui tabs
-

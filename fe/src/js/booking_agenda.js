@@ -1,6 +1,6 @@
-function get_bookings() {
+function get_bookings(start, end) {
     var params = {};
-    params = {start: '2011-12-01', end: '2011-12-31', res_owner_ids:[9]};
+    params = {start: start, end: end, res_owner_ids:[current_ctx], calc_mode:[1]};
     jsonrpc('usages.find_by_date', params, on_find_usages);
 };
 
@@ -10,7 +10,18 @@ function on_find_usages(resp) {
 };
 
 function render_bookings(bookings) {
-    $('#bookings-tmpl').tmpl(bookings).appendTo('#agenda');
+    $('#pane-booking').empty();
+    $('#bookings-tmpl').tmpl(bookings).appendTo('#pane-booking');
 };
 
-get_bookings();
+$('#booking-date-inp').datepicker( {
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    dateFormat: 'MM yy',
+    onSelect: function(dateText, ui) { 
+        var selected = new Date(ui.selectedYear, ui.selectedMonth, ui.selectedDay);
+        var week_start_end = get_week_range(selected);
+        get_bookings(week_start_end[0], week_start_end[1]);
+    }
+});

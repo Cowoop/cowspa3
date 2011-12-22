@@ -60,7 +60,7 @@ class Booking(BookingPage):
         resource_pane.resource_opt.opt = tf.OPTION("${name}", value="${id}")
         resource_pane.select = tf.SELECT(id='resource-select')
         resource_pane.select.option = tf.OPTION("Select a resource", disabled="true", selected="selected")
-        resource_pane.date = tf.SPAN(type="text", id="booking-date-inp")
+        resource_pane.date = tf.SPAN(id="booking-date-inp")
 
         booking_pane = tf.DIV(id="pane-booking")
         booking_pane.topbar = tf.DIV(id="booking-menu")
@@ -82,6 +82,13 @@ class WeekAgenda(BookingPage):
     def content(self):
         container = tf.DIV(id="agenda")
 
+        resource_pane = tf.DIV(id="pane-resource")
+        #resource_pane.monthselector = tf.INPUT(id="month-picker", type="text", placeholder="Select Month")
+        resource_pane.date = tf.SPAN(type="text", id="booking-date-inp")
+        #resource_pane.monthselector = tf.DIV(id="month-picker")
+        #resource_pane.monthselector = tf.INPUT(id="month-selected", type="hidden")
+
+        booking_pane = tf.DIV(id="pane-booking")
         bookings_tmpl = sphc.more.jq_tmpl('bookings-tmpl')
         bookings_tmpl.aday = tf.DIV(Class="aday")
         bookings_tmpl.aday.date = tf.DIV(Class="date")
@@ -96,7 +103,11 @@ class WeekAgenda(BookingPage):
         bookings_tmpl.aday.bookings.booking.member = tf.DIV("${member_name}", Class="member-name")
         bookings_tmpl.aday.bookings.loop_end = "{{/each}}"
 
+        container.resource_pane = resource_pane
+        container.booking_pane = booking_pane
         container.bookings_tmpl = bookings_tmpl
+        #container.mp_script = tf.SCRIPT(src='https://raw.github.com/lucianocosta/jquery.mtz.monthpicker/master/jquery.mtz.monthpicker.js')
+        #container.mp_script = tf.SCRIPT(src='http://ec2-46-137-53-243.eu-west-1.compute.amazonaws.com/jquery-ui-monthpicker/jquery.ui.monthpicker.js')
         container.script = sphc.more.script_fromfile("fe/src/js/booking_agenda.js")
 
         return container
