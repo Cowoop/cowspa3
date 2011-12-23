@@ -2,6 +2,7 @@ var tariff_baseurl =  basepath + '/tariffs/';
 var tariff_id = null;
 var action_status = $('#tariff_form .action-status');
 var tariffs_title = $('#content-title').text();
+var tariff_pricing = null;
 
 function update_tariff(theform) {
     var inputs = theform.serializeArray();
@@ -26,15 +27,44 @@ function update_tariff(theform) {
 
 $("#cancel-btn").click(function (){
     $("#tariff_form").hide();
+    $("#tariff-pricing-content").hide();
     $("#new-tariff").show();
     $("#tariff_list").show();
     $('#content-title').text(tariffs_title);
     window.location = tariff_baseurl;
 });
 
+$('#new-starts-vis').datepicker( {
+    altFormat: 'yy-mm-dd',
+    altField: '#new-starts',
+    dateFormat: 'M d, yy'
+});
+
+function on_tariff_pricing(resp) {
+    tariff_pricing = resp.result;
+    $('#old-pricing-tmpl').tmpl(resp.result).appendTo('#old-pricings');
+    $('.pricing-amt').each( function() {
+        $(this).text(format_currency($(this).text()));
+    });
+};
+
+function get_pricing(id) {
+    function error(resp) {
+        alert('error fetching pricing: ' + resp.error.message);
+    };
+
+    var params = {'tariff': id, 'owner': current_ctx};
+    jsonrpc('pricings.default_tariff', params, on_tariff_pricing, error);
+};
+
 function show_editform(id) {
+    if (tariff_pricing == null) {
+        get_pricing(id);
+    }
+
     $("#tariff_list").hide();
     $("#tariff_form").show();
+    $("#tariff-pricing-content").show();
 
     function success(resp) {
         tariff = resp['result'];

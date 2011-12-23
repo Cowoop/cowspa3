@@ -47,6 +47,12 @@ def lst(resource_id, tariff_id):
 def by_tariff(tariff_id):
     return pricing_store.get_by(crit=dict(plan=tariff_id))
 
+def default_tariff_price(owner, tariff):
+    default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
+    result = dbaccess.pricing_store.get_by(crit=dict(plan=default_tariff_id,
+             resource=tariff), fields=['starts','amount'])
+    return result
+
 def by_location(owner):
     """
     returns pricing for ALL the resources for each tariff defined for this
@@ -105,6 +111,7 @@ pricings.list = lst
 pricings.by_resource = by_resource
 pricings.by_tariff = by_tariff
 pricings.by_location = by_location
+pricings.default_tariff = default_tariff_price
 pricings.delete = delete
 
 settable_attrs = ['starts', 'ends', 'cost']
