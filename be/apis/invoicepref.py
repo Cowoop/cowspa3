@@ -8,20 +8,20 @@ bizplace_store = dbaccess.stores.bizplace_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class InvoiceprefCollection:
-    def new(self, owner, tax_included, default_taxes, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
+    def new(self, owner, tax_included=True, default_taxes=None, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
 
         data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, tax_included=tax_included)
         if not tax_included: data['default_taxes'] = default_taxes
-      
+
         invoicepref_store.add(**data)
 
         return True
-        
+
 class InvoiceprefResource:
 
     def update(self, owner, **mod_data):
         invoicepref_store.update_by(dict(owner=owner), **mod_data)
-        
+
         bizplace_name = bizplace_store.get(owner, fields=['name'])
         data = dict(name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
         activity_id = activitylib.add('invoicepref_management', 'invoicepref_updated', data)
