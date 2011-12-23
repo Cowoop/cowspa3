@@ -179,11 +179,14 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     if calc_mode: clauses.append('calc_mode IN %(calc_mode)s')
     clauses_s = ' AND '.join(clauses)
     clause_values = dict(resource_ids=tuple(resource_ids), owner_ids=tuple(res_owner_ids), member_ids=tuple(member_ids), resource_types=tuple(resource_types), calc_mode=tuple(calc_mode))
-    resource_rows = resource_store.get_by_clause(clauses_s, clause_values, fields=['id'], hashrows=False)
-    resource_filter = tuple(row[0] for row in resource_rows)
+    if clauses:
+        resource_rows = resource_store.get_by_clause(clauses_s, clause_values, fields=['id'], hashrows=False)
+        resource_filter = tuple(row[0] for row in resource_rows)
+    else:
+        resource_filter = tuple()
 
     clauses = []
-    if resource_ids: clauses.append('resource_id IN %(resource_filter)s')
+    if resource_filter: clauses.append('resource_id IN %(resource_filter)s')
     if start: clauses.append('start_time >= %(start_time)s')
     if end: clauses.append('start_time <= %(end_time)s')
     if invoice_id: clauses.append('invoice = %(invoice_id)s')
