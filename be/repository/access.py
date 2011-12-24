@@ -197,7 +197,7 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
 
     fields = ['resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id']
-    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids))
+    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter)
     return usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
@@ -214,7 +214,7 @@ def get_member_membership(member_id, bizplace_id, date, exclude_ids=[]):
     exclude_ids = list of membership ids which we want to exclude from result
     """
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND ends >= %(date)s'
-    if exclude_ids: 
+    if exclude_ids:
         clause += " AND id NOT IN %(exclude_ids)s"
         exclude_ids = tuple(exclude_ids)
     values = dict(member_id=member_id, date=date, bizplace_id=bizplace_id, exclude_ids=exclude_ids)
