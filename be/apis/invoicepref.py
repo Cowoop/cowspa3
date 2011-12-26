@@ -8,10 +8,9 @@ bizplace_store = dbaccess.stores.bizplace_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class InvoiceprefCollection:
-    def new(self, owner, tax_included=True, default_taxes=None, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
+    def new(self, owner, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
 
-        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, tax_included=tax_included)
-        if not tax_included: data['default_taxes'] = default_taxes
+        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details)
 
         invoicepref_store.add(**data)
 
@@ -28,7 +27,7 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        return invoicepref_store.get_by(dict(owner=owner), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo'])[0]
+        return invoicepref_store.get_by(dict(owner=owner), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included'])[0]
         
     def get(self, owner, attrname):
         return invoicepref_store.get_by(dict(owner=owner), fields=[attrname])[0][attrname]
@@ -36,6 +35,9 @@ class InvoiceprefResource:
     def set(self, owner, attrname, v):
         self.update(owner, **{attrname: v})
         return True
+        
+    def get_taxinfo(self, owner):
+        return invoicepref_store.get_by(dict(owner=owner), fields=['tax_included', 'taxes'])[0]
 
 invoicepref_resource = InvoiceprefResource()
 invoicepref_collection = InvoiceprefCollection()

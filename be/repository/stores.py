@@ -186,10 +186,10 @@ class Resource(PGStore):
     picture TEXT,
     archived BOOLEAN DEFAULT False,
     follow_owner_taxes BOOLEAN DEFAULT True,
-    default_taxes BYTEA,
+    taxes BYTEA,
     accnt_code TEXT
     """
-    pickle_cols = ['default_taxes']
+    pickle_cols = ['taxes']
 
 class Membership(PGStore):
     create_sql = """
@@ -200,8 +200,7 @@ class Membership(PGStore):
     starts DATE NOT NULL,
     ends DATE NOT NULL,
     bizplace_id INTEGER NOT NULL,
-    bizplace_name TEXT,
-    stopped BOOLEAN DEFAULT False
+    bizplace_name TEXT
     """
 
 class ResourceRelation(PGStore):
@@ -276,10 +275,10 @@ class InvoicePref(PGStore):
     bank_details TEXT,
     logo TEXT,
     tax_included BOOLEAN DEFAULT True,
-    default_taxes BYTEA,
+    taxes BYTEA,
     taxation_num TEXT
     """
-    pickle_cols = ['default_taxes']
+    pickle_cols = ['taxes']
 
 class Activity(PGStore):
     create_sql = """

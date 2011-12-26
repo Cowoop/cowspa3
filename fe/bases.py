@@ -76,6 +76,7 @@ resources_opt = [
 locations_opt = [
     tf.A("Team", href=ctxpath + '/team'),
     tf.A("Tariffs", href=ctxpath + '/tariffs'),
+    tf.A("Taxes", href=ctxpath + '/taxes'),
     ]
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]

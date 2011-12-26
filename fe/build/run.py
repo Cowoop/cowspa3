@@ -20,6 +20,7 @@ import fe.src.plan_pages as planpages
 import fe.src.pages.resource as resourcepages
 import fe.src.pages.booking as bookingpages
 import commonlib.shared.static as static
+import fe.src.pages.taxes
 
 option_no_themes = '--nothemes' in sys.argv
 
@@ -109,7 +110,8 @@ pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoices/history'),
          PageBuilder(bookingpages.Booking, prefix + '/booking/new'),
          PageBuilder(bookingpages.WeekAgenda, prefix + '/booking/week'),
-         PageBuilder(fe.src.pages.team.List, prefix + 'team')
+         PageBuilder(fe.src.pages.team.List, prefix + 'team'),
+         PageBuilder(fe.src.pages.taxes.Taxes, prefix + 'taxes')
         ]
 
 def copydirs(srcs, dst, verbose=False, overwrite=True):
