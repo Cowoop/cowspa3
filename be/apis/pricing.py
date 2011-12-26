@@ -31,6 +31,10 @@ def new(resource_id, tariff_id, starts, amount, ends=None):
         set(old_pricing.id, 'ends', old_pricing_ends)
     return pricing_store.add(plan=tariff_id, resource=resource_id, starts=starts, ends=ends, amount=amount)
 
+def new_tariff_pricing(owner,tariff_id, starts, amount, ends=None):
+    default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
+    return new(tariff_id,default_tariff_id,starts,amount,ends)
+
 def destroy(tariff_id):
     raise NotImplemented
 
@@ -50,7 +54,7 @@ def by_tariff(tariff_id):
 def default_tariff_price(owner, tariff):
     default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
     result = dbaccess.pricing_store.get_by(crit=dict(plan=default_tariff_id,
-             resource=tariff), fields=['starts','amount'])
+             resource=tariff), fields=['id','starts','amount'])
     return result
 
 def by_location(owner):
@@ -103,7 +107,7 @@ def delete(pricing_id):
     prev_pricing = pricing_store.get_by(crit)[0]
     if prev_pricing: set(prev_pricing.id, 'ends', pricing.ends)
     return pricing_store.remove(pricing_id)
-    
+
 pricings = applib.Collection()
 pricings.new = new
 pricings.get = get
@@ -112,6 +116,7 @@ pricings.by_resource = by_resource
 pricings.by_tariff = by_tariff
 pricings.by_location = by_location
 pricings.default_tariff = default_tariff_price
+pricings.new_tariff = new_tariff_pricing
 pricings.delete = delete
 
 settable_attrs = ['starts', 'ends', 'cost']

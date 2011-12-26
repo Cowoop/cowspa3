@@ -61,7 +61,7 @@ class ListTariff(BasePage):
         edit_pricing.start_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='edit_starts_vis-${id}').set_required())
         edit_pricing.starts = tf.INPUT(id='edit_starts-${id}', type="hidden", value="-")
         edit_pricing.amount = tf.SPAN(tf.INPUT(type="text", id='edit_amount-${id}', value="${amount}").set_required())
-        edit_pricing.save = tf.SPAN(tf.BUTTON("Save", type="submit"))
+        edit_pricing.save = tf.SPAN(tf.BUTTON("Save", id="save_edit-${id}", type="submit"))
         edit_pricing.cancel = tf.SPAN(tf.BUTTON("Cancel", type="button", Class="edit-cancel", id="cancel_edit-${id}"))
         pricing_tmpl.pricing.view = view_pricing
         pricing_tmpl.pricing.edit = edit_pricing
