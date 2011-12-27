@@ -22,13 +22,13 @@ $("#taxation").submit(function(){
     update_taxes();
     return false;
 });
-$(".step-controls").hide();
 function update_taxes(){
     params = {'owner' : current_ctx};
     params.tax_included = checked_map[$("#taxes_included:checked").val()];
     params.taxes = null;
     $('.new-tax').each(function(){
-        params.taxes = {};
+        if(params.taxes == null)
+            params.taxes = {};
         params.taxes[$(".new-name", this).val()] = $(".new-value", this).val();
     });
     function on_taxes_updation_success(){
