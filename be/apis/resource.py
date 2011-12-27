@@ -2,8 +2,9 @@ import datetime
 import collections
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
-import be.apis.pricing as pricinglib
+import be.apis.invoicepref as invoicepref_lib
 import commonlib.shared.constants
+import be.libs.signals as signals
 
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
@@ -40,7 +41,7 @@ class ResourceCollection:
         # default_tariff_id would be None when we are creating default_tariff for a new location. This is because we are adding location and there is no default_tariff yet. Now this tariff is a resource so further we need to create pricing for it. In pricing we need to specify some tariff so tariff refers itself as default_tariff.
         if default_tariff_id is None:
             default_tariff_id = res_id
-        pricinglib.pricings.new(res_id, default_tariff_id, None, default_price)
+        signals.send_signal('resource_created', res_id, default_tariff_id, None, default_price)
 
         return res_id
 
@@ -157,5 +158,12 @@ class ResourceResource:
             d[relation].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
 
+    def get_taxinfo(self, res_id):
+    
+        result = invoicepref_lib.invoicepref_resource.get_taxinfo(self.get(res_id, 'owner'))
+        taxes = self.get(res_id, 'taxes')
+        if taxes: result['taxes'] = taxes
+        return result
+        
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()

@@ -6,6 +6,7 @@ import commonlib.helpers
 import be.libs.cost as costlib
 import be.libs.signals as signals
 import calendar
+import be.apis.resource as resource_lib
 
 odict = commonlib.helpers.odict
 
@@ -118,6 +119,7 @@ pricings.by_location = by_location
 pricings.default_tariff = default_tariff_price
 pricings.new_tariff = new_tariff_pricing
 pricings.delete = delete
+signals.connect("resource_created", pricings.new)
 
 settable_attrs = ['starts', 'ends', 'cost']
 
@@ -172,7 +174,7 @@ pricing.update = update
 
 class CustomResource(costlib.Rule):
     name = 'Custom Resource'
-    def apply(self, env, usage, cost):
+    def apply(self, env, usage, cost, tax_info, taxes):
         if not usage.resource_id:
             assert usage.cost is not None, "Cost is mandatory for Custom Resource"
             cost.new(self.name, usage.cost)
@@ -181,7 +183,7 @@ class CustomResource(costlib.Rule):
 
 class InitialCost(costlib.Rule):
     name = 'Initial Cost'
-    def apply(self, env, usage, cost):
+    def apply(self, env, usage, cost, tax_info, taxes):
         resource = resource_store.get(usage.resource_id)
         if resource.calc_mode == CalcMode.time_based:
             try:
@@ -193,19 +195,30 @@ class InitialCost(costlib.Rule):
             usage['quantity'] = ((usage.ends - usage.starts).days + 1) / float(calendar.monthrange(usage.starts.year, usage.starts.month)[1])
         rate = float(pricings.get(usage.member_id, usage.resource_id, usage.starts))
         amount = rate * usage.quantity
-        cost.new(self.name, costlib.to_decimal(amount))
+        cost.new(self.name, amount)
         return costlib.flags.proceed
 
 class Taxes(costlib.Rule):
-    name = 'Initial Cost'
-    def apply(self, env, usage, cost):
-        raise NotImplemented
+    name = 'Taxes'
+    def apply(self, env, usage, cost, tax_info, taxes):
+        
+        amount = cost.last()
+        for tax in tax_info['taxes']:
+            taxes[tax] = amount * float(tax_info['taxes'][tax]) / 100
+        tax_amount = float(cost.last() * sum([taxes[tax] for tax in taxes]) / 100)
+        if tax_info['tax_included']:
+            amount = amount
+        else:
+            amount += tax_amount
+        cost.new(self.name, costlib.to_decimal(amount))
+        return costlib.flags.proceed
 
-rules = [CustomResource(), InitialCost()]
+rules = [CustomResource(), InitialCost(), Taxes()]
 
 def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=None):
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
     usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends, cost=cost)
-    processor = costlib.Processor(usage, rules)
+    tax_info = resource_lib.resource_resource.get_taxinfo(resource_id)
+    processor = costlib.Processor(usage, rules, tax_info)
     return processor.run()

@@ -34,14 +34,16 @@ class Rule(object):
         raise NotImplemented
 
 class Processor(object):
-    def __init__(self, usage, rules):
+    def __init__(self, usage, rules, tax_info):
         self.usage = usage
         self.rules = rules
         self.cost = Cost()
+        self.tax_info = tax_info
         self.shared = {} # later we may consider making shared immutable for existing keys
+        self.taxes = {}
     def run(self):
         for rule in self.rules:
-            flag = rule.apply(self.shared, self.usage, self.cost)
+            flag = rule.apply(self.shared, self.usage, self.cost, self.tax_info, self.taxes)
             if flag == flags.stop:
                 break
         return self.cost.last()
