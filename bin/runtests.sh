@@ -3,6 +3,7 @@ nosetests -vx --pdb-failures --pdb \
 tests/test_schemas.py \
 tests/test_system.py \
 tests/test_bizplace.py \
+tests/test_invoicepref.py \
 tests/test_member.py \
 tests/test_user.py \
 tests/test_resources.py \

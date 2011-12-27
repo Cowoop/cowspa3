@@ -6,7 +6,7 @@ admin = None
 #country code 466 for "Mali"
 
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
-bizplace_id = None
+bizplace_id = None  
 
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
 plan_id = None
@@ -52,8 +52,7 @@ more_usages = [
     dict(resource_name='RES3', quantity=13, cost=1050, tax_dict=(('VAT', 100))),
     ]
 
-invoice_preference_data = [
-    dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune", logo=""),
-    dict(email_text="See the attached pdf.\nThank you.", terms_and_conditions="Pay within 20days", due_date=20, bcc_email="india@hub.com", bank_details="State Bank of India,\nMumbai", logo="")
-    ]
+invoice_preference_data = dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune", logo="")
+
+taxes = dict(tax=7.5, vat=5)
 
