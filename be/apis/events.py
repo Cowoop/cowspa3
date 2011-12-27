@@ -7,7 +7,6 @@ member_store = dbaccess.stores.member_store
 def make_date_element(date):
     return "<c class='date'>%s</c> " % commonlib.helpers.date4human(date)
 
-
 class BaseEvent(object):
     name = "base"
     category = ""
@@ -47,6 +46,16 @@ class MemberInvited(BaseEvent):
     category = "member_management"
     def _msg_tmpl(self):
         return make_date_element(self.data.created) + ' %(actor_name)s has send membership invitaion to "%(first_name)s %(last_name)s"'
+    def _access(self):
+        return dict(roles=[(0, 'admin')], member_ids=[self.actor])
+
+class MemberRegistered(BaseEvent):
+    name = "new_registration"
+    category = "member_management"
+    def _msg_tmpl(self):
+        return make_date_element(self.data.created) + '"%(first_name)s %(last_name)s" has registered'
+    def _access(self):
+        return dict(roles=[(0, 'admin')])
 
 class MemberUpdated(BaseEvent):
     name = "member_updated"

@@ -16,3 +16,4 @@ class Message(object):
         return message_dict
 
 activation = Message('activation')
+invitation = Message('invitation')

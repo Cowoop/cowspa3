@@ -3,7 +3,7 @@ subject = "Spaces | Activation Key"
 plain = """Hello {{ first_name }},
 
 Thanks for signing up.
-You need to activate your account by visiting {{ activation_url }} .
+Please activate your account by visiting {{ activation_url }} .
 
 We can't wait to see you around!
 

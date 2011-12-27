@@ -1,6 +1,7 @@
 import sphc
 import sphc.more
 import fe.bases
+import fe.src.forms as forms
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
@@ -19,22 +20,14 @@ class Login(fe.bases.CSAnonPage):
         formbox.form = form.build()
 
         container.side_container.formbox = formbox
-        container.side_container.register_link = tf.DIV("Signing up is quick and easy", Class="inverse-box")
-        container.side_container.register_link.a = tf.BUTTON('Signup', href='#', id="signup-btn")
+        # Signup code // begin
+        #container.side_container.register_link = tf.DIV("Signing up is quick and easy", Class="inverse-box")
+        #container.side_container.register_link.a = tf.BUTTON('Signup', href='#', id="signup-btn")
 
-        signup_box = tf.DIV(id='signup-box', Class="hidden inverse-box")
-        form = sphc.more.Form(id="signup-form", classes=['vform'])
-        form.add_field('First name', \
-            tf.INPUT(required=True, type="TEXT", name="first_name", placeholder="First Name", id="first_name", \
-                nv_attrs=('required',)))
-        form.add_field('Last name', \
-            tf.INPUT(required=True, type="TEXT", name="last_name", placeholder="Last Name", id="last_name", \
-                nv_attrs=('required',)))
-        form.add_field('Email', tf.INPUT(required=True, type="email", name="email", placeholder="Email Address", id="email", \
-            nv_attrs=('required',)))
-        form.add_buttons(tf.BUTTON("Yes, I am ready!", id='register-btn', type='submit'))
-        signup_box.form = form.build()
-        container.signup_box = signup_box
+        #signup_box = tf.DIV(id='signup-box', Class="hidden inverse-box")
+        #signup_box.form = forms.signup_form().build()
+        #container.signup_box = signup_box
+        # Signup code // end
 
         container.imgbox = tf.DIV(Class="login-img")
         container.imgbox.img = tf.IMG(src="/images/cow.png")

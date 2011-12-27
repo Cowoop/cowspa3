@@ -440,7 +440,6 @@ div[role="main"] {
         }
         .sidebar {
             display: inline-block;
-            background: darken($page-background, 10%);
             width: 25%;
             float: right;
             border-left: 1px solid;
@@ -629,6 +628,12 @@ button, input[type="button"] {
     display: inline-block;
     text-decoration: none;
     text-align: center;
+}
+
+.bigger-button {
+    @extend .big-button;
+    font-size: 1.5em;
+    margin: 0.5em;
 }
 
 .submit-btns {

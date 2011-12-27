@@ -11,15 +11,20 @@ user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
 registered_store = dbaccess.stores.registered_store
 
-def new(first_name, last_name, email):
+def _new(first_name, last_name, email):
     activation_key = commonlib.helpers.random_key_gen()
     created = datetime.datetime.now()
     registered_id = registered_store.add(activation_key=activation_key, first_name=first_name, last_name=last_name, email=email)
     activation_url = env.config.http_baseurl + "/activate#" + activation_key
+    return activation_url
+
+def new(first_name, last_name, email, sendmail=True):
+    activation_url = _new(first_name, last_name, email)
     data = dict (first_name=first_name, activation_url=activation_url)
     mail_data = messages.activation.build(data)
     mail_data['to'] = (first_name, email)
     env.mailer.send(**mail_data)
+    activitylib.add('member_management', 'new_registration', data)
     return registered_id
 
 def activate(key, username, password):
@@ -30,8 +35,12 @@ def activate(key, username, password):
     return member_id
 
 def invite(first_name, last_name, email):
-    new(first_name, last_name, email)
-    data = dict(first_name=first_name, last_name=last_name, email=email)
+    activation_url = _new(first_name, last_name, email)
+    data = dict(first_name=first_name, last_name=last_name, email=email, inviter_name=env.context.name, inviter_id=env.context.user_id, \
+        activation_url=activation_url)
+    mail_data = messages.invitation.build(data)
+    mail_data['to'] = (first_name, email)
+    env.mailer.send(**mail_data)
     activitylib.add('member_management', 'member_invited', data)
 
 def info(key_or_id):

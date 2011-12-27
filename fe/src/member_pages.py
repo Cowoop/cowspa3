@@ -4,6 +4,7 @@ import sphc
 import sphc.more
 import fe.bases
 import fe.src.common
+import fe.src.forms
 import commonlib.shared.static as data_lists
 import commonlib.shared.symbols
 
@@ -48,7 +49,7 @@ def preferences_form():
 
 def billing_pref_form():
     billing_pref_form = sphc.more.Form(id="billing_pref", Class="hform")
-    
+
     mode = billing_pref_form.add(sphc.more.Fieldset())
     mode.add(tf.LEGEND("Billing mode"))
     radio1 = tf.DIV(id="radio_field1")
@@ -67,7 +68,7 @@ def billing_pref_form():
     radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")
     radio4.label = tf.label("Organization")
     mode.add(radio4)
-    
+
     details = billing_pref_form.add(sphc.more.Fieldset(id="billing_details"))
     details.add(tf.LEGEND("Billing Details"))
     
@@ -192,9 +193,11 @@ def make_buttons():
 class MemberCreate(BasePage):
     current_nav = 'Members'
     title = 'New Member'
+    script = "fe/src/js/member_create.js"
+
     def content(self):
         container = tf.DIV()
-        
+
         form  = sphc.more.Form(Class='hform simple-hform', id="createmember_form", method="POST")
 
         sections = []
@@ -206,10 +209,10 @@ class MemberCreate(BasePage):
         section.add_field('Username', tf.INPUT(type='text', id='username', name='username').set_required())
         section.add_field('Password',tf.INPUT(type='password', id='password', name='password').set_required())
         lang_options = [tf.OPTION(language['label'], value=language['name']) for language in data_lists.languages]
-        section.add_field('Language', tf.SELECT(lang_options, id='language', name='language'))         
+        section.add_field('Language', tf.SELECT(lang_options, id='language', name='language'))
         sections.append(section)
 
-        section = sphc.more.Fieldset()  
+        section = sphc.more.Fieldset()
         section.add(tf.LEGEND("Contact"))
         section.add_field("Address", tf.TEXTAREA(name='address', type="text"))
         section.add_field("City", tf.INPUT(name='city', type="text"))
@@ -221,16 +224,23 @@ class MemberCreate(BasePage):
         section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
         section.add_field("Skype", tf.INPUT(name='skype', type="text"))
         sections.append(section)
-        
+
         for section in sections:
             form.add(section.build())
         form.add_buttons(tf.BUTTON("Create", id='save-btn', type='submit'))
-        
+
         container.form = form.build()
-        
-        container.script = tf.SCRIPT(open("fe/src/js/member_create.js").read(), escape=False, type="text/javascript", language="javascript")
-        
+
         return container
+
+    def sidebar(self):
+        #content = tf.DIV(tf.DIV("Related", Class="title"))
+        content = tf.DIV()
+        content.invite = tf.DIV(id='invite', Class='hidden')
+        content.invite.form = fe.src.forms.signup_form().build()
+        content.help = tf.DIV("You may choose invite Hub hosts to join. It is safer and quicker option.")
+        content.action = tf.BUTTON("Invite", href="", Class="bigger-button", id="invite-btn")
+        return content
 
 class EditProfile(BasePage):
     current_nav = 'Members'
@@ -300,7 +310,7 @@ class EditProfile(BasePage):
         add_usage.add_field("Cost", tf.INPUT(name='cost', id='cost'))
         add_usage.add_buttons(tf.INPUT(id="calculate_cost-btn", type="Button", value="Calculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Add", id='submit-usage', Class="big-button", disabled="disabled"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
         usages.add_usage = add_usage_form.build()
-        
+
         edit_usage = tf.FIELDSET(id="edit_usage", Class="hidden")
         edit_usage.legend = tf.LEGEND("Edit Usage")
         edit_usage_form = sphc.more.Form(id='edit_usage-form', action='#', Class='profile-edit-form', classes=['hform'])
@@ -312,15 +322,15 @@ class EditProfile(BasePage):
         edit_usage_form.add_buttons(tf.INPUT(id="recalculate_cost-btn", type="Button", value="Recalculate Cost", Class="big-button"), '→', tf.INPUT(type="button", value="Save", id='update-usage', Class="big-button"), tf.INPUT(type="button", value="Cancel", Class="big-button cancel-usage"))
         edit_usage.form = edit_usage_form.build()
         usages.edit_usage = edit_usage
-        
+
         usages.resource_select_tmpl = sphc.more.jq_tmpl("resource-tmpl")
         usages.resource_select_tmpl.option = tf.OPTION("${name}", id="resource_${id}", value="${id}")
-        
+
         uninvoiced = tf.FIELDSET(id="uninvoiced_usages")
         uninvoiced.legend = tf.LEGEND("Uninvoiced Usages")
         uninvoiced.table = tf.TABLE(id="usage_table")
         usages.uninvoiced = uninvoiced
-        
+
         #Invoices
         invoices = tf.DIV(id="invoices")
         invoice_summary = tf.DIV(id="invoice_summary")
@@ -332,7 +342,7 @@ class EditProfile(BasePage):
         invoice_history.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         invoices.invoice_summary = invoice_summary
         invoices.table = invoice_history
-        
+
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
