@@ -159,7 +159,10 @@ class ResourceResource:
         return d
 
     def get_taxinfo(self, res_id):
-    
+        """
+        returns tax_include and taxes dict
+        if resource uses location level taxes then it returns locations's taxes dict     
+        """
         result = invoicepref_lib.invoicepref_resource.get_taxinfo(self.get(res_id, 'owner'))
         taxes = self.get(res_id, 'taxes')
         if taxes: result['taxes'] = taxes
