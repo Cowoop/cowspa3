@@ -22,7 +22,7 @@ class Taxes(BasePage):
         tax_template.new_tax = tf.DIV(Class="new-tax")
         tax_template.new_tax.name = tf.DIV(tf.INPUT(type="text", value="${name}", Class="new-name").set_required(), Class='tax-name')
         tax_template.new_tax.value = tf.DIV([tf.INPUT(type="number", value="${value}", Class="new-value", step="0.1").set_required(), tf.span("%")], Class='tax-value')
-        tax_template.new_tax.delete = tf.DIV(tf.A("X", type="button", href="#"), Class="tax-delete remove-tax")
+        tax_template.new_tax.delete = tf.DIV(tf.A("X", href="#"), Class="tax-delete remove-tax")
         
         container.taxes = taxes.build()
         container.template = tax_template

@@ -90,7 +90,8 @@ class ResourceManage(BasePage):
         tab_container = tf.DIV(Class="tab-container hidden")
         tab_container.tabs = tf.DIV(id="tabs", Class="tabs")
         tab_container.tabs.items = [tf.A(tf.DIV("Profile"), href="#/ID/edit/profile", id="res-profile-tab", Class="tab"),
-            tf.A(tf.DIV("Pricing"), href="#/ID/edit/pricing", id="res-pricing-tab", Class="tab")]
+            tf.A(tf.DIV("Pricing"), href="#/ID/edit/pricing", id="res-pricing-tab", Class="tab"),
+            tf.A(tf.DIV("Taxes"), href="#/ID/edit/taxes", id="res-taxes-tab", Class="tab")]
         tab_container.profile = tf.DIV(resource_edit_form.build(), id="res-profile-content", Class="tab-content")
 
         pricing = tf.DIV(id="res-pricing-content", Class="tab-content")
@@ -129,6 +130,25 @@ class ResourceManage(BasePage):
 
         pricing.table = tf.DIV(id="old-pricings", Class="grid")
 
+        taxation = tf.DIV(id="res-taxes-content", Class="tab-content")        
+        taxes = sphc.more.Form(id="taxation", Class="hform")
+        taxes.add(tf.DIV([tf.INPUT(id="tax_mode0", type="radio", name="tax_mode", value="0"), tf.label("Use Hub Level Taxes")]))
+        taxes.add(tf.DIV([tf.INPUT(id="tax_mode1", type="radio", name="tax_mode", value="1"), tf.label("Use Following Taxes")]))
+        add_tax = tf.DIV(id="add_tax")
+        add_tax.name = tf.DIV(tf.INPUT(placeholder="Tax name", type="text", id='new_tax'), Class='tax-name')
+        add_tax.value = tf.DIV([tf.INPUT(placeholder="Value", type="number", id='new_value', step="0.1"), tf.span("%")], Class='tax-value')
+        add_tax.action = tf.DIV(tf.BUTTON("Add", type="button", id="add_tax-btn"), Class="tax-delete")
+        taxes.add_field("", tf.DIV(add_tax, id="taxes_list"))
+        taxes.add_buttons(tf.BUTTON("Save", id="save-btn", type="submit"))
+        tax_template = sphc.more.jq_tmpl('tax_tmpl')
+        tax_template.new_tax = tf.DIV(Class="new-tax")
+        tax_template.new_tax.name = tf.DIV(tf.INPUT(type="text", value="${name}", Class="new-name").set_required(), Class='tax-name')
+        tax_template.new_tax.value = tf.DIV([tf.INPUT(type="number", value="${value}", Class="new-value", step="0.1").set_required(), tf.span("%")], Class='tax-value')
+        tax_template.new_tax.delete = tf.DIV(tf.A("X", href="#"), Class="tax-delete remove-tax")
+        
+        taxation.taxes = taxes.build()
+        taxation.template = tax_template
+        
         container.list_container = tf.DIV(id="list-container", Class="hidden")
         container.list_container.types = types
         container.list_container.filters = filters
@@ -136,6 +156,7 @@ class ResourceManage(BasePage):
         container.list_container.resource_list = resource_list
         container.resource_tabs = tab_container
         container.resource_tabs.pricing = pricing
+        container.resource_tabs.taxation = taxation
 
         container.script = sphc.more.script_fromfile("fe/src/js/resource_manage.js")
         return container

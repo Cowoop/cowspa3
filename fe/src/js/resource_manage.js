@@ -10,6 +10,7 @@ var image_size_limit = 256000;//256kb
 var res_id = null;
 var this_resource = null;
 var this_res_pricing = null;
+var this_res_taxes = null;
 //xxxxxxxxxxxxxxxxxxxxxxxxxxx End Global Section xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 // Routing
@@ -19,6 +20,7 @@ function setup_routing () {
         '/:id': {
             '/edit/profile' : get_resource,
             '/edit/pricing' : get_pricing,
+            '/edit/taxes' : get_taxes,
             on: act_on_route
         },
     };
@@ -399,5 +401,76 @@ function delete_pricing(){
         load_tariff_pricings();
     };
     jsonrpc("pricings.delete", {"pricing_id":pricing_id}, on_delete_pricing_success, on_delete_pricing_error);
+};
+//**************************Taxation**********************************************************
+$("#tax_mode1").click(function(){
+    $("#taxes_list *").removeAttr("disabled");
+});
+$("#tax_mode0").click(function(){
+    $("#taxes_list *").attr("disabled", "disabled");
+});
+$("#add_tax-btn").click(function(){
+    var data = {};
+    data.name = $("#new_tax").val();
+    data.value = $("#new_value").val();
+    append_taxes([data]);
+});
+function append_taxes(data){
+    $("#tax_tmpl").tmpl(data).appendTo("#taxes_list");
+    $("#new_tax").val("");
+    $("#new_value").val("");
+    $(".remove-tax").unbind('click');
+    $(".remove-tax A").attr("href", "#/"+res_id+"/edit/taxes");
+    $(".remove-tax A").click(function(){
+        $(this).parent().parent().remove();
+    });
+}
+$("#taxation").submit(function(){
+    $(this).checkValidity();
+    update_taxes();
+    return false;
+});
+function update_taxes(){
+    params = {'res_id' : res_id};
+    params.taxes = null;
+    if(parseInt($("input:radio[name='tax_mode']:checked").val()) == 0){
+        params.taxes = null;
+    }
+    else{
+        params.taxes = {};
+        $('.new-tax').each(function(){
+            params.taxes[$(".new-name", this).val()] = $(".new-value", this).val();    
+        });
+    }
+    function on_taxes_updation_success(){
+        $(".action-status").removeClass('status-fail');
+        $(".action-status").text("Taxes saved successfully.").addClass('class', 'status-success');
+    };
+    function on_taxes_updation_error(){
+        $(".action-status").removeClass('status-success');
+        $(".action-status").text("Error in saving taxes.").addClass('class', 'status-fail');
+    };
+    jsonrpc("resource.update", params, on_taxes_updation_success, on_taxes_updation_error);  
+};
+function get_taxes(id) {
+    if (this_res_taxes == null || res_id != id) {
+        function on_get_taxes(resp){
+            if(resp.result){
+                $("#tax_mode1").click();
+                var taxes = resp.result;
+                for(var key in taxes){
+                    append_taxes([{'name':key, 'value':taxes[key]}]);
+                };
+            }
+            else{
+                $("#tax_mode0").click();
+            }
+            this_res_taxes = true;
+        };
+        res_id = id;
+        var params = {'res_id': id, 'attrname': 'taxes'};
+        jsonrpc('resource.get', params, on_get_taxes, error);
+    }
+    $('#res-taxes-content').show();
 };
 setup_routing();

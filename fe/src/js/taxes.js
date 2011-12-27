@@ -9,14 +9,11 @@ function append_taxes(data){
     $("#tax_tmpl").tmpl(data).appendTo("#taxes_list");
     $("#new_tax").val("");
     $("#new_value").val("");
-    $(".remove-tax").unbind('click');
-    $(".remove-tax").click(function(){
-        $(this).parent().remove();
+    $(".remove-tax A").unbind('click');
+    $(".remove-tax A").click(function(){
+        $(this).parent().parent().remove();
     });
 }
-$(".remove-tax").click(function(){
-    $(this).parent().remove();
-});
 $("#taxation").submit(function(){
     $(this).checkValidity();
     update_taxes();
@@ -33,11 +30,11 @@ function update_taxes(){
     });
     function on_taxes_updation_success(){
         $(".action-status").removeClass('status-fail');
-        $(".action-status").text("Taxes saved successfully.").attr('class', 'status-success');
+        $(".action-status").text("Taxes saved successfully.").addClass('class', 'status-success');
     };
     function on_taxes_updation_error(){
         $(".action-status").removeClass('status-success');
-        $(".action-status").text("Error in saving taxes.").attr('class', 'status-fail');
+        $(".action-status").text("Error in saving taxes.").addClass('class', 'status-fail');
     };
     jsonrpc("invoicepref.update", params, on_taxes_updation_success, on_taxes_updation_error);  
 };

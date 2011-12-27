@@ -93,9 +93,9 @@ class ResourceCollection:
 class ResourceResource:
 
     get_attributes = ['name', 'short_description', 'type', 'owner', 'state',
-            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code']
+            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code', 'taxes']
     set_attributes = ['name', 'short_description', 'type', 'owner', 'state',
-            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code']
+            'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code', 'taxes']
 
     def info(self, res_id):
         """
