@@ -89,7 +89,7 @@ class InvoiceCollection:
     
     def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
-        return invoice_store.get_by(crit, fields=['id', 'cost', 'created', 'id'], hashrows=hashrows)
+        return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'id'], hashrows=hashrows)
 
 class InvoiceResource:
 

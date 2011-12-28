@@ -710,7 +710,7 @@ function get_invoice_tab_data(){
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
             "aoColumns": [
-                { "sTitle": "Id" },
+                { "sTitle": "Number" },
                 { "sTitle": "Cost",
                     "fnRender": function(obj) {
                             var sReturn = format_currency(obj.aData[ obj.iDataColumn ]);
