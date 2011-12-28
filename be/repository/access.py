@@ -373,3 +373,14 @@ class OidGenerator(object):
     @staticmethod
     def get_otype(oid):
         return oidgen_store.get(oid, fields=['type'])
+        
+def generate_invoice_number(issuer, limit=1):
+    
+    query = "SELECT number+1 from (SELECT number::INTEGER FROM invoice UNION select %(starting)s) AS temp_table WHERE number+1 NOT IN (SELECT number::INTEGER FROM invoice) ORDER BY number LIMIT %(limit)s"
+    values = dict(issuer = issuer, limit = limit, starting = issuer * 10000000) 
+    inv_number = str(invoice_store.query_exec(query, values, hashrows=False)[0][0])
+    if issuer < 10:
+        inv_number = "00" + inv_number
+    elif issuer < 100:
+        inv_number = "0" + inv_number
+    return inv_number

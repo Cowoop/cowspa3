@@ -45,7 +45,8 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usagelib.usage_resource.get(usage, 'cost') for usage in usages]))
-        data = dict(issuer=issuer, member=member, usages=usages, number=None, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        number = dbaccess.generate_invoice_number(issuer)
+        data = dict(issuer=issuer, member=member, usages=usages, number=number, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
