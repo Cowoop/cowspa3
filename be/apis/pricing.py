@@ -231,5 +231,4 @@ def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=Non
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id)
     processor = costlib.Processor(usage, rules, tax_info)
     ret = processor.run()
-    print processor.cost
     return ret
