@@ -160,13 +160,15 @@ class ResourceResource:
 
     def get_taxinfo(self, res_id):
         """
-        returns tax_include and taxes dict
-        if resource uses location level taxes then it returns locations's taxes dict     
+        if resource level taxes has precedance over location level taxes
+        returns tax information dict
+            eg. {tax_included: True/False, taxes: {label: value, ..}
         """
-        result = invoicepref_lib.invoicepref_resource.get_taxinfo(self.get(res_id, 'owner'))
-        taxes = self.get(res_id, 'taxes')
-        if taxes: result['taxes'] = taxes
-        return result
-        
+        owner = self.get(res_id, 'owner')
+        taxinfo = invoicepref_lib.invoicepref_resource.get_taxinfo(owner)
+        resource_taxes = self.get(res_id, 'taxes')
+        if resource_taxes: taxinfo['taxes'] = resource_taxes
+        return taxinfo
+
 resource_resource = ResourceResource()
 resource_collection = ResourceCollection()

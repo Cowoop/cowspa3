@@ -27,17 +27,20 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        return invoicepref_store.get_by(dict(owner=owner), ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included'])[0]
-        
+        fields = ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included']
+        return invoicepref_store.get_by(dict(owner=owner), fields)[0]
+
     def get(self, owner, attrname):
         return invoicepref_store.get_by(dict(owner=owner), fields=[attrname])[0][attrname]
 
     def set(self, owner, attrname, v):
         self.update(owner, **{attrname: v})
         return True
-        
+
     def get_taxinfo(self, owner):
-        return invoicepref_store.get_by(dict(owner=owner), fields=['tax_included', 'taxes'])[0]
+        d = invoicepref_store.get_by(dict(owner=owner), fields=['tax_included', 'taxes'])[0]
+        taxes = dict((k, float(v)) for k,v in d['taxes'].items())
+        return dict(taxes=taxes, tax_included=d['tax_included'])
 
 invoicepref_resource = InvoiceprefResource()
 invoicepref_collection = InvoiceprefCollection()

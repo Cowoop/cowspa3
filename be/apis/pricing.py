@@ -200,18 +200,27 @@ class InitialCost(costlib.Rule):
 
 class Taxes(costlib.Rule):
     name = 'Taxes'
+
     def apply(self, env, usage, cost, tax_info, taxes):
-        
-        amount = cost.last()
-        for tax in tax_info['taxes']:
-            taxes[tax] = amount * float(tax_info['taxes'][tax]) / 100
-        tax_amount = float(cost.last() * sum([taxes[tax] for tax in taxes]) / 100)
-        if tax_info['tax_included']:
-            amount = amount
+        tax_included = tax_info['tax_included']
+        taxes = tax_info['taxes']
+        tax_names = taxes.keys()
+        initial_cost = float(cost.last())
+        total_tax_level = sum(taxes.values())
+
+        if tax_included:
+            basic_cost = initial_cost / ((100+total_tax_level)/100.0)
+            tax_applied = ((name, (basic_cost*float(level/100.0))) for name, level in taxes.items())
+            total = initial_cost
         else:
-            amount += tax_amount
-        cost.new(self.name, costlib.to_decimal(amount))
+            amount_to_add = float(initial_cost) * (total_tax_level/100.0)
+            tax_applied = ((name, (initial_cost * float(level/100.0))) for name, level in taxes.items())
+            total = initial_cost + amount_to_add
+
+        cost.new(self.name, total)
+        usage.taxes = tuple(tax_applied)
         return costlib.flags.proceed
+
 
 rules = [CustomResource(), InitialCost(), Taxes()]
 
@@ -221,4 +230,6 @@ def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=Non
     usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends, cost=cost)
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id)
     processor = costlib.Processor(usage, rules, tax_info)
-    return processor.run()
+    ret = processor.run()
+    print processor.cost
+    return ret

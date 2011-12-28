@@ -43,7 +43,7 @@ function get_taxesinfo(){
         $("#taxes_included").attr("checked", resp.result.tax_included);
         var taxes = resp.result.taxes;
         for(var key in taxes){
-            append_taxes([{'name':key, 'value':taxes[key]}]);
+            append_taxes([{'name':key, 'value':parseFloat(taxes[key])}]);
         };
     };
     jsonrpc("invoicepref.taxinfo", {"owner":current_ctx}, on_get_taxinfo_success);
