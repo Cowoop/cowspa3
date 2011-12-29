@@ -8,6 +8,7 @@ import os
 import commonlib.helpers
 import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
+import be.apis.billingpref as billingpreflib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
@@ -114,7 +115,7 @@ class InvoiceResource:
         member_id = invoice['member']
         invoicing_pref = invoicepref_store.get_by(dict(owner=invoice.issuer))[0]
         issuer = bizplace_store.get(invoice['issuer'])
-        email = member_store.get(member_id, ['email'])
+        email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
         subject = issuer.name + ' | Invoice'
         attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
