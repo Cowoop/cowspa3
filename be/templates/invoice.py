@@ -40,7 +40,7 @@ class Template(sphc.more.HTML5Page):
 
         container.top.col2.invoice = tf.DIV(id="invoice-details")
         container.top.col2.invoice.details = tf.TABLE(Class="defs")
-        container.top.col2.invoice.details.row = tf.TR([tf.TD("Number"), tf.TD(str(data.invoice.id))])
+        container.top.col2.invoice.details.row = tf.TR([tf.TD("Number"), tf.TD(str(data.invoice.number if data.invoice.number else "-"))])
         container.top.col2.invoice.details.date = tf.TR([tf.TD("Date"), tf.TD(commonlib.helpers.date4human(data.invoice.created))])
         container.top.col2.invoice.details.period = tf.TR([tf.TD("Period"),
             tf.TD(commonlib.helpers.date4human(data.invoice.start_date)+" to "+commonlib.helpers.date4human(data.invoice.end_date))])
