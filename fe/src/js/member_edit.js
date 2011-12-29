@@ -37,6 +37,7 @@ function on_member_profile(resp) {
     $('input[name="username"]').val(thismember.account.username);
     $('select[name="theme"]').val(thismember.preferences.theme);
     $('select[name="language"]').val(thismember.preferences.language);
+    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"Guest");
     for(i in thismember.memberships){
         thismember.memberships[i].starts = to_formatted_date(thismember.memberships[i].starts);
         thismember.memberships[i].ends = to_formatted_date(thismember.memberships[i].ends);
@@ -70,8 +71,9 @@ $(".profile-tab").click(function(){
     window.location.hash = "#/" + thismember_id + "/" + $(this).attr('href').slice(1);
 });
 //-------------------------------End Tabs---------------------------------------
-function show_profile() { $("#profile_tabs").tabs('select', 0); };
-function show_memberships() { $("#profile_tabs").tabs('select', 1); };
+function show_info() { $("#profile_tabs").tabs('select', 0); };
+function show_profile() { $("#profile_tabs").tabs('select', 1); };
+function show_memberships() { $("#profile_tabs").tabs('select', 2); };
 function show_billing() {
     $("#billing .action-status").text("").removeClass('status-fail status-success');
     if(!is_get_thismember_billingpref_done && mtype!="Organization"){
@@ -79,33 +81,33 @@ function show_billing() {
         get_billing_pref_details();
     };
     if(mtype != "Organization"){
-        $("#profile_tabs").tabs('select', 2);
+        $("#profile_tabs").tabs('select', 3);
     } 
 };
 function show_usages() {
     if(!is_get_thismember_usages_done){
         get_uninvoiced_usages();
     };
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#add_usage").hide();
     $("#edit_usage").hide(); 
     $("#uninvoiced_usages").show();
 };
 function show_add_usage() {
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#uninvoiced_usages").hide();
     $("#edit_usage").hide();
     $("#add_usage").show();
 };
 function show_edit_usage(id, usage_id) {
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#uninvoiced_usages").hide();
     $("#add_usage").hide();
     $("#edit_usage").show();
     handle_edit_usage(usage_id);
 };
 function show_invoices() {
-    $("#profile_tabs").tabs('select', 4);
+    $("#profile_tabs").tabs('select', 5);
     if(!is_get_thismember_invoices_done){
         get_invoice_tab_data();
     };
@@ -114,6 +116,7 @@ function show_invoices() {
 function setup_routing () {
     var routes = {
         '/:id': {
+            '/info': show_info,
             '/profile': show_profile,
             '/billing': show_billing,
             '/memberships': show_memberships,

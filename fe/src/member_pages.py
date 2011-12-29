@@ -250,14 +250,17 @@ class EditProfile(BasePage):
     def content(self):
         container = tf.DIV()
 
+        # Info
+        info = tf.DIV(id="info", Class="labeled-list hidden")
+        info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
+        info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
+        info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
+        info.membership = tf.DIV([tf.DIV("Membership", Class="label"), tf.C(Class="data-membership")], Class="individual")
+        info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        info.line = tf.hr(Class="light")
+        
         # Profile
         profile = tf.DIV(id="profile")
-        profile.info = tf.DIV(id="member-info", Class="labeled-list hidden")
-        profile.info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
-        profile.info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
-        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
-        profile.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
-        profile.info.line = tf.hr(Class="light")
 
         # About
         about_form = sphc.more.Form(id='about', Class='profile-edit-form', classes=['hform'])
@@ -346,11 +349,13 @@ class EditProfile(BasePage):
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
+        container.tabs.list.tab1 = tf.li(tf.A("Info", href="#info", Class="profile-tab"))
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile", Class="profile-tab"))
         container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="profile-tab"))
         container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab individual"), CLass="individual")
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages", Class="profile-tab"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices", Class="profile-tab"))
+        container.tabs.info = info
         container.tabs.profile = profile
         container.tabs.memberships = memberships
         container.tabs.billing = billing
