@@ -1,13 +1,19 @@
 var history_table;
 var inv_id;
 //****************************Get Invoice History*******************************
-function success(response) {
+function on_get_invoices_success(response) {
     history_table = $('#history_table').dataTable({
         "aaData": response['result'],
         "bJQueryUI": true,
+        "bDestroy": true,
         "sPaginationType": "full_numbers",
         "aoColumns": [
-            { "sTitle": "Number" },
+            { "sTitle": "Number",
+              "fnRender": function(obj) {
+                    var number = obj.aData[obj.iDataColumn];
+                    return number?number:"-";
+                    }
+            },
             { "sTitle": "Member" },
             { "sTitle": "Cost" },
             { "sTitle": "Date",
@@ -38,6 +44,7 @@ function success(response) {
             },
         ]
     });
+    $('<DIV>Note: Only sent Invoices has Invoice Number.</DIV>').insertAfter("#history_table_info");
     //****************************View Invoice**********************************
     $('.invoice-view').click(function () {
         $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+$(this).attr('id')+'/html');
@@ -63,19 +70,25 @@ function success(response) {
     //****************************Send Invoice**********************************
     $('.inv-send').click(function () {
         var box_id = $(this).attr("id");
-        function on_send_invoice() {
+        var number_td = $(this).parent().parent().children(":first-child");
+        function on_send_invoice_success() {
             $("#"+box_id).text("Resend");
             alert('Invoice sent successfully');
+            params['attr'] = 'number';
+            function on_get_number_success(resp){
+                $(number_td).text(resp.result);
+            }
+            jsonrpc('invoice.get', params, on_get_number_success, on_send_invoice_failure);
         };
         function on_send_invoice_failure() {
             alert('failed to send invoice');
         };
         var params = {invoice_id : box_id.split("-")[1]};
-        jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);
+        jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
 function error(){};
 var params = { 'issuer' : current_ctx};
-jsonrpc('invoice.list', params, success, error);
+jsonrpc('invoice.list', params, on_get_invoices_success, error);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx

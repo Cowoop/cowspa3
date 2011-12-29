@@ -46,8 +46,7 @@ class InvoiceCollection:
 
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usagelib.usage_resource.get(usage, 'cost') for usage in usages]))
-        number = dbaccess.generate_invoice_number(issuer)
-        data = dict(issuer=issuer, member=member, usages=usages, number=number, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        data = dict(issuer=issuer, member=member, usages=usages, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
@@ -121,7 +120,13 @@ class InvoiceResource:
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
         env.mailer.send(issuer.email, email, subject=subject, rich=invoicing_pref.email_text, \
             plain='', cc=[], bcc=bcc, attachment=attachment)
-        return self.update(invoice_id, sent=datetime.datetime.now())
+        if invoice_store.get(invoice_id, 'number'):
+            return self.update(invoice_id, sent=datetime.datetime.now())
+        else:
+            return dbaccess.update_invoice_number(invoice_id, invoice['issuer'])
 
+    def get(self, invoice_id, attr):
+        return invoice_store.get(invoice_id, attr)
+        
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()

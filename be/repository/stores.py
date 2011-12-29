@@ -246,7 +246,7 @@ class Usage(PGStore):
 class Invoice(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    number TEXT UNIQUE,
+    number INTEGER UNIQUE,
     member INTEGER,
     issuer INTEGER,
     usages INTEGER[],
