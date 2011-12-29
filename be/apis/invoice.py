@@ -94,7 +94,7 @@ class InvoiceCollection:
 
 class InvoiceResource:
 
-    def update(self, invoice_id, mod_data):
+    def update(self, invoice_id, **mod_data):
         """
         """
         invoice_store.update(invoice_id, **mod_data)
@@ -121,6 +121,7 @@ class InvoiceResource:
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
         env.mailer.send(issuer.email, email, subject=subject, rich=invoicing_pref.email_text, \
             plain='', cc=[], bcc=bcc, attachment=attachment)
+        return self.update(invoice_id, sent=datetime.datetime.now())
 
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()
