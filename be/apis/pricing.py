@@ -203,10 +203,10 @@ class Taxes(costlib.Rule):
 
     def apply(self, env, usage, cost, tax_info, taxes):
         tax_included = tax_info['tax_included']
-        taxes = tax_info['taxes']
-        tax_names = taxes.keys() if taxes else []
+        taxes = tax_info['taxes'] if tax_info['taxes'] else {}
+        tax_names = taxes.keys()
         initial_cost = float(cost.last())
-        total_tax_level = sum(taxes.values()) if taxes else 0
+        total_tax_level = sum(taxes.values())
 
         if tax_included:
             basic_cost = initial_cost / ((100+total_tax_level)/100.0)
@@ -214,7 +214,7 @@ class Taxes(costlib.Rule):
             total = initial_cost
         else:
             amount_to_add = float(initial_cost) * (total_tax_level/100.0)
-            tax_applied = ((name, (initial_cost * float(level/100.0))) for name, level in taxes.items())
+            tax_applied = ((name, (initial_cost * float(level/100.0))) for name, level in taxes.items()) if taxes else None
             total = initial_cost + amount_to_add
 
         cost.new(self.name, total)
@@ -224,11 +224,12 @@ class Taxes(costlib.Rule):
 
 rules = [CustomResource(), InitialCost(), Taxes()]
 
-def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=None):
+def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=None, return_taxes=False):
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
     usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends, cost=cost)
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id)
     processor = costlib.Processor(usage, rules, tax_info)
     ret = processor.run()
-    return ret
+    return dict(calculated_cost=ret, taxes=usage.taxes) if return_taxes else ret
+    
