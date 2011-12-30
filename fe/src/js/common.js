@@ -99,7 +99,7 @@ function init_autocomplete() {
         startText: "Search member by name, email or id",
         resultClick: function (data) {
             var id = data['attributes']['id'];
-            window.location = basepath + "/member/edit/#/" +id+ "/profile";
+            window.location = basepath + "/member/edit/#/" +id+ "/info";
         } 
     });
 };

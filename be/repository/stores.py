@@ -75,7 +75,7 @@ class MemberProfile(PGStore):
     facebook TEXT[2],
     linkedin TEXT[2],
     use_gravtar BOOLEAN default false,
-    organization TEXT
+    organization_no TEXT
     """
 
 # Container objects
@@ -198,7 +198,7 @@ class Membership(PGStore):
     tariff_id INTEGER NOT NULL,
     tariff_name TEXT,
     starts DATE NOT NULL,
-    ends DATE NOT NULL,
+    ends DATE,
     bizplace_id INTEGER NOT NULL,
     bizplace_name TEXT
     """

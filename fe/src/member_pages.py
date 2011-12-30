@@ -99,6 +99,7 @@ def billing_pref_form():
     
     organization_form = sphc.more.Form(id="new_org-form")
     organization_form.add_field('Organization Name', tf.INPUT(type='text', id='org_name', name='org_name'))
+    organization_form.add_field('Organization Number', tf.INPUT(type='text', id='org_number', name='org_number'))
     organization_form.add_field('Address', tf.TEXTAREA(id='org_address', name='org_address'))
     organization_form.add_field('City', tf.INPUT(id='org_city', name='org_city', type="text"))
     organization_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='org_country', name='org_country'))
@@ -158,7 +159,7 @@ def add_tariffs_section(container):
     next_tariff_form.add_field("", tf.INPUT(id='start', type="hidden"))
     next_tariff_form.add_field("Start", tf.INPUT(name='start-vis', id='start-vis').set_required())
     next_tariff_form.add_field("", tf.INPUT(id='end', type="hidden"))
-    next_tariff_form.add_field("End", tf.INPUT(name='end-vis', id='end-vis').set_required())
+    next_tariff_form.add_field("Stop", tf.INPUT(name='end-vis', id='end-vis'))
     next_tariff_form.add_buttons(tf.BUTTON("Save", id="tariff_save-btn", type="submit"), tf.BUTTON("Cancel", id='tariff_cancel-btn', type="button"))
     next_tariff_section = tf.DIV(id='next-tariff-section', Class='hidden')
     next_tariff_section.form = next_tariff_form.build()
@@ -169,7 +170,7 @@ def add_tariffs_section(container):
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='starts'))
     change_tariff_form.add_field("Start", tf.INPUT(name='starts-vis', id='starts-vis'))
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='ends'))
-    change_tariff_form.add_field("End", tf.INPUT(name='ends-vis', id='ends-vis'))
+    change_tariff_form.add_field("Stop", tf.INPUT(name='ends-vis', id='ends-vis'))
     change_tariff_form.add_buttons(tf.INPUT(value="Save", id="save-btn" ,type="button"), tf.INPUT(value="Cancel", id='cancel-btn' ,type="button"))
     change_tariff_section = tf.DIV(id='change-tariff-section', Class='hidden')
     change_tariff_section.form = change_tariff_form.build()
@@ -250,14 +251,17 @@ class EditProfile(BasePage):
     def content(self):
         container = tf.DIV()
 
+        # Info
+        info = tf.DIV(id="info", Class="labeled-list hidden")
+        info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
+        info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
+        info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
+        info.membership = tf.DIV([tf.DIV("Membership", Class="label"), tf.C(Class="data-membership")], Class="individual")
+        info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        info.line = tf.hr(Class="light")
+        
         # Profile
         profile = tf.DIV(id="profile")
-        profile.info = tf.DIV(id="member-info", Class="labeled-list hidden")
-        profile.info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
-        profile.info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
-        profile.info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
-        profile.info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
-        profile.info.line = tf.hr(Class="light")
 
         # About
         about_form = sphc.more.Form(id='about', Class='profile-edit-form', classes=['hform'])
@@ -266,6 +270,7 @@ class EditProfile(BasePage):
         about.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required(), container_classes=['individual'])
         about.add_field("Last Name", tf.INPUT(name='last_name', type="text"), container_classes=['individual'])
         about.add_field("Name", tf.INPUT(name='name', type="text"), container_classes=['organization'])
+        about.add_field("Organization Number", tf.INPUT(name='organization_no', type="text"), container_classes=['organization'])
         about.add_field("Short description", tf.INPUT(name='short_description', type="text"))
         about.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
         about.add_buttons(tf.BUTTON("Update", type="submit"))
@@ -346,11 +351,13 @@ class EditProfile(BasePage):
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
         container.tabs.list = tf.UL()
+        container.tabs.list.tab1 = tf.li(tf.A("Info", href="#info", Class="profile-tab"))
         container.tabs.list.tab1 = tf.li(tf.A("Profile", href="#profile", Class="profile-tab"))
         container.tabs.list.tab2 = tf.li(tf.A("Memberships", href="#memberships", Class="profile-tab"))
         container.tabs.list.tab3 = tf.li(tf.A("Billing Preferences", href="#billing", Class="profile-tab individual"), CLass="individual")
         container.tabs.list.tab4 = tf.li(tf.A("Usages", href="#usages", Class="profile-tab"))
         container.tabs.list.tab5 = tf.li(tf.A("Invoices", href="#invoices", Class="profile-tab"))
+        container.tabs.info = info
         container.tabs.profile = profile
         container.tabs.memberships = memberships
         container.tabs.billing = billing

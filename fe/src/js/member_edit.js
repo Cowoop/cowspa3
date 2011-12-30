@@ -25,6 +25,7 @@ function on_member_profile(resp) {
     $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="name"]').val(thismember.profile.name);
+    $('input[name="organization_no"]').val(thismember.profile.organization_no);
     $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
@@ -37,6 +38,7 @@ function on_member_profile(resp) {
     $('input[name="username"]').val(thismember.account.username);
     $('select[name="theme"]').val(thismember.preferences.theme);
     $('select[name="language"]').val(thismember.preferences.language);
+    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"Guest");
     for(i in thismember.memberships){
         thismember.memberships[i].starts = to_formatted_date(thismember.memberships[i].starts);
         thismember.memberships[i].ends = to_formatted_date(thismember.memberships[i].ends);
@@ -70,8 +72,9 @@ $(".profile-tab").click(function(){
     window.location.hash = "#/" + thismember_id + "/" + $(this).attr('href').slice(1);
 });
 //-------------------------------End Tabs---------------------------------------
-function show_profile() { $("#profile_tabs").tabs('select', 0); };
-function show_memberships() { $("#profile_tabs").tabs('select', 1); };
+function show_info() { $("#profile_tabs").tabs('select', 0); };
+function show_profile() { $("#profile_tabs").tabs('select', 1); };
+function show_memberships() { $("#profile_tabs").tabs('select', 2); };
 function show_billing() {
     $("#billing .action-status").text("").removeClass('status-fail status-success');
     if(!is_get_thismember_billingpref_done && mtype!="Organization"){
@@ -79,33 +82,33 @@ function show_billing() {
         get_billing_pref_details();
     };
     if(mtype != "Organization"){
-        $("#profile_tabs").tabs('select', 2);
+        $("#profile_tabs").tabs('select', 3);
     } 
 };
 function show_usages() {
     if(!is_get_thismember_usages_done){
         get_uninvoiced_usages();
     };
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#add_usage").hide();
     $("#edit_usage").hide(); 
     $("#uninvoiced_usages").show();
 };
 function show_add_usage() {
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#uninvoiced_usages").hide();
     $("#edit_usage").hide();
     $("#add_usage").show();
 };
 function show_edit_usage(id, usage_id) {
-    $("#profile_tabs").tabs('select', 3);
+    $("#profile_tabs").tabs('select', 4);
     $("#uninvoiced_usages").hide();
     $("#add_usage").hide();
     $("#edit_usage").show();
     handle_edit_usage(usage_id);
 };
 function show_invoices() {
-    $("#profile_tabs").tabs('select', 4);
+    $("#profile_tabs").tabs('select', 5);
     if(!is_get_thismember_invoices_done){
         get_invoice_tab_data();
     };
@@ -114,6 +117,7 @@ function show_invoices() {
 function setup_routing () {
     var routes = {
         '/:id': {
+            '/info': show_info,
             '/profile': show_profile,
             '/billing': show_billing,
             '/memberships': show_memberships,
@@ -206,6 +210,7 @@ $("#update-billingpref").click(function(){
                     params['billto'] = null;
                     params['organization_details'] = {
                         "name" :$("#details_3 #org_name").val(),
+                        "organization_no" :$("#details_3 #org_number").val(),
                         "address" :$("#details_3 #org_address").val(),
                         "city" :$("#details_3 #org_city").val(),
                         "country" :$("#details_3 #org_country").val(),
@@ -298,15 +303,31 @@ $('#details_3 #existing_org').autocomplete({
 $('#next-tariff-form #start-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#start',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
 });
 $('#next-tariff-form #end-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#end',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
+    beforeShow: function( input ) {
+        setTimeout(function() {
+            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
+            $( "<button>", {
+                text: "Clear",
+                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+                click: function() {
+                    $.datepicker._clearDate( input );
+                }
+            }).appendTo( buttonPane );
+        }, 1);
+    }
 });
 $('#next_tariff-btn').click(function() {
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
+    $('#next-tariff-form #start-vis').datepicker("setDate", null);
+    $('#next-tariff-form #end-vis').datepicker("setDate", null);
     $('#next-tariff-form').dialog({ 
         title: "Next Tariff", 
         width: 500, 
@@ -341,7 +362,13 @@ $("#tariff_cancel-btn").click(function() {
 }); 
 
 var params1 = {}
-function success1(resp) {     
+function success1(resp) {
+    var tariffs = resp.result;
+    for(ind in tariffs)
+        if(tariffs[ind].name == "Guest Tariff"){
+            delete(tariffs[ind]);
+            break;
+        };
     $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
     $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
     };
@@ -378,12 +405,27 @@ $('#load-tariff-history').click(function(){
 $('#change-tariff-form #starts-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#change-tariff-form #starts',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true
 });
+//Clear button code:http://jsbin.com/ofare/edit#javascript,html,live
 $('#change-tariff-form #ends-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#change-tariff-form #ends',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
+    beforeShow: function( input ) {
+        setTimeout(function() {
+            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
+            $( "<button>", {
+                text: "Clear",
+                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+                click: function() {
+                    $.datepicker._clearDate( input );
+                }
+            }).appendTo( buttonPane );
+        }, 1);
+    }
 });
 
 function bind_cancel_and_change_tariff() {
@@ -428,7 +470,6 @@ function bind_cancel_and_change_tariff() {
             function success(resp) { 
                 $("#tariff_row-"+membership_id+" #starts").text(to_formatted_date(params.starts));
                 $("#tariff_row-"+membership_id+" #ends").text(to_formatted_date(params.ends));
-                $("#tariff_row-"+membership_id+" #tariff_name").text($("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text());
                 $("#change-tariff-form .action-status").text("").removeClass("status-success status-fail");
                 $('#change-tariff-form').dialog("close");
                 is_get_thismember_usages_done = false;

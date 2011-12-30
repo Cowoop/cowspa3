@@ -27,10 +27,11 @@ def create_invoice_pdf(invoice_id):
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
             member=member, invoicepref=invoicepref, memberpref=memberpref)
     html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
-    pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
     be.templates.invoice.Template(data).write(html_path)
-    pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
-    return pdf
+    if invoice['number']:
+        pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice['number'])
+        pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
+    return True
 
 
 class InvoiceCollection:
@@ -123,7 +124,8 @@ class InvoiceResource:
         if invoice_store.get(invoice_id, 'number'):
             return self.update(invoice_id, sent=datetime.datetime.now())
         else:
-            return dbaccess.update_invoice_number(invoice_id, invoice['issuer'])
+            dbaccess.update_invoice_number(invoice_id, invoice['issuer'])
+            return create_invoice_pdf(invoice_id)
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)

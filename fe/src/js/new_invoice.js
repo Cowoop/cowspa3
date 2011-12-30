@@ -24,6 +24,13 @@ function get_invoicee_name_and_contact(id){
         $('#invoicee-info').empty();
         $('#invoicee-info-tmpl').tmpl(data).appendTo('#invoicee-info');
         $('#invoicee-info').show();
+        $('#invoice-save').removeAttr("disabled");
+        $('#invoice-view').attr("disabled", true);
+        $('#invoice-send').attr("disabled", true);
+        $('#inv-action-status').removeClass('status-fail');
+        $('#inv-action-status').removeClass('status-success');
+        $('#inv-action-status').text('');
+        $('#usages tr:gt(0)').remove();
     };
     function on_get_contact_error () {};
     jsonrpc('member.contact', params, on_get_contact_success, on_get_contact_error);
@@ -65,6 +72,12 @@ function get_uninvoiced_usages(start, end){
         };
         $('#usages tr:gt(0)').remove();
         $('#usage-tmpl').tmpl(usages).appendTo('#usages');
+        $('#invoice-save').removeAttr("disabled");
+        $('#invoice-view').attr("disabled", true);
+        $('#invoice-send').attr("disabled", true);
+        $('#inv-action-status').removeClass('status-fail');
+        $('#inv-action-status').removeClass('status-success');
+        $('#inv-action-status').text('');
     };
     function on_get_uninvoiced_usages_error(){};
     var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end, 'uninvoiced':true};
@@ -136,6 +149,7 @@ function on_create_invoice(response) {
     inv_id = response.result;
     $('#inv-action-status').text('Invoice creation successful');
     $('#inv-action-status').addClass('status-success');
+    $('#inv-action-status').removeClass('status-fail');
     $('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
@@ -144,6 +158,7 @@ function on_create_invoice(response) {
 function on_create_invoice_failure() {
     $('#inv-action-status').text('failed to create invoice');
     $('#inv-action-status').addClass('status-fail');
+    $('#inv-action-status').removeClass('status-success');
 };
 $('#invoice-save').click( function () {
     var new_usages = [];
@@ -178,11 +193,14 @@ $('#invoice-view').click(function () {
 $('#invoice-send').click(function () {
     $('#inv-action-status').text('sending ...');
     function on_send_invoice() {
+        $('#inv-action-status').removeClass('status-fail');
+        $('#inv-action-status').addClass('status-success');
         $('#inv-action-status').text('Invoice sent successfully');
     };
     function on_send_invoice_failure() {
         $('#inv-action-status').text('failed to send invoice');
         $('#inv-action-status').addClass('status-fail');
+        $('#inv-action-status').removeClass('status-success');
     };
     var params = {invoice_id : inv_id};
     jsonrpc('invoice.send', params, on_send_invoice, on_send_invoice_failure);

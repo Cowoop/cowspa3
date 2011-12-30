@@ -39,7 +39,7 @@ class InvoiceprefResource:
 
     def get_taxinfo(self, owner):
         d = invoicepref_store.get_by(dict(owner=owner), fields=['tax_included', 'taxes'])[0]
-        taxes = dict((k, float(v)) for k,v in d['taxes'].items())
+        taxes = dict((k, float(v)) for k,v in d['taxes'].items()) if d['taxes'] else d['taxes']
         return dict(taxes=taxes, tax_included=d['tax_included'])
 
 invoicepref_resource = InvoiceprefResource()

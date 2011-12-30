@@ -14,11 +14,13 @@ class UsageCollection:
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-
+        taxes = None
         if not cancelled_against:
-            calculated_cost = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost))
+            result = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True))
+            calculated_cost = result['calculated_cost']
+            taxes = result['taxes']
         if not cost: cost = calculated_cost
-        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking, calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
+        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking,  calculated_cost=calculated_cost, cost=cost, tax_dict=taxes, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
         return usage_store.add(**data)
 
     def _delete(self, usage_id):
