@@ -25,6 +25,7 @@ function on_member_profile(resp) {
     $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="name"]').val(thismember.profile.name);
+    $('input[name="organization_no"]').val(thismember.profile.organization_no);
     $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
@@ -209,6 +210,7 @@ $("#update-billingpref").click(function(){
                     params['billto'] = null;
                     params['organization_details'] = {
                         "name" :$("#details_3 #org_name").val(),
+                        "organization_no" :$("#details_3 #org_number").val(),
                         "address" :$("#details_3 #org_address").val(),
                         "city" :$("#details_3 #org_city").val(),
                         "country" :$("#details_3 #org_country").val(),

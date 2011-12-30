@@ -75,7 +75,7 @@ class MemberProfile(PGStore):
     facebook TEXT[2],
     linkedin TEXT[2],
     use_gravtar BOOLEAN default false,
-    organization TEXT
+    organization_no TEXT
     """
 
 # Container objects
