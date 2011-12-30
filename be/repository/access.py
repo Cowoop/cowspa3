@@ -213,7 +213,7 @@ def get_member_membership(member_id, bizplace_id, date, exclude_ids=[]):
     """
     exclude_ids = list of membership ids which we want to exclude from result
     """
-    clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND ends >= %(date)s'
+    clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS null)'
     if exclude_ids:
         clause += " AND id NOT IN %(exclude_ids)s"
         exclude_ids = tuple(exclude_ids)
@@ -237,6 +237,14 @@ def get_member_current_memberships(member_id, bizplace_ids=[]):
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     values = dict(member_id=member_id, date=date, bizplace_ids=bizplace_ids)
     return membership_store.get_by_clause(clause, values)
+
+def get_member_next_memberships(member_id, date, bizplace_ids=[], exclude_ids=[]):
+    clause = '(member_id = %(member_id)s) AND (starts > %(date)s)'
+    if bizplace_ids: clause += ' AND bizplace_id IN %(bizplace_ids)s'
+    if exclude_ids: clause += ' AND id NOT IN %(exclude_ids)s'
+    clause += ' ORDER BY starts LIMIT 1'
+    values = dict(member_id=member_id, date=date, bizplace_ids=tuple(bizplace_ids), exclude_ids=tuple(exclude_ids))
+    return membership_store.get_by_clause(clause, values)[0]
 
 def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=False):
     current_date = datetime.datetime.now()

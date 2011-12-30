@@ -198,7 +198,7 @@ class Membership(PGStore):
     tariff_id INTEGER NOT NULL,
     tariff_name TEXT,
     starts DATE NOT NULL,
-    ends DATE NOT NULL,
+    ends DATE,
     bizplace_id INTEGER NOT NULL,
     bizplace_name TEXT
     """

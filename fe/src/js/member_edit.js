@@ -301,15 +301,31 @@ $('#details_3 #existing_org').autocomplete({
 $('#next-tariff-form #start-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#start',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
 });
 $('#next-tariff-form #end-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#end',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
+    beforeShow: function( input ) {
+        setTimeout(function() {
+            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
+            $( "<button>", {
+                text: "Clear",
+                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+                click: function() {
+                    $.datepicker._clearDate( input );
+                }
+            }).appendTo( buttonPane );
+        }, 1);
+    }
 });
 $('#next_tariff-btn').click(function() {
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
+    $('#next-tariff-form #start-vis').datepicker("setDate", null);
+    $('#next-tariff-form #end-vis').datepicker("setDate", null);
     $('#next-tariff-form').dialog({ 
         title: "Next Tariff", 
         width: 500, 
@@ -381,12 +397,27 @@ $('#load-tariff-history').click(function(){
 $('#change-tariff-form #starts-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#change-tariff-form #starts',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true
 });
+//Clear button code:http://jsbin.com/ofare/edit#javascript,html,live
 $('#change-tariff-form #ends-vis').datepicker( {
     altFormat: 'yy-mm-dd',
     altField: '#change-tariff-form #ends',
-    dateFormat: 'M d, yy'
+    dateFormat: 'M d, yy',
+    showButtonPanel: true,
+    beforeShow: function( input ) {
+        setTimeout(function() {
+            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
+            $( "<button>", {
+                text: "Clear",
+                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+                click: function() {
+                    $.datepicker._clearDate( input );
+                }
+            }).appendTo( buttonPane );
+        }, 1);
+    }
 });
 
 function bind_cancel_and_change_tariff() {
@@ -431,7 +462,6 @@ function bind_cancel_and_change_tariff() {
             function success(resp) { 
                 $("#tariff_row-"+membership_id+" #starts").text(to_formatted_date(params.starts));
                 $("#tariff_row-"+membership_id+" #ends").text(to_formatted_date(params.ends));
-                $("#tariff_row-"+membership_id+" #tariff_name").text($("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text());
                 $("#change-tariff-form .action-status").text("").removeClass("status-success status-fail");
                 $('#change-tariff-form').dialog("close");
                 is_get_thismember_usages_done = false;
