@@ -360,7 +360,13 @@ $("#tariff_cancel-btn").click(function() {
 }); 
 
 var params1 = {}
-function success1(resp) {     
+function success1(resp) {
+    var tariffs = resp.result;
+    for(ind in tariffs)
+        if(tariffs[ind].name == "Guest Tariff"){
+            delete(tariffs[ind]);
+            break;
+        };
     $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
     $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
     };

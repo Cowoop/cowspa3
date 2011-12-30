@@ -244,7 +244,7 @@ def get_member_next_memberships(member_id, date, bizplace_ids=[], exclude_ids=[]
     if exclude_ids: clause += ' AND id NOT IN %(exclude_ids)s'
     clause += ' ORDER BY starts LIMIT 1'
     values = dict(member_id=member_id, date=date, bizplace_ids=tuple(bizplace_ids), exclude_ids=tuple(exclude_ids))
-    return membership_store.get_by_clause(clause, values)[0]
+    return membership_store.get_by_clause(clause, values)
 
 def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=False):
     current_date = datetime.datetime.now()

@@ -35,7 +35,7 @@ def new(tariff_id, member_id, starts, ends):
         raise Exception("End date is overlapping with another membership.")
     elif not ends_dt:
         next_membership = dbaccess.get_member_next_memberships(member_id, starts_dt, [tariff.owner])
-        if  next_membership: ends_dt = next_membership['starts'] - datetime.timedelta(1)
+        if  next_membership: ends_dt = next_membership[0]['starts'] - datetime.timedelta(1)
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     current_date = datetime.datetime.now().date()
@@ -49,8 +49,9 @@ def create_membership_usages(starts, ends, tariff_id, tariff_name, member):
     # usage 3: 1 Mar - 31 Mar 2021
     # usage 4: 1 Apr - 05 Apr 2021
     current_date = datetime.datetime.now().date()
-    if not ends or ends.month>current_date.month:
-        ends = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
+    current_months_last_date = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
+    if not ends or ends>current_months_last_date:
+        ends = current_months_last_date
     while starts <= ends:
         if starts.month == ends.month:
             new_ends = ends
@@ -130,12 +131,18 @@ def update(membership_id, **mod_data):
         raise Exception("End date is overlapping with another membership.")
     elif not ends:
         next_membership = dbaccess.get_member_next_memberships(old_data['member_id'], starts, [old_data['bizplace_id']], [membership_id])
-        if  next_membership: ends = next_membership['starts'] - datetime.timedelta(1)
+        if  next_membership: ends = next_membership[0]['starts'] - datetime.timedelta(1)
         
     #Deleting usages which are out of starts<->ends
+    current_date = datetime.datetime.now().date()
+    current_months_last_date = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
+    if not ends or ends>current_months_last_date:
+        usage_ends = current_months_last_date
+    else:
+        usage_ends = ends
     rev_usages = range(len(usages)-1, -1, -1)
     for i in rev_usages:
-        if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > ends:
+        if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > usage_ends:
             usagelib.usage_collection.delete(usages[i]['id'])
             del(usages[i])
             
@@ -144,11 +151,11 @@ def update(membership_id, **mod_data):
         if starts != usages[0]['start_time'].date():
             create_membership_usages(starts, (usages[0]['start_time']-datetime.timedelta(1)).date(),\
              old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
-        if ends != usages[-1]['end_time'].date():
-            create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), ends,\
+        if usage_ends != usages[-1]['end_time'].date():
+            create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), usage_ends,\
              old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
     else:
-        create_membership_usages(starts, ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+        create_membership_usages(starts, usage_ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
     
     return membership_store.update(membership_id, **mod_data)
 
