@@ -27,7 +27,7 @@ def new(resource_id, tariff_id, starts, amount, ends=None):
         ends = old_pricing.ends
         if old_pricing.starts and old_pricing.starts>= starts:
             msg = "Pricing start date should be greater than %s" % old_pricing.starts
-            raise be.errors.ErrorWithHint(msg)
+            raise Exception(msg)#be.errors.ErrorWithHint(msg)
         old_pricing_ends = starts - datetime.timedelta(1)
         set(old_pricing.id, 'ends', old_pricing_ends)
     return pricing_store.add(plan=tariff_id, resource=resource_id, starts=starts, ends=ends, amount=amount)
@@ -103,10 +103,10 @@ def delete(pricing_id):
     pricing = pricing_store.get(pricing_id)
     if dbaccess.find_usage(start=pricing.starts, end=pricing.ends, resource_ids=[pricing.resource]):
         msg = "Usages are associated with this pricing, you can't delete pricing."
-        raise be.errors.ErrorWithHint(msg)
+        raise Exception(msg)#be.errors.ErrorWithHint(msg)
     if not pricing.starts:
-        msg = "You can't delete first pricing for Guest Tariff."
-        raise be.errors.ErrorWithHint(msg)
+        msg = "You can't delete first pricing for Guest tariff."
+        raise Exception(msg)#be.errors.ErrorWithHint(msg)
     crit = dict(plan=pricing.plan, resource=pricing.resource, ends=pricing.starts-datetime.timedelta(1))
     prev_pricing = pricing_store.get_by(crit)
     if prev_pricing: set(prev_pricing[0].id, 'ends', pricing.ends)
@@ -152,7 +152,7 @@ def update(pricing_id, **mod_data):
     #Checking usages for pricing changed time interval
     if dbaccess.find_usage(start=changed_intervals_starts, end=changed_intervals_ends, resource_ids=[pricing.resource]):
         msg = "Usages are associated with this pricing, you can't delete pricing."
-        raise be.errors.ErrorWithHint(msg)
+        raise Exception(msg)#be.errors.ErrorWithHint(msg)
         
     if new_starts != pricing.starts:
         mod_data['starts'] = new_starts
@@ -163,7 +163,7 @@ def update(pricing_id, **mod_data):
         if old_pricing:#old_pricing contains pricing at new_starts
             if old_pricing.starts and old_pricing.starts >= new_starts:
                 msg = "Pricing start date should be greater than %s" % old_pricing.starts
-                raise be.errors.ErrorWithHint(msg)
+                raise Exception(msg)#be.errors.ErrorWithHint(msg)
             mod_data['ends'] = old_pricing.ends
             set(old_pricing.id, 'ends', mod_data['starts']-datetime.timedelta(1))
     pricing_store.update(pricing_id, **mod_data)

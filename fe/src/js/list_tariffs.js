@@ -44,7 +44,7 @@ function add_new_pricing() {
     var params = {'owner': current_ctx, 'tariff_id': tariff_id, 'starts': $('#new-starts').val(), 
         'amount': $('#new-amount').val()};
     function error(resp) {
-        alert('error adding new pricings: ' + resp.error.message);
+        alert('error adding new pricings: ' + resp.error.data);
     };
     function success () {
         $('#new-amount').val('');
@@ -87,7 +87,7 @@ function save_edited_pricing(){
     var pricing_id = parseInt($(this).attr('id').split('-')[1]);
     $(this).checkValidity();
     function on_edit_error(resp) {
-        alert('error updating pricings: ' + resp.error.message);
+        alert('error updating pricings: ' + resp.error.data);
     };
     function on_edit_success () {
         $("#pricing_amount-"+pricing_id).text(format_currency($("#edit_amount-"+pricing_id).val()));
@@ -103,7 +103,7 @@ function save_edited_pricing(){
 function delete_pricing(){
     var pricing_id = $(this).attr('id').split('_')[1];
     function on_delete_pricing_error(resp) {
-        alert('error deleting pricings: ' + resp.error.message);
+        alert('error deleting pricings: ' + resp.error.data);
     };
     function on_delete_pricing_success () {
         get_pricing(tariff_id);
@@ -133,7 +133,7 @@ function on_tariff_pricing(resp) {
 
 function get_pricing(id) {
     function error(resp) {
-        alert('error fetching pricing: ' + resp.error.message);
+        alert('error fetching pricing: ' + resp.error.data);
     };
 
     var params = {'tariff': id, 'owner': current_ctx};
