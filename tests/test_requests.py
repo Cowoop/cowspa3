@@ -25,7 +25,7 @@ def test_requests_made():
     assert test_data.request_id in req_ids
 
 def test_list():
-    reqs = requestlib.in_queue(1)
+    reqs = requestlib.in_queue(test_data.member_id)
     req_ids = [req.id for req in reqs]
     assert test_data.request_id in req_ids
 
