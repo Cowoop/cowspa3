@@ -187,8 +187,8 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
 
     clauses = []
     if resource_filter: clauses.append('resource_id IN %(resource_filter)s')
-    if start: clauses.append('start_time >= %(start_time)s')
-    if end: clauses.append('start_time <= %(end_time)s')
+    if start: clauses.append('start_time::Date >= %(start_time)s')
+    if end: clauses.append('start_time::Date <= %(end_time)s')
     if invoice_id: clauses.append('invoice = %(invoice_id)s')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if uninvoiced: clauses.append('invoice IS null')
