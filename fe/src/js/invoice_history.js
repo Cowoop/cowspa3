@@ -62,7 +62,7 @@ function on_get_invoices_success(response) {
             history_table.fnDeleteRow(history_table.fnGetPosition(row));
         };
         function on_invoice_delete_error(resp){
-            alert("Error in deleting invoice");
+            alert("Error in deleting invoice: "+resp.error.data);
         };
         jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
     });
