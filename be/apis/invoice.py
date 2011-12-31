@@ -127,7 +127,7 @@ class InvoiceResource:
         if invoice_store.get(invoice_id, 'number'):
             return self.update(invoice_id, sent=datetime.datetime.now())
         else:
-            dbaccess.update_invoice_number(invoice_id, invoice['issuer'])
+            dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             return create_invoice_pdf(invoice_id)
 
     def get(self, invoice_id, attr):

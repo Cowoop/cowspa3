@@ -8,9 +8,9 @@ bizplace_store = dbaccess.stores.bizplace_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class InvoiceprefCollection:
-    def new(self, owner, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
-
-        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details)
+    def new(self, owner, start_number=None, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
+        
+        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, start_number=start_number)
 
         invoicepref_store.add(**data)
 
