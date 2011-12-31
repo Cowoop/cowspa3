@@ -14,6 +14,11 @@ function render_bookings(bookings) {
     $('#bookings-tmpl').tmpl(bookings).appendTo('#pane-booking');
 };
 
+function on_date_select(selected) {
+    var week_start_end = get_week_range(selected);
+    get_bookings(week_start_end[0], week_start_end[1]);
+};
+
 $('#booking-date-inp').datepicker( {
     changeMonth: true,
     changeYear: true,
@@ -25,3 +30,6 @@ $('#booking-date-inp').datepicker( {
         get_bookings(week_start_end[0], week_start_end[1]);
     }
 });
+
+var selected = $('#booking-date-inp').datepicker("getDate");
+on_date_select(selected);

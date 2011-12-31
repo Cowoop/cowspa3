@@ -99,10 +99,10 @@ class WeekAgenda(BookingPage):
         bookings_tmpl.aday.bookings = tf.DIV(Class="data")
         bookings_tmpl.aday.bookings.loop_start = "{{each bookings}}"
         bookings_tmpl.aday.bookings.booking = tf.DIV(Class="booking")
-        bookings_tmpl.aday.bookings.booking.name = tf.DIV("${resource_name}", Class="name")
         bookings_tmpl.aday.bookings.booking.timw = tf.DIV("${to_formatted_time(start_time)} - ${to_formatted_time(end_time)}")
+        bookings_tmpl.aday.bookings.booking.name = tf.DIV("${resource_name}", Class="name")
         bookings_tmpl.aday.bookings.booking.member = tf.DIV("Booked for: ${member_name}", Class="member-name")
-        bookings_tmpl.aday.bookings.booking.member = tf.DIV("Booked by: ${created_by}", Class="member-name")
+        bookings_tmpl.aday.bookings.booking.member = tf.DIV("Booked by: ${created_by_name}", Class="member-name")
         bookings_tmpl.aday.bookings.loop_end = "{{/each}}"
 
         container.resource_pane = resource_pane

@@ -264,11 +264,13 @@ class PGStore(BaseStore):
         """
         returns list of dicts keyed by field names
         """
-        cursor = self.cursor_getter()
-        clause = "id IN %s"
-        if order_by: clause += ' ORDER BY ' + order_by
-        clause_values = (tuple(oids),)
-        return self.get_by_clause(clause, clause_values, fields, hashrows)
+        if oids:
+            cursor = self.cursor_getter()
+            clause = "id IN %s"
+            if order_by: clause += ' ORDER BY ' + order_by
+            clause_values = (tuple(oids),)
+            return self.get_by_clause(clause, clause_values, fields, hashrows)
+        return []
 
     def get_all(self, fields=[], hashrows=True, order_by=None):
         """

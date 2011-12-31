@@ -199,10 +199,13 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     fields = ['member', 'resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id', 'created_by']
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter)
     usages = usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
-    members = dict(member_store.get_many([usage.member for usage in usages], fields=['id', 'name'], hashrows=False))
+    member_ids = set([usage.member for usage in usages] + [usage.created_by for usage in usages])
+    members = dict(member_store.get_many(member_ids, fields=['id', 'name'], hashrows=False))
     for usage in usages:
         usage['member_name'] = members[usage.member]
         usage['member_id'] = usage.member
+        usage['created_by_id'] = usage.created_by
+        usage['created_by_name'] = members[usage.created_by]
         del usage['member']
     return usages
 
