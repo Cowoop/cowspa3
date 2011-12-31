@@ -4,6 +4,7 @@ import commontest
 import test_data
 
 import be.apis.bizplace as bizplacelib
+import be.libs.cost as costlib
 import be.apis.resource as resourcelib
 import be.apis.pricing as pricinglib
 import be.apis.membership as membershiplib
@@ -92,4 +93,4 @@ def test_cost():
     ends = (datetime.datetime.now() + datetime.timedelta(0, 10*3600)).isoformat()
     cost = pricinglib.calculate_cost(test_data.member_w_plan, test_data.resource_id, quantity, starts, ends)
     rate = pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, starts)
-    assert cost == (quantity * rate)
+    assert cost == costlib.to_decimal( float(quantity * rate) * ( 100 + sum(test_data.taxes.values()) ) / 100 )
