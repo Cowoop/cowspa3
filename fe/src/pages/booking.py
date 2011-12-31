@@ -49,7 +49,8 @@ class BookingPage(BasePage):
         tf.C('|', Class="item-w"),
         tf.C('Agenda', Class="item"),
         tf.A("Week", href="/${lang}/${theme}/booking/week", Class="item"),
-        tf.A("Month", href="/${lang}/${theme}/booking/month", Class="item")]
+        #tf.A("Month", href="/${lang}/${theme}/booking/month", Class="item")
+        ]
 
 class Booking(BookingPage):
     def content(self):
@@ -99,7 +100,7 @@ class WeekAgenda(BookingPage):
         bookings_tmpl.aday.bookings.loop_start = "{{each bookings}}"
         bookings_tmpl.aday.bookings.booking = tf.DIV(Class="booking")
         bookings_tmpl.aday.bookings.booking.name = tf.DIV("${resource_name}", Class="name")
-        bookings_tmpl.aday.bookings.booking.timw = tf.DIV("${start_time} - ${end_time}")
+        bookings_tmpl.aday.bookings.booking.timw = tf.DIV("${to_formatted_time(start_time)} - ${to_formatted_time(end_time)}")
         bookings_tmpl.aday.bookings.booking.member = tf.DIV("${member_name}", Class="member-name")
         bookings_tmpl.aday.bookings.loop_end = "{{/each}}"
 

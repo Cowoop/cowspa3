@@ -42,8 +42,9 @@ function on_get_usages(resp) {
 
 function get_usages(resource_id) {
     var params = {'resource_ids': [resource_id],
-        'start': to_iso_date(add_days(get_selected_date(), -3)),
-        'end': to_iso_date(add_days(get_selected_date(), 3))
+        calc_mode: [1],
+        start: to_iso_date(add_days(get_selected_date(), -3)),
+        end: to_iso_date(add_days(get_selected_date(), 3))
     };
     jsonrpc("usages.find", params, on_get_usages, error);
 };

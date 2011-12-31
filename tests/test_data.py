@@ -6,7 +6,7 @@ admin = None
 #country code 466 for "Mali"
 
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
-bizplace_id = None  
+bizplace_id = None
 
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
 plan_id = None

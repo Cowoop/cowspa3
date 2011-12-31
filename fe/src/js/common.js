@@ -312,6 +312,27 @@ function to_formatted_datetime(date){
     return $.datepicker.formatDate('M dd, yy', fdate) + " " + time;
 };
 
+function to_formatted_time(date){
+    if(date==null || date==""){
+        return "";
+    }
+    var fdate = new Date(date);
+    var hh = fdate.getHours();
+    var time = " AM";
+    if(hh>=12){
+        time = " PM";
+        hh -= 12;
+    }
+    hh = (hh<10?"0":"") + hh; 
+    var mm = fdate.getMinutes();
+    mm = (mm<10?"0":"") + mm;
+    //var ss = fdate.getSeconds();
+    //ss = (ss<10?"0":"") + ss;
+    time = hh + ":" +  mm + time
+    return time;
+};
+
+
 function get_week_range(adate, start) {
     // http://stackoverflow.com/a/8381494/84513
     start = start || 0;
