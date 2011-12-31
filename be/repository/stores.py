@@ -276,7 +276,8 @@ class InvoicePref(PGStore):
     logo TEXT,
     tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
-    taxation_num TEXT
+    taxation_num TEXT,
+    start_number INTEGER
     """
     pickle_cols = ['taxes']
 

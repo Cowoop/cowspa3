@@ -27,7 +27,8 @@ class BizplaceCollection:
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id))
+        start_number = dbaccess.generate_invoice_start_number()
+        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, start_number=start_number))
         default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
         bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 

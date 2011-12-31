@@ -7,6 +7,7 @@ var select_member_box = $('.select-member');
 var usage_table;
 var usage_edit_id = null;
 var mtype = null;
+var inv_id;
 
 function on_member_profile(resp) {
     thismember = resp.result;
@@ -766,10 +767,23 @@ function get_invoice_tab_data(){
                 },
                 { "sTitle": "Link", "bSortable": false,
                 "fnRender": function(obj) {
-                        var sReturn = obj.aData[obj.iDataColumn];
-                        return "<A id='"+sReturn+"' href='#' class='invoice-view'>View</A>";
+                        inv_id = obj.aData[obj.iDataColumn];
+                        return "<A id='"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-view'>View</A>|<A id='delete-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-delete'>X</A>";
                         }
-                }
+                },
+                { "sTitle": "Send",
+                "fnRender": function(obj) {
+                        var sent = obj.aData[obj.iDataColumn];
+                        var link;
+                        if(sent){
+                            link = "<A id='inv-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='inv-send'>Resend</A>";
+                        }
+                        else{
+                            link = "<A id='inv-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='inv-send'>Send</A>";
+                        }
+                        return link;
+                        }      
+                },
             ]
         });
         //****************************View Invoice**********************************
@@ -782,6 +796,37 @@ function get_invoice_tab_data(){
             });
         });
         //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //****************************Delete Invoice**********************************
+    $('.invoice-delete').click(function () {
+        var row = $(this).closest("tr").get(0);
+        function on_invoice_delete_success(){
+            history_table.fnDeleteRow(history_table.fnGetPosition(row));
+        };
+        function on_invoice_delete_error(resp){
+            alert("Error in deleting invoice: "+resp.error.data);
+        };
+        jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+    });
+        //****************************Send Invoice**********************************
+    $('.inv-send').click(function () {
+        var box_id = $(this).attr("id");
+        var number_td = $(this).parent().parent().children(":first-child");
+        function on_send_invoice_success() {
+            $("#"+box_id).text("Resend");
+            alert('Invoice sent successfully');
+            params['attr'] = 'number';
+            function on_get_number_success(resp){
+                $(number_td).text(resp.result);
+            }
+            jsonrpc('invoice.get', params, on_get_number_success, on_send_invoice_failure);
+        };
+        function on_send_invoice_failure() {
+            alert('failed to send invoice');
+        };
+        var params = {invoice_id : box_id.split("-")[1]};
+        jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
+    });
+    //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
     function get_invoice_history_error(){};
     var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id), 'hashrows':false};

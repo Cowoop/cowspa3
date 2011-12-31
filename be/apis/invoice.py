@@ -62,8 +62,11 @@ class InvoiceCollection:
 
     def delete(self, invoice_id):
         """
-        Delete Invoice
+        Delete Invoice 
         """
+        if invoice_store.get(invoice_id, 'sent'):
+            msg = "You can not delete sent invoice."
+            raise Exception(msg)
         if invoice_store.remove(invoice_id):
 
             mod_data = dict(invoice=None)
@@ -90,7 +93,7 @@ class InvoiceCollection:
     
     def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
-        return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'id'], hashrows=hashrows)
+        return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'id', 'sent'], hashrows=hashrows)
 
 class InvoiceResource:
 
@@ -124,7 +127,7 @@ class InvoiceResource:
         if invoice_store.get(invoice_id, 'number'):
             return self.update(invoice_id, sent=datetime.datetime.now())
         else:
-            dbaccess.update_invoice_number(invoice_id, invoice['issuer'])
+            dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             return create_invoice_pdf(invoice_id)
 
     def get(self, invoice_id, attr):
