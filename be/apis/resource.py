@@ -107,6 +107,7 @@ class ResourceResource:
         # TODO change owner ref to name
         info['owner_id'] = info['owner']
         info['owner_name'] = dbaccess.oid2name(info['owner'])
+        info['state'] = commonlib.shared.constants.resource.to_dict(info['state'])
         return info
 
     def update(self, res_id, **mod_data):
