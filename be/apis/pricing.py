@@ -104,9 +104,12 @@ def delete(pricing_id):
     if dbaccess.find_usage(start=pricing.starts, end=pricing.ends, resource_ids=[pricing.resource]):
         msg = "Usages are associated with this pricing, you can't delete pricing."
         raise be.errors.ErrorWithHint(msg)
+    if not pricing.starts:
+        msg = "You can't delete first pricing for Guest Tariff."
+        raise be.errors.ErrorWithHint(msg)
     crit = dict(plan=pricing.plan, resource=pricing.resource, ends=pricing.starts-datetime.timedelta(1))
-    prev_pricing = pricing_store.get_by(crit)[0]
-    if prev_pricing: set(prev_pricing.id, 'ends', pricing.ends)
+    prev_pricing = pricing_store.get_by(crit)
+    if prev_pricing: set(prev_pricing[0].id, 'ends', pricing.ends)
     return pricing_store.remove(pricing_id)
 
 pricings = applib.Collection()
