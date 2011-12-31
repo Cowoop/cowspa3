@@ -342,7 +342,7 @@ function add_new_pricing() {
     var params = {'resource_id': this_resource_id, 'tariff_id': $('#tariff-select').val(), 'starts': $('#new-starts').val(), 
         'amount': $('#new-amount').val()};
     function error(resp) {
-        alert('error adding new pricings: ' + resp.error.message);
+        alert('error adding new pricings: ' + resp.error.data);
     };
     function success () {};
     jsonrpc("pricings.new", params, load_tariff_pricings, error);
@@ -380,7 +380,7 @@ function save_edited_pricing(){
     var pricing_id = parseInt($(this).attr('id').split('-')[1]);
     $(this).checkValidity();
     function on_edit_error(resp) {
-        alert('error updating pricings: ' + resp.error.message);
+        alert('error updating pricings: ' + resp.error.data);
     };
     function on_edit_success () {
         load_tariff_pricings();
@@ -395,7 +395,7 @@ function save_edited_pricing(){
 function delete_pricing(){
     var pricing_id = $(this).attr('id').split('_')[1];
     function on_delete_pricing_error(resp) {
-        alert('error deleting pricings: ' + resp.error.message);
+        alert('error deleting pricings: ' + resp.error.data);
     };
     function on_delete_pricing_success () {
         load_tariff_pricings();

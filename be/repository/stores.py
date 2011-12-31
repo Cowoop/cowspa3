@@ -274,7 +274,7 @@ class InvoicePref(PGStore):
     bcc_email TEXT,
     bank_details TEXT,
     logo TEXT,
-    tax_included BOOLEAN DEFAULT True,
+    tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
     taxation_num TEXT
     """

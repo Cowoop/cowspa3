@@ -126,7 +126,7 @@ class ResourceManage(BasePage):
         pricing.new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis'))
         pricing.new.starts = tf.INPUT(id='new-starts', type="hidden").set_required()
         pricing.new.amount = tf.SPAN(tf.INPUT(placeholder="New price", type="text", id='new-amount').set_required())
-        pricing.new.action = tf.SPAN(tf.BUTTON("Save", type="submit"))
+        pricing.new.action = tf.SPAN(tf.BUTTON("Add", type="submit"))
 
         pricing.table = tf.DIV(id="old-pricings", Class="grid")
 
