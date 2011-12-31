@@ -196,7 +196,7 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
 
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
 
-    fields = ['member', 'resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id']
+    fields = ['member', 'resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id', 'created_by']
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter)
     usages = usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
     members = dict(member_store.get_many([usage.member for usage in usages], fields=['id', 'name'], hashrows=False))
