@@ -16,5 +16,5 @@ def test_login():
 def test_role_assign():
     member_id = test_data.member_id
     roles = ['host', 'director']
-    rolelib.new_roles(member_id, roles, 1)
+    rolelib.new_roles(member_id, roles, test_data.bizplace_id)
     env.context.pgcursor.connection.commit()
