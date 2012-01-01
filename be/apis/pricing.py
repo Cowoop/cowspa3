@@ -209,7 +209,6 @@ class Taxes(costlib.Rule):
         taxes = tax_info['taxes'] if tax_info['taxes'] else {}
         tax_names = taxes.keys()
         initial_cost = float(cost.last())
-        print taxes
         total_tax_level = sum(map(float, taxes.values()))
 
         if tax_included:
