@@ -137,7 +137,7 @@ $('#resource-select').change( function () {
     refresh_cal();
 });
 
-var params = {'owner': current_ctx};
+var params = {owner: current_ctx, calc_mode: 1};
 jsonrpc("resources.available", params, on_available_resources, error);
 
 set_day_titles();
@@ -188,8 +188,6 @@ function open_edit_booking_form(booking) {
     $('#new-ends').attr('min', start_iso);
     $('#new-booking').dialog({
         title: booking.resource_name,
-        width: 500,
-        height: 500,
         close: on_close_booking_form
     });
 };

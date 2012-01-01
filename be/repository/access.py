@@ -131,6 +131,20 @@ def oid2name(oid):
     store = stores_by_type[OidGenerator.get_otype(oid)]
     return store.get(oid, ['name'], hashrows=False)
 
+def oids2names(oids, otype=None):
+    """
+    oids: list/tuple of oids. All oids assumed to be of same type
+    returns object id to name map
+    """
+    names = {}
+    oids = tuple(oids)
+    if 0 in oids: names[0] = 'Global'
+    if 1 in oids: names[1] = env.config.system_username
+    if oids:
+        store = stores_by_type[otype or OidGenerator.get_otype(oids[0])]
+        names.update(store.get_many(oids, fields=['id', 'name'], hashrows=False))
+    return names
+
 def oid2o(oid):
     store = stores_by_type[OidGenerator.get_otype]
     return store.get(int(oid))
@@ -182,6 +196,8 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     if clauses:
         resource_rows = resource_store.get_by_clause(clauses_s, clause_values, fields=['id'], hashrows=False)
         resource_filter = tuple(row[0] for row in resource_rows)
+        if not resource_filter: # no resource matched
+            return []
     else:
         resource_filter = tuple()
 
@@ -200,7 +216,7 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter)
     usages = usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
     member_ids = set([usage.member for usage in usages] + [usage.created_by for usage in usages])
-    members = dict(member_store.get_many(member_ids, fields=['id', 'name'], hashrows=False))
+    members = oids2names(member_ids)
     for usage in usages:
         usage['member_name'] = members[usage.member]
         usage['member_id'] = usage.member

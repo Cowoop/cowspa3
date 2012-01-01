@@ -73,12 +73,12 @@ function set_userid(uid) {
 function jsonrpc(apiname, params, success, error) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
-    if (!error) { function error(resp) { alert('Remote error: ' + resp.error.message); }; }
-    function cs_success(args) {
+    if (typeof(error) == 'undefined') { var error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; }
+    var cs_success = function(args) {
         waiting_ele.removeClass('waiting');
         success(args);
     };
-    function cs_error(args) {
+    var cs_error = function(args) {
         waiting_ele.removeClass('waiting');
         error(args);
     };
@@ -222,6 +222,7 @@ function error(){ };
 
 params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
 if(params['user_id']) {
+    function error() {};
     jsonrpc('roles.list', params, on_roles_list, error); 
 };
      

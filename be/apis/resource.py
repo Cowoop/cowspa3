@@ -72,10 +72,11 @@ class ResourceCollection:
         available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
         return resource_store.get_by(crit=dict(owner=owner, state=available_state), fields=['id', 'name'])
 
-    def available(self, owner):
+    def available(self, owner, calc_mode=None):
         available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
-        return [res for res in resource_store.get_by(crit=dict(owner=owner, state=available_state), fields=['id', 'name', 'type']) \
-            if res.type != 'tariff']
+        crit = dict(owner=owner, state=available_state)
+        if calc_mode: crit['calc_mode'] = calc_mode
+        return [res for res in resource_store.get_by(crit=crit, fields=['id', 'name', 'type']) if res.type != 'tariff']
 
     def resources(self, owner, type=None):
         """
