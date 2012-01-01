@@ -39,7 +39,7 @@ def booking_form():
     form.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
     form.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900", value="19:00"))
     #form.add_field("Quantity", tf.INPUT(id="new-quantity", type="text"), "Not applicable for time based resources")
-    form.add_buttons(tf.INPUT(type="submit", value="Add booking"))
+    form.add_buttons(tf.INPUT(type="submit", value="Save"))
     return form.build()
 
 class BookingPage(BasePage):

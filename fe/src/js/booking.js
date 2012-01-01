@@ -3,6 +3,7 @@ var resource_map = {};
 var shown_dates = [];
 var new_booking_date = null;
 var dropped_slot = null;
+var booking_action = 'click';
 
 function error(resp) {
     alert('Remote error: ' + resp.error.message);
@@ -94,6 +95,7 @@ function mark_slot(usage) {
 };
 
 function on_drop_booking(event, ui ) {
+    booking_action = 'drop';
     var draggable = ui.draggable;
     var current_booking_id = parseInt(draggable.attr('id').split('_')[1]);
     var date_start_end = id2datetime($(this).attr('id'));
@@ -119,6 +121,7 @@ function mark_slots(usages) {
     };
     $('.slot-available').droppable({drop: on_drop_booking});
     $('.booking').click( function () {
+        booking_action = 'click';
         var booking_id = parseInt($(this).attr('id').split('_')[1]);
         get_booking_info(booking_id);
     });
@@ -171,17 +174,22 @@ function open_edit_booking_form(booking) {
     $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
     var booking_duration = (new Date(booking.end_time)) - (new Date(booking.start_time));
     var upper_slots_time = booking_duration / 2;
-    var dropped_slot_time = (dropped_slot.split(':')[0] * 60 * 60 * 1000) + (dropped_slot.split(':')[1] * 60 * 1000);
-    if (dropped_slot_time > upper_slots_time) {
-        var offset = (dropped_slot_time - upper_slots_time);
-        var start_time = new Date(new_booking_date.getTime() + offset);
-        var end_time = new Date(start_time.getTime() + booking_duration);
-        var start_iso = date2iso(start_time, true);
-        var end_iso = date2iso(end_time, true);
+    if (booking_action == 'drop') {
+        var dropped_slot_time = (dropped_slot.split(':')[0] * 60 * 60 * 1000) + (dropped_slot.split(':')[1] * 60 * 1000);
+        if (dropped_slot_time > upper_slots_time) {
+            var offset = (dropped_slot_time - upper_slots_time);
+            var start_time = new Date(new_booking_date.getTime() + offset);
+            var end_time = new Date(start_time.getTime() + booking_duration);
+            var start_iso = date2iso(start_time, true);
+            var end_iso = date2iso(end_time, true);
+        } else {
+            var start_iso = '00:00';
+            var end_time = new Date(new_booking_date.getTime() + booking_duration);
+            var end_iso = date2iso(end_time, true);
+        };
     } else {
-        var start_iso = '00:00';
-        var end_time = new Date(new_booking_date.getTime() + booking_duration);
-        var end_iso = date2iso(end_time, true);
+        var start_iso = date2iso(booking.start_time);
+        var end_iso = date2iso(booking.end_time);
     };
     $('#new-starts').val(start_iso);
     $('#new-ends').val(end_iso);
