@@ -439,7 +439,7 @@ function update_taxes(){
     else{
         params.taxes = {};
         $('.new-tax').each(function(){
-            params.taxes[$(".new-name", this).val()] = $(".new-value", this).val();    
+            params.taxes[$(".new-name", this).val()] =  parseFloat($(".new-value", this).val());    
         });
     }
     function on_taxes_updation_success(){

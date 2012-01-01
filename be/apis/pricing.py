@@ -209,19 +209,20 @@ class Taxes(costlib.Rule):
         taxes = tax_info['taxes'] if tax_info['taxes'] else {}
         tax_names = taxes.keys()
         initial_cost = float(cost.last())
-        total_tax_level = sum(taxes.values())
+        print taxes
+        total_tax_level = sum(map(float, taxes.values()))
 
         if tax_included:
             basic_cost = initial_cost / ((100+total_tax_level)/100.0)
-            tax_applied = ((name, (basic_cost*float(level/100.0))) for name, level in taxes.items()) if taxes else None
+            tax_applied = {name:(basic_cost*float(float(level)/100.0)) for name, level in taxes.items()} if taxes else None
             total = initial_cost
         else:
             amount_to_add = float(initial_cost) * (total_tax_level/100.0)
-            tax_applied = ((name, (initial_cost * float(level/100.0))) for name, level in taxes.items()) if taxes else None
+            tax_applied = {name:(initial_cost * float(float(level)/100.0)) for name, level in taxes.items()} if taxes else None
             total = initial_cost + amount_to_add
 
         cost.new(self.name, total)
-        usage.taxes = tuple(tax_applied) if tax_applied else None
+        usage.taxes = tax_applied if tax_applied else None
         return costlib.flags.proceed
 
 

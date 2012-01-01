@@ -56,11 +56,19 @@ class Template(sphc.more.HTML5Page):
         usages = tf.TABLE(id='usages_summary', Class="stripped")
         usages.caption = tf.h3("Usage Summary")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in ('Resource', 'Amount')]
+        usages.header.cells = [tf.TH(name) for name in ('Resource', 'Amount', 'Taxes(Inclusive)')]
         for name, group in itertools.groupby(data.usages, itemgetter('resource_name')):
             usage_row = tf.TR()
             usage_row.td = tf.TD(name)
+            group = list(group)
             usage_row.td = tf.TD(show_currency(sum([usage.cost for usage in group])))
+            tax_keys = set([])
+            for usage in group:
+                if usage.tax_dict:
+                    tax_keys = tax_keys.union(set([tax for tax in usage.tax_dict]))
+            tax_keys = list(tax_keys)
+            taxes = { key : sum([usage.tax_dict[key] if key in usage.tax_dict else 0 for usage in group]) for key in tax_keys} 
+            usage_row.td = tf.TD(', '.join([key + " : " + str(show_currency(taxes[key])) for key in tax_keys]) if taxes else "-")
             usages.row = usage_row
         usage_row = tf.TR()
         usage_row.td = tf.TD("Sub Total")

@@ -150,7 +150,7 @@ function on_create_invoice(response) {
     $('#inv-action-status').text('Invoice creation successful');
     $('#inv-action-status').addClass('status-success');
     $('#inv-action-status').removeClass('status-fail');
-    $('#invoice-save').attr("disabled", true);
+    //$('#invoice-save').attr("disabled", true);
     $('#invoice-view').removeAttr("disabled");
     $('#invoice-send').removeAttr("disabled");
     $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+inv_id+'/html');
