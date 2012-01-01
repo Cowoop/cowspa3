@@ -8,19 +8,18 @@ usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 
-    def new(self, resource_id, resource_name, member, start_time, end_time=None, quantity=None, cost=None, tax_dict={}, invoice=None, cancelled_against=None, pricing=None, booking=None, calculated_cost=None):
+    def new(self, resource_id, resource_name, member, start_time, end_time=None, quantity=None, cost=None, tax_dict=None, invoice=None, cancelled_against=None, pricing=None, booking=None, calculated_cost=None):
 
         if not quantity: quantity = 1
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-        taxes = None
         if not cancelled_against:
             result = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True))
             calculated_cost = result['calculated_cost']
-            taxes = result['taxes']
+            tax_dict = result['taxes']    
         if not cost: cost = calculated_cost
-        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking,  calculated_cost=calculated_cost, cost=cost, tax_dict=taxes, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
+        data = dict(resource_id=resource_id, resource_name=resource_name, quantity=quantity, booking=booking,  calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
         return usage_store.add(**data)
 
     def _delete(self, usage_id):
@@ -37,6 +36,9 @@ class UsageCollection:
         del(data['id'])
         del(data['created'])
         del(data['invoice'])
+        if data['tax_dict']: 
+            for tax in data['tax_dict']:
+                data['tax_dict'][tax] = -data['tax_dict'][tax] 
         if amount: usage_store.update(usage_id, cost=amount)
         return self.new(**data)
 

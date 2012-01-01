@@ -67,7 +67,7 @@ class Template(sphc.more.HTML5Page):
                 if usage.tax_dict:
                     tax_keys = tax_keys.union(set([tax for tax in usage.tax_dict]))
             tax_keys = list(tax_keys)
-            taxes = { key : sum([usage.tax_dict[key] if key in usage.tax_dict else 0 for usage in group]) for key in tax_keys} 
+            taxes = { key : sum([usage.tax_dict[key] if usage.tax_dict and key in usage.tax_dict else 0 for usage in group]) for key in tax_keys} 
             usage_row.td = tf.TD(', '.join([key + " : " + str(show_currency(taxes[key])) for key in tax_keys]) if taxes else "-")
             usages.row = usage_row
         usage_row = tf.TR()
