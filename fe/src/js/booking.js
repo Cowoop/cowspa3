@@ -160,8 +160,6 @@ function open_booking_form(resource_name, new_booking_date, start_time, end_time
     $('#new-ends').attr('min', start_time);
     $('#new-booking').dialog({
         title: resource_name,
-        width: 500,
-        height: 500,
         close: on_close_booking_form
     });
 };

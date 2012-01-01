@@ -7,7 +7,7 @@ def setup(username, password, email, first_name):
     if dbaccess.stores.user_store.count():
         return
     # 0. Id offsets to accmodate migration
-    q = 'ALTER SEQUENCE oidgen_id_seq MINVALUE %(offset)s START %(offset)s RESTART %(offset)s'
+    q = 'ALTER SEQUENCE member_number_seq MINVALUE %(offset)s START %(offset)s RESTART %(offset)s'
     q_values = dict(offset=20000)
     dbaccess.stores.oidgen_store.query_exec(q, q_values)
     # 1. Create system account

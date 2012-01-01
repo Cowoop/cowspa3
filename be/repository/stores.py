@@ -83,6 +83,7 @@ class Member(PGStore):
     table_name = "member"
     create_sql = """
     id INTEGER NOT NULL,
+    number SERIAL NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     state INTEGER default 1 NOT NULL,
     type TEXT NOT NULL

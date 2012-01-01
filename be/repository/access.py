@@ -390,20 +390,22 @@ class OidGenerator(object):
     @staticmethod
     def get_otype(oid):
         return oidgen_store.get(oid, fields=['type'])
-        
+
 def update_invoice_number(invoice_id, issuer, start_number):
 
     query = "UPDATE invoice SET number=(SELECT number+1 from (SELECT number FROM invoice WHERE issuer = %(issuer)s UNION select %(starting)s) AS temp_table WHERE number+1 NOT IN (SELECT number FROM invoice WHERE issuer = %(issuer)s AND number IS NOT null) ORDER BY number LIMIT 1), sent=%(sent)s WHERE id=%(invoice_id)s"
-    values = dict(issuer=issuer, starting=start_number * 10000000, invoice_id=invoice_id, sent=datetime.datetime.now()) 
+    values = dict(issuer=issuer, starting=start_number * 10000000, invoice_id=invoice_id, sent=datetime.datetime.now())
     return invoice_store.query_exec(query, values)
 
 def generate_invoice_number(issuer, start_number, limit=1):
-    
+
     query = "SELECT number+1 from (SELECT number FROM invoice WHERE issuer = %(issuer)s UNION select %(starting)s) AS temp_table WHERE number+1 NOT IN (SELECT number FROM invoice WHERE issuer = %(issuer)s) ORDER BY number LIMIT %(limit)s"
-    values = dict(issuer = issuer, limit = limit, starting = start_number * 10000000) 
+    values = dict(issuer = issuer, limit = limit, starting = start_number * 10000000)
     return invoice_store.query_exec(query, values, hashrows=False)[0][0]
 
 def generate_invoice_start_number():
+    bizplace_invoice_start_offset = 200
+    # invoice number starts with bizplace id. old system has used around 100 ids so we start with 200 making sure that new invoice_start allocations do not conflict with old ones
     query = "SELECT count(id) FROM oidgen WHERE type=%(type)s";
-    values = dict(type='BizPlace') 
-    return oidgen_store.query_exec(query, values, hashrows=False)[0][0]
+    values = dict(type='BizPlace')
+    return oidgen_store.query_exec(query, values, hashrows=False)[0][0] + bizplace_invoice_start_offset
