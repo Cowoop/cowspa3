@@ -45,7 +45,7 @@ class MemberInvited(BaseEvent):
     name = "member_invited"
     category = "member_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + ' %(actor_name)s has send membership invitaion to "%(first_name)s %(last_name)s"'
+        return make_date_element(self.data.created) + ' %(actor_name)s has send membership invitation to "%(first_name)s %(last_name)s"'
     def _access(self):
         return dict(roles=[(0, 'admin')], member_ids=[self.actor])
 
