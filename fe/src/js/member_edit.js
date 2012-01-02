@@ -5,6 +5,7 @@ var is_get_thismember_invoices_done = false;
 var is_get_thismember_billingpref_done = false;
 var select_member_box = $('.select-member');
 var usage_table;
+var invoice_table;
 var usage_edit_id = null;
 var mtype = null;
 var inv_id;
@@ -747,7 +748,7 @@ function delete_usage() {
 function get_invoice_tab_data(){
     function get_invoice_history_success(response) {
         is_get_thismember_invoices_done = true;
-        $('#history_table').dataTable({
+        invoice_table = $('#history_table').dataTable({
             "aaData": response.result,
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
@@ -800,7 +801,7 @@ function get_invoice_tab_data(){
     $('.invoice-delete').click(function () {
         var row = $(this).closest("tr").get(0);
         function on_invoice_delete_success(){
-            history_table.fnDeleteRow(history_table.fnGetPosition(row));
+            invoice_table.fnDeleteRow(invoice_table.fnGetPosition(row));
         };
         function on_invoice_delete_error(resp){
             alert("Error in deleting invoice: "+resp.error.data);
