@@ -69,7 +69,7 @@ class ListTariff(BasePage):
         pricing.add(pricing_tmpl)
 
         new = tf.FORM(id="new-pricing", method="POST") #, Class="hidden")
-        new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis'))
+        new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis').set_required())
         new.starts = tf.INPUT(id='new-starts', type="hidden").set_required()
         new.amount = tf.SPAN(tf.INPUT(placeholder="New price", type="text", id='new-amount').set_required())
         new.action = tf.SPAN(tf.BUTTON("Save", type="submit"))
