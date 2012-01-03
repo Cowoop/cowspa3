@@ -169,7 +169,7 @@ class ResourceResource:
         owner = self.get(res_id, 'owner')
         taxinfo = invoicepref_lib.invoicepref_resource.get_taxinfo(owner)
         resource_taxes = self.get(res_id, 'taxes')
-        if resource_taxes: taxinfo['taxes'] = resource_taxes
+        if resource_taxes != None: taxinfo['taxes'] = resource_taxes
         return taxinfo
 
 resource_resource = ResourceResource()
