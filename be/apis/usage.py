@@ -40,7 +40,8 @@ class UsageCollection:
             for tax in data['tax_dict']:
                 data['tax_dict'][tax] = -data['tax_dict'][tax] 
         if amount: usage_store.update(usage_id, cost=amount)
-        return self.new(**data)
+        self.new(**data)
+        return usage_store.remove(usage_id)
 
     def delete(self, usage_id, amount=None):
         return self.cancel(usage_id, amount) if usage_store.get(usage_id, 'invoice') else self._delete(usage_id)
