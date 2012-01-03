@@ -751,6 +751,7 @@ function get_invoice_tab_data(){
         invoice_table = $('#history_table').dataTable({
             "aaData": response.result,
             "bJQueryUI": true,
+            "bDestroy": true,
             "sPaginationType": "full_numbers",
             "aoColumns": [
                 { "sTitle": "Number" },
