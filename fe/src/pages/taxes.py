@@ -15,7 +15,7 @@ class Taxes(BasePage):
             "If unchecked tax amount will be added to final usage prices")
         add_tax = tf.DIV(id="add_tax")
         add_tax.name = tf.DIV(tf.INPUT(placeholder="Tax name", type="text", id='new_tax'), Class='tax-name')
-        add_tax.value = tf.DIV([tf.INPUT(placeholder="Value", type="number", id='new_value', step="0.1"), tf.span("%")], Class='tax-value')
+        add_tax.value = tf.DIV([tf.INPUT(placeholder="Value: eg. 10 for 10%", type="number", id='new_value', step="0.1"), tf.span("%")], Class='tax-value')
         add_tax.action = tf.DIV(tf.BUTTON("Add", type="button", id="add_tax-btn"), Class="tax-delete")
         taxes.add_field("Taxes", tf.DIV(add_tax, id="taxes_list"))
         taxes.add_buttons(tf.BUTTON("Save", id="save-btn", type="submit"))

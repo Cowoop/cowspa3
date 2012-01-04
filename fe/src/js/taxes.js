@@ -26,7 +26,7 @@ function update_taxes(){
     $('.new-tax').each(function(){
         if(params.taxes == null)
             params.taxes = {};
-        params.taxes[$(".new-name", this).val()] = $(".new-value", this).val();
+        params.taxes[$(".new-name", this).val()] = parseFloat($(".new-value", this).val());
     });
     function on_taxes_updation_success(){
         $(".action-status").removeClass('status-fail');
@@ -43,7 +43,7 @@ function get_taxesinfo(){
         $("#taxes_included").attr("checked", resp.result.tax_included);
         var taxes = resp.result.taxes;
         for(var key in taxes){
-            append_taxes([{'name':key, 'value':parseFloat(taxes[key])}]);
+            append_taxes([{'name':key, 'value':taxes[key]}]);
         };
     };
     jsonrpc("invoicepref.taxinfo", {"owner":current_ctx}, on_get_taxinfo_success);
