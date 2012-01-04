@@ -29,7 +29,7 @@ def create_invoice_pdf(invoice_id):
     html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
     be.templates.invoice.Template(data).write(html_path)
     if invoice['number']:
-        pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice['number'])
+        pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
         pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return True
 
@@ -122,13 +122,12 @@ class InvoiceResource:
         subject = issuer.name + ' | Invoice'
         attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
+        if not invoice_store.get(invoice_id, 'number'):
+            dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
+            create_invoice_pdf(invoice_id)
         env.mailer.send(issuer.email, email, subject=subject, rich=invoicing_pref.email_text, \
             plain='', cc=[], bcc=bcc, attachment=attachment)
-        if invoice_store.get(invoice_id, 'number'):
-            return self.update(invoice_id, sent=datetime.datetime.now())
-        else:
-            dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
-            return create_invoice_pdf(invoice_id)
+        return self.update(invoice_id, sent=datetime.datetime.now())
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)
