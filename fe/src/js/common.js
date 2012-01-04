@@ -163,7 +163,7 @@ function on_roles_list(resp) {
         on_roles(result)
     }); // calling on_roles hook which might be defined (only once) at some other js
 
-    var ctx_label = 'Your Hub';
+    var ctx_label = 'My Hub';
     if(result.length == 0) {
         $('#ctx-menu').show();
         set_0_locations_menu();
@@ -239,9 +239,9 @@ function iso2date(iso) {
     var mm = parseInt(iso.slice(5, 7)-1);
     var dd = parseInt(iso.slice(8, 10));
     if (iso.length > 11) { // this won't work after year 9999 or before year 1000
-        var hh = parseInt(iso.slice(11, 13));
-        var mi = parseInt(iso.slice(14, 16));
-        var ss = parseInt(iso.slice(17, 19));
+        var hh = parseInt(iso.slice(11, 13), 10);
+        var mi = parseInt(iso.slice(14, 16), 10);
+        var ss = parseInt(iso.slice(17, 19), 10);
     } else {
         var hh = 0;
         var mi = 0;
