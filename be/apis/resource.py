@@ -102,7 +102,7 @@ class ResourceResource:
         """
         returns dict containing essential information of specified business
         """
-        info_attributes = ['name', 'owner', 'short_description', 'state', 'id',
+        info_attributes = ['name', 'owner', 'short_description', 'long_description', 'state', 'id',
                 'calc_mode', 'accnt_code']
         info = resource_store.get(res_id, info_attributes)
         # TODO change owner ref to name
