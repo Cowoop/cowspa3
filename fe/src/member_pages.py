@@ -239,7 +239,7 @@ class MemberCreate(BasePage):
         content = tf.DIV()
         content.invite = tf.DIV(id='invite', Class='hidden')
         content.invite.form = fe.src.forms.signup_form().build()
-        content.help = tf.DIV("You may choose invite Hub hosts to join. It is safer and quicker option.")
+        content.help = tf.DIV("You may choose to invite Hub Hosts to join. It is a safer and quicker option.")
         content.action = tf.BUTTON("Invite", href="", Class="bigger-button", id="invite-btn")
         return content
 
