@@ -136,6 +136,7 @@ setup_routing();
 
 function edit_member(theform) {
     var action_status = $('#'+theform.attr('id') + ' .action-status');
+    $('input[name="name"]').val($('input[name="first_name"]').val()+" "+$('input[name="last_name"]').val());
     var inputs = theform.serializeArray();
     var params = {'member_id': thismember_id}
     for(var i in inputs) {
@@ -143,6 +144,12 @@ function edit_member(theform) {
     };
     function success(resp) {
         action_status.text("Update is successful.").attr('class', 'status-success');
+        $('.data-username').text($("#username").val());
+        $('.data-email-link').attr('href', 'mailto:'+$("#member-contact-edit-email").val()).text($("#member-contact-edit-email").val());
+        $('#content-title').text($('input[name="name"]').val());
+        if("theme" in params && params.theme!=thismember.preferences.theme){
+            window.location = (window.location).toString().replace(thismember.preferences.theme.toString(), params.theme.toString());
+        }
     };
     function error() {
         action_status.text("Update failed").attr('class', 'status-fail');
