@@ -55,8 +55,8 @@ function on_member_profile(resp) {
 };
 
 function act_on_route(id) {
-    if (thismember_id != parseInt(id)) {
-        thismember_id = parseInt(id);
+    if (thismember_id != parseInt(id, 10)) {
+        thismember_id = parseInt(id, 10);
         is_get_thismember_usages_done = false;
         is_get_thismember_invoices_done = false;
         is_get_thismember_billingpref_done = false;
@@ -199,8 +199,8 @@ $("#organization_mode1").click(function(){
 
 //---------------------Save Billing Preferences---------------------------------
 $("#update-billingpref").click(function(){
-    var params = {'member': thismember_id, 'mode': parseInt(mode)};
-    switch(parseInt(mode)){
+    var params = {'member': thismember_id, 'mode': parseInt(mode, 10)};
+    switch(parseInt(mode, 10)){
         case 0 : params['billto'] = null;
                  break;
         case 1 : params['billto'] = null;
@@ -215,7 +215,7 @@ $("#update-billingpref").click(function(){
                  break;
         case 2 : params['billto'] = billto;
                  break;         
-        case 3 : if(parseInt($("input:radio[name='organization_mode']:checked").val()) == 1){
+        case 3 : if(parseInt($("input:radio[name='organization_mode']:checked").val(), 10) == 1){
                     params['billto'] = null;
                     params['organization_details'] = {
                         "name" :$("#details_3 #org_name").val(),
@@ -496,22 +496,6 @@ function bind_cancel_and_change_tariff() {
     });
 };   
 //***********************End Cancel/Change Tariff*******************************
-/*-------------------------Stop Membership--------------------------------------
-$('#stop_date').datepicker( {
-    altFormat: 'yy-mm-dd',
-    altField: '#stops',
-    dateFormat: 'M d, yy'
-});
-$("#stop_membership").submit(function(){
-    function on_stop_membership_success(res) {
-        is_get_thismember_usages_done = false;
-    };
-    function on_stop_membership_error(){};
-    var params = {'membership_id':thismember.memberships[0].id, 'ends':to_iso_date($('#stops').val())};
-    jsonrpc('membership.stop', params, on_stop_membership_success, on_stop_membership_error);
-    return false;
-});
-//------------------------End Stop Membership-----------------------------------*/
 //****************************Usage Management********************************** 
 //-----------------------------Get Resources------------------------------------
 function on_get_resources_success(res) {
@@ -523,7 +507,7 @@ function on_get_resources_success(res) {
     $("#resource_name").val($("#add-usage-form #resource_select option:first").text());
 };
 function on_get_resources_error(){};
-jsonrpc('resource.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
+jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
 $("#resource_select").change(function(){
     $("#resource_name").val($("#resource_select option:selected").text());
@@ -540,7 +524,7 @@ $('#add-usage-form #end_time').datetimepicker({
 });
 $("#calculate_cost-btn").click(function(){
     params = {
-        'resource_id' : parseInt($("#resource_select").val()),
+        'resource_id' : parseInt($("#resource_select").val(), 10),
         'quantity' : parseFloat($("#quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#start_time").val()),
@@ -565,7 +549,7 @@ $("#calculate_cost-btn").click(function(){
 $('#submit-usage').click(function(){
     var action_status = $('#add-usage-form .action-status');
     params = {
-        'resource_id' : parseInt($("#resource_select").val()),
+        'resource_id' : parseInt($("#resource_select").val(), 10),
         'resource_name' : $("#resource_name").val(),
         'quantity' : parseFloat($("#quantity").val()),
         'cost' : parseFloat($("#cost").val()),
@@ -616,7 +600,7 @@ function get_uninvoiced_usages(){
             "bDestroy": true,
             "sPaginationType": "full_numbers",
             "aoColumns": [
-                { "sTitle": "Resource Name", "sWidth":"20%" },
+                { "sTitle": "Resource/Tariff Name", "sWidth":"20%" },
                 { "sTitle": "Start Time", "sWidth":"20%",
                     "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
@@ -685,7 +669,7 @@ function handle_edit_usage(usage_id){
 };
 $("#recalculate_cost-btn").click(function(){
     params = {
-        'resource_id' : parseInt($("#res_select").val()),
+        'resource_id' : parseInt($("#res_select").val(), 10),
         'quantity' : parseFloat($("#res_quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#res_start_time").val()),
@@ -709,8 +693,8 @@ $("#recalculate_cost-btn").click(function(){
 $('#update-usage').click(function(){
     var action_status = $('#edit_usage-form .action-status');
     var params = {
-        'usage_id' : parseInt(usage_edit_id),
-        'resource_id' : parseInt($("#res_select").val()),
+        'usage_id' : parseInt(usage_edit_id, 10),
+        'resource_id' : parseInt($("#res_select").val(), 10),
         'resource_name' : $("#res_name").val(),
         'quantity' : parseFloat($("#res_quantity").val()),
         'cost' : parseFloat($("#res_cost").val()),
@@ -745,7 +729,7 @@ function delete_usage() {
     };
     if(confirm("Do you want to cancel usage?")){
         var params = {};
-        params['usage_id'] = parseInt($(this).attr("id").split("-")[1]);
+        params['usage_id'] = parseInt($(this).attr("id").split("-")[1], 10);
         jsonrpc('usages.delete', params, on_usage_cancel_success, on_usage_cancel_error);
     };
 };
@@ -838,7 +822,7 @@ function get_invoice_tab_data(){
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
     function get_invoice_history_error(){};
-    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id), 'hashrows':false};
+    var params = { 'issuer' : parseInt(current_ctx), 'member' : parseInt(thismember_id, 10), 'hashrows':false};
     jsonrpc('invoice.by_member', params, get_invoice_history_success, get_invoice_history_error);
 };
 $("#new_invoice-btn").click(function(){
