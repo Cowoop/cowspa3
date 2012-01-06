@@ -112,7 +112,7 @@ def update(membership_id, **mod_data):
     """
     """
     old_data = info(membership_id)
-    usages = usagelib.usage_collection.find(start=old_data['starts'], end=old_data['ends'] if old_data['ends'] else datetime.datetime.now().date(), member_ids=[old_data['member_id']], resource_ids=[old_data['tariff_id']], only_non_cancelled=True)
+    usages = usagelib.usage_collection.find(start=old_data['starts'], end=old_data['ends'] if old_data['ends'] else datetime.datetime.now().date(), member_ids=[old_data['member_id']], resource_ids=[old_data['tariff_id']], exclude_credit_usages=True, exclude_cancelled_usages=True)
     starts = commonlib.helpers.iso2date(mod_data['starts']) if 'starts' in mod_data else old_data['starts']
     ends = commonlib.helpers.iso2date(mod_data['ends']) if 'ends' in mod_data else old_data['ends']
     
@@ -163,7 +163,7 @@ def delete(membership_id):
     """
     """
     membership = info(membership_id)
-    usages = usagelib.usage_collection.find(start=membership['starts'], end=membership['ends'], member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], only_non_cancelled=True)
+    usages = usagelib.usage_collection.find(start=membership['starts'], end=membership['ends'], member_ids=[membership['member_id']], resource_ids=[membership['tariff_id']], exclude_credit_usages=True, exclude_cancelled_usages=True)
     usagelib.usage_collection.bulk_delete([usage.id for usage in usages])
     return membership_store.remove(membership_id)
     

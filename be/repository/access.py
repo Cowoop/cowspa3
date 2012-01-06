@@ -184,7 +184,7 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, only_non_cancelled=False, calc_mode=[]):
+def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, exclude_credit_usages=False, calc_mode=[], exclude_cancelled_usages=False):
 
     clauses = []
     if resource_ids: clauses.append('(id IN %(resource_ids)s)')
@@ -208,7 +208,8 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     if invoice_id: clauses.append('invoice = %(invoice_id)s')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if uninvoiced: clauses.append('invoice IS null')
-    if only_non_cancelled: clauses.append('cancelled_against IS null')
+    if exclude_credit_usages: clauses.append('cancelled_against IS null')
+    if exclude_cancelled_usages: clauses.append('id NOT IN (SELECT cancelled_against FROM usage WHERE cancelled_against IS NOT null)')
 
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
 
