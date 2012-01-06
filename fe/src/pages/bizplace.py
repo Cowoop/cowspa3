@@ -15,6 +15,7 @@ def get_location_form():
         name='address'))
     about.add_field('City', sphc.tf.INPUT(type='text', id='city',
         name='city').set_required())
+    about.add_field("State/Province", tf.INPUT(name='province', id='province', type="text"))
     country_select = sphc.tf.SELECT(id='country', name='country')
     country_select.options = fe.src.common.country_options
     about.add_field('Country', country_select)
@@ -121,6 +122,7 @@ class List(BasePage):
         field_data = [('Name', 'name'),
             ('Address', 'address'),
             ('City', 'city'),
+            ('State/Province', 'province'),
             ('Country', 'country'),
             ('Timezone', 'tz'),
             ('Short description', 'short_description'),

@@ -13,6 +13,7 @@ function show_editform(id) {
         $('#tz option:contains("' +loc.tz+ '")').attr('selected','selected');
         $('textarea[name="short_description"]').val(loc.short_description);
         $('input[name="city"]').val(loc.city);
+        $('input[name="province"]').val(loc.province);
         $('input[name="email"]').val(loc.email);
         $('#currency').val(loc.currency);
         $('#website').val(loc.website);
@@ -180,6 +181,7 @@ function location_info(resp) {
     $('#location_view_form #city').text(loc.city);
     $('#location_view_form #email').text(loc.email);
     $('#location_view_form #short_description').text(loc.short_description);
+    $('#location_view_form #province').text(loc.province);
     $('#location_view_form #country').text(loc.country);
     $('#location_view_form #tz').text(loc.tz);
     $('#location_view_form #phone').text(loc.phone);

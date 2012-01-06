@@ -57,7 +57,7 @@ def biz_info(biz_id):
     return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
 
 bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency',
-'address', 'city', 'country', 'email', 'phone', 'fax','host_email',
+'address', 'city', 'province', 'country', 'email', 'phone', 'fax','host_email',
 'booking_email', 'website', 'tz']
 
 def bizplace_info(bizplace_id):

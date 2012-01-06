@@ -15,6 +15,7 @@ def contact_form():
     form = sphc.more.Form(id='member-contact-edit', Class='profile-edit-form', classes=['hform'])
     form.add_field("Address", tf.TEXTAREA(name='address', type="text"))
     form.add_field("City", tf.INPUT(name='city', type="text"))
+    form.add_field("State/Province", tf.INPUT(name='province', type="text"))
     select = tf.SELECT(id='country', name='country')
     select.options = fe.src.common.country_options
     form.add_field("Country", select)
@@ -217,6 +218,7 @@ class MemberCreate(BasePage):
         section.add(tf.LEGEND("Contact"))
         section.add_field("Address", tf.TEXTAREA(name='address', type="text"))
         section.add_field("City", tf.INPUT(name='city', type="text"))
+        section.add_field("State/Province", tf.INPUT(name='province', type="text"))
         section.add_field("Country", tf.SELECT(fe.src.common.country_options, id='country', name='country'))
         section.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
         section.add_field("Phone", tf.INPUT(name='phone', type="text"))

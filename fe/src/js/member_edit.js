@@ -33,6 +33,7 @@ function on_member_profile(resp) {
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
     $('input[name="address"]').val(thismember.contact.address);
     $('input[name="city"]').val(thismember.contact.city);
+    $('input[name="province"]').val(thismember.contact.province);
     $('input[name="email"]').val(thismember.contact.email);
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('#country').val(thismember.contact.country);

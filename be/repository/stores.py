@@ -29,6 +29,7 @@ class Contact(PGStore):
     id SERIAL NOT NULL UNIQUE,
     address TEXT,
     city TEXT,
+    province TEXT,
     country TEXT,
     pincode TEXT,
     phone TEXT,
