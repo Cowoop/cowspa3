@@ -84,7 +84,7 @@ function allow_edit_pricing(pricing_id){
     $("#edit_pricing-"+pricing_id).hide();
 };
 function save_edited_pricing(){
-    var pricing_id = parseInt($(this).attr('id').split('-')[1]);
+    var pricing_id = parseInt($(this).attr('id').split('-')[1], 10);
     $(this).checkValidity();
     function on_edit_error(resp) {
         alert('error updating pricings: ' + resp.error.data);

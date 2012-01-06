@@ -58,7 +58,7 @@ $('#all-list-locations-link').click(function(){
 });
 
 function show_tariff() {
-    set_context(parseInt(this.id.split('-')[1]));
+    set_context(parseInt(this.id.split('-')[1], 10));
     window.location = basepath + '/tariffs';
 }
 
@@ -117,14 +117,14 @@ function show_tariff_details() {
         alert('Error getting resources');
     }
     var tariff_info = this.id.split('-');
-    var location_id = parseInt(tariff_info[1]);
+    var location_id = parseInt(tariff_info[1], 10);
     params['owner'] = location_id;
     $('#content-title').text(tariff_info[2]);
     jsonrpc('resource.list', params, resource_success, resource_error);
 }
 
 function show_team() {
-    set_context(parseInt(this.id.split('-')[1]));
+    set_context(parseInt(this.id.split('-')[1], 10));
     window.location = basepath + '/team';
 }
 

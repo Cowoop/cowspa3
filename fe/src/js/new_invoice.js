@@ -16,7 +16,7 @@ setup_routing ();
 function get_invoicee_name_and_contact(id){
     $('#inv-start_date-vis').val("");
     $('#inv-end_date-vis').val("");
-    inv_member_id = parseInt(id);
+    inv_member_id = parseInt(id, 10);
     var params = {'member_id': inv_member_id};
     function on_get_contact_success (response) {
         var data = response['result'];
@@ -124,7 +124,7 @@ $('#submit-usage').click( function () {
     $('#usage-tmpl').tmpl([data]).appendTo('#usages');
     $(".cancel-usage").click(function(){
         if(confirm("Do you want to remove?")){
-            var usage_id = parseInt($(this).attr('id').split('-')[1]);
+            var usage_id = parseInt($(this).attr('id').split('-')[1], 10);
             $(this).parent().parent().remove();
             delete(inv_usages[usage_id-1]);
         }
@@ -177,7 +177,7 @@ $('#invoice-save').click( function () {
     var usages  = [];
     $('.usage-checkbox:checked').each(function(index, item){
         if(checked_map[$(this).val()]){
-            usages.push(parseInt($(this).parent().parent().attr('id').split("-")[1]));
+            usages.push(parseInt($(this).parent().parent().attr('id').split("-")[1], 10));
         };
     });
     var params = {issuer: current_ctx, member: inv_member_id, po_number: $('#po_number').val(), notice: $('#notice').val(), usages: usages, new_usages: new_usages, start_date: $('#inv-start_date').val(), end_date: $('#inv-end_date').val()};

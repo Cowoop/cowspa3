@@ -97,7 +97,7 @@ function mark_slot(usage) {
 function on_drop_booking(event, ui ) {
     booking_action = 'drop';
     var draggable = ui.draggable;
-    var current_booking_id = parseInt(draggable.attr('id').split('_')[1]);
+    var current_booking_id = parseInt(draggable.attr('id').split('_')[1], 10);
     var date_start_end = id2datetime($(this).attr('id'));
     new_booking_date = date_start_end[0]; // global
     dropped_slot = date_start_end[1];
@@ -122,7 +122,7 @@ function mark_slots(usages) {
     $('.slot-available').droppable({drop: on_drop_booking});
     $('.booking').click( function () {
         booking_action = 'click';
-        var booking_id = parseInt($(this).attr('id').split('_')[1]);
+        var booking_id = parseInt($(this).attr('id').split('_')[1], 10);
         get_booking_info(booking_id);
     });
 };
@@ -147,7 +147,7 @@ set_day_titles();
 
 function id2datetime(id) {
     var slot_no = id.split('_')[1];
-    var day_no = parseInt(slot_no.split('-')[0]);
+    var day_no = parseInt(slot_no.split('-')[0], 10);
     var thedate = add_days(get_selected_date(),  (-3 + day_no));
     var start_end = slot_no.split('-')[1].split('.');
     var start = start_end[0];
@@ -235,7 +235,7 @@ function refresh_cal() {
         $(this).removeClass('slot-unavailable');
         $(this).removeClass('slot-available');
     });
-    var resource_id = parseInt($('#resource-select').val());
+    var resource_id = parseInt($('#resource-select').val(), 10);
     if (resource_id) {
         get_usages(resource_id);
     };
@@ -257,7 +257,7 @@ function make_booking() {
     
     var params = {};
 
-    params.resource_id = parseInt($('#resource-select').val());
+    params.resource_id = parseInt($('#resource-select').val(), 10);
     params.resource_name = resource_map[params.resource_id];
 
     var start_time = new Date(new_booking_date.getTime());

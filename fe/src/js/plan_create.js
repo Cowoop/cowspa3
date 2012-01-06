@@ -4,7 +4,7 @@ var action_status = $('#tariff_form .action-status');
 
 function create_tariff() {
     var inputs = $('#tariff_form').serializeArray();
-    var params = {}
+    var params = {};
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }

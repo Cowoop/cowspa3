@@ -121,7 +121,7 @@ function show_resource(){
     $(this).attr('class', 'resource_type-show');
     var type = ($(this).val()).toLowerCase();
     $('.typed_resource-hidden').each(function(){
-        res_id = parseInt($(this).attr('id').split('_')[1]);
+        res_id = parseInt($(this).attr('id').split('_')[1], 10);
         if(resource_list[res_id]['type'] == type){
             $(this).removeClass("typed_resource-hidden");
             $(this).addClass("typed_resource-visible");
@@ -142,7 +142,7 @@ function hide_resource(){
     $(this).attr('class', 'resource_type-hide');
     type = ($(this).val()).toLowerCase();
     $('.typed_resource-visible').each(function(){
-        res_id = parseInt($(this).attr('id').split('_')[1]);
+        res_id = parseInt($(this).attr('id').split('_')[1], 10);
         if(resource_list[res_id]['type'] == type){
             $(this).addClass("typed_resource-hidden");
             $(this).removeClass("typed_resource-visible");
@@ -161,7 +161,7 @@ $('.resource_type-show').click(hide_resource);
 function show_filtered_resources(){
     state |= states[$(this).attr('id')];
     $('.filtered_resource-visible').each(function(){
-        res_id = parseInt($(this).attr('id').split('_')[1]);
+        res_id = parseInt($(this).attr('id').split('_')[1], 10);
         if((resource_list[res_id].flag & state) != state){
             $(this).removeClass("filtered_resource-visible");
             $(this).addClass("filtered_resource-hidden");
@@ -177,7 +177,7 @@ function show_filtered_resources(){
 function hide_filtered_resources(){
     state ^= states[$(this).attr('id')];
     $('.filtered_resource-hidden').each(function(){
-        res_id = parseInt($(this).attr('id').split('_')[1]);
+        res_id = parseInt($(this).attr('id').split('_')[1], 10);
         if((resource_list[res_id].flag & state) == state){
             $(this).addClass("filtered_resource-visible");
             $(this).removeClass("filtered_resource-hidden");
@@ -377,7 +377,7 @@ function cancel_edit_pricing(){
     $("#edit_pricing-"+pricing_id).hide();
 };
 function save_edited_pricing(){
-    var pricing_id = parseInt($(this).attr('id').split('-')[1]);
+    var pricing_id = parseInt($(this).attr('id').split('-')[1], 10);
     $(this).checkValidity();
     function on_edit_error(resp) {
         alert('error updating pricings: ' + resp.error.data);
@@ -433,7 +433,7 @@ $("#taxation").submit(function(){
 function update_taxes(){
     params = {'res_id' : res_id};
     params.taxes = null;
-    if(parseInt($("input:radio[name='tax_mode']:checked").val()) == 0){
+    if(parseInt($("input:radio[name='tax_mode']:checked").val(), 10) == 0){
         params.taxes = null;
     }
     else{

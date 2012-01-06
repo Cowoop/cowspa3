@@ -1,6 +1,6 @@
 // Globals
-var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx")):null;
-var current_userid = parseInt($.cookie("user_id"));
+var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx"), 10):null;
+var current_userid = parseInt($.cookie("user_id"), 10);
 var member_name = $.cookie("member_name");
 var basepath = window.location.pathname.split('/').slice(0,3).join('/');
 var locale_data = {
@@ -235,9 +235,9 @@ function format_date(thedate, format) {
 function iso2date(iso) {
     if(iso=="" || iso==null)
         return "";
-    var yy = parseInt(iso.slice(0, 4));
-    var mm = parseInt(iso.slice(5, 7)-1);
-    var dd = parseInt(iso.slice(8, 10));
+    var yy = parseInt(iso.slice(0, 4), 10);
+    var mm = parseInt(iso.slice(5, 7)-1, 10);
+    var dd = parseInt(iso.slice(8, 10), 10);
     if (iso.length > 11) { // this won't work after year 9999 or before year 1000
         var hh = parseInt(iso.slice(11, 13), 10);
         var mi = parseInt(iso.slice(14, 16), 10);
