@@ -100,16 +100,16 @@ class BizplaceCreated(BaseEvent):
     name = "bizplace_created"
     category = "bizplace_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New place <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/profile'>%(actor_name)s</a>."
+        return make_date_element(self.data.created) + " New Hub <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/profile'>%(actor_name)s</a>."
 
 class BizplaceUpdated(BaseEvent):
     name = "bizplace_updated"
     category = "bizplace_management"
     def _msg_tmpl(self):
         if self.actor == self.data.id:
-            tmpl = " You have updated %(name)s place's profile."
+            tmpl = " You have updated %(name)s Hub's profile."
         else:
-            tmpl = " %(actor_name)s has updated %(name)s place's profile."
+            tmpl = " %(actor_name)s has updated %(name)s Hub's profile."
         return make_date_element(self.data.created) + tmpl
 
 class ResourceCreated(BaseEvent):
@@ -140,7 +140,7 @@ class InvoiceprefUpdated(BaseEvent):
     name = "invoicepref_updated"
     category = "invoicepref_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Invoice Preferences %(attrs)s updated for Place %(name)s by %(actor_name)s."
+        return make_date_element(self.data.created) + " Invoice Preferences %(attrs)s updated for Hub %(name)s by %(actor_name)s."
     def _access(self):
         return dict(member_ids=[self.actor])
 

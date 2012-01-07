@@ -80,7 +80,7 @@ class Dashboard(BasePage):
 
     def sidebar(self):
         content = tf.DIV(tf.DIV("Getting started", Class="title"))
-        content.action = [tf.BR(), tf.A("Add your Coworking place", href="/${lang}/${theme}/bizplace/new", Class="big-button")]
+        content.action = [tf.BR(), tf.A("Add your Hub", href="/${lang}/${theme}/bizplace/new", Class="big-button")]
         return content
 
 class GettingStarted(BasePage):
