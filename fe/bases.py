@@ -62,10 +62,10 @@ booking_opt = [
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoices/new/'),
     tf.A("Sent", href=ctxpath+'/invoices/history'),
-    tf.A("Received", href='#'),
+    # tf.A("Received", href='#'),
     tf.A("Settings", href=ctxpath+'/invoices/preferences'),
-    tf.A("Auto-Generate", href='#'),
-    tf.A("Export", href='#')
+    # tf.A("Auto-Generate", href='#'),
+    # tf.A("Export", href='#')
 ]
 
 resources_opt = [
@@ -87,7 +87,8 @@ member_nav = new_nav + [
 host_nav = member_nav + [
     ('Locations', '#', locations_opt),
     ('Resources', '#', []),
-    ('Reports', '#', []), ]
+    # ('Reports', '#', []),
+    ]
 
 
 class CSAuthedPage(CSPage):
