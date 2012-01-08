@@ -13,11 +13,19 @@ var inv_id;
 function on_member_profile(resp) {
     thismember = resp.result;
     mtype = thismember.mtype;
+    $(".action-status").removeClass('status-success');
+    $(".action-status").removeClass('status-failed');
+    $(".action-status").text("");
+    
     if(mtype == "individual"){
         $(".individual").show();
         $(".organization").hide();
+        $('input[name="first_name"]').attr("required","");
+        $('input[name="name"]').removeAttr("required");
     }
     else{
+        $('input[name="first_name"]').removeAttr("required");
+        $('input[name="name"]').attr("required","");
         $(".individual").hide();
         $(".organization").show();
     }
@@ -137,14 +145,18 @@ setup_routing();
 
 function edit_member(theform) {
     var action_status = $('#'+theform.attr('id') + ' .action-status');
-    $('input[name="name"]').val($('input[name="first_name"]').val()+" "+$('input[name="last_name"]').val());
+    if(mtype == "individual"){
+        $('input[name="name"]').val($('input[name="first_name"]').val()+" "+$('input[name="last_name"]').val());
+    }
     var inputs = theform.serializeArray();
     var params = {'member_id': thismember_id}
     for(var i in inputs) {
         params[inputs[i].name] = inputs[i].value;
     };
     function success(resp) {
-        action_status.text("Update is successful.").attr('class', 'status-success');
+        $('.action-status').text("").removeClass('status-fail');
+        $('.action-status').removeClass('status-success');
+        action_status.text("Update is successful.").addClass('status-success');
         $('.data-username').text($("#username").val());
         $('.data-email-link').attr('href', 'mailto:'+$("#member-contact-edit-email").val()).text($("#member-contact-edit-email").val());
         $('#content-title').text($('input[name="name"]').val());
@@ -153,7 +165,9 @@ function edit_member(theform) {
         }
     };
     function error() {
-        action_status.text("Update failed").attr('class', 'status-fail');
+        $('.action-status').text("").removeClass('status-fail');
+        $('.action-status').removeClass('status-success');
+        action_status.text("Update failed").addClass('status-fail');
     };
     action_status.text("updating ...");
     jsonrpc('member.update', params, success, error);
@@ -799,7 +813,9 @@ function get_invoice_tab_data(){
         function on_invoice_delete_error(resp){
             alert("Error in deleting invoice: "+resp.error.data);
         };
-        jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+        if(confirm("Do you want to delete invoice?")){
+            jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+        };
     });
         //****************************Send Invoice**********************************
     $('.inv-send').click(function () {

@@ -64,7 +64,9 @@ function on_get_invoices_success(response) {
         function on_invoice_delete_error(resp){
             alert("Error in deleting invoice: "+resp.error.data);
         };
-        jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+        if(confirm("Do you want to delete invoice?")){
+            jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+        };
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     //****************************Send Invoice**********************************
