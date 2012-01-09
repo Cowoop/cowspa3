@@ -43,10 +43,14 @@ $.jsonRPC.setup({
     namespace: ''
 });
 
-function set_locale(resp) {
-    locale_data.currency_symbol = resp.result.symbol;
-    locale_data.decimal_sep = resp.result.decimal;
-    locale_data.group_sep = resp.result.group;
+function set_locale(ctx) {
+    function success(resp) {
+        locale_data.currency_symbol = resp.result.symbol;
+        locale_data.decimal_sep = resp.result.decimal;
+        locale_data.group_sep = resp.result.group;
+    };
+    var params = {'bizplace_id': ctx, 'user_id': current_userid};
+    jsonrpc('bizplace.currency', params, success, error);
 };
 
 function set_context(ctx) {
@@ -58,7 +62,6 @@ function set_context(ctx) {
         delete_cookie("current_ctx");
     } else {
         var params = {'bizplace_id': ctx, 'user_id': current_userid};
-        jsonrpc('bizplace.currency', params, set_locale, error);
         set_cookie("current_ctx", ctx);
         $('.ctx-opt').removeClass('current-ctx');
         $('#ctx_' + ctx).addClass('current-ctx');
@@ -172,6 +175,7 @@ function on_roles_list(resp) {
         ctx_label = result[0].label;
         $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         set_context(result[0].id);
+        set_locale(current_ctx);
     }
     else {
         $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
@@ -185,6 +189,7 @@ function on_roles_list(resp) {
             for (idx in result) {
                 if (result[idx].id == current_ctx) {
                     ctx_label = result[idx].label;
+                    set_context(current_ctx);
                     break;
                 };
             }; 
@@ -192,6 +197,7 @@ function on_roles_list(resp) {
             ctx_label = result[0].label;
             set_context(result[0].id);
         };
+        set_locale(current_ctx);
     };
     $('#ctx-switcher-title').text(ctx_label + " ▼");
     $('#ctx-switcher-title').click( function () {
@@ -201,9 +207,7 @@ function on_roles_list(resp) {
         var ctx_id = $(this).attr('id').split('_')[1];
         set_context(ctx_id);
         toggle_ctx_menu();
-        setTimeout(function(){
-            window.location.reload();
-        }, 800);
+        window.location.reload();
     });
 };
 
