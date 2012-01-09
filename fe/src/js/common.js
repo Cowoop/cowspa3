@@ -201,7 +201,9 @@ function on_roles_list(resp) {
         var ctx_id = $(this).attr('id').split('_')[1];
         set_context(ctx_id);
         toggle_ctx_menu();
-        window.location.reload();
+        setTimeout(function(){
+            window.location.reload();
+        }, 800);
     });
 };
 
