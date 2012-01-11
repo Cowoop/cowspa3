@@ -261,7 +261,7 @@ def get_member_current_memberships(member_id, bizplace_ids=[]):
     clause = '(member_id = %(member_id)s) AND (starts <= %(date)s) AND (ends IS NULL OR ends >= %(date)s)'
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
-    values = dict(member_id=member_id, date=date, bizplace_ids=bizplace_ids)
+    values = dict(member_id=member_id, date=date, bizplace_ids=tuple(bizplace_ids))
     return membership_store.get_by_clause(clause, values)
 
 def get_member_next_memberships(member_id, date, bizplace_ids=[], exclude_ids=[]):
@@ -282,7 +282,7 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
     if bizplace_ids:
         clause += ' AND bizplace_id IN %(bizplace_ids)s'
     clause += ' ORDER BY starts DESC'
-    values = dict(member_id=member_id, since=since, bizplace_ids=bizplace_ids, current_date=current_date)
+    values = dict(member_id=member_id, since=since, bizplace_ids=tuple(bizplace_ids), current_date=current_date)
     return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):

@@ -107,13 +107,13 @@ class MemberResource:
         info['state'] = commonlib.shared.constants.member.to_dict(info['state'])
         return info
 
-    def details(self, member_id):
+    def details(self, member_id, bizplace_ids=[]):
         mtype = member_store.get(member_id, 'type')
         profile = profile_store.get_by(dict(member=member_id))[0]
         contact = contact_store.get_by(dict(id=member_id))[0]
         account = dict(username=user_store.get(member_id, ['username']), password="") if mtype == "individual" else []
         preferences = memberpref_store.get_by(dict(member=member_id), ['theme', 'language'])[0] if mtype == "individual" else []
-        memberships = dbaccess.get_member_current_memberships(member_id)
+        memberships = dbaccess.get_member_current_memberships(member_id, bizplace_ids)
         return dict(mtype=mtype, profile=profile, contact=contact, account=account, preferences=preferences, memberships=memberships)
 
     def contact(self, member_id):

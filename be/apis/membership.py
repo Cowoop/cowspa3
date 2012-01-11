@@ -27,7 +27,7 @@ def new(tariff_id, member_id, starts, ends):
     if ends_dt and starts_dt > ends_dt:
         raise Exception("End date should be greater than start date.")
     if overlapping_membership:
-        if overlapping_membership['ends']:
+        if overlapping_membership['ends'] or overlapping_membership['starts']==starts_dt:
             raise Exception("Start date is overlapping with another membership.")
         update(overlapping_membership['id'], ends=(starts_dt-datetime.timedelta(1)).isoformat())
     overlapping_membership = dbaccess.get_member_membership(member_id, bizplace.id, ends_dt)
@@ -85,13 +85,13 @@ def list_by_tariff(tariff_id, at_time=None):
         member_list.append(m_dict)
     return member_list
 
-def list_for_member(member_id, not_current=False):
-    return dbaccess.get_member_memberships(member_id=member_id, not_current=not_current)
+def list_for_member(member_id, bizplace_ids=[], not_current=False):
+    return dbaccess.get_member_memberships(member_id=member_id, bizplace_ids=bizplace_ids, not_current=not_current)
 
-def list_memberships(by_tariff=None, for_member=None, not_current=False, at_time=None):
+def list_memberships(by_tariff=None, for_member=None, not_current=False, at_time=None, bizplace_ids=[]):
     if by_tariff:
         return list_by_tariff(by_tariff, at_time)
-    return list_for_member(for_member, not_current)
+    return list_for_member(for_member, bizplace_ids, not_current)
 
 memberships.new = new
 memberships.bulk_new = bulk_new

@@ -70,7 +70,7 @@ function act_on_route(id) {
         is_get_thismember_invoices_done = false;
         is_get_thismember_billingpref_done = false;
         select_member_box.hide();
-        var params = {'member_id': id};
+        var params = {'member_id': id, 'bizplace_ids': [parseInt(current_ctx, 10)]};
         jsonrpc('member.profile', params, on_member_profile, error);
     };
 };
@@ -422,6 +422,7 @@ $('#load-tariff-history').click(function(){
     };
     params['for_member'] = thismember_id;
     params['not_current'] = true;
+    params['bizplace_ids'] = [parseInt(current_ctx, 10)];
     jsonrpc('memberships.list', params, success2, error2); 
 });
 //***************************End Tariff History*********************************
