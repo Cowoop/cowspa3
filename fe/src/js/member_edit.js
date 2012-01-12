@@ -525,6 +525,7 @@ function on_get_resources_success(res) {
 function on_get_resources_error(){};
 jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
+$("#add_usage [for='cost']").text($("[for='cost']").text()+' (' +locale_data.currency_symbol+')');
 $("#resource_select").change(function(){
     $("#resource_name").val($("#resource_select option:selected").text());
 });
@@ -667,6 +668,7 @@ $('#edit_usage-form #res_end_time').datetimepicker({
     dateFormat: 'M d, yy',
     timeFormat: 'hh:mm TT',
 });
+$("#edit_usage [for='res_cost']").text($("[for='res_cost']").text()+' (' +locale_data.currency_symbol+')');
 function handle_edit_usage(usage_id){
     usage_edit_id = usage_id;
     function on_get_usage_info_success(response){
@@ -677,7 +679,6 @@ function handle_edit_usage(usage_id){
         $("#edit_usage-form #res_start_time").val(to_formatted_datetime(info.start_time));
         $("#edit_usage-form #res_end_time").val(to_formatted_datetime(info.end_time));
         $("#edit_usage-form #res_cost").val(info.cost);
-        $("[for='res_cost']").text($("[for='res_cost']").text()+' (' +locale_data.currency_symbol+')')
     };
     function on_get_usage_info_error(){
     };
