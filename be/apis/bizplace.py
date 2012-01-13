@@ -30,7 +30,6 @@ class BizplaceCollection:
         start_number = dbaccess.generate_invoice_start_number()
         invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, start_number=start_number))
         default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
-        custom_resource_id = resourcelib.resource_collection.new("Custom", "Custom Resource", "custom", bizplace_id, 0)
         bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 
         data = dict(name=name, id=bizplace_id)

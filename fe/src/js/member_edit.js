@@ -517,30 +517,17 @@ function bind_cancel_and_change_tariff() {
 function on_get_resources_success(res) {
     $('#resource-tmpl').tmpl(res['result']).appendTo('#add-usage-form #resource_select');
     $('#resource-tmpl').tmpl(res['result']).appendTo('#edit_usage-form #res_select');
+    var custom_resource = [{'id':0, 'name':'Custom'}];
+    $('#resource-tmpl').tmpl(custom_resource).appendTo('#add-usage-form #resource_select');
+    $('#resource-tmpl').tmpl(custom_resource).appendTo('#edit_usage-form #res_select');
     $("#resource_name").val($("#add-usage-form #resource_select option:first").text());
 };
 function on_get_resources_error(){};
 jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
 $("#add_usage [for='cost']").text($("[for='cost']").text()+' (' +locale_data.currency_symbol+')');
-if($("#resource_select option:selected").text()=="Custom"){
-        $("#calculate_cost-btn").attr("disabled",true);
-        $("#submit-usage").removeAttr("disabled");
-}
-else{
-    $("#submit-usage").attr("disabled", true);
-    $("#calculate_cost-btn").removeAttr("disabled");
-};
 $("#resource_select").change(function(){
     $("#resource_name").val($("#resource_select option:selected").text());
-    if($("#resource_select option:selected").text()=="Custom"){
-        $("#calculate_cost-btn").attr("disabled",true);
-        $("#submit-usage").removeAttr("disabled");
-    }
-    else{
-        $("#submit-usage").attr("disabled", true);
-        $("#calculate_cost-btn").removeAttr("disabled");
-    }
 });
 $('#add-usage-form #start_time').datetimepicker({
     ampm: true,
@@ -670,12 +657,6 @@ function get_uninvoiced_usages(){
 //---------------------------Edit Usage-----------------------------------------
 $("#res_select").change(function(){
     $("#res_name").val($("#res_select option:selected").text());
-    if($("#res_select option:selected").text()=="Custom"){
-        $("#recalculate_cost-btn").attr("disabled",true);
-    }
-    else{
-        $("#recalculate_cost-btn").removeAttr("disabled");
-    };
 });
 $('#edit_usage-form #res_start_time').datetimepicker({
     ampm: true,
@@ -694,12 +675,6 @@ function handle_edit_usage(usage_id){
         info = response.result;
         $('#edit_usage-form #res_select').val(info.resource_id);
         $("#edit_usage-form #res_name").val(info.resource_name);
-        if($("#edit_usage-form  #res_select option:selected").text()=="Custom"){
-            $("#recalculate_cost-btn").attr("disabled",true);
-        }
-        else{
-            $("#recalculate_cost-btn").removeAttr("disabled");
-        };
         $("#edit_usage-form #res_quantity").val(info.quantity);
         $("#edit_usage-form #res_start_time").val(to_formatted_datetime(info.start_time));
         $("#edit_usage-form #res_end_time").val(to_formatted_datetime(info.end_time));
