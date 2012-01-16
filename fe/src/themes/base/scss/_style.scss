@@ -495,10 +495,10 @@ ul.as-selections li.as-original input { width: 100%; }
         @include divsizing;
     }
     .field-value {
-        font-weight: bold;
+        font-size: 110%;
+        border-bottom: 0.2px groove;
         white-space: pre-wrap;
         @include columns(5, 11);
-        // @include omega;
         @include divsizing;
     }
 }
