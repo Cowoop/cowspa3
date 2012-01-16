@@ -8,10 +8,10 @@ def get_tariff_form(create_form=True):
     form  = sphc.more.Form(classes=['hform'], id="tariff_form", style="display:none")
     about = form.add(sphc.more.Fieldset())
     about.add(sphc.tf.LEGEND('Details'))
-    about.add_field('Name', tf.INPUT(type='text', id='name',
-        name='name').set_required())
+    about.add_field('Name', tf.INPUT(type='text', id='name', name='name').set_required())
     about.add_field('Description', tf.TEXTAREA(id='short_description', name='short_description'))
-    if create_form: about.add_field('Default Price', tf.INPUT(id='default_price', name='default_price').set_required())
+    if create_form:
+        about.add_field('Charges ', tf.INPUT(id='default_price', name='default_price').set_required(), "Per month membership fees")
 
     return form
 
