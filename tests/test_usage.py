@@ -15,6 +15,7 @@ def test_add_usage():
     data = test_data.usage
     data['member'] = test_data.member_id
     data['resource_id'] = test_data.resource_id
+    data['resource_owner'] = test_data.bizplace_id
     data['start_time'] = datetime.datetime.now().isoformat()
     data['end_time'] = datetime.datetime.now().isoformat()
     data['invoice'] = 1
@@ -43,6 +44,7 @@ def test_add_more_usage():
     for data in test_data.more_usages:
         data['member'] = test_data.member_id
         data['resource_id'] = test_data.resource_id
+        data['resource_owner'] = test_data.bizplace_id
         data['start_time'] = datetime.datetime.now().isoformat()
         data['end_time'] = datetime.datetime.now().isoformat()
         usage_id = usagelib.usage_collection.new(**data)

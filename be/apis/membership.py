@@ -39,9 +39,9 @@ def new(tariff_id, member_id, starts, ends):
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     current_date = datetime.datetime.now().date()
-    return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, member_id)
+    return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, tariff.owner, member_id)
 
-def create_membership_usages(starts, ends, tariff_id, tariff_name, member):
+def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner, member):
     # find start, end dates for every months month in start-end and create that many usages
     # ex. starts: 3 Jan 2021 ends: 5 Apr 2021
     # usage 1: 3 Jan - 31 Jan 2021
@@ -57,7 +57,7 @@ def create_membership_usages(starts, ends, tariff_id, tariff_name, member):
             new_ends = ends
         else:
             new_ends = datetime.date(starts.year, starts.month, calendar.monthrange(starts.year, starts.month)[1])
-        data = dict(resource_id=tariff_id, resource_name=tariff_name, member=member, start_time=starts.isoformat(), end_time=new_ends.isoformat())
+        data = dict(resource_id=tariff_id, resource_name=tariff_name, resource_owner=tariff_owner, member=member, start_time=starts.isoformat(), end_time=new_ends.isoformat())
         usagelib.usage_collection.new(**data)
         starts = new_ends + datetime.timedelta(1)
     return True
@@ -148,12 +148,13 @@ def update(membership_id, **mod_data):
     if usages:
         if starts != usages[0]['start_time'].date():
             create_membership_usages(starts, (usages[0]['start_time']-datetime.timedelta(1)).date(),\
-             old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+             old_data['tariff_id'], old_data['tariff_name'], old_data['bizplace_id'], old_data['member_id'])
         if usage_ends != usages[-1]['end_time'].date():
             create_membership_usages((usages[-1]['end_time']+datetime.timedelta(1)).date(), usage_ends,\
-             old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+             old_data['tariff_id'], old_data['tariff_name'], old_data['bizplace_id'], old_data['member_id'])
     else:
-        create_membership_usages(starts, usage_ends, old_data['tariff_id'], old_data['tariff_name'], old_data['member_id'])
+        create_membership_usages(starts, usage_ends, old_data['tariff_id'], old_data['tariff_name'],\
+             old_data['bizplace_id'], old_data['member_id'])
     
     return membership_store.update(membership_id, **mod_data)
 
