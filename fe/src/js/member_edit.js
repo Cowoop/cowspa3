@@ -526,8 +526,24 @@ function on_get_resources_error(){};
 jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
 $("#add_usage [for='cost']").text($("[for='cost']").text()+' (' +locale_data.currency_symbol+')');
+if($("#resource_select option:selected").text()=="Custom"){
+        $("#calculate_cost-btn").attr("disabled",true);
+        $("#submit-usage").removeAttr("disabled");
+}
+else{
+    $("#submit-usage").attr("disabled", true);
+    $("#calculate_cost-btn").removeAttr("disabled");
+};
 $("#resource_select").change(function(){
     $("#resource_name").val($("#resource_select option:selected").text());
+    if($("#resource_select option:selected").text()=="Custom"){
+        $("#calculate_cost-btn").attr("disabled",true);
+        $("#submit-usage").removeAttr("disabled");
+    }
+    else{
+        $("#submit-usage").attr("disabled", true);
+        $("#calculate_cost-btn").removeAttr("disabled");
+    };
 });
 $('#add-usage-form #start_time').datetimepicker({
     ampm: true,
@@ -568,6 +584,7 @@ $('#submit-usage').click(function(){
     params = {
         'resource_id' : parseInt($("#resource_select").val(), 10),
         'resource_name' : $("#resource_name").val(),
+        'resource_owner' : parseInt(current_ctx, 10),
         'quantity' : parseFloat($("#quantity").val()),
         'cost' : parseFloat($("#cost").val()),
         'member' : thismember_id,
@@ -657,6 +674,12 @@ function get_uninvoiced_usages(){
 //---------------------------Edit Usage-----------------------------------------
 $("#res_select").change(function(){
     $("#res_name").val($("#res_select option:selected").text());
+    if($("#res_select option:selected").text()=="Custom"){
+        $("#recalculate_cost-btn").attr("disabled",true);
+    }
+    else{
+        $("#recalculate_cost-btn").removeAttr("disabled");
+    };
 });
 $('#edit_usage-form #res_start_time').datetimepicker({
     ampm: true,
@@ -673,6 +696,12 @@ function handle_edit_usage(usage_id){
     usage_edit_id = usage_id;
     function on_get_usage_info_success(response){
         info = response.result;
+        if($("#edit_usage-form #res_select option:selected").text()=="Custom"){
+            $("#recalculate_cost-btn").attr("disabled",true);
+        }
+        else{
+            $("#recalculate_cost-btn").removeAttr("disabled");
+        };
         $('#edit_usage-form #res_select').val(info.resource_id);
         $("#edit_usage-form #res_name").val(info.resource_name);
         $("#edit_usage-form #res_quantity").val(info.quantity);
