@@ -276,6 +276,7 @@ class InvoicePref(PGStore):
     due_date INTEGER,
     bcc_email TEXT,
     bank_details TEXT,
+    company_no TEXT,
     logo TEXT,
     tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
