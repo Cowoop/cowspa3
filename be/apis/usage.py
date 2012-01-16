@@ -14,7 +14,7 @@ class UsageCollection:
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-        if not cancelled_against:
+        if not cancelled_against and resource_id!=0:
             result = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True))
             calculated_cost = result['calculated_cost']
             tax_dict = result['taxes']    
