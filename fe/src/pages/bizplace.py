@@ -48,8 +48,8 @@ def get_location_form():
     return form
 
 class Create(BasePage):
-    current_nav = 'Locations'
-    title = 'New Location'
+    current_nav = 'Admin'
+    title = 'New Hub'
 
     def content(self):
         container = tf.DIV()
@@ -61,8 +61,8 @@ class Create(BasePage):
 
 class List(BasePage):
 
-    title = "Locations"
-    current_nav = 'Locations'
+    title = "Hubs"
+    current_nav = 'Admin'
 
     def content(self):
         container = tf.DIV()
@@ -107,7 +107,7 @@ class List(BasePage):
         fields = [edit]
 
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("List of Locations", id='list-locations-link',
+        cancel.link = tf.A("List of Hubs", id='list-locations-link',
                 href='/${lang}/${theme}/bizplaces/')
         fields.append(cancel)
 
