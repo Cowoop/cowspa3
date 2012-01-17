@@ -11,6 +11,7 @@ import be.apis.membership as membershiplib
 import be.errors
 import be.repository.access as dbaccess
 import test_member
+import be.apis.invoicepref as invoicepreflib
 
 # dependencies bizplace plan resource
 
@@ -96,3 +97,14 @@ def test_cost():
     assert result['calculated_cost'] == costlib.to_decimal(float(quantity * rate))
     assert result['amount'] == costlib.to_decimal(float(quantity * rate) * ( 100 + sum(test_data.taxes.values()) ) / 100 )
     
+def test_calculate_taxes():
+    result = pricinglib.calculate_taxes(0, test_data.bizplace_id, 1000)
+    assert result['amount'] == costlib.to_decimal("1125.00")
+    for tax in test_data.taxes:
+        assert result['taxes'][tax] == test_data.taxes[tax]*1000/100
+    invoicepreflib.invoicepref_resource.update(test_data.bizplace_id, tax_included=True)
+    result = pricinglib.calculate_taxes(0, test_data.bizplace_id, 1000)
+    assert result['amount'] == costlib.to_decimal("1000.00")
+    total_tax_level = sum(map(float, test_data.taxes.values()))
+    for tax in test_data.taxes:
+        assert costlib.to_decimal(result['taxes'][tax]) == costlib.to_decimal(test_data.taxes[tax]*(1000/(100+total_tax_level)*100.0)/100.0)
