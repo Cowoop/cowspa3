@@ -200,31 +200,22 @@ class InitialCost(costlib.Rule):
         cost.new(self.name, amount)
         return costlib.flags.proceed
 
-class Taxes(costlib.Rule):
-    name = 'Taxes'
+def apply_taxes(resource_id, resource_owner, cost):
+    tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
+    tax_included = tax_info['tax_included']
+    taxes = tax_info['taxes'] if tax_info['taxes'] else {}
+    tax_names = taxes.keys()
+    total_tax_level = sum(map(float, taxes.values()))
+    if tax_included:
+        basic_cost = cost / ((100 + total_tax_level)/100.0)
+        tax_applied = dict((name, (basic_cost * float(float(level)/100.0))) for (name, level) in taxes.items()) if taxes else None
+        total = cost
+    else:
+        amount_to_add = float(cost) * (total_tax_level/100.0)
+        tax_applied = dict((name, (cost * float(float(level)/100.0))) for name, level in taxes.items()) if taxes else None
+        total = cost + amount_to_add
 
-    def apply(self, env, usage, cost, tax_info):
-        tax_included = tax_info['tax_included']
-        taxes = tax_info['taxes'] if tax_info['taxes'] else {}
-        tax_names = taxes.keys()
-        usage.calculated_cost = costlib.to_decimal(cost.last())
-        initial_cost = usage.cost if usage.cost else float(cost.last())
-        total_tax_level = sum(map(float, taxes.values()))
-
-        if tax_included:
-            basic_cost = initial_cost / ((100 + total_tax_level)/100.0)
-            #tax_applied = {name: (basic_cost * float(float(level)/100.0)) for (name, level) in taxes.items()} if taxes else None
-            tax_applied = dict((name, (basic_cost * float(float(level)/100.0))) for (name, level) in taxes.items()) if taxes else None
-            total = initial_cost
-        else:
-            amount_to_add = float(initial_cost) * (total_tax_level/100.0)
-            tax_applied = dict((name, (initial_cost * float(float(level)/100.0))) for name, level in taxes.items()) if taxes else None
-            total = initial_cost + amount_to_add
-
-        cost.new(self.name, total)
-        usage.taxes = tax_applied if tax_applied else None
-        return costlib.flags.proceed
-
+    return dict(amount=costlib.to_decimal(total), taxes=tax_applied if tax_applied else None)
 
 rules = [CustomResource(), InitialCost()]
 
@@ -232,8 +223,13 @@ def calculate_cost(member_id, resource_id, resource_owner, quantity, starts, end
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
     usage = odict(member_id=member_id, resource_id=resource_id, resource_owner=resource_owner, quantity=quantity, starts=starts, ends=ends, cost=cost)
-    tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
-    processor = costlib.Processor(usage, rules, Taxes(), tax_info)
-    ret = costlib.to_decimal(processor.run())
-    return dict(amount=ret, calculated_cost=usage.calculated_cost, taxes=usage.taxes) if return_taxes else usage.calculated_cost
+    processor = costlib.Processor(usage, rules)
+    calculated_cost = processor.run()
+    cost = cost if cost else calculated_cost
+    if return_taxes:
+        result = apply_taxes(resource_id, resource_owner, cost)
+        result['calculated_cost'] = costlib.to_decimal(calculated_cost)
+    else:
+        result = costlib.to_decimal(calculated_cost)
+    return result 
     
