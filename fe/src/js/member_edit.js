@@ -558,11 +558,11 @@ $('#add-usage-form #end_time').datetimepicker({
 $("#calculate_cost-btn").click(function(){
     params = {
         'resource_id' : parseInt($("#resource_select").val(), 10),
+        'resource_owner' : parseInt(current_ctx, 10),
         'quantity' : parseFloat($("#quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#start_time").val()),
-        'ends' : to_iso_datetime($("#end_time").val()),
-        'cost': $('#cost').val()
+        'ends' : to_iso_datetime($("#end_time").val())
     };
     function on_calculate_cost_success(resp){
         $("#cost").val(resp['result']);
@@ -716,11 +716,11 @@ function handle_edit_usage(usage_id){
 $("#recalculate_cost-btn").click(function(){
     params = {
         'resource_id' : parseInt($("#res_select").val(), 10),
+        'resource_owner' : parseInt(current_ctx, 10),
         'quantity' : parseFloat($("#res_quantity").val()),
         'member_id' : thismember_id,
         'starts' : to_iso_datetime($("#res_start_time").val()),
-        'ends' : to_iso_datetime($("#res_end_time").val()),
-        'cost': $('#res_cost').val()
+        'ends' : to_iso_datetime($("#res_end_time").val())
     };
     function on_calculate_cost_success(resp){
        $("#res_cost").val(resp['result']);
