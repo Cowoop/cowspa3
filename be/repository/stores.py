@@ -233,6 +233,7 @@ class Usage(PGStore):
     quantity REAL,
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
+    amount NUMERIC(16, 2),
     tax_dict bytea,
     invoice INTEGER,
     start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,

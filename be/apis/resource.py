@@ -160,15 +160,16 @@ class ResourceResource:
             d[relation].append(dict(id=other_res_id, name=other_resources[other_res_id]))
         return d
 
-    def get_taxinfo(self, res_id):
+    def get_taxinfo(self, res_id, resource_owner=None):
         """
         if resource level taxes has precedance over location level taxes
         returns tax information dict
             eg. {tax_included: True/False, taxes: {label: value, ..}
+        if res_id is 0 ie custom resource then return location level taxes
         """
-        owner = self.get(res_id, 'owner')
+        owner = resource_owner if resource_owner else self.get(res_id, 'owner')
         taxinfo = invoicepref_lib.invoicepref_resource.get_taxinfo(owner)
-        resource_taxes = self.get(res_id, 'taxes')
+        resource_taxes = self.get(res_id, 'taxes') if res_id != 0 else None
         if resource_taxes != None: taxinfo['taxes'] = resource_taxes
         return taxinfo
 

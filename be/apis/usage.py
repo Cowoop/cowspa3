@@ -8,18 +8,19 @@ usage_store = dbaccess.stores.usage_store
 
 class UsageCollection:
 
-    def new(self, resource_id, resource_name, resource_owner, member, start_time, end_time=None, quantity=None, cost=None, tax_dict=None, invoice=None, cancelled_against=None, pricing=None, booking=None, calculated_cost=None):
+    def new(self, resource_id, resource_name, resource_owner, member, start_time, amount=None, end_time=None, quantity=None, cost=None, tax_dict=None, invoice=None, cancelled_against=None, pricing=None, booking=None, calculated_cost=None):
 
         if not quantity: quantity = 1
         if not end_time: end_time = start_time
 
         created = datetime.datetime.now()
-        if not cancelled_against and resource_id!=0:
-            result = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True))
+        if not cancelled_against:
+            result = pricinglib.calculate_cost(**dict(member_id=member, resource_id=resource_id, resource_owner=resource_owner, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True))
             calculated_cost = result['calculated_cost']
+            amount = result['amount']
             tax_dict = result['taxes']    
         if not cost: cost = calculated_cost
-        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, booking=booking,  calculated_cost=calculated_cost, cost=cost, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
+        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, booking=booking,  calculated_cost=calculated_cost, cost=cost, amount=amount, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
         return usage_store.add(**data)
 
     def _delete(self, usage_id):

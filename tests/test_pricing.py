@@ -91,6 +91,8 @@ def test_cost():
     quantity = 10
     starts = datetime.datetime.now().isoformat()
     ends = (datetime.datetime.now() + datetime.timedelta(0, 10*3600)).isoformat()
-    cost = pricinglib.calculate_cost(test_data.member_w_plan, test_data.resource_id, quantity, starts, ends)
+    result = pricinglib.calculate_cost(test_data.member_w_plan, test_data.resource_id, quantity, starts, ends, return_taxes=True)
     rate = pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, starts)
-    assert cost == costlib.to_decimal( float(quantity * rate) * ( 100 + sum(test_data.taxes.values()) ) / 100 )
+    assert result['calculated_cost'] == costlib.to_decimal(float(quantity * rate))
+    assert result['amount'] == costlib.to_decimal(float(quantity * rate) * ( 100 + sum(test_data.taxes.values()) ) / 100 )
+    

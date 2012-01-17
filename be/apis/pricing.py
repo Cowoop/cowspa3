@@ -177,16 +177,15 @@ pricing.update = update
 
 class CustomResource(costlib.Rule):
     name = 'Custom Resource'
-    def apply(self, env, usage, cost, tax_info, taxes):
-        if not usage.resource_id:
-            assert usage.cost is not None, "Cost is mandatory for Custom Resource"
+    def apply(self, env, usage, cost):
+        if usage.resource_id == 0:
             cost.new(self.name, usage.cost)
             return costlib.flags.stop
         return costlib.flags.proceed
 
 class InitialCost(costlib.Rule):
     name = 'Initial Cost'
-    def apply(self, env, usage, cost, tax_info, taxes):
+    def apply(self, env, usage, cost):
         resource = resource_store.get(usage.resource_id)
         if resource.calc_mode == CalcMode.time_based:
             try:
@@ -204,11 +203,12 @@ class InitialCost(costlib.Rule):
 class Taxes(costlib.Rule):
     name = 'Taxes'
 
-    def apply(self, env, usage, cost, tax_info, taxes):
+    def apply(self, env, usage, cost, tax_info):
         tax_included = tax_info['tax_included']
         taxes = tax_info['taxes'] if tax_info['taxes'] else {}
         tax_names = taxes.keys()
-        initial_cost = float(cost.last())
+        usage.calculated_cost = costlib.to_decimal(cost.last())
+        initial_cost = usage.cost if usage.cost else float(cost.last())
         total_tax_level = sum(map(float, taxes.values()))
 
         if tax_included:
@@ -226,14 +226,14 @@ class Taxes(costlib.Rule):
         return costlib.flags.proceed
 
 
-rules = [CustomResource(), InitialCost(), Taxes()]
+rules = [CustomResource(), InitialCost()]
 
-def calculate_cost(member_id, resource_id, quantity, starts, ends=None, cost=None, return_taxes=False):
+def calculate_cost(member_id, resource_id, resource_owner, quantity, starts, ends=None, cost=None, return_taxes=False):
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
-    usage = odict(member_id=member_id, resource_id=resource_id, quantity=quantity, starts=starts, ends=ends, cost=cost)
-    tax_info = resource_lib.resource_resource.get_taxinfo(resource_id)
-    processor = costlib.Processor(usage, rules, tax_info)
+    usage = odict(member_id=member_id, resource_id=resource_id, resource_owner=resource_owner, quantity=quantity, starts=starts, ends=ends, cost=cost)
+    tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
+    processor = costlib.Processor(usage, rules, Taxes(), tax_info)
     ret = costlib.to_decimal(processor.run())
-    return dict(calculated_cost=ret, taxes=usage.taxes) if return_taxes else ret
+    return dict(amount=ret, calculated_cost=usage.calculated_cost, taxes=usage.taxes) if return_taxes else usage.calculated_cost
     
