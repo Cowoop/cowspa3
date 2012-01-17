@@ -15,6 +15,7 @@ Contributing to articles
 ------------------------
 
 Say you 
+
 - write new help articles (wow!)
 - have additions/corrections to existing help topics
 - offer better screenshots/videos
