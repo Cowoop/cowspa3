@@ -109,6 +109,14 @@ function show_add_usage() {
     $("#profile_tabs").tabs('select', 4);
     $("#uninvoiced_usages").hide();
     $("#edit_usage").hide();
+    if($("#resource_select option:selected").text()=="Custom"){
+        $("#calculate_cost-btn").attr("disabled",true);
+        $("#submit-usage").removeAttr("disabled");
+    }
+    else{
+        $("#submit-usage").attr("disabled", true);
+        $("#calculate_cost-btn").removeAttr("disabled");
+    };
     $("#add_usage").show();
 };
 function show_edit_usage(id, usage_id) {
@@ -526,14 +534,6 @@ function on_get_resources_error(){};
 jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
 $("#add_usage [for='cost']").text($("[for='cost']").text()+' (' +locale_data.currency_symbol+')');
-if($("#resource_select option:selected").text()=="Custom"){
-        $("#calculate_cost-btn").attr("disabled",true);
-        $("#submit-usage").removeAttr("disabled");
-}
-else{
-    $("#submit-usage").attr("disabled", true);
-    $("#calculate_cost-btn").removeAttr("disabled");
-};
 $("#resource_select").change(function(){
     $("#resource_name").val($("#resource_select option:selected").text());
     if($("#resource_select option:selected").text()=="Custom"){

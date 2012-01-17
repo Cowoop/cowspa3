@@ -61,7 +61,7 @@ class Template(sphc.more.HTML5Page):
             usage_row = tf.TR()
             usage_row.td = tf.TD(name)
             group = list(group)
-            usage_row.td = tf.TD(show_currency(sum([usage.cost for usage in group])))
+            usage_row.td = tf.TD(show_currency(sum([usage.amount for usage in group])))
             tax_keys = set([])
             for usage in group:
                 if usage.tax_dict:
@@ -94,7 +94,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD(str(usage.resource_name))
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
-            usage_row.td = tf.TD(show_currency(usage.cost))
+            usage_row.td = tf.TD(show_currency(usage.amount))
             usages.row = usage_row
             sr_no += 1
         usage_row = tf.TR()

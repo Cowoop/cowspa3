@@ -200,7 +200,7 @@ class InitialCost(costlib.Rule):
         cost.new(self.name, amount)
         return costlib.flags.proceed
 
-def apply_taxes(resource_id, resource_owner, cost):
+def calculate_taxes(resource_id, resource_owner, cost):
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
     tax_included = tax_info['tax_included']
     taxes = tax_info['taxes'] if tax_info['taxes'] else {}
@@ -227,7 +227,7 @@ def calculate_cost(member_id, resource_id, resource_owner, quantity, starts, end
     calculated_cost = processor.run()
     cost = cost if cost else calculated_cost
     if return_taxes:
-        result = apply_taxes(resource_id, resource_owner, cost)
+        result = calculate_taxes(resource_id, resource_owner, cost)
         result['calculated_cost'] = costlib.to_decimal(calculated_cost)
     else:
         result = costlib.to_decimal(calculated_cost)
