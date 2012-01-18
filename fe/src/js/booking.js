@@ -44,8 +44,8 @@ function on_get_usages(resp) {
 function get_usages(resource_id) {
     var params = {'resource_ids': [resource_id],
         calc_mode: [1],
-        start: to_iso_date(add_days(get_selected_date(), -3)),
-        end: to_iso_date(add_days(get_selected_date(), 3))
+        start: date2isodate(add_days(get_selected_date(), -3)),
+        end: date2isodate(add_days(get_selected_date(), 3))
     };
     jsonrpc("usages.find", params, on_get_usages, error);
 };
@@ -180,12 +180,12 @@ function open_edit_booking_form(booking) {
             var offset = (dropped_slot_time - upper_slots_time);
             var start_time = new Date(new_booking_date.getTime() + offset);
             var end_time = new Date(start_time.getTime() + booking_duration);
-            var start_iso = date2iso(start_time, true);
-            var end_iso = date2iso(end_time, true);
+            var start_iso = date2iso(start_time);
+            var end_iso = date2iso(end_time);
         } else {
             var start_iso = '00:00';
             var end_time = new Date(new_booking_date.getTime() + booking_duration);
-            var end_iso = date2iso(end_time, true);
+            var end_iso = date2iso(end_time);
         };
     } else {
         var start_iso = date2iso(booking.start_time);
@@ -266,7 +266,7 @@ function make_booking() {
     var mins = hrs_mins[1];
     start_time.setHours(hrs);
     start_time.setMinutes(mins);
-    params.start_time = to_iso_datetime(start_time)
+    params.start_time = fdate2iso(start_time)
 
     var end_time = new Date(new_booking_date.getTime());
     var hrs_mins = $('#new-ends').val().split(':');
@@ -274,7 +274,7 @@ function make_booking() {
     var mins = hrs_mins[1];
     end_time.setHours(hrs);
     end_time.setMinutes(mins);
-    params.end_time = to_iso_datetime(end_time)
+    params.end_time = fdate2iso(end_time)
 
     // params.quantity = $('#new-quantity').val() || 1;
     params.member = $('#for-member').val();

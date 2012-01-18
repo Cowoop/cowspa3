@@ -19,7 +19,7 @@ function on_get_invoices_success(response) {
             { "sTitle": "Date",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
-                    return to_formatted_date(sReturn);
+                    return isodate2fdate(sReturn);
                     }   
             },
             { "sTitle": "Link", "bSortable": false,

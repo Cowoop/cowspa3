@@ -67,8 +67,8 @@ function get_uninvoiced_usages(start, end){
     function on_get_uninvoiced_usages_success(response){
         var usages = response.result;
         for(i in usages){
-            usages[i].start_time = to_formatted_datetime(usages[i].start_time);
-            usages[i].end_time = to_formatted_datetime(usages[i].end_time);
+            usages[i].start_time = iso2fdate(usages[i].start_time);
+            usages[i].end_time = iso2fdate(usages[i].end_time);
         };
         $('#usages tr:gt(0)').remove();
         $('#usage-tmpl').tmpl(usages).appendTo('#usages');
@@ -168,8 +168,8 @@ $('#invoice-save').click( function () {
             var o = v;
             delete o.id;
             delete o.unit;
-            o.start_time = to_iso_datetime(o.start_time);
-            o.end_time = to_iso_datetime(o.end_time);
+            o.start_time = fdate2iso(o.start_time);
+            o.end_time = fdate2iso(o.end_time);
             new_usages.push(o)
         }
     });

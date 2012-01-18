@@ -51,8 +51,8 @@ function on_member_profile(resp) {
     $('select[name="language"]').val(thismember.preferences.language);
     $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"Guest");
     for(i in thismember.memberships){
-        thismember.memberships[i].starts = to_formatted_date(thismember.memberships[i].starts);
-        thismember.memberships[i].ends = to_formatted_date(thismember.memberships[i].ends);
+        thismember.memberships[i].starts = isodate2fdate(thismember.memberships[i].starts);
+        thismember.memberships[i].ends = isodate2fdate(thismember.memberships[i].ends);
     }
     $('#tariff-row').tmpl(thismember.memberships).appendTo('#tariff-info');
     bind_cancel_and_change_tariff();
@@ -378,9 +378,8 @@ function save_next_tariff() {
     };
     params['member_id'] = thismember_id;
     params['tariff_id'] = $("#next-tariff-form #tariff").val();
-    params['starts'] = to_iso_date($("#next-tariff-form #start").val());
-    params['ends'] = to_iso_date($("#next-tariff-form #end").val());
-    params['ends'] = to_iso_date($("#next-tariff-form #end").val());
+    params['starts'] = $("#next-tariff-form #start").val();
+    params['ends'] = $("#next-tariff-form #end").val();
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
     jsonrpc('memberships.new', params, success, error);
 };
@@ -418,8 +417,8 @@ $('#load-tariff-history').click(function(){
     function success2(response) {
         memberships = response.result;
         for(i in memberships){
-            memberships[i].starts = to_formatted_date(memberships[i].starts);
-            memberships[i].ends = to_formatted_date(memberships[i].ends);
+            memberships[i].starts = isodate2fdate(memberships[i].starts);
+            memberships[i].ends = isodate2fdate(memberships[i].ends);
         }
         $('#tariff-row').tmpl(response.result).appendTo('#tariff-info');
         $('#load-tariff-history').hide();
@@ -477,10 +476,10 @@ function bind_cancel_and_change_tariff() {
     $('.change-sub').unbind('click');
     $('.change-sub').click(function(){
         var membership_id = $(this).attr('id').split("-")[1];
-        var date = to_formatted_date($("#tariff_row-"+membership_id+" #starts").text());
+        var date = isodate2fdate($("#tariff_row-"+membership_id+" #starts").text());
         $('#change-tariff-form #starts-vis').datepicker("setDate", date);
         if($("#tariff_row-"+membership_id+" #ends").text()!=""){
-            date = to_formatted_date($("#tariff_row-"+membership_id+" #ends").text());
+            date = isodate2fdate($("#tariff_row-"+membership_id+" #ends").text());
             $('#change-tariff-form #ends-vis').datepicker("setDate", date);
         }
         else{
@@ -496,13 +495,13 @@ function bind_cancel_and_change_tariff() {
             var params = {'membership_id':membership_id};
             //params['tariff_id'] = $("#change-tariff-form #tariff").val();
             //params['tariff_name'] = $("#change-tariff-form #tariff option[value='"+params['tariff_id']+"']").text();
-            params['starts'] = to_iso_date($('#change-tariff-form #starts').val());
+            params['starts'] = $('#change-tariff-form #starts').val();
             if($('#change-tariff-form #end').val() != ""){
-                params['ends'] = to_iso_date($('#change-tariff-form #ends').val());
+                params['ends'] = $('#change-tariff-form #ends').val();
             }
             function success(resp) { 
-                $("#tariff_row-"+membership_id+" #starts").text(to_formatted_date(params.starts));
-                $("#tariff_row-"+membership_id+" #ends").text(to_formatted_date(params.ends));
+                $("#tariff_row-"+membership_id+" #starts").text(isodate2fdate(params.starts));
+                $("#tariff_row-"+membership_id+" #ends").text(isodate2fdate(params.ends));
                 $("#change-tariff-form .action-status").text("").removeClass("status-success status-fail");
                 $('#change-tariff-form').dialog("close");
                 is_get_thismember_usages_done = false;
@@ -561,8 +560,8 @@ $("#calculate_cost-btn").click(function(){
         'resource_owner' : parseInt(current_ctx, 10),
         'quantity' : parseFloat($("#quantity").val()),
         'member_id' : thismember_id,
-        'starts' : to_iso_datetime($("#start_time").val()),
-        'ends' : to_iso_datetime($("#end_time").val())
+        'starts' : fdate2iso($("#start_time").val()),
+        'ends' : fdate2iso($("#end_time").val())
     };
     function on_calculate_cost_success(resp){
         $("#cost").val(resp['result']);
@@ -588,8 +587,8 @@ $('#submit-usage').click(function(){
         'quantity' : parseFloat($("#quantity").val()),
         'cost' : parseFloat($("#cost").val()),
         'member' : thismember_id,
-        'start_time' : to_iso_datetime($("#start_time").val()),
-        'end_time' : to_iso_datetime($("#end_time").val())
+        'start_time' : fdate2iso($("#start_time").val()),
+        'end_time' : fdate2iso($("#end_time").val())
     };
     function on_add_usage_success(resp){
         action_status.text("Add usage is successful.").addClass('status-success');
@@ -638,13 +637,13 @@ function get_uninvoiced_usages(){
                 { "sTitle": "Start Time", "sWidth":"20%",
                     "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
-                        return to_formatted_datetime(sReturn);
+                        return iso2fdate(sReturn);
                         }
                 },
                 { "sTitle": "End Time", "sWidth":"20%",
                     "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
-                        return to_formatted_datetime(sReturn);
+                        return iso2fdate(sReturn);
                         }
                 },
                 { "sTitle": "Quantity", "sWidth":"10%"},
@@ -705,8 +704,8 @@ function handle_edit_usage(usage_id){
         $('#edit_usage-form #res_select').val(info.resource_id);
         $("#edit_usage-form #res_name").val(info.resource_name);
         $("#edit_usage-form #res_quantity").val(info.quantity);
-        $("#edit_usage-form #res_start_time").val(to_formatted_datetime(info.start_time));
-        $("#edit_usage-form #res_end_time").val(to_formatted_datetime(info.end_time));
+        $("#edit_usage-form #res_start_time").val(iso2fdate(info.start_time));
+        $("#edit_usage-form #res_end_time").val(iso2fdate(info.end_time));
         $("#edit_usage-form #res_cost").val(info.cost);
     };
     function on_get_usage_info_error(){
@@ -719,8 +718,8 @@ $("#recalculate_cost-btn").click(function(){
         'resource_owner' : parseInt(current_ctx, 10),
         'quantity' : parseFloat($("#res_quantity").val()),
         'member_id' : thismember_id,
-        'starts' : to_iso_datetime($("#res_start_time").val()),
-        'ends' : to_iso_datetime($("#res_end_time").val())
+        'starts' : fdate2iso($("#res_start_time").val()),
+        'ends' : fdate2iso($("#res_end_time").val())
     };
     function on_calculate_cost_success(resp){
        $("#res_cost").val(resp['result']);
@@ -744,8 +743,8 @@ $('#update-usage').click(function(){
         'resource_name' : $("#res_name").val(),
         'quantity' : parseFloat($("#res_quantity").val()),
         'cost' : parseFloat($("#res_cost").val()),
-        'start_time' : to_iso_datetime($("#res_start_time").val()),
-        'end_time' : to_iso_datetime($("#res_end_time").val())
+        'start_time' : fdate2iso($("#res_start_time").val()),
+        'end_time' : fdate2iso($("#res_end_time").val())
     };
     function on_edit_usage_success(resp){
         action_status.text("Update usage is successful").addClass('status-success');
@@ -801,7 +800,7 @@ function get_invoice_tab_data(){
                 { "sTitle": "Date",
                 "fnRender": function(obj) {
                         var sReturn = obj.aData[obj.iDataColumn];
-                        return to_formatted_date(sReturn);
+                        return isodate2fdate(sReturn);
                         }   
                 },
                 { "sTitle": "Link", "bSortable": false,

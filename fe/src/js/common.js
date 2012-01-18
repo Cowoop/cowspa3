@@ -8,6 +8,9 @@ var locale_data = {
                     decimal_sep:'.',
                     group_sep:','
                  }; //default values
+var fdate_format = "MMM D, YYYY";
+var ftime_format = "hh:mm A";
+var fdatetime_format = "MMM D, YYYY hh:mm A";
 //
 
 $.webshims.setOptions('forms', {
@@ -95,15 +98,15 @@ function jsonrpc(apiname, params, success, error) {
 function init_autocomplete() {
     $('input#search').autoSuggest("/search/member", {
         selectedItemProp: "name",
-        selectedValuesProp: "id", 
+        selectedValuesProp: "id",
         searchObjProps: "name, email, id",
         minChars: 1,
-        selectionLimit: 0, 
+        selectionLimit: 0,
         startText: "Search member by name, email or id",
         resultClick: function (data) {
             var id = data['attributes']['id'];
             window.location = basepath + "/member/edit/#/" +id+ "/info";
-        } 
+        }
     });
 };
 
@@ -234,111 +237,72 @@ if(params['user_id']) {
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
-function format_date(thedate, format) {
-    // http://docs.jquery.com/UI/Datepicker/formatDate
-    return $.datepicker.formatDate(format, thedate);
-};
-function iso2date(iso) {
-    if(iso=="" || iso==null)
+function iso2date(iso){
+    if(iso==null || iso==""){
         return "";
-    var yy = parseInt(iso.slice(0, 4), 10);
-    var mm = parseInt(iso.slice(5, 7)-1, 10);
-    var dd = parseInt(iso.slice(8, 10), 10);
-    if (iso.length > 11) { // this won't work after year 9999 or before year 1000
-        var hh = parseInt(iso.slice(11, 13), 10);
-        var mi = parseInt(iso.slice(14, 16), 10);
-        var ss = parseInt(iso.slice(17, 19), 10);
-    } else {
-        var hh = 0;
-        var mi = 0;
-        var ss = 0;
     };
-    var dt = new Date(yy, mm, dd, hh, mi, ss);
-    return dt;
+    return moment(iso, "YYYY-MM-DDTHH:mm:ss");
 };
-
-function to_iso_date(date){
+function date2iso(date){
     if(jQuery.trim(date) == ""){
         return null;
-    }
-    var fdate = new Date(date);
-    return  $.datepicker.formatDate('yy-mm-dd', fdate);
-}
-function to_iso_datetime(date){
+    };
+    return moment(date).format("YYYY:MM:DDTHH:mm:ss");
+};
+function date2isotime(date){
     if(jQuery.trim(date) == ""){
         return null;
-    }
-    var fdate = new Date(date);
-    var hh = fdate.getHours();
-    hh = (hh<10?"0":"") + hh; 
-    var mm = fdate.getMinutes();
-    mm = (mm<10?"0":"") + mm;
-    var ss = fdate.getSeconds();
-    ss = (ss<10?"0":"") + ss;
-    return $.datepicker.formatDate('yy-mm-dd', fdate)+"T"+hh+":"+mm+":"+ss;
-}
-function date2iso(date, exclude_sec){
+    };
+    return moment(date).format("HH:mm:ss");
+};
+function date2isodate(date){
     if(jQuery.trim(date) == ""){
         return null;
-    }
-    var fdate = new Date(date);
-    var hh = fdate.getHours();
-    hh = (hh<10?"0":"") + hh; 
-    var mm = fdate.getMinutes();
-    mm = (mm<10?"0":"") + mm;
-    var ss = fdate.getSeconds();
-    ss = (ss<10?"0":"") + ss;
-    return (exclude_sec) ? hh+':'+mm : hh+":"+mm+":"+ss;
-}
-
-function to_formatted_date(date){
-    if(date==null || date==""){
-        return "";
-    }
-    var fdate = new Date(date);
-    return $.datepicker.formatDate('M dd, yy', fdate);
+    };
+    return moment(date).format("YYYY:MM:DD");
 };
-
-function to_formatted_datetime(date){
-    if(date==null || date==""){
+function fdate2date(fdate){
+    if(jQuery.trim(fdate) == ""){
         return "";
-    }
-    var fdate = new Date(date);
-    var hh = fdate.getHours();
-    var time = " AM";
-    if(hh>=12){
-        time = " PM";
-        hh -= 12;
-    }
-    hh = (hh<10?"0":"") + hh; 
-    var mm = fdate.getMinutes();
-    mm = (mm<10?"0":"") + mm;
-    //var ss = fdate.getSeconds();
-    //ss = (ss<10?"0":"") + ss;
-    time = hh + ":" +  mm + time
-    return $.datepicker.formatDate('M dd, yy', fdate) + " " + time;
+    };
+    return moment(fdate, fdatetime_format);
 };
-
-function to_formatted_time(date){
-    if(date==null || date==""){
+function fdate2iso(fdate){
+    if(jQuery.trim(fdate) == ""){
+        return null;
+    };
+    moment(fdate, fdatetime_format).format("YYYY:MM:DDTHH:mm:ss");
+};
+function fdate2isodate(fdate){
+    if(jQuery.trim(fdate) == ""){
+        return null;
+    };
+    moment(fdate, fdate_format).format("YYYY:MM:DD");
+};
+function fdate2isotime(fdate){
+    if(jQuery.trim(fdate) == ""){
+        return null;
+    };
+    moment(fdate, ftime_format).format("HH:mm:ss");
+};
+function iso2fdate(iso){
+    if(iso==null || iso==""){
         return "";
-    }
-    var fdate = new Date(date);
-    var hh = fdate.getHours();
-    var time = " AM";
-    if(hh>=12){
-        time = " PM";
-        hh -= 12;
-    }
-    hh = (hh<10?"0":"") + hh; 
-    var mm = fdate.getMinutes();
-    mm = (mm<10?"0":"") + mm;
-    //var ss = fdate.getSeconds();
-    //ss = (ss<10?"0":"") + ss;
-    time = hh + ":" +  mm + time
-    return time;
+    };
+    return moment(iso, "YYYY-MM-DDTHH:mm:ss").format(fdatetime_format);
 };
-
+function isotime2fdate(iso){
+    if(iso==null || iso==""){
+        return "";
+    };
+    return moment(iso, "HH:mm:ss").format(ftime_format);
+};
+function isodate2fdate(iso){
+    if(iso==null || iso==""){
+        return "";
+    };
+    return moment(iso, "YYYY-MM-DD").format(fdate_format);
+};
 
 function get_week_range(adate, start) {
     // http://stackoverflow.com/a/8381494/84513

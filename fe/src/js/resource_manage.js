@@ -297,7 +297,7 @@ function on_tariff_pricings(resp) {
     $('#old-pricings').empty();
     $('#old-pricing-tmpl').tmpl(resp.result).appendTo('#old-pricings');
     $('.pricing-date').each( function() {
-        $(this).text(to_formatted_date($(this).text()));
+        $(this).text(isodate2fdate($(this).text()));
     });
     $('.pricing-amt').each( function() {
         $(this).text(format_currency($(this).text()));
