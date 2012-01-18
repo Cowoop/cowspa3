@@ -11,7 +11,7 @@ ctxpath = '/${lang}/${theme}'
 class CSPage(sphc.more.HTML5Page):
     jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js',
             '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js',
-            '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js',
+            '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/moment.min.js',
             '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js',
             '/js/jquery.dataTables.min.js', '/js/accounting.js'] + webshims + ['/js/SS.min.js', '/js/common.js']
     # loading jq locally may be we should consider do that only when remote fails
