@@ -292,30 +292,37 @@ function date2isodate(date){
     return format_date(date, 'yy-mm-dd')
 };
 
-function fdate2date(fdate){
+function fdate2datetime(fdate){
     if(jQuery.trim(fdate) == ""){
         return "";
     };
     return moment(fdate, fdatetime_format).native();
 };
 
+function fdate2date(fdate){
+    if(jQuery.trim(fdate) == ""){
+        return "";
+    };
+    return moment(fdate, fdate_format).native();
+};
+
 function fdate2iso(fdate){
     if(jQuery.trim(fdate) == ""){
         return null;
     };
-    moment(fdate, fdatetime_format).format(iso_format);
+    return moment(fdate, fdatetime_format).format(iso_format);
 };
 function fdate2isodate(fdate){
     if(jQuery.trim(fdate) == ""){
         return null;
     };
-    moment(fdate, fdate_format).format(iso_date_format);
+    return moment(fdate, fdate_format).format(iso_date_format);
 };
 function fdate2isotime(fdate){
     if(jQuery.trim(fdate) == ""){
         return null;
     };
-    moment(fdate, ftime_format).format("HH:mm:ss");
+    return moment(fdate, ftime_format).format("HH:mm:ss");
 };
 
 function iso2fdate(iso){
@@ -345,8 +352,6 @@ function isodate2fdate(iso){
     };
     return moment(iso, iso_date_format).format(fdate_format);
 };
-
-
 
 function date2ftime(date) {
     var iso = date2iso(date);    

@@ -476,10 +476,10 @@ function bind_cancel_and_change_tariff() {
     $('.change-sub').unbind('click');
     $('.change-sub').click(function(){
         var membership_id = $(this).attr('id').split("-")[1];
-        var date = isodate2fdate($("#tariff_row-"+membership_id+" #starts").text());
+        var date = fdate2date($("#tariff_row-"+membership_id+" #starts").text());
         $('#change-tariff-form #starts-vis').datepicker("setDate", date);
         if($("#tariff_row-"+membership_id+" #ends").text()!=""){
-            date = isodate2fdate($("#tariff_row-"+membership_id+" #ends").text());
+            date = fdate2date($("#tariff_row-"+membership_id+" #ends").text());
             $('#change-tariff-form #ends-vis').datepicker("setDate", date);
         }
         else{
