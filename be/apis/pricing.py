@@ -157,8 +157,8 @@ def update(pricing_id, **mod_data):
     if new_starts != pricing.starts:
         mod_data['starts'] = new_starts
         crit = dict(plan=pricing.plan, resource=pricing.resource, ends=pricing.starts-datetime.timedelta(1))
-        prev_pricing = pricing_store.get_by(crit)[0]
-        if prev_pricing: set(prev_pricing.id, 'ends', pricing.ends)
+        prev_pricing = pricing_store.get_by(crit)
+        if prev_pricing: set(prev_pricing[0].id, 'ends', pricing.ends)
         old_pricing = dbaccess.get_resource_pricing(pricing.plan, pricing.resource, new_starts, [pricing_id])
         if old_pricing:#old_pricing contains pricing at new_starts
             if old_pricing.starts and old_pricing.starts >= new_starts:
