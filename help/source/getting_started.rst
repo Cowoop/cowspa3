@@ -79,3 +79,5 @@ Invoicing a member
 - Search for member name.  
 - Selecting member from the list of members found redirects to member page. 
 - Open "Invoices" tab. On usages section you can add new usages as well as manage existing ones.
+
+

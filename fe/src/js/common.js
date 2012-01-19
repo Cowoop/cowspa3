@@ -10,7 +10,7 @@ var locale_data = {
                  }; //default values
 var fdate_format = "MMM D, YYYY";
 var ftime_format = "hh:mm A";
-var fdatetime_format = "MMM D, YYYY hh:mm A";
+var fdatetime_format = fdate_format + ' ' + ftime_format;
 //
 
 $.webshims.setOptions('forms', {
@@ -237,47 +237,79 @@ if(params['user_id']) {
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
-function iso2date(iso){
-    if(iso==null || iso==""){
-        return "";
-    };
-    return moment(iso, "YYYY-MM-DDTHH:mm:ss");
+function format_date(thedate, format) {
+    // http://docs.jquery.com/UI/Datepicker/formatDate
+    return $.datepicker.formatDate(format, thedate);
 };
+
+var iso_date_format = "YYYY-MM-DD"; // momentjs only
+var iso_format = iso_date_format + "\THH:mm:ss"; // momentjs only
+
+function iso2date(iso){
+    var yy = parseInt(iso.slice(0, 4), 10);
+    var mm = parseInt(iso.slice(5, 7)-1, 10);
+    var dd = parseInt(iso.slice(8, 10), 10);
+
+    if (iso.length > 11) { // this won't work after year 9999 or before year 1000
+        var hh = parseInt(iso.slice(11, 13), 10);
+        var mi = parseInt(iso.slice(14, 16), 10);
+        var ss = parseInt(iso.slice(17, 19), 10);
+
+    } else {
+        var hh = 0;
+        var mi = 0;
+        var ss = 0;
+    };
+
+    var dt = new Date(yy, mm, dd, hh, mi, ss);
+    return dt;
+};
+
+function date2isotime(date, exclude_sec){
+    if(jQuery.trim(date) == ""){
+        return null;
+    };
+    var hh = date.getHours();
+    hh = (hh<10?"0":"") + hh; 
+    var mm = date.getMinutes();
+    mm = (mm<10?"0":"") + mm;
+    var ss = date.getSeconds();
+    ss = (ss<10?"0":"") + ss;
+    return (exclude_sec) ? hh+':'+mm : hh+":"+mm+":"+ss;
+};
+
 function date2iso(date){
     if(jQuery.trim(date) == ""){
         return null;
     };
-    return moment(date).format("YYYY:MM:DDTHH:mm:ss");
+    return format_date(date, 'yy-mm-dd') + 'T' + date2isotime(date);
 };
-function date2isotime(date){
-    if(jQuery.trim(date) == ""){
-        return null;
-    };
-    return moment(date).format("HH:mm:ss");
-};
+
 function date2isodate(date){
     if(jQuery.trim(date) == ""){
         return null;
     };
-    return moment(date).format("YYYY:MM:DD");
+    return format_date(date, 'yy-mm-dd')
 };
+
 function fdate2date(fdate){
     if(jQuery.trim(fdate) == ""){
         return "";
     };
-    return moment(fdate, fdatetime_format);
+    return moment(fdate, fdatetime_format).native();
 };
+
 function fdate2iso(fdate){
     if(jQuery.trim(fdate) == ""){
         return null;
     };
-    moment(fdate, fdatetime_format).format("YYYY:MM:DDTHH:mm:ss");
+    moment(fdate, fdatetime_format).format(iso_format);
 };
 function fdate2isodate(fdate){
     if(jQuery.trim(fdate) == ""){
         return null;
     };
-    moment(fdate, fdate_format).format("YYYY:MM:DD");
+    moment(fdate, fdate_format).format(iso_date_format);
 };
 function fdate2isotime(fdate){
     if(jQuery.trim(fdate) == ""){
@@ -285,23 +317,40 @@ function fdate2isotime(fdate){
     };
     moment(fdate, ftime_format).format("HH:mm:ss");
 };
+
 function iso2fdate(iso){
     if(iso==null || iso==""){
         return "";
     };
-    return moment(iso, "YYYY-MM-DDTHH:mm:ss").format(fdatetime_format);
+    return moment(iso, iso_format).format(fdatetime_format);
 };
+
+function iso2ftime(iso){
+    if(iso==null || iso==""){
+        return "";
+    };
+    return moment(iso, iso_format).format(ftime_format);
+};
+
 function isotime2fdate(iso){
     if(iso==null || iso==""){
         return "";
     };
     return moment(iso, "HH:mm:ss").format(ftime_format);
 };
+
 function isodate2fdate(iso){
     if(iso==null || iso==""){
         return "";
     };
-    return moment(iso, "YYYY-MM-DD").format(fdate_format);
+    return moment(iso, iso_date_format).format(fdate_format);
+};
+
+
+
+function date2ftime(date) {
+    var iso = date2iso(date);    
+    return moment(iso, iso_date_format).format(ftime_format);
 };
 
 function get_week_range(adate, start) {

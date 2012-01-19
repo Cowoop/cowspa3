@@ -9,7 +9,7 @@ Being an open source nature of the project your contributions are appreciated. T
 
 Issues (Simplest)
 -----------------
-You find some issues like grammtical/spelling mistakes, write us cowspa.dev at gmail dot com OR better create a ticket at https://github.com/shon/cowspa3/issues
+You find some issues like grammatical/spelling mistakes, write us cowspa.dev at gmail dot com OR better create a ticket at https://github.com/shon/cowspa3/issues
 
 Contributing to articles
 ------------------------

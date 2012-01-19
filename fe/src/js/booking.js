@@ -10,7 +10,7 @@ function error(resp) {
 };
 
 function add_days(adate, days) {
-    return new Date(adate.getTime() + (days * day_miliseconds))
+    return new Date(adate.getTime() + (days * day_miliseconds));
 };
 
 function set_day_titles() {
@@ -60,6 +60,8 @@ function get_bookings(start, end, bizplace_id) {
 function mark_slot(usage) {
     var booking_id = usage.id;
     var start_time = iso2date(usage.start_time);
+    console.log(usage.start_time);
+    console.log(start_time);
     var end_time = iso2date(usage.end_time);
     for (i in shown_dates) {
         if (shown_dates[i] > start_time) {
@@ -180,16 +182,16 @@ function open_edit_booking_form(booking) {
             var offset = (dropped_slot_time - upper_slots_time);
             var start_time = new Date(new_booking_date.getTime() + offset);
             var end_time = new Date(start_time.getTime() + booking_duration);
-            var start_iso = date2iso(start_time);
-            var end_iso = date2iso(end_time);
+            var start_iso = date2isotime(start_time, true);
+            var end_iso = date2isotime(end_time, true);
         } else {
             var start_iso = '00:00';
             var end_time = new Date(new_booking_date.getTime() + booking_duration);
-            var end_iso = date2iso(end_time);
+            var end_iso = date2isotime(end_time, true);
         };
     } else {
-        var start_iso = date2iso(booking.start_time);
-        var end_iso = date2iso(booking.end_time);
+        var start_iso = date2isotime(iso2date(booking.start_time), true);
+        var end_iso = date2isotime(iso2date(booking.end_time), true);
     };
     $('#new-starts').val(start_iso);
     $('#new-ends').val(end_iso);
@@ -257,6 +259,7 @@ function make_booking() {
     
     var params = {};
 
+    params.resource_owner = current_ctx;
     params.resource_id = parseInt($('#resource-select').val(), 10);
     params.resource_name = resource_map[params.resource_id];
 
@@ -266,7 +269,7 @@ function make_booking() {
     var mins = hrs_mins[1];
     start_time.setHours(hrs);
     start_time.setMinutes(mins);
-    params.start_time = fdate2iso(start_time)
+    params.start_time = date2iso(start_time)
 
     var end_time = new Date(new_booking_date.getTime());
     var hrs_mins = $('#new-ends').val().split(':');
@@ -274,7 +277,7 @@ function make_booking() {
     var mins = hrs_mins[1];
     end_time.setHours(hrs);
     end_time.setMinutes(mins);
-    params.end_time = fdate2iso(end_time)
+    params.end_time = date2iso(end_time)
 
     // params.quantity = $('#new-quantity').val() || 1;
     params.member = $('#for-member').val();
