@@ -159,6 +159,8 @@ function edit_member(theform) {
     var inputs = theform.serializeArray();
     var params = {'member_id': thismember_id}
     for(var i in inputs) {
+        if(inputs[i].name=="password" && jQuery.trim(inputs[i].value)=="")
+            continue;
         params[inputs[i].name] = inputs[i].value;
     };
     function success(resp) {

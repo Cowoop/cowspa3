@@ -85,6 +85,10 @@ def new(username, password, state=None):
     user_store.add(**data)
     return user_id
 
+def update(member_id, **mod_data):
+    if 'password' in mod_data: mod_data['password'] = encrypt(mod_data['password'])
+    user_store.update(member_id, **mod_data)
+
 def create_system_account():
     username = env.config.system_username
     password = commonlib.helpers.random_key_gen()

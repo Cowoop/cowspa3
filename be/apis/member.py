@@ -88,9 +88,8 @@ class MemberResource:
     def update(self, member_id, **mod_data):
         if 'state' in mod_data:
             mod_data['state'] = commonlib.shared.constants.member.to_flags(mod_data['state'])
-        if 'username' in mod_data or 'password' in mod_data: # may be this should call userlib.update
-            mod_data['password'] = helpers.encrypt(mod_data['password'])
-            user_store.update(member_id, **mod_data)
+        if 'username' in mod_data or 'password' in mod_data:
+            userlib.update(member_id, **mod_data)
         elif 'theme' in mod_data or 'language' in mod_data:
             memberpref_store.update_by(dict(member=member_id), **mod_data)
         else:
