@@ -54,16 +54,15 @@ def compile_scss(prjdir):
 themes = static.themes
 theme_map = dict((theme['name'], theme) for theme in themes)
 theme_codes = themedirs
-languages = [dict(label=label, name=code) for label, code in [ ('English', 'en'), ('German', 'de') ]]
-lang_map = dict((lang['name'], lang) for lang in languages)
-lang_codes = tuple(lang_map.keys())
 
 class BuilderBase(object):
     def __init__(self, page, path):
         self.page = page
         self.path = path
-    def gen_path_combinations(self):
-        build_data = dict(theme=theme_codes, lang=lang_codes)
+    def gen_path_combinations(self, lang):
+        l=[]
+        l.append(lang)
+        build_data = dict(theme=theme_codes, lang=l)
         pathvars = [var[2:-2] for var in self.path.split(os.path.sep) if var.startswith('%')]
         combinations = itertools.product(*([{var: v} for v in build_data[var]] for var in pathvars))
         return combinations
@@ -73,12 +72,16 @@ class BuilderBase(object):
         To be implemented by concrete class
         """
 
+def bld_mo_files (lang):
+    cmd="/usr/bin/msgfmt --output-file=l10n/"+lang+"/LC_MESSAGES/cowspa.mo l10n/" + lang + "/" + lang + ".po"
+    exec_cmd(cmd)
+
 class PageBuilder(BuilderBase):
-    def build(self):
-        for path_data in self.gen_path_combinations():
+    def build(self,lang):
+        for path_data in self.gen_path_combinations(lang):
             d = {}
             for elem in path_data:
-                d.update(elem)
+               d.update(elem)
             path = pathjoin(pubroot, (self.path % d))
             print("Building page: %s" % path)
             page = self.page()
@@ -228,8 +231,10 @@ def build_be_template_styles():
         compile_scss(base_dir)
 
 def build_all():
+    lang = os.environ.get('LANGUAGE', None)
+    bld_mo_files(lang)
     for page in pages:
-        page.build()
+        page.build(lang)
 
 def main():
     if not os.path.exists(pubroot):

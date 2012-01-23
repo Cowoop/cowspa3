@@ -1,6 +1,17 @@
 # -*- coding: UTF-8 -*-
 import sphc
 import sphc.more
+import os, gettext
+
+langs = []
+language = os.environ.get('LANGUAGE', None)
+if (language):
+    langs.append(language)
+
+local_path=os.getcwd() + '/l10n/'
+gettext.bindtextdomain('cowspa',local_path)
+gettext.textdomain('cowspa')
+_=gettext.translation('cowspa',local_path,languages=langs,fallback=True).gettext
 
 tf = sphc.TagFactory()
 

@@ -1,5 +1,8 @@
 import sphc
 import fe.bases
+import gettext
+
+_ = fe.bases._
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
@@ -7,22 +10,23 @@ BasePage = fe.bases.CSAuthedPage
 def get_tariff_form(create_form=True):
     form  = sphc.more.Form(classes=['hform'], id="tariff_form", style="display:none")
     about = form.add(sphc.more.Fieldset())
-    about.add(sphc.tf.LEGEND('Details'))
-    about.add_field('Name', tf.INPUT(type='text', id='name', name='name').set_required())
-    about.add_field('Description', tf.TEXTAREA(id='short_description', name='short_description'))
+    about.add(sphc.tf.LEGEND(_('Details')))
+    about.add_field(_('Name'), tf.INPUT(type='text', id='name',
+        name='name').set_required())
+    about.add_field(_('Description'), tf.TEXTAREA(id='short_description', name='short_description'))
     if create_form:
-        about.add_field('Charges ', tf.INPUT(id='default_price', name='default_price').set_required(), "Per month membership fees")
+        about.add_field(_('Charges'), tf.INPUT(id='default_price', name='default_price').set_required(), "Per month membership fees")
 
     return form
 
 class CreateTariff(BasePage):
-    title = 'New Tariff'
-    current_nav = 'Admin'
+    title = _('New Tariff')
+    current_nav = _('Admin')
     def content(self):
         container = tf.DIV()
 
         form = get_tariff_form()
-        form.add_buttons(tf.BUTTON("Create", id='save-btn', type="submit"), tf.BUTTON("Cancel", id='cancel-btn', type='button'))
+        form.add_buttons(tf.BUTTON(_("Create"), id='save-btn', type="submit"), tf.BUTTON("Cancel", id='cancel-btn', type='button'))
 
         container.form = form.build()
         container.script = sphc.more.script_fromfile("fe/src/js/plan_create.js")
@@ -31,7 +35,7 @@ class CreateTariff(BasePage):
 class ListTariff(BasePage):
     title = 'Tariffs'
     current_nav = 'Admin'
-    content_menu = [tf.A('Create New +', href="/${lang}/${theme}/tariff/new", Class="item big-button")]
+    content_menu = [tf.A(_('Create New +'), href="/${lang}/${theme}/tariff/new", Class="item big-button")]
     def content(self):
         container = tf.DIV()
 
@@ -69,10 +73,10 @@ class ListTariff(BasePage):
         pricing.add(pricing_tmpl)
 
         new = tf.FORM(id="new-pricing", method="POST") #, Class="hidden")
-        new.starts_vis = tf.SPAN(tf.INPUT(placeholder="From date", type="text", id='new-starts-vis').set_required())
+        new.starts_vis = tf.SPAN(tf.INPUT(placeholder=_("From date"), type="text", id='new-starts-vis').set_required())
         new.starts = tf.INPUT(id='new-starts', type="hidden").set_required()
-        new.amount = tf.SPAN(tf.INPUT(placeholder="New price", type="text", id='new-amount').set_required())
-        new.action = tf.SPAN(tf.BUTTON("Save", type="submit"))
+        new.amount = tf.SPAN(tf.INPUT(placeholder=_("New price"), type="text", id='new-amount').set_required())
+        new.action = tf.SPAN(tf.BUTTON(_("Save"), type="submit"))
         pricing.add(new)
 
         table = tf.DIV(id="old-pricings", Class="grid")
@@ -83,12 +87,11 @@ class ListTariff(BasePage):
         container.tariffs = tariffs
 
         form = get_tariff_form(create_form=False)
-        form.add_buttons(tf.BUTTON("Save", id='save-btn', type="submit"), tf.BUTTON("Cancel", id='cancel-btn', type='button'))
+        form.add_buttons(tf.BUTTON(_("Save"), id='save-btn', type="submit"), tf.BUTTON(_("Cancel"), id='cancel-btn', type='button'))
 
         container.profile_form = form.build()
 
         container.pricing = pricing_content
-        #container.pricing.pricing_contents = pricing
 
         container.script = sphc.more.script_fromfile("fe/src/js/list_tariffs.js")
         return container
