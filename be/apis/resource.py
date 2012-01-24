@@ -23,7 +23,7 @@ class ResourceCollection:
             archived=False, picture=None, accnt_code=None):
         created = datetime.datetime.now()
         if state is None:
-            state = 2 ** commonlib.shared.constants.resource.enabled
+            state = commonlib.shared.constants.resource.enabled
         else:
             state = commonlib.shared.constants.resource.to_flags(state)
         data = dict(name=name, owner=owner, created=created, short_description=short_description,
