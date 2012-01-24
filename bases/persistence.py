@@ -59,7 +59,7 @@ class BaseStore(object):
     def update_many(self, oids, **mod_data):
         raise NotImplemented
     def update_by(self, crit, **mod_data):
-        raise NotImplemented    
+        raise NotImplemented
     def query_exec(self, q, values, hashrows=True, log=False):
         """
         @q: object representing query to be executed
@@ -70,9 +70,9 @@ class BaseStore(object):
         raise NotImplemented
     def count_by_clause(self, clause, clause_values):
         raise NotImplemented
-    def total(self):
+    def sum(self):
         raise NotImplemented
-    def total_by_clause(self, field, clause, clause_values):
+    def sum_by_clause(self, field, clause, clause_values):
         raise NotImplemented
     def destroy(self):
         """
@@ -289,8 +289,7 @@ class PGStore(BaseStore):
 
     def get_by_clause(self, clause, clause_values, fields=[], hashrows=True):
         cols_str = self.fields2cols(fields)
-        q = "SELECT %(cols_str)s FROM %(table_name)s WHERE %(clause)s" % \
-            dict(table_name=self.table_name, cols_str=cols_str, clause=clause)
+        q = "SELECT %(cols_str)s FROM %(table_name)s WHERE %(clause)s" % dict(table_name=self.table_name, cols_str=cols_str, clause=clause)
         return self.query_exec(q, clause_values, hashrows=hashrows)
 
     def get_one_by_clause(self, clause, clause_values, fields=[], hashrows=True):
@@ -313,9 +312,9 @@ class PGStore(BaseStore):
         values['oid'] = oid
         self.query_exec(q, values)
         return True
-        
+
     def update_many(self, oids, **mod_data):
-        
+
         """update rows based on mod_data passed
         mod_data: dict
         -> True/False
@@ -353,7 +352,7 @@ class PGStore(BaseStore):
         q = "DELETE FROM %s WHERE id = %%s" % self.table_name
         self.query_exec(q, (oid,))
         return True
-    
+
     def remove_many(self, oids):
         q = "DELETE FROM %s WHERE id IN %%s" % self.table_name
         self.query_exec(q, (tuple(oids),))
@@ -380,7 +379,7 @@ class PGStore(BaseStore):
         """
         q = 'SELECT count(*) from %s' % self.table_name
         return self.query_exec(q, hashrows=False)[0][0]
-    
+
     def count_by_clause(self, clause, clause_values):
         """
         -> int
@@ -388,20 +387,20 @@ class PGStore(BaseStore):
         q = "SELECT count(*) FROM %(table_name)s WHERE %(clause)s" % dict(table_name=self.table_name, clause=clause)
         return self.query_exec(q, clause_values, hashrows=False)[0][0]
 
-    def total(self, field):
+    def sum(self, field):
         """
         -> int, float
         """
         q = 'SELECT sum(%(field)s) from %(table_name)s' % dict(table_name=self.table_name, field=field)
         return self.query_exec(q, hashrows=False)[0][0]
-    
-    def total_by_clause(self, field, clause, clause_values):
+
+    def sum_by_clause(self, field, clause, clause_values):
         """
         -> int, float
         """
         q = "SELECT sum(%(field)s) FROM %(table_name)s WHERE %(clause)s" % dict(field=field, table_name=self.table_name, clause=clause)
-        return self.query_exec(q, clause_values, hashrows=False)[0][0]    
-    
+        return self.query_exec(q, clause_values, hashrows=False)[0][0]
+
     def destroy(self, cursor=None):
         cursor = cursor or self.cursor_getter()
         q = "select 1 from information_schema.tables where table_name = %s"
