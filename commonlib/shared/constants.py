@@ -1,7 +1,7 @@
 import commonlib.helpers
 import collections
 
-class states():
+class states(object):
     """
     class mystates(states):
         names = ['enabled', 'hidden']
@@ -17,10 +17,10 @@ class states():
     names = ['enabled', 'hidden']
     def __init__(self):
         self.nt = collections.namedtuple(self.__class__.__name__, ' '.join(self.names))._make(range(len(self.names)))
-    
+
     def __getattr__(self, name):
-        return 2 ** getattr(self.nt, name)    
-    
+        return 2 ** getattr(self.nt, name)
+
     def to_dict(self, state_flag):
         state_dict = dict((state, bool(state_flag & getattr(self, state))) for state in self.names)
         return state_dict
@@ -36,7 +36,7 @@ class user(states): pass
 class member(states): pass
 
 class resource(states):
-    names = ['enabled', 'host_only', 'repairs']
+    names = ['enabled', 'host_only', 'repairs', 'disabled']
 
 member = member()
 resource = resource()
