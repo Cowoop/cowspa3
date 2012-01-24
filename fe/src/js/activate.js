@@ -34,11 +34,11 @@ function activate() {
         params[inputs[i].name] = inputs[i].value;
     };
     function success(resp) {
-        action_status.text("Account activated! Now logging in ..").attr('class', 'status-success');
+        action_status.text(_("Account activated! Now logging in ..")).attr('class', 'status-success');
         login();
         };
     function error() {
-        action_status.text("Activation failed. Try different username").attr('class', 'status-fail');
+        action_status.text(_("Activation failed. Try different username")).attr('class', 'status-fail');
         };
     jsonrpc('registration.activate', params, success, error);
 };

@@ -8,11 +8,11 @@ function create_bizplace() {
         params[inputs[i].name] = inputs[i].value;
     }
     function success() {
-        action_status.text("Location created successfully").attr('class', 'status-success');
+        action_status.text(_("Location created successfully")).attr('class', 'status-success');
         window.location = basepath + '/dashboard';
     };
     function error() {
-        action_status.text("Error in creating location").attr('class', 'status-fail');
+        action_status.text(_("Error in creating location")).attr('class', 'status-fail');
     };
     jsonrpc('bizplace.new', params, success, error);
 };
