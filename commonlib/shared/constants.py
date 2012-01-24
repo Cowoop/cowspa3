@@ -3,6 +3,18 @@ import commonlib.helpers
 Constants = commonlib.helpers.Constants
 
 class states(Constants):
+    """
+    class mystates(states):
+        names = ['enabled', 'hidden']
+
+    mystates.enabled
+    mystates.hidden
+    mystates.to_flags(dict(enabled=True)) -> 1
+    mystates.to_flags(dict(hidden=True)) -> 2
+    mystates.to_flags(dict(enabled=True, hidden=True)) -> 3
+    mystates.to_dict(3) -> dict(enabled=True, hidden=True)
+    mystates.to_dict(2) -> dict(enabled=False, hidden=True)
+    """
     names = ['enabled', 'hidden']
 
     def to_dict(self, state_flag):
