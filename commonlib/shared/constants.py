@@ -1,8 +1,7 @@
 import commonlib.helpers
+import collections
 
-Constants = commonlib.helpers.Constants
-
-class states(Constants):
+class states():
     """
     class mystates(states):
         names = ['enabled', 'hidden']
@@ -16,7 +15,12 @@ class states(Constants):
     mystates.to_dict(2) -> dict(enabled=False, hidden=True)
     """
     names = ['enabled', 'hidden']
-
+    def __init__(self):
+        self.nt = collections.namedtuple(self.__class__.__name__, ' '.join(self.names))._make(range(len(self.names)))
+    
+    def __getattr__(self, name):
+        return 2 ** getattr(self.nt, name)    
+    
     def to_dict(self, state_flag):
         state_dict = dict((state, bool(state_flag & getattr(self, state))) for state in self.names)
         return state_dict

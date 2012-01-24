@@ -41,7 +41,7 @@ class Constants(object):
     def __init__(self):
         self.nt = collections.namedtuple(self.__class__.__name__, ' '.join(self.names))._make(range(len(self.names)))
     def __getattr__(self, name):
-        return 2 ** getattr(self.nt, name)
+        return getattr(self.nt, name)
     def rev(self, n):
         return self.nt._fields[n]
 
