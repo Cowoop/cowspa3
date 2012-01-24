@@ -36,7 +36,7 @@ class user(states): pass
 class member(states): pass
 
 class resource(states):
-    names = ['enabled', 'host_only', 'repairs', 'disabled']
+    names = ['enabled', 'host_only', 'repairs']
 
 member = member()
 resource = resource()
