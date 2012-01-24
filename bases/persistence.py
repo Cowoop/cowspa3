@@ -68,6 +68,12 @@ class BaseStore(object):
         raise NotImplemented
     def count(self):
         raise NotImplemented
+    def count_by_clause(self, clause, clause_values):
+        raise NotImplemented
+    def total(self):
+        raise NotImplemented
+    def total_by_clause(self, field, clause, clause_values):
+        raise NotImplemented
     def destroy(self):
         """
         Destroys the store
@@ -374,7 +380,28 @@ class PGStore(BaseStore):
         """
         q = 'SELECT count(*) from %s' % self.table_name
         return self.query_exec(q, hashrows=False)[0][0]
+    
+    def count_by_clause(self, clause, clause_values):
+        """
+        -> int
+        """
+        q = "SELECT count(*) FROM %(table_name)s WHERE %(clause)s" % dict(table_name=self.table_name, clause=clause)
+        return self.query_exec(q, clause_values, hashrows=False)[0][0]
 
+    def total(self, field):
+        """
+        -> int, float
+        """
+        q = 'SELECT sum(%(field)s) from %(table_name)s' % dict(table_name=self.table_name, field=field)
+        return self.query_exec(q, hashrows=False)[0][0]
+    
+    def total_by_clause(self, field, clause, clause_values):
+        """
+        -> int, float
+        """
+        q = "SELECT sum(%(field)s) FROM %(table_name)s WHERE %(clause)s" % dict(field=field, table_name=self.table_name, clause=clause)
+        return self.query_exec(q, clause_values, hashrows=False)[0][0]    
+    
     def destroy(self, cursor=None):
         cursor = cursor or self.cursor_getter()
         q = "select 1 from information_schema.tables where table_name = %s"
