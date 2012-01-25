@@ -39,7 +39,7 @@ class MemberCreated(BaseEvent):
     name = "member_created"
     category = "member_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New member <a href='./member/edit/#/%(id)s/profile'>%(name)s</a> created by %(actor_name)s."
+        return make_date_element(self.data.created) + " New member <a href='./member/edit/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
 
 class MemberInvited(BaseEvent):
     name = "member_invited"
@@ -79,7 +79,7 @@ class OrganizationCreated(BaseEvent):
     name = "organization_created"
     category = "organization_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New organization <a href='./member/edit/#/%(id)s/profile'>%(name)s</a> created by %(actor_name)s."
+        return make_date_element(self.data.created) + " New organization <a href='./member/edit/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
 
 class OrganizationUpdated(BaseEvent):
     name = "organization_updated"
@@ -100,7 +100,7 @@ class BizplaceCreated(BaseEvent):
     name = "bizplace_created"
     category = "bizplace_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New Hub <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/profile'>%(actor_name)s</a>."
+        return make_date_element(self.data.created) + " New Hub <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/info'>%(actor_name)s</a>."
 
 class BizplaceUpdated(BaseEvent):
     name = "bizplace_updated"
@@ -132,7 +132,7 @@ class InvoiceCreated(BaseEvent):
     name = "invoice_created"
     category = "invoice_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./member/edit/#/%(member_id)s/profile'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./member/edit/#/%(member_id)s/info'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return dict(member_ids=[self.actor])
 
@@ -148,7 +148,7 @@ class BillingprefUpdated(BaseEvent):
     name = "billingpref_updated"
     category = "billingpref_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/edit/#/%(member_id)s/profile'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/edit/#/%(member_id)s/billing'>%(name)s</a> by %(actor_name)s."
 
 class Categories(dict):
     """
