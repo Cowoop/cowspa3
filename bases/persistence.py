@@ -66,13 +66,13 @@ class BaseStore(object):
         @log: logs the query
         """
         raise NotImplemented
-    def count(self):
+    def count(self, group_by=None):
         raise NotImplemented
-    def count_by_clause(self, clause, clause_values):
+    def count_by_clause(self, clause, clause_values, group_by=None):
         raise NotImplemented
-    def sum(self):
+    def sum(self, group_by=None):
         raise NotImplemented
-    def sum_by_clause(self, field, clause, clause_values):
+    def sum_by_clause(self, field, clause, clause_values, group_by=None):
         raise NotImplemented
     def destroy(self):
         """
@@ -373,33 +373,53 @@ class PGStore(BaseStore):
         self.query_exec(q, clause_values)
         return True
 
-    def count(self):
+    def count(self, group_by=None, hashrows=True):
         """
         -> int
         """
-        q = 'SELECT count(*) from %s' % self.table_name
-        return self.query_exec(q, hashrows=False)[0][0]
+        if group_by:
+            q = 'SELECT %s, count(*) FROM %s GROUP BY %s' % (group_by, self.table_name, group_by)
+        else:
+            q = 'SELECT count(*) FROM %s' % self.table_name
+            hashrows = False
+        result = self.query_exec(q, hashrows=hashrows)
+        return result if group_by else result[0][0]
 
-    def count_by_clause(self, clause, clause_values):
+    def count_by_clause(self, clause, clause_values, group_by=None, hashrows=True):
         """
         -> int
         """
-        q = "SELECT count(*) FROM %(table_name)s WHERE %(clause)s" % dict(table_name=self.table_name, clause=clause)
-        return self.query_exec(q, clause_values, hashrows=False)[0][0]
+        if group_by:
+            q = 'SELECT %(group_by)s, count(*) FROM %(table_name)s WHERE %(clause)s GROUP BY %(group_by)s' % dict(group_by=group_by, table_name=self.table_name, clause=clause)
+        else:
+            q = "SELECT count(*) FROM %(table_name)s WHERE %(clause)s" % dict(table_name=self.table_name, clause=clause)
+            hashrows = False
+        result = self.query_exec(q, clause_values, hashrows=False)
+        return result if group_by else result[0][0]
 
-    def sum(self, field):
+    def sum(self, field, group_by=None, hashrows=True):
         """
         -> int, float
         """
-        q = 'SELECT sum(%(field)s) from %(table_name)s' % dict(table_name=self.table_name, field=field)
-        return self.query_exec(q, hashrows=False)[0][0]
+        if group_by:
+            q = 'SELECT %(group_by)s, sum(%(field)s) FROM %(table_name)s GROUP BY %(group_by)s' % dict(group_by=group_by, table_name=self.table_name, field=field)
+        else:
+            q = 'SELECT sum(%(field)s) FROM %(table_name)s' % dict(table_name=self.table_name, field=field)
+            hashrows = False
+        result = self.query_exec(q, hashrows=False)
+        return result if group_by else result[0][0]
 
-    def sum_by_clause(self, field, clause, clause_values):
+    def sum_by_clause(self, field, clause, clause_values, group_by=None, hashrows=True):
         """
         -> int, float
         """
-        q = "SELECT sum(%(field)s) FROM %(table_name)s WHERE %(clause)s" % dict(field=field, table_name=self.table_name, clause=clause)
-        return self.query_exec(q, clause_values, hashrows=False)[0][0]
+        if group_by:
+            q = 'SELECT %(group_by)s, sum(%(field)s) FROM %(table_name)s WHERE %(clause)s GROUP BY %(group_by)s' % dict(group_by=group_by, table_name=self.table_name, field=field, clause=clause)
+        else:
+            q = "SELECT sum(%(field)s) FROM %(table_name)s WHERE %(clause)s" % dict(field=field, table_name=self.table_name, clause=clause)
+            hashrows = False
+        result = self.query_exec(q, clause_values, hashrows=False)
+        return result if group_by else result[0][0]
 
     def destroy(self, cursor=None):
         cursor = cursor or self.cursor_getter()
