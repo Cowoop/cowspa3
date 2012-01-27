@@ -17,7 +17,7 @@ class BillingprefResource:
             mod_data['organization_details']['mtype'] = "organization"
             mod_data['billto'] = memberlib.member_collection.new(**mod_data['organization_details'])
             del mod_data['organization_details']
-        if mod_data['mode'] == modes.another and mod_data['billto'] == member:
+        if mod_data['mode'] == modes.other and mod_data['billto'] == member:
             mod_data['mode'] == modes.self
             del(mod_data['billto'])
         invoicepref_store.update_by(dict(member=member), **mod_data)
@@ -33,8 +33,8 @@ class BillingprefResource:
         while True:
             preferences = self.info(billto)
             billto = preferences['billto'] if preferences['mode'] != modes.self else billto
-            details = preferences['details'] if billto != member or preferences['mode'] != modes.another else None
-            mode = preferences['mode'] if billto != member or preferences['mode'] != modes.another else modes.self
+            details = preferences['details'] if billto != member or preferences['mode'] != modes.other else None
+            mode = preferences['mode'] if billto != member or preferences['mode'] != modes.other else modes.self
             if mode == modes.self:
                 details = member_store.get(billto, ['name', 'address', 'city', 'country', 'phone', 'email'])
                 break
