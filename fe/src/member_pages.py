@@ -63,7 +63,7 @@ def billing_pref_form():
     mode.add(radio2)
     radio3 = tf.DIV(id="radio_field3")
     radio3.value = tf.INPUT(id="mode", name="mode", type="radio", value="2")
-    radio3.label = tf.label("Another Member")
+    radio3.label = tf.label("Other Member")
     mode.add(radio3)
     radio4 = tf.DIV(id="radio_field4")
     radio4.value = tf.INPUT(id="mode", name="mode", type="radio", value="3")

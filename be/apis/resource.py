@@ -18,8 +18,7 @@ class CalcMode:
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, default_price,
-            state=None, long_description=None, calc_mode=CalcMode.monthly,
+    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, calc_mode=CalcMode.monthly,
             archived=False, picture=None, accnt_code=None):
         created = datetime.datetime.now()
         if state is None:

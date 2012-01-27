@@ -78,8 +78,8 @@ def logout(token):
         print err
 
 def new(username, password, state=None):
-    if state is None:
-        state = commonlib.shared.constants.member.enabled
+    if state is None: state = commonlib.shared.constants.member.enabled
+    if password is None: password = helpers.random_key_gen()
     user_id = dbaccess.OidGenerator.next("Member")
     data = dict(id=user_id, username=username, password=encrypt(password), state=state)
     user_store.add(**data)
