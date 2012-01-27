@@ -75,8 +75,7 @@ class MemberProfile(PGStore):
     twitter TEXT[2],
     facebook TEXT[2],
     linkedin TEXT[2],
-    use_gravtar BOOLEAN default false,
-    organization_no TEXT
+    use_gravtar BOOLEAN default false
     """
 
 # Container objects
@@ -148,7 +147,8 @@ class BizPlace(PGStore):
     holidays smallint[],
     default_tariff INTEGER,
     currency TEXT,
-    logo TEXT
+    logo TEXT,
+    organization INTEGER NOT NULL
     """
     parent_stores = [BizplaceProfile(), Contact()]
 
@@ -282,9 +282,12 @@ class InvoicePref(PGStore):
     tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
     taxation_num TEXT,
-    start_number INTEGER
+    start_number INTEGER,
+    mode INTEGER NOT NULL,
+    billto INTEGER,
+    details BYTEA
     """
-    pickle_cols = ['taxes']
+    pickle_cols = ['details', 'taxes']
 
 class Activity(PGStore):
     create_sql = """
@@ -304,17 +307,7 @@ class ActivityAccess(PGStore):
     role_name TEXT,
     member_id INTEGER
     """
-
-class BillingPref(PGStore):
-    table_name = "billing_pref"
-    create_sql = """
-    member INTEGER NOT NULL UNIQUE,
-    mode INTEGER NOT NULL,
-    billto INTEGER,
-    details BYTEA
-    """
-    pickle_cols = ['details']
-
+    
 class OidGen(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,

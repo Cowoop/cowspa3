@@ -1,16 +1,18 @@
 import datetime
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
+import commonlib.helpers
 
+bizplace_store = dbaccess.stores.bizplace_store
 member_store = dbaccess.stores.member_store
 invoicepref_store = dbaccess.stores.invoicepref_store
-bizplace_store = dbaccess.stores.bizplace_store
 memberpref_store = dbaccess.stores.memberpref_store
+modes = commonlib.helpers.odict(**{'self':0, 'custom':1, 'another':2, 'organization':3})
 
 class InvoiceprefCollection:
-    def new(self, owner, start_number=None, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details=""):
+    def new(self, owner, start_number=None, email_text="", terms_and_conditions="", due_date=15, bcc_email="", bank_details="", mode=modes.self, billto=None, details=None, company_no=None):
         
-        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, start_number=start_number)
+        data = dict(owner=owner, email_text=email_text, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, start_number=start_number, mode=mode, billto=billto, details=details, company_no=company_no)
 
         invoicepref_store.add(**data)
 
@@ -19,25 +21,30 @@ class InvoiceprefCollection:
 class InvoiceprefResource:
 
     def update(self, owner, **mod_data):
+        owner = bizplace_store.get(owner, 'organization') if dbaccess.OidGenerator.get_otype(owner) == "BizPlace" else owner
         invoicepref_store.update_by(dict(owner=owner), **mod_data)
 
-        bizplace_name = bizplace_store.get(owner, fields=['name'])
-        data = dict(name=bizplace_name, attrs=', '.join(attr for attr in mod_data))
+        member_name = member_store.get(owner, fields=['name'])
+        data = dict(name=member_name, attrs=', '.join(attr for attr in mod_data))
         activity_id = activitylib.add('invoicepref_management', 'invoicepref_updated', data)
         return True
 
     def info(self, owner):
+        owner = bizplace_store.get(owner, 'organization') if dbaccess.OidGenerator.get_otype(owner) == "BizPlace" else owner
         fields = ['email_text', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included']
         return invoicepref_store.get_by(dict(owner=owner), fields)[0]
 
     def get(self, owner, attrname):
+        owner = bizplace_store.get(owner, 'organization') if dbaccess.OidGenerator.get_otype(owner) == "BizPlace" else owner
         return invoicepref_store.get_by(dict(owner=owner), fields=[attrname])[0][attrname]
 
     def set(self, owner, attrname, v):
+        owner = bizplace_store.get(owner, 'organization') if dbaccess.OidGenerator.get_otype(owner) == "BizPlace" else owner
         self.update(owner, **{attrname: v})
         return True
 
     def get_taxinfo(self, owner):
+        owner = bizplace_store.get(owner, 'organization') if dbaccess.OidGenerator.get_otype(owner) == "BizPlace" else owner
         d = invoicepref_store.get_by(dict(owner=owner), fields=['tax_included', 'taxes'])[0]
         taxes = dict((k, float(v)) for k,v in d['taxes'].items()) if d['taxes'] else d['taxes']
         return dict(taxes=taxes, tax_included=d['tax_included'])

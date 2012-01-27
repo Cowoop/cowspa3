@@ -3,19 +3,11 @@ import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 import be.apis.member as memberlib
 import commonlib.helpers
-import be.libs.signals as signals
 
 member_store = dbaccess.stores.member_store
-billingpref_store = dbaccess.stores.billingpref_store
+invoicepref_store = dbaccess.stores.invoicepref_store
+
 modes = commonlib.helpers.odict(**{'self':0, 'custom':1, 'another':2, 'organization':3})
-
-class BillingprefCollection:
-    def new(self, member, mode=modes.self, billto=None, details=None):
-
-        data = dict(member=member, mode=mode, billto=billto, details=details)
-        billingpref_store.add(**data)
-
-        return True
         
 class BillingprefResource:
 
@@ -27,8 +19,8 @@ class BillingprefResource:
             del mod_data['organization_details']
         if mod_data['mode'] == modes.another and mod_data['billto'] == member:
             mod_data['mode'] == modes.self
-            del(mod_data['billto'])    
-        billingpref_store.update_by(dict(member=member), **mod_data)
+            del(mod_data['billto'])
+        invoicepref_store.update_by(dict(member=member), **mod_data)
         
         data = dict(name=member_store.get(member, ['name']), member_id=member)
         activity_id = activitylib.add('billingpref_management', 'billingpref_updated', data)
@@ -56,8 +48,6 @@ class BillingprefResource:
         return details
         
     def info(self, member):
-        return billingpref_store.get_by(dict(member=member), fields=['mode', 'billto', 'details'])[0]
+        return invoicepref_store.get_by(dict(member=member), fields=['mode', 'billto', 'details'])[0]
 
 billingpref_resource = BillingprefResource()
-billingpref_collection = BillingprefCollection()
-signals.connect("member_created", billingpref_collection.new)

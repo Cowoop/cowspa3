@@ -30,7 +30,6 @@ pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
 activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
-billingpref_store = stores_mod.BillingPref()
 oidgen_store = stores_mod.OidGen()
 
 class RStore(object): pass

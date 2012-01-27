@@ -2,7 +2,7 @@ import datetime
 import be.repository.access as dbaccess
 import be.apis.role as rolelib
 import be.apis.activities as activitylib
-import be.apis.invoicepref as invoicepreflib
+import be.apis.member as memberlib
 import be.apis.resource as resourcelib
 import commonlib.shared.static as static
 from babel.numbers import get_currency_symbol, get_decimal_symbol, get_group_symbol
@@ -15,6 +15,7 @@ class BizplaceCollection:
             twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
             skype=None, mobile=None, currency=None, host_email=None,
             booking_email=None, tz='UTC'):
+        organization = memberlib.member_collection.new(name=name, address=address, city=city, country=country, email=email, mtype="organization", start_number=dbaccess.generate_invoice_start_number())
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
         data = dict(id=bizplace_id, name=name, created=created,
@@ -23,12 +24,11 @@ class BizplaceCollection:
                 blog=blog, twitter=twitter, facebook=facebook, address=address,
                 city=city, country=country, email=email, phone=phone, fax=fax,
                 skype=skype, mobile=mobile, currency=currency, province=province,
-                host_email=host_email, booking_email=booking_email, tz=tz)
+                host_email=host_email, booking_email=booking_email, tz=tz, organization=organization)
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-        start_number = dbaccess.generate_invoice_start_number()
-        invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, start_number=start_number))
+        
         default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
         bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 
@@ -76,8 +76,8 @@ class BizplaceCollection:
 
 class BizplaceResource:
 
-    get_attributes = ['name', 'city', 'email', 'default_tariff', 'province']
-    set_attributes = ['name', 'city', 'email', 'default_tariff', 'province']
+    get_attributes = ['name', 'city', 'email', 'default_tariff', 'province', 'organization']
+    set_attributes = ['name', 'city', 'email', 'default_tariff', 'province', 'organization']
 
     def info(self, bizplace_id):
         """

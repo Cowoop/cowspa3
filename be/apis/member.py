@@ -6,7 +6,6 @@ import be.apis.activities as activitylib
 import be.apis.user as userlib
 import commonlib.shared.static as data_lists
 import be.apis.invoicepref as invoicepreflib
-import be.libs.signals as signals
 
 user_store = dbaccess.stores.user_store
 member_store = dbaccess.stores.member_store
@@ -15,7 +14,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization_no=None):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", company_no=None, start_number=None):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -30,15 +29,13 @@ class MemberCollection:
         memberpref_store.add(**data)
 
         #owner = user_id
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, organization_no=organization_no, province=province)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, province=province)
         member_store.add(**data)
 
         search_d = dict(id=user_id, name=name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
         
-        invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
-        
-        signals.send_signal('member_created', member=user_id)
+        invoicepreflib.invoicepref_collection.new(**dict(owner=user_id, company_no=company_no, start_number=start_number))
 
         data = dict(name=name, id=user_id)
         member_activities = dict(individual=dict(category='member_management', name='member_created'),\
