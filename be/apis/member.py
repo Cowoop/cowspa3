@@ -14,7 +14,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", company_no=None, start_number=None):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", company_no=None):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -35,7 +35,7 @@ class MemberCollection:
         search_d = dict(id=user_id, name=name, short_description=short_description, long_description=long_description, username=username)
         #searchlib.add(search_d)
         
-        invoicepreflib.invoicepref_collection.new(**dict(owner=user_id, company_no=company_no, start_number=start_number))
+        invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
 
         data = dict(name=name, id=user_id)
         member_activities = dict(individual=dict(category='member_management', name='member_created'),\

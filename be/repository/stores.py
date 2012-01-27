@@ -147,8 +147,7 @@ class BizPlace(PGStore):
     holidays smallint[],
     default_tariff INTEGER,
     currency TEXT,
-    logo TEXT,
-    organization INTEGER NOT NULL
+    logo TEXT
     """
     parent_stores = [BizplaceProfile(), Contact()]
 
@@ -281,7 +280,7 @@ class InvoicePref(PGStore):
     logo TEXT,
     tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
-    taxation_num TEXT,
+    taxation_no TEXT,
     start_number INTEGER,
     mode INTEGER NOT NULL,
     billto INTEGER,
