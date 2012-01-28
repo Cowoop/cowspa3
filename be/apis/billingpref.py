@@ -20,7 +20,7 @@ class BillingprefResource:
         if mod_data['mode'] == modes.other and mod_data['billto'] == member:
             mod_data['mode'] == modes.self
             del(mod_data['billto'])
-        invoicepref_store.update_by(dict(member=member), **mod_data)
+        invoicepref_store.update_by(dict(owner=member), **mod_data)
 
         data = dict(name=member_store.get(member, ['name']), member_id=member)
         activity_id = activitylib.add('billingpref_management', 'billingpref_updated', data)
@@ -48,6 +48,6 @@ class BillingprefResource:
         return details
 
     def info(self, member):
-        return invoicepref_store.get_by(dict(member=member), fields=['mode', 'billto', 'details'])[0]
+        return invoicepref_store.get_by(dict(owner=member), fields=['mode', 'billto', 'details'])[0]
 
 billingpref_resource = BillingprefResource()
