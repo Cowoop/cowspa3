@@ -14,7 +14,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", company_no=None):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", company_no=None, number=None):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = datetime.datetime.now()
@@ -30,6 +30,8 @@ class MemberCollection:
 
         #owner = user_id
         data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, province=province)
+
+        if number: data['number'] = number # migration specific
         member_store.add(**data)
 
         search_d = dict(id=user_id, name=name, short_description=short_description, long_description=long_description, username=username)
@@ -99,7 +101,7 @@ class MemberResource:
         activity_id = activitylib.add(member_activities[mtype]['category'], member_activities[mtype]['name'], data)
 
     def info(self, member_id):
-        info = member_store.get(member_id, ['id', 'state', 'name'])
+        info = member_store.get(member_id, ['id', 'number', 'state', 'name'])
         info['state'] = commonlib.shared.constants.member.to_dict(info['state'])
         return info
 

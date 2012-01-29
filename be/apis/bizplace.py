@@ -15,7 +15,7 @@ class BizplaceCollection:
             long_description=None, tags=None, website=None, blog=None,
             twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
             skype=None, mobile=None, currency=None, host_email=None,
-            booking_email=None, tz='UTC'):
+            booking_email=None, tz='UTC', skip_default_tariff=False):
 
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
@@ -29,12 +29,13 @@ class BizplaceCollection:
         bizplace_store.add(**data)
 
         rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
-        
+
         start_number=dbaccess.generate_invoice_start_number()
         invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, start_number=start_number))
-        
-        default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
-        bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
+
+        if not skip_default_tariff: # migration specific code. don't use skip_default_tariff otherwise
+            default_tariff_id = resourcelib.resource_collection.new_tariff('Guest Tariff', 'Guest Tariff', bizplace_id, 0)
+            bizplace_store.update(bizplace_id, default_tariff=default_tariff_id)
 
         data = dict(name=name, id=bizplace_id)
         activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)
