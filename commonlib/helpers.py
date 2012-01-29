@@ -64,7 +64,7 @@ def datetime4human(date):
     return date.strftime("%b %d, %Y %I:%M%p")
 
 def iso2date(iso):
-    return datetime.datetime.strptime(iso, "%Y-%m-%d").date() if iso else None
+    return datetime.datetime.strptime(iso[0:10], "%Y-%m-%d").date() if iso else None
 
 def iso2datetime(iso):
     return dateutil.parser.parse(iso) if iso else None
