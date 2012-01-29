@@ -276,7 +276,12 @@ legend {
     padding: 1em;
 }
 
-.cell { display: inline-block; margin: 0.3em; }
+.cell {
+    display: inline-block;
+    margin: 0.3em;
+    padding: 0.5em;
+    border: 1px dotted;
+}
 
 button#new-tariff, button#new_invoice-btn, button#new_usage-btn {float: right; margin-top: 0.5em;}
 
