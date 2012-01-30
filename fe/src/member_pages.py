@@ -67,7 +67,7 @@ def billing_pref_form():
     mode.add(radio3)
     radio2 = tf.DIV(id="radio_field2")
     radio2.value = tf.INPUT(id="mode", name="mode", type="radio", value="1")
-    radio2.label = tf.label("Use custom billing details")
+    radio2.label = tf.label("Use different billing details")
     mode.add(radio2)
 
     details = billing_pref_form.add(sphc.more.Fieldset(id="billing_details"))
