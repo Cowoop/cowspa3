@@ -308,6 +308,7 @@ def search_member(query_parts, options, limit, mtype):
         clause += '((Member.first_name ILIKE %(query_part1)s AND Member.last_name ILIKE %(query_part2)s) OR (Member.first_name ILIKE %(query_part2)s AND Member.last_name ILIKE %(query_part1)s))'
         values = dict(query_part1=query_parts[0], query_part2=query_parts[1]+"%", limit=limit)
     if mtype != "member":
+        clause += ' AND type = %(mtype)s'
         values['mtype'] = mtype
     query  += ' WHERE '+clause+' LIMIT %(limit)s'
     values['member_id'] =  env.context.user_id
