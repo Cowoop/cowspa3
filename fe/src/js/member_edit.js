@@ -35,7 +35,7 @@ function on_member_profile(resp) {
     $('.data-username').text(thismember.account.username);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="name"]').val(thismember.profile.name);
-    $('input[name="organization_no"]').val(thismember.profile.organization_no);
+    $('input[name="company_no"]').val(thismember.profile.company_no);
     $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
@@ -43,6 +43,7 @@ function on_member_profile(resp) {
     $('input[name="city"]').val(thismember.contact.city);
     $('input[name="province"]').val(thismember.contact.province);
     $('input[name="email"]').val(thismember.contact.email);
+    $('input[name="phone"]').val(thismember.contact.phone);
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('#country').val(thismember.contact.country);
     $('#member-info').slideDown();
@@ -204,21 +205,11 @@ $("#billing_pref #mode").click(function(){
     }
 });
 $("#organization_mode0").click(function(){
-    $('#details_3 #org_name').attr('disabled', 'disabled');
-    $('#details_3 #org_address').attr('disabled', 'disabled');
-    $('#details_3 #org_city').attr('disabled', 'disabled');
-    $('#details_3 #org_country').attr('disabled', 'disabled');
-    $('#details_3 #org_phone').attr('disabled', 'disabled');
-    $('#details_3 #org_email').attr('disabled', 'disabled');
+    $('#details_3 #new_org-form').hide();
     $('#details_3 #existing_org').removeAttr('disabled');
 });
 $("#organization_mode1").click(function(){
-    $('#details_3 #org_name').removeAttr('disabled');
-    $('#details_3 #org_address').removeAttr('disabled');
-    $('#details_3 #org_country').removeAttr('disabled');
-    $('#details_3 #org_city').removeAttr('disabled');
-    $('#details_3 #org_phone').removeAttr('disabled');
-    $('#details_3 #org_email').removeAttr('disabled');
+    $('#details_3 #new_org-form').show();
     $('#details_3 #existing_org').attr('disabled', 'disabled');
 });
 
@@ -244,7 +235,7 @@ $("#update-billingpref").click(function(){
                     params['billto'] = null;
                     params['organization_details'] = {
                         "name" :$("#details_3 #org_name").val(),
-                        "organization_no" :$("#details_3 #org_number").val(),
+                        "company_no" :$("#details_3 #company_no").val(),
                         "address" :$("#details_3 #org_address").val(),
                         "city" :$("#details_3 #org_city").val(),
                         "country" :$("#details_3 #org_country").val(),
@@ -306,6 +297,12 @@ function get_billing_preferences(){
 //-------------------------Get Billing Preferences Details----------------------
 function get_billing_pref_details(){
     function on_success(resp){
+        if(mode==2){
+            $('#details_2 #member').val(resp['result']['name']);
+        }
+        else if(mode==3){
+            $('#details_3 #existing_org').val(resp['result']['name']);
+        }
         $('#billing_preferences_view_section #bill_name').text(resp['result']['name']);
         $('#billing_preferences_view_section #bill_address').text(resp['result']['address']);
         $('#billing_preferences_view_section #bill_city').text(resp['result']['city']);
