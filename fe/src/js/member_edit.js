@@ -193,26 +193,18 @@ $('.profile-edit-form').submit(function () {
 
 //*************************Billing Preferences**********************************
 var mode, billto, details;
-$("#billing_pref #mode").click(function(){
+$("#billing_pref .mode").click(function(){
     $("#details_1").hide();
     $("#details_2").hide();
-    $("#details_3").hide();
     $("#billing_details").show();
     mode = $(this).val();
     $("#details_"+mode).show();
     if(mode == "0"){
         $("#billing_details").hide();
     }
+    $("#billing .action-status").text("").removeClass('status-fail');
+    $("#billing .action-status").removeClass('status-success');
 });
-$("#organization_mode0").click(function(){
-    $('#details_3 #new_org-form').hide();
-    $('#details_3 #existing_org').removeAttr('disabled');
-});
-$("#organization_mode1").click(function(){
-    $('#details_3 #new_org-form').show();
-    $('#details_3 #existing_org').attr('disabled', 'disabled');
-});
-
 //---------------------Save Billing Preferences---------------------------------
 $("#update-billingpref").click(function(){
     var params = {'member': thismember_id, 'mode': parseInt(mode, 10)};
@@ -231,22 +223,6 @@ $("#update-billingpref").click(function(){
                  break;
         case 2 : params['billto'] = billto;
                  break;         
-        case 3 : if(parseInt($("input:radio[name='organization_mode']:checked").val(), 10) == 1){
-                    params['billto'] = null;
-                    params['organization_details'] = {
-                        "name" :$("#details_3 #org_name").val(),
-                        "company_no" :$("#details_3 #company_no").val(),
-                        "address" :$("#details_3 #org_address").val(),
-                        "city" :$("#details_3 #org_city").val(),
-                        "country" :$("#details_3 #org_country").val(),
-                        "phone" :$("#details_3 #org_phone").val(),
-                        "email" :$("#details_3 #org_email").val()
-                        };
-                 }
-                 else{
-                    params['billto'] = billto;
-                 }
-                 break;
     }
     function on_save_billingpref_success(){
         $("#billing .action-status").removeClass('status-fail');
@@ -268,7 +244,6 @@ function get_billing_preferences(){
         details = resp['result']['details'];
         switch(mode){
             case 0 : $('input:radio[name=mode][value=0]').click();
-                     $('input:radio[name=organization_mode][value=0]').click();
                      break;
             case 1 : $('input:radio[name=mode][value=1]').click();
                      if(details != null){
@@ -279,13 +254,8 @@ function get_billing_preferences(){
                         $('#details_1 #custom_phone').val(details['phone']);
                         $('#details_1 #custom_email').val(details['email']);
                      }
-                     $('input:radio[name=organization_mode][value=0]').click();
                      break;
             case 2 : $('input:radio[name=mode][value=2]').click();
-                     $('input:radio[name=organization_mode][value=0]').click();
-                     break;
-            case 3 : $('input:radio[name=mode][value=3]').click();
-                     $('input:radio[name=organization_mode][value=0]').click();
                      break;
         }   
         is_get_thismember_billingpref_done = true;
@@ -299,16 +269,7 @@ function get_billing_pref_details(){
     function on_success(resp){
         if(mode==2){
             $('#details_2 #member').val(resp['result']['name']);
-        }
-        else if(mode==3){
-            $('#details_3 #existing_org').val(resp['result']['name']);
-        }
-        $('#billing_preferences_view_section #bill_name').text(resp['result']['name']);
-        $('#billing_preferences_view_section #bill_address').text(resp['result']['address']);
-        $('#billing_preferences_view_section #bill_city').text(resp['result']['city']);
-        $('#billing_preferences_view_section #bill_country').text(resp['result']['country']);
-        $('#billing_preferences_view_section #bill_phone').text(resp['result']['phone']);
-        $('#billing_preferences_view_section #bill_email').text(resp['result']['email']);
+        };
     };
     function on_error(){};
     var args = {'member': thismember_id};
@@ -316,14 +277,7 @@ function get_billing_pref_details(){
 };
 //------------------------Existing Member Search--------------------------------
 $('#details_2 #member').autocomplete({
-    source: "/search/individual", 
-    select: function (event, ui) {
-        billto = ui.item.id;
-    } 
-});
-//------------------------Existing Organization Search--------------------------
-$('#details_3 #existing_org').autocomplete({
-    source: "/search/organization", 
+    source: "/search/member", 
     select: function (event, ui) {
         billto = ui.item.id;
     } 
