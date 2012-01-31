@@ -206,8 +206,14 @@ class MemberCreate(BasePage):
 
         section = sphc.more.Fieldset()
         section.add(tf.LEGEND("About"))
-        section.add_field('First Name',tf.INPUT(type='text', id='first_name', name='first_name').set_required())
-        section.add_field('Last Name', tf.INPUT(type='text', id='last_name', name='last_name'))
+        mtype = tf.SELECT(id='mtype', name='mtype')
+        mtype.individual = tf.OPTION("Individual", value="individual")
+        mtype.individual = tf.OPTION("Organization", value="organization")
+        section.add_field('Type', mtype)
+        section.add_field('First Name',tf.INPUT(type='text', id='first_name', name='first_name').set_required(), container_classes=['individual'])
+        section.add_field('Last Name', tf.INPUT(type='text', id='last_name', name='last_name'), container_classes=['individual'])
+        section.add_field('Name',tf.INPUT(type='text', id='name', name='name').set_required(), container_classes=['organization'])
+        section.add_field('Company Number',tf.INPUT(type='text', id='company_no', name='company_no'), container_classes=['organization'])
         section.add_field('Username', tf.INPUT(type='text', id='username', name='username').set_required())
         section.add_field('Password',tf.INPUT(type='password', id='password', name='password').set_required())
         lang_options = [tf.OPTION(language['label'], value=language['name']) for language in data_lists.languages]

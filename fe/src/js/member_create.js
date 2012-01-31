@@ -6,6 +6,14 @@ $('#createmember_form').submit(function () {
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     };
+    if(params.mtype=="individual"){
+        delete(params.name);
+        delete(params.company_no);
+    }
+    else{
+        delete(params.first_name);
+        delete(params.last_name);
+    };
     function success() {
         $('.action-status').text("Member Created successfully.").addClass('status-success');
     };
@@ -16,7 +24,24 @@ $('#createmember_form').submit(function () {
     jsonrpc('member.new', params, success, error);
     return false
 });
-
+function set_mtype_fields(mtype){
+    if(mtype=="individual"){
+        $(".individual").show();
+        $(".organization").hide();
+        $("#first_name").attr("required", "");
+        $("#name").removeAttr("required");
+    }
+    else{
+        $(".organization").show();
+        $(".individual").hide();
+        $("#name").attr("required", "");
+        $("#first_name").removeAttr("required");
+    };
+};
+set_mtype_fields($("#mtype").val());
+$("#mtype").change(function(){
+    set_mtype_fields($(this).val());
+});
 function register() {
     var action_status = $('#signup-form .action-status');
     var inputs = $('#signup-form').serializeArray();
