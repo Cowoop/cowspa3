@@ -7,19 +7,15 @@ import commonlib.helpers
 member_store = dbaccess.stores.member_store
 invoicepref_store = dbaccess.stores.invoicepref_store
 
-modes = commonlib.helpers.odict(self=0, custom=1, other=2, organization=3)
+modes = commonlib.helpers.odict(self=0, custom=1, other=2)
 
 class BillingprefResource:
 
     def update(self, member, **mod_data):
 
-        if mod_data['mode'] == modes.organization and not mod_data['billto']:
-            mod_data['organization_details']['mtype'] = "organization"
-            mod_data['billto'] = memberlib.member_collection.new(**mod_data['organization_details'])
-            del mod_data['organization_details']
         if mod_data['mode'] == modes.other and mod_data['billto'] == member:
-            mod_data['mode'] == modes.self
-            del(mod_data['billto'])
+            mod_data['mode'] = modes.self
+            mod_data['billto'] = None 
         invoicepref_store.update_by(dict(owner=member), **mod_data)
 
         data = dict(name=member_store.get(member, ['name']), member_id=member)
@@ -42,9 +38,7 @@ class BillingprefResource:
                 break
             elif mode == modes.other:
                 continue
-            elif mode == modes.organization:
-                details = member_store.get(billto, ['name', 'address', 'city', 'country', 'phone', 'email'])
-                break
+            
         return details
 
     def info(self, member):

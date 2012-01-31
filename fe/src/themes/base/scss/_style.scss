@@ -1114,7 +1114,11 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     }
     
 }
-
+.buttons {
+    width: 100%;
+    text-align: center;
+    padding-top: 0.5em;
+}
 
 // Hacks goes here
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
