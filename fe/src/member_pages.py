@@ -68,7 +68,7 @@ def billing_pref_form():
 
     details = billing_pref_form.add(sphc.more.Fieldset(id="billing_details"))
     details.add(tf.LEGEND("Billing Details"))
-    
+
     custom = tf.DIV(id="details_1", Class="hidden")
     custom_form = sphc.more.Form(id="custom_details-form", Class='hform')
     custom_form.add_field('Name', tf.INPUT(type='text', id='custom_name', name='custom_name').set_required())
@@ -79,9 +79,9 @@ def billing_pref_form():
     custom_form.add_field('Email', tf.INPUT(type='email', id='custom_email', name='custom_email').set_required())
     custom.form = custom_form.build()
     details.add(custom)
-    
+
     member = tf.DIV(id="details_2", Class="hidden")
-    member.label = tf.LABEL("To Other ")
+    member.label = tf.LABEL("Bill to ")
     member.value = tf.INPUT(id="member", type="text", Class="field-input")
     details.add(member)
 
@@ -131,10 +131,10 @@ def add_tariffs_section(container):
     tariff_box.history = tariff_load_history
 
     container.tariff_box = tariff_box
-    
+
     tariff_list_row = sphc.more.jq_tmpl("tariff-options")
     tariff_list_row.option = tf.option("${name}", value="${id}")
-    
+
     next_tariff_form = sphc.more.Form(id='next-tariff-form', classes=['vform'])
     next_tariff_form.add_field("Tariff", tf.SELECT(name='tariff', id='tariff'))
     next_tariff_form.add_field("", tf.INPUT(id='start', type="hidden"))
@@ -146,7 +146,7 @@ def add_tariffs_section(container):
     next_tariff_section.form = next_tariff_form.build()
     next_tariff_section.tmpl = tariff_list_row
     container.next_tarrif = next_tariff_section
-    
+
     change_tariff_form = sphc.more.Form(id='change-tariff-form', classes=['vform'])
     change_tariff_form.add_field("", tf.INPUT(type="hidden", id='starts'))
     change_tariff_form.add_field("Start", tf.INPUT(name='starts-vis', id='starts-vis'))
@@ -157,7 +157,7 @@ def add_tariffs_section(container):
     change_tariff_section.form = change_tariff_form.build()
     change_tariff_section.tmpl = tariff_list_row
     container.change_tarrif = change_tariff_section
-    
+
     #stop_membership_form = sphc.more.Form(id='stop_membership', classes=['hform'])
     #stop_membership_form.add_field("End Date", tf.INPUT(id="stop_date", type="text").set_required())
     #stop_membership_form.add_field("", tf.INPUT(type="hidden", id='stops'))
@@ -269,7 +269,7 @@ class EditProfile(BasePage):
         profile.account.legend = tf.LEGEND("Account")
         profile.account.account_div = tf.DIV(id="account")
         profile.account.account_div.form = account_form().build()
-                
+
         # Contact
         profile.contact = tf.FIELDSET()
         profile.contact.legend = tf.LEGEND("Contact")
@@ -281,15 +281,15 @@ class EditProfile(BasePage):
         profile.preferences.legend = tf.LEGEND("Preferences")
         profile.preferences.preferences_div = tf.DIV(id="preferences")
         profile.preferences.preferences_div.form = preferences_form().build()
-        
+
         # Billing
         billing = tf.DIV(id="billing")
         billing.form = billing_pref_form()
 
         # Memberships
         memberships = tf.DIV(id="memberships")
-        add_tariffs_section(memberships) 
-        
+        add_tariffs_section(memberships)
+
         # Usages
         usages = tf.DIV(id="usages")
         usages.new = tf.DIV(tf.Button("New", type="button", id="new_usage-btn"))
@@ -353,6 +353,6 @@ class EditProfile(BasePage):
         container.tabs.invoices = invoices
 
         container.script = sphc.more.script_fromfile("fe/src/js/member_edit.js")
-        
+
         return container
 
