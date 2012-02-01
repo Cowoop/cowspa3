@@ -3,6 +3,7 @@ import itertools
 import be.repository.access as dbaccess
 import be.apis.pricing as pricinglib
 import be.apis.resource as resourcelib
+import be.apis.billingpref as billingpreflib
 
 usage_store = dbaccess.stores.usage_store
 
@@ -51,11 +52,15 @@ class UsageCollection:
             self.delete(usage_id, amount)
         return True
 
-    def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, exclude_credit_usages=False, calc_mode=[], exclude_cancelled_usages=False):
+    def find(self, start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, exclude_credit_usages=False, calc_mode=[], exclude_cancelled_usages=False, get_dependent_usages=False):
         """
         returns list of usage dicts which are filtered on the basis of specified criteria
         start end: if specified, usages with start time falling in start-end range would be searched
         """
+        if get_dependent_usages:
+            billing_info = billingpreflib.billingpref_resource.info(member_ids[0])
+            if billing_info['mode'] == 2: return []
+            member_ids = billingpreflib.billingpref_resource.get_dependent_members(member_ids[0])
         assert (start or end or invoice_id or res_owner_ids or resource_ids or member_ids or resource_types), 'atleast one criteria'
         return dbaccess.find_usage(start, end, invoice_id, res_owner_ids, resource_ids, member_ids, resource_types, uninvoiced, exclude_credit_usages, calc_mode, exclude_cancelled_usages)
 

@@ -44,4 +44,10 @@ class BillingprefResource:
     def info(self, member):
         return invoicepref_store.get_by(dict(owner=member), fields=['mode', 'billto', 'details'])[0]
 
+    def get_dependent_members(self, member):
+        """
+        return list of members whose invoice will be forward to the member 
+        """
+        return dbaccess.get_billing_dependent_members(member)
+        
 billingpref_resource = BillingprefResource()
