@@ -114,15 +114,20 @@ def add_tariffs_section(container):
     tariff_row.tr.td = cell
     
     tariff_load_history = tf.DIV()
-    tariff_load_history.link = tf.A("Load tariff history", id='load-tariff-history', href='#memberships')
+    tariff_load_history.link = tf.A("View all records", id='load-tariff-history', href='#memberships')
 
     tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em", Class="stripped")
     tariff_info.caption = tf.CAPTION("Current Tariffs")
     tariff_info.header = header
+    
+    tariff_list = tf.TABLE(id="tariff-list", cellspacing="1em", Class="stripped hidden")
+    tariff_list.caption = tf.CAPTION("Tariffs")
+    tariff_list.header = header
 
     tariff_box.new = new
     tariff_box.tmpl = tariff_row
     tariff_box.info = tariff_info
+    tariff_box.list = tariff_list
     tariff_box.history = tariff_load_history
 
     container.tariff_box = tariff_box
