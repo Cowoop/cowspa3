@@ -80,7 +80,7 @@ function get_uninvoiced_usages(start, end){
         $('#inv-action-status').text('');
     };
     function on_get_uninvoiced_usages_error(){};
-    var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end, 'uninvoiced':true, 'res_owner_ids':[parseInt(current_ctx, 10)]};
+    var params = { 'member_ids' : [inv_member_id], 'start':start, 'end':end, 'uninvoiced':true, 'res_owner_ids':[parseInt(current_ctx, 10)], 'get_dependent_usages' : true};
     jsonrpc('usages.find', params, on_get_uninvoiced_usages_success, on_get_uninvoiced_usages_error);
 };
 $(".all_usages-checkbox").click(function(){

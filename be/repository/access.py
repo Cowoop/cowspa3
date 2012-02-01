@@ -432,3 +432,10 @@ def get_count_of_memberships(bizplace, starts, ends, by_tariff=False):
     clause = "bizplace_id=%(bizplace)s AND starts<=%(ends)s AND (ends IS null OR ends>=%(starts)s)"
     clause_values = dict(bizplace=bizplace, starts=starts, ends=ends)
     return membership_store.count_by_clause(clause, clause_values, group_by)
+    
+def get_billing_dependent_members(member, members=[]):
+    if member not in members: members.append(member)
+    ids = invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)
+    for id in ids:
+        get_billing_dependent_members(id[0], members)
+    return members
