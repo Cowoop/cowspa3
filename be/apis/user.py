@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import commonlib.shared.constants
 import be.repository.access as dbaccess
 import be.errors as errors
@@ -12,6 +13,10 @@ member_store = dbaccess.stores.member_store
 def encrypt(phrase):
     return commonlib.helpers.encrypt(phrase, env.config.random_str)
 
+def m_encrypt(phrase):
+    # to support migrated passwords
+    return hashlib.md5('ojas88').hexdigest()
+
 def authenticate(username, password):
     """
     Returns T if authentication is successful. Else False.
@@ -21,7 +26,7 @@ def authenticate(username, password):
     except IndexError, err:
         return False
     encrypted = encrypt(password)
-    return encrypted == passphrase
+    return passphrase == encrypted or passphrase == m_encrypt(password)
 
 def create_session(user_id):
     token  = commonlib.helpers.random_key_gen()
@@ -77,11 +82,16 @@ def logout(token):
     except Exception, err:
         print err
 
-def new(username, password, state=None):
+def new(username, password, state=None, enc_password=None):
     if state is None: state = commonlib.shared.constants.member.enabled
-    if password is None: password = helpers.random_key_gen()
+    if enc_password:
+        encrypted = enc_password
+    else:
+        if password is None:
+            password = helpers.random_key_gen()
+        encrypted = encrypt(password)
     user_id = dbaccess.OidGenerator.next("Member")
-    data = dict(id=user_id, username=username, password=encrypt(password), state=state)
+    data = dict(id=user_id, username=username, password=encrypted, state=state)
     user_store.add(**data)
     return user_id
 
