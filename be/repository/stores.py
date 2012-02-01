@@ -242,7 +242,6 @@ class Usage(PGStore):
     created_by INTEGER NOT NULL,
     pricing INTEGER,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    booking INTEGER DEFAULT NULL,
     cancelled_against INTEGER DEFAULT NULL
     """
     pickle_cols = ['tax_dict']
