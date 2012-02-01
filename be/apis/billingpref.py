@@ -15,7 +15,7 @@ class BillingprefResource:
 
         if mod_data['mode'] == modes.other and mod_data['billto'] == member:
             mod_data['mode'] = modes.self
-            mod_data['billto'] = None 
+            mod_data['billto'] = None
         invoicepref_store.update_by(dict(owner=member), **mod_data)
 
         data = dict(name=member_store.get(member, ['name']), member_id=member)
@@ -38,7 +38,7 @@ class BillingprefResource:
                 break
             elif mode == modes.other:
                 continue
-            
+
         return details
 
     def info(self, member):
@@ -46,8 +46,8 @@ class BillingprefResource:
 
     def get_dependent_members(self, member):
         """
-        return list of members whose invoice will be forward to the member 
+        returns list of members whose biiling is forwarded to specified member
         """
         return dbaccess.get_billing_dependent_members(member)
-        
+
 billingpref_resource = BillingprefResource()

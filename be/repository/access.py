@@ -426,16 +426,15 @@ def generate_invoice_start_number():
     query = "SELECT count(id) FROM oidgen WHERE type=%(type)s";
     values = dict(type='BizPlace')
     return oidgen_store.query_exec(query, values, hashrows=False)[0][0] + bizplace_invoice_start_offset
-    
+
 def get_count_of_memberships(bizplace, starts, ends, by_tariff=False):
     group_by = "tariff_id" if by_tariff else None
     clause = "bizplace_id=%(bizplace)s AND starts<=%(ends)s AND (ends IS null OR ends>=%(starts)s)"
     clause_values = dict(bizplace=bizplace, starts=starts, ends=ends)
     return membership_store.count_by_clause(clause, clause_values, group_by)
-    
-def get_billing_dependent_members(member, members=[]):
+
+def get_billto_members(member, members=[]):
     if member not in members: members.append(member)
-    ids = invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)
-    for id in ids:
-        get_billing_dependent_members(id[0], members)
+    for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member), fields=['owner'], hashrows=False)):
+        get_billto_members(members, members)
     return members
