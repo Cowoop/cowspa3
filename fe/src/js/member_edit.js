@@ -373,7 +373,8 @@ $('#load-tariff-history').click(function(){
             memberships[i].starts = isodate2fdate(memberships[i].starts);
             memberships[i].ends = isodate2fdate(memberships[i].ends);
         }
-        $('#tariff-row').tmpl(response.result).appendTo('#tariff-info');
+        $('#tariff-row').tmpl(response.result).appendTo('#tariff-list');
+        $('#tariff-list').show();
         $('#load-tariff-history').hide();
         bind_cancel_and_change_tariff();
     };
