@@ -31,15 +31,15 @@ def test_update_usage():
     assert old_cost == test_data.usage['cost']
     assert new_cost == usagelib.usage_resource.info(test_data.usage_id)['cost']
 
-def test_delete_or_cancel_usage(): 
+def test_delete_or_cancel_usage():
     new_amount = 1000
     old_amount = usagelib.usage_resource.get(test_data.usage_id, 'cost')
     usage_id = usagelib.usage_collection.delete(test_data.usage_id, new_amount)
     assert usagelib.usage_resource.get(test_data.usage_id, 'cost') == new_amount
     assert usagelib.usage_resource.get(usage_id, 'cancelled_against') == test_data.usage_id
-    assert usagelib.usage_resource.get(usage_id, 'cost') == -old_amount    
+    assert usagelib.usage_resource.get(usage_id, 'cost') == -old_amount
     assert usagelib.usage_collection.delete(usage_id, env.context.user_id) == True
-    
+
 def test_add_more_usage():
     for data in test_data.more_usages:
         data['member'] = test_data.member_id
@@ -60,6 +60,13 @@ def test_find_by():
     data = dict(res_owner_ids=[test_data.bizplace_id])
     usages = usagelib.usage_collection.find(**data)
     assert bool(usages)
+
+def test_uninvoiced():
+    start = (datetime.datetime.now() - datetime.timedelta(1)).isoformat()
+    end = datetime.datetime.now().isoformat()
+    usages = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+    assert len(usages) >= 1
+    assert all((usage.member_id == test_data.member_id) for usage in usages)
 
 def test_delete_usage():
     ret = usagelib.usage_collection._delete(1)
