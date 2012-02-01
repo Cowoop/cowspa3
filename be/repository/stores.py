@@ -68,6 +68,7 @@ class MemberProfile(PGStore):
     name TEXT NOT NULL,
     short_description TEXT,
     long_description TEXT,
+    organization TEXT,
     interests TEXT[],
     expertise TEXT[],
     website TEXT,
