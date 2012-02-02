@@ -2,6 +2,7 @@ import sphc
 import sphc.more
 import commonlib.helpers
 import itertools
+import be.repository.access as dbaccess
 from operator import itemgetter
 from babel.numbers import get_currency_symbol, format_currency
 odict = commonlib.helpers.odict
@@ -82,15 +83,22 @@ class Template(sphc.more.HTML5Page):
             container.terms_and_conditions.heading = tf.H3("Terms & Conditions")
             container.terms_and_conditions.data = tf.DIV(data.invoicepref.terms_and_conditions)
 
+        table_headers = ['Sr. No.', 'Resource', 'Quantity', 'Duration', 'Amount']
+        multimember_invoice = False
+        members = set(usage.member for usage in data.usages)
+        if members != set([data.member.id]):
+            table_headers.insert(1, 'Member')
+            multimember_invoice = True
         usage_details = tf.DIV()
         usages = tf.TABLE(id='usages_details', Class="stripped")
         usages.caption = tf.CAPTION("Usage Details")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in ('Sr. No.', 'Resource', 'Quantity', 'Duration', 'Amount')]
+        usages.header.cells = [tf.TH(name) for name in table_headers]
         sr_no = 1
         for usage in data.usages:
             usage_row = tf.TR()
             usage_row.td = tf.TD(str(sr_no))
+            if multimember_invoice: usage_row.td = tf.TD(dbaccess.member_store.get(usage.member, "name"))
             usage_row.td = tf.TD(str(usage.resource_name))
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
