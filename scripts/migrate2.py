@@ -119,6 +119,10 @@ else:
     migrated.resource = {}
     migrated.member = {}
     migrated.pricing = {}
+    migrated.usage = {}
+    migrated.membership = {}
+    migrated.pending = mdict()
+    migrated.pending.usage_created_by = {}
 
 class Object(object):
     unchanged = tuple()
@@ -172,12 +176,11 @@ class InvoicePref(Object):
     renamed = dict(invoice_bcc='bcc_email', vat_included='tax_included', invoice_duedate='due_date', payment_terms='terms_and_conditions')
     later = dict(defaulttariff_id='default_tariff')
     def export(self):
-        invlogo_filename = "location-invlogo-%s" % location_id
+        self.new_data['owner'] = migrated.location[self.id]
+        invlogo_filename = "location-invlogo-%s" % self.id
         invlogo = import_image(invlogo_filename)
-        logo_data = dict(owner=self.id, logo=invlogo)
-        jsonrpc(auth_token, 'invoicepref.update', **logo_data)
+        self.new_data['logo'] = invlogo
 
-        self.new_data['owner'] = self.id
         self.new_data['tax_included'] = bool(self.data['vat_included'])
         self.new_data['taxes'] = dict(VAT=self.data['vat_default'])
         self.new_data['company_no'] = self.data['company_no']
@@ -195,7 +198,6 @@ class Resource(Object):
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
         if self.data['type'] == 'tariff':
             self.new_data['calc_mode'] = 2
-        self.new_data['owner'] = migrated.location[location_id]
         self.new_data['owner'] = migrated.location[location_id]
         self.new_data['short_description'] = ''
         self.new_data['default_price'] = 0 # this will correct once we import all pricings
@@ -227,20 +229,24 @@ class Pricing(Object):
         migrated.pricing[self.id] = result['result']
 
 class Member(Object):
+    # TODO: relationships dict
     table_name = 'tg_user'
     unchanged = ('first_name', 'last_name', 'mobile', 'fax', 'website', 'address')
-    renamed = dict(id='number', display_name='name', email_address='email', user_name='username', skype_id='skype', description='long_description')
+    renamed = dict(id='number', display_name='name', email_address='email', user_name='username', skype_id='skype', description='long_description', organisation='organization', password='enc_password')
 
     def export(self):
-        if 'long_description' in self.new_data:
+        if self.new_data.get('long_description'):
             long_description = self.new_data['long_description']
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
+        self.new_data['state'] = dict(enabled = bool(self.data['active']))
 
         result = jsonrpc(auth_token, 'member.new', **self.new_data)
         new_member_id = result['result']
         migrated.member[self.id] = new_member_id
 
         mod_data = dict(member_id=new_member_id, created=self.data['created'])
+        #signedby = migrated.member[self.data['signedby_id']]
+        #hostcontact = migrated.member[self.data['hostcontact_id']]
         result = jsonrpc(auth_token, 'member.update', **mod_data)
 
         mode = 0
@@ -260,12 +266,46 @@ class Member(Object):
                 email=self.data['bill_email'],
                 fax=self.data['bill_fax'], # new
                 company_no=self.data['bill_company_no'],
-                taxation_num=self.data['bill_vat_no']
+                taxation_no=self.data['bill_vat_no']
                 )
         elif mode == 2:
             billing_pref['billto'] = migrated.member[self.data['billto_id']]
 
         jsonrpc(auth_token, 'billingpref.update', **billing_pref)
+
+class Usage(Object):
+    table_name = 'rusage'
+    unchanged = ('resource_name', 'end_time', 'quantity')
+    renamed = dict(start='start_time', date_booked='created')
+
+    def export(self):
+        q = 'SELECT id from pricing where tariff_id = %(tariff_id)s AND resource_id = %(resource_id)s AND periodstarts <= %(start)s AND periodends >= %(start)s';
+        pricing = select(spacecur, q, self.data, False)[0][0]
+        resource_id = migrated.resource[self.data['resource_id']]
+        self.new_data['pricing'] = migrated.pricing[pricing]
+        self.new_data['resource_id'] = resource_id
+        self.new_data['resource_owner'] = migrated.location[location_id]
+        self.new_data['member'] = migrated.member[self.data['user_id']]
+        if self.data['refund_for']:
+            self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
+        customcost = self.data.get('customcost', None)
+        self.new_data['cost'] = customcost
+        self.new_data['calculated_cost'] = self.data['cost']
+        self.new_data['amount'] = customcost if customcost is not None else self.data['cost']
+        result = jsonrpc(auth_token, 'usage.m_new', **self.new_data)
+        new_usage_id = result['result']
+        migrated.usage[self.id] = new_usage_id
+        if self.data['bookedby_id'] not in migrated.member:
+            migrated.pending.usage_created_by[self.id] = self.data['bookedby_id']
+        else:
+            mod_data = dict(usage_id=new_usage_id, created_by = migrated.member[self.data['bookedby_id']])
+            jsonrpc(auth_token, 'usage.update', **mod_data)
+
+class Invoice(Object):
+    unchanged = ('sent',)
+    def export(self):
+        pass
+
 
 def banner(s):
     print("\n" + s + "\n" + ('-'*len(s)))
@@ -281,7 +321,7 @@ def migrate_location():
         new_location_id = migrated.location[location_id]
 
         banner("Migrating invoicepref")
-        invoicepref = InvoicePref(new_location_id)
+        invoicepref = InvoicePref(location_id)
         invoicepref.migrate()
 
     banner("Migrating resources")
@@ -349,6 +389,54 @@ def migrate_location():
         print("migrating id:%d" % id)
         member = Member(id)
         member.migrate()
+
+    banner("Migrating usages")
+    q = 'SELECT id FROM rusage WHERE resource_id IN %(resource_ids)s ORDER BY id'
+    values = dict(resource_ids=resource_ids)
+    usage_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+    for id in usage_ids:
+        if id in migrated.usage:
+            print("Skipping id:%d" % id)
+            continue
+        print("migrating id:%d" % id)
+        usage = Usage(id)
+        usage.migrate()
+
+    banner("Migrating memberships")
+    member_ids = tuple(migrated.member.keys())
+    q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff') AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
+    for id in member_ids:
+        memberships = []
+        values = dict(member_id=id, location_id=location_id)
+        tariff_usages_ = select(spacecur, q, values)
+        if not tariff_usages_:
+            continue
+        # Found some tariff usages have same start,end. This is not acceptable in Ops
+        # So filtering here
+        tariff_usages = [tariff_usages_[0]]
+        for usage in tariff_usages_[1:]:
+            if usage.start == tariff_usages[-1].start:
+                tariff_usages[-1] = usage
+            else:
+                tariff_usages.append(usage)
+
+        usage = tariff_usages[0]
+        memberships.append([usage.resource_id, usage.start, usage.end_time])
+        for usage in tariff_usages[1:]:
+            last = memberships[-1]
+            if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
+                last[-1] = usage.end_time
+            else:
+                memberships.append([usage.resource_id, usage.start, usage.end_time])
+
+        for membership in memberships:
+            data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
+                ends=(membership[2]-datetime.timedelta(1)).isoformat())
+            membership_hash = hash(frozenset(data.items()))
+            if not membership_hash in migrated.membership:
+                result = jsonrpc(auth_token, 'memberships.new', **data)
+                #migrated.membership[membership_hash] = result['result']
+
 
 
 def before_exit():
