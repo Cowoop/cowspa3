@@ -435,6 +435,6 @@ def get_count_of_memberships(bizplace, starts, ends, by_tariff=False):
 
 def get_billto_members(member, members=[]):
     if member not in members: members.append(member)
-    for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member), fields=['owner'], hashrows=False)):
-        get_billto_members(members, members)
+    for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)):
+        get_billto_members(member_id, members)
     return members
