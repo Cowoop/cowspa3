@@ -6,7 +6,7 @@ path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -19,6 +19,10 @@ import be.apps
 cowspa = be.apps.cowspa
 import commonlib.helpers as helpers
 
+@app.route('/')
+def index():
+    return redirect('login')
+    
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
