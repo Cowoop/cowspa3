@@ -65,6 +65,7 @@ def test_uninvoiced():
     start = (datetime.datetime.now() - datetime.timedelta(1)).isoformat()
     end = datetime.datetime.now().isoformat()
     usages = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+    #TODO we should make sure that all usage.member have billto pointing to member_id or usage.member == member_id
     assert len(usages) >= 1
     assert all((usage.member_id == test_data.member_id) for usage in usages)
 
