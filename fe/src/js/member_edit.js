@@ -382,7 +382,6 @@ $('#load-tariff-history').click(function(){
         alert("Error loading memberships: " + resp.error.message);
     };
     params['for_member'] = thismember_id;
-    params['not_current'] = true;
     params['bizplace_ids'] = [parseInt(current_ctx, 10)];
     jsonrpc('memberships.list', params, success2, error2); 
 });
