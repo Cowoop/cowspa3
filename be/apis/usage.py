@@ -10,7 +10,7 @@ member_store = dbaccess.stores.member_store
 
 class UsageCollection:
 
-    def new(self, resource_id, resource_name, resource_owner, member, start_time, amount=None, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, pricing=None, calculated_cost=None):
+    def new(self, resource_id, resource_name, resource_owner, member, start_time, amount=None, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, calculated_cost=None):
 
         if not end_time: end_time = start_time
         created = datetime.datetime.now()
@@ -21,15 +21,17 @@ class UsageCollection:
             amount = result['amount']
             tax_dict = result['taxes']
         if cost is None: cost = calculated_cost
+
+        pricing = pricinglib.pricings.get(member, resource_id, start_time) if resource_id else None
         data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, amount=amount, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
         return usage_store.add(**data)
 
-    def m_new(self, resource_id, resource_name, resource_owner, member, start_time, amount=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, pricing=None, calculated_cost=None, created=None):
+    def m_new(self, resource_id, resource_name, resource_owner, member, start_time, amount=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None):
 
         if not end_time: end_time = start_time
         tax_dict = {}
         if not cost: cost = calculated_cost
-        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, amount=amount, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
+        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, amount=amount, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against)
         return usage_store.add(**data)
 
     def _delete(self, usage_id):
@@ -46,6 +48,7 @@ class UsageCollection:
         del(data['id'])
         del(data['created'])
         del(data['invoice'])
+        del(data['pricing'])
         if data['tax_dict']:
             for tax in data['tax_dict']:
                 data['tax_dict'][tax] = -data['tax_dict'][tax]
