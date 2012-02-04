@@ -16,7 +16,9 @@
 import atexit
 import cPickle
 import datetime
+import calendar
 import base64
+import urllib
 import magic
 import psycopg2
 import sys
@@ -57,12 +59,26 @@ def jsonrpc(auth_token, apiname, **kw):
     return result
 
 def import_image(filename):
-    return 'data:'
+    if TEST_RUN:
+        return 'data:'
     path = '/tmp/' + filename
     cmd = "scp admin-st@space-hub.nile.the-hub.net:/opt/apphomes/hubspace/hubspace/binaries/%s /tmp/" % filename
     ret = os.system(cmd)
     logo = ('data:' + mime.from_file(path) + ';base64,' + base64.b64encode(open(path).read())) if ret == 0 else None
     return logo
+
+def wget(src, dst):
+    print("fetching " + src)
+    cmd = "wget %(src)s -O %(dst)s" % locals()
+    return os.system(cmd)
+
+def download_invoices(old_id, new_id):
+    invoice_dir = 'be/repository/invoices'
+    paths = [("http://members.the-hub.net/show_invoice/%s", 'html'), ("http://members.the-hub.net/pdf_invoice/%s", 'pdf')]
+    for path, format in paths:
+        src = path % old_id
+        dst = "%s/%s.%s" % (invoice_dir, new_id, format)
+        ret = wget(src, dst)
 
 auth_token = jsonrpc(None, "login", username="admin", password="x")['result']['auth_token']
 
@@ -81,8 +97,12 @@ class odict(dict):
     def __getattr__(self, attr):
         return self[attr]
 
+def get_month_end(date):
+    last_day = calendar.monthrange(date.year, date.month)[1]
+    return datetime.datetime(date.year, date.month, last_day)
+
 def select(cur, q, values=None, hashrows=True):
-    if debug: print(q)
+    if debug: print(q, values)
     cur.execute(q, values)
     rows = cur.fetchall()
     if cur.description and hashrows:
@@ -91,13 +111,13 @@ def select(cur, q, values=None, hashrows=True):
     else:
         return rows
 
-def insert(cur, q, values):
-    if debug: print(q, v)
+def qexec(cur, q, values):
+    if debug: print(q, values)
     try:
-        cursor.execute(q, values)
+        cur.execute(q, values)
     except psycopg2.ProgrammingError, err:
         try:
-            print(cursor.mogrify(q, values))
+            print(cur.mogrify(q, values))
         except:
             print("damn, can't even mogrify: [%s], [%s]" % (q, values))
         raise err
@@ -121,8 +141,10 @@ else:
     migrated.pricing = {}
     migrated.usage = {}
     migrated.membership = {}
+    migrated.invoice = {}
     migrated.pending = mdict()
     migrated.pending.usage_created_by = {}
+    migrated.pending.usage_invoices = {}
 
 class Object(object):
     unchanged = tuple()
@@ -279,10 +301,7 @@ class Usage(Object):
     renamed = dict(start='start_time', date_booked='created')
 
     def export(self):
-        q = 'SELECT id from pricing where tariff_id = %(tariff_id)s AND resource_id = %(resource_id)s AND periodstarts <= %(start)s AND periodends >= %(start)s';
-        pricing = select(spacecur, q, self.data, False)[0][0]
         resource_id = migrated.resource[self.data['resource_id']]
-        self.new_data['pricing'] = migrated.pricing[pricing]
         self.new_data['resource_id'] = resource_id
         self.new_data['resource_owner'] = migrated.location[location_id]
         self.new_data['member'] = migrated.member[self.data['user_id']]
@@ -302,10 +321,37 @@ class Usage(Object):
             jsonrpc(auth_token, 'usage.update', **mod_data)
 
 class Invoice(Object):
-    unchanged = ('sent',)
+    table_name = 'invoice'
+    # TODO cost/amount?
+    unchanged = ('number',)
+    renamed = dict(start='start_date', end_time='end_date')
     def export(self):
-        pass
+        self.new_data['member'] = migrated.member[self.data['user_id']]
+        self.new_data['issuer'] = migrated.location[self.data['location_id']]
+        ponumbers_s = self.data['ponumbers']
+        ponumbers = cPickle.loads(str(ponumbers_s)) if ponumbers_s else []
+        self.new_data['po_number'] = ponumbers[0:1] or None
+        q = 'SELECT id FROM rusage WHERE invoice_id = %(invoice_id)s'
+        values = dict(invoice_id=self.id)
+        anomolies = (117922, 117925) # resource owned by one location, invoiced by another
+        self.new_data['usages'] = [migrated.usage[row[0]] for row in select(spacecur, q, values, False) if row[0] in migrated.usage]
+        result = jsonrpc(auth_token, 'invoice.new', **self.new_data)
+        new_invoice_id = result['result']
+        migrated.invoice[self.id] = new_invoice_id
+        migrated.pending.usage_invoices[self.id] = [row[0] for row in select(spacecur, q, values, False) if row[0] not in migrated.usage]
+        if not TEST_RUN:
+            download_invoices(self.id, new_invoice_id)
 
+    def post(self):
+        print("Invoice %s migrattion | post" % self.id)
+        new_invoice_id = migrated.invoice[self.id]
+        data = dict(invoice_id=new_invoice_id, sent=self.data['sent'], created=self.data['created'])
+        jsonrpc(auth_token, 'invoice.update', **data)
+        usages = self.new_data['usages']
+        if usages:
+            q = 'UPDATE usage SET invoice = %(invoice_id)s WHERE id IN %(usages)s'
+            values = dict(usages=tuple(usages), invoice_id=new_invoice_id)
+            qexec(cscur, q, values)
 
 def banner(s):
     print("\n" + s + "\n" + ('-'*len(s)))
@@ -372,8 +418,8 @@ def migrate_location():
 
 
     banner("Migrating members")
-    q = 'SELECT id FROM tg_user WHERE id in (SELECT user_id FROM rusage WHERE resource_id IN %(resource_ids)s)'
-    values = dict(resource_ids=resource_ids)
+    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s))'
+    values = dict(location_id=location_id)
     member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     q = 'SELECT billto_id FROM tg_user WHERE id in %(member_ids)s AND billto_id IS NOT NULL'
     values = dict(member_ids=member_ids)
@@ -391,8 +437,8 @@ def migrate_location():
         member.migrate()
 
     banner("Migrating usages")
-    q = 'SELECT id FROM rusage WHERE resource_id IN %(resource_ids)s ORDER BY id'
-    values = dict(resource_ids=resource_ids)
+    q = 'SELECT id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s) ORDER BY id'
+    values = dict(location_id=location_id)
     usage_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     for id in usage_ids:
         if id in migrated.usage:
@@ -404,8 +450,8 @@ def migrate_location():
 
     banner("Migrating memberships")
     member_ids = tuple(migrated.member.keys())
-    q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff') AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
-    for id in member_ids:
+    q = "SELECT id, start, resource_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff') AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
+    for id in []:# member_ids:
         memberships = []
         values = dict(member_id=id, location_id=location_id)
         tariff_usages_ = select(spacecur, q, values)
@@ -421,23 +467,37 @@ def migrate_location():
                 tariff_usages.append(usage)
 
         usage = tariff_usages[0]
-        memberships.append([usage.resource_id, usage.start, usage.end_time])
+        memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
         for usage in tariff_usages[1:]:
             last = memberships[-1]
+            if last[1].date() == usage.start.date():
+                continue
             if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
                 last[-1] = usage.end_time
             else:
-                memberships.append([usage.resource_id, usage.start, usage.end_time])
+                memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
 
+        banner('Migrating memberships of %d' % id)
+        print(memberships)
         for membership in memberships:
             data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
                 ends=(membership[2]-datetime.timedelta(1)).isoformat())
             membership_hash = hash(frozenset(data.items()))
             if not membership_hash in migrated.membership:
                 result = jsonrpc(auth_token, 'memberships.new', **data)
-                #migrated.membership[membership_hash] = result['result']
+                migrated.membership[membership_hash] = result['result']
 
-
+    banner("Migrating Invoices")
+    q = 'SELECT id FROM invoice WHERE location_id = %(location_id)s'
+    values = dict(location_id=location_id)
+    invoice_ids = (row[0] for row in select(spacecur, q, values, False))
+    for id in invoice_ids:
+        if id in migrated.invoice:
+            print("Skipping id:%d" % id)
+            continue
+        print("migrating id:%d" % id)
+        invoice = Invoice(id)
+        invoice.migrate()
 
 def before_exit():
     f = open(state_path, 'w')
