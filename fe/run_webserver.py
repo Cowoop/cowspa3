@@ -12,17 +12,18 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 static_root = 'pub'
-import be.apis.user as userlib
 import be.bootstrap
+import be.apis.user as userlib
 be.bootstrap.start('conf_test')
 import be.apps
 cowspa = be.apps.cowspa
 import commonlib.helpers as helpers
+import be.apis.invoice as invoicelib
 
 @app.route('/')
 def index():
     return redirect('login')
-    
+
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
@@ -32,8 +33,8 @@ def search(entity):
     return helpers.jsonify(data['result'])
 
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
-def get_invoices(oid, format):
-    path = "be/repository/invoices/invoice_%s.%s" % (oid, format)
+def get_invoice(oid, format):
+    path = "%s/%s.%s" % (invoicelib.invoice_storage_dir, oid, format)
     if format == "pdf":
         content_type = "application/pdf"
     else:
