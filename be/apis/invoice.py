@@ -17,6 +17,8 @@ bizplace_store = dbaccess.stores.bizplace_store
 invoicepref_store = dbaccess.stores.invoicepref_store
 memberpref_store = dbaccess.stores.memberpref_store
 
+invoice_storage_dir = "be/repository/invoices/"
+
 def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
     usages = usage_store.get_many(invoice.usages)
@@ -26,17 +28,17 @@ def create_invoice_pdf(invoice_id):
     invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
             member=member, invoicepref=invoicepref, memberpref=memberpref)
-    html_path = '%sinvoice_%s.html' % ("be/repository/invoices/", invoice_id)
+    html_path = invoice_storage_dir + str(invoice_id) + '.html'
     be.templates.invoice.Template(data).write(html_path)
     if invoice['number']:
-        pdf_path = '%sinvoice_%s.pdf' % ("be/repository/invoices/", invoice_id)
+        pdf_path = invoice_storage_dir + str(invoice_id) + '.pdf'
         pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return True
 
 
 class InvoiceCollection:
 
-    def new(self, issuer, member, po_number, start_date, end_date, notice, usages=[], new_usages=[], state=0):
+    def new(self, issuer, member, po_number, start_date, end_date, notice='', usages=[], new_usages=[], state=0, number=None):
         """
         usages --> The list of existing usage_ids
         new_usages --> The list of usage data which needs to create
@@ -48,6 +50,7 @@ class InvoiceCollection:
         created = datetime.datetime.now()
         cost = decimal.Decimal(sum([usagelib.usage_resource.get(usage, 'cost') for usage in usages]))
         data = dict(issuer=issuer, member=member, usages=usages, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        if number: data['number'] = number
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
@@ -55,9 +58,9 @@ class InvoiceCollection:
 
         data = dict(name=member_store.get(member, ['name']), issuer=bizplace_store.get(issuer, ['name']), invoice_id=invoice_id, member_id=member)
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
-        
+
         create_invoice_pdf(invoice_id)
-        
+
         return invoice_id
 
     def delete(self, invoice_id):
@@ -131,6 +134,6 @@ class InvoiceResource:
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)
-        
+
 invoice_collection = InvoiceCollection()
 invoice_resource = InvoiceResource()
