@@ -319,6 +319,7 @@ class PGStore(BaseStore):
         mod_data: dict
         -> True/False
         """
+        if not oids: return
         cols = mod_data.keys()
         cols_to_pickle = set(cols).intersection(self.pickle_cols)
         cols_str = ', '.join('%s=%%(%s)s' % (k,k) for k in mod_data.keys())
