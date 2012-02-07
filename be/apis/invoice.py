@@ -9,6 +9,7 @@ import commonlib.helpers
 import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.billingpref as billingpreflib
+import be.apis.messagecust as messagecustlib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
@@ -131,7 +132,7 @@ class InvoiceResource:
         member = access.stores.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email'])
         billingpref = billingpreflib.billingpref_resource.get_details(invoice_id)
         data = dict(LOCATION_PHONE=billingpref.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email, LOCATION_URL=issuer.url, CURRENCY=issuer.currency)
-        mcust = mailtext or dbaccess.stores.messagecust_store.get_one_by(owner=issuer.id, name='invoice_mail')
+        mcust = mailtext or messagecustlib.get(issuer.id, 'invoice_mail')
         text = string.Template(mcust.content).substitute(**data)
         env.mailer.send(issuer.email, email, subject=subject, rich=text, plain='', cc=[], bcc=bcc, attachment=attachment)
         return self.update(invoice_id, sent=datetime.datetime.now())
