@@ -65,7 +65,7 @@ class InvoiceCollection:
 
     def delete(self, invoice_id):
         """
-        Delete Invoice 
+        Delete Invoice
         """
         if invoice_store.get(invoice_id, 'sent'):
             msg = "You can not delete sent invoice."
@@ -93,7 +93,7 @@ class InvoiceCollection:
     def list(self, issuer, limit=100):
         data = dict(issuer=issuer, limit=limit)
         return dbaccess.list_invoices(**data)
-    
+
     def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
         return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'sent', 'id'], hashrows=hashrows)
@@ -106,15 +106,15 @@ class InvoiceResource:
         invoice_store.update(invoice_id, **mod_data)
         if 'usages' in mod_data:
             old_usages = invoice_store.get(invoice_id, ['usages'])
-            modf_data = dict(invoice=None)
-            usage_store.update_many(old_usages, **modf_data)
+            mod_data = dict(invoice=None)
+            usage_store.update_many(old_usages, **mod_data)
 
             new_usages = mod_data['usages']
-            modf_data = dict(invoice=invoice_id)
-            usage_store.update_many(new_usages, **modf_data)
+            mod_data = dict(invoice=invoice_id)
+            usage_store.update_many(new_usages, **mod_data)
         return True
 
-    def send(self, invoice_id):
+    def send(self, invoice_id, mailtext=None):
         """
         """
         invoice = invoice_store.get(invoice_id, ['member', 'issuer'])
@@ -123,13 +123,17 @@ class InvoiceResource:
         issuer = bizplace_store.get(invoice['issuer'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
         subject = issuer.name + ' | Invoice'
-        attachment = os.getcwd() + '/be/repository/invoices/' + str(invoice_id) + '.pdf'
+        attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
         if not invoice_store.get(invoice_id, 'number'):
             dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
-        env.mailer.send(issuer.email, email, subject=subject, rich=invoicing_pref.email_text, \
-            plain='', cc=[], bcc=bcc, attachment=attachment)
+        member = access.stores.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email'])
+        billingpref = billingpreflib.billingpref_resource.get_details(invoice_id)
+        data = dict(LOCATION_PHONE=billingpref.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email, LOCATION_URL=issuer.url, CURRENCY=issuer.currency)
+        mcust = mailtext or dbaccess.stores.messagecust_store.get_one_by(owner=issuer.id, name='invoice_mail')
+        text = string.Template(mcust.content).substitute(**data)
+        env.mailer.send(issuer.email, email, subject=subject, rich=text, plain='', cc=[], bcc=bcc, attachment=attachment)
         return self.update(invoice_id, sent=datetime.datetime.now())
 
     def get(self, invoice_id, attr):
