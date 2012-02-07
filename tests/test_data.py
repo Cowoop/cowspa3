@@ -52,7 +52,7 @@ more_usages = [
     dict(resource_name='RES3', quantity=13, cost=1050, tax_dict=(('VAT', 100))),
     ]
 
-invoice_preference_data = dict(email_text="See the attached pdf.\nThank you.", due_date=30, bcc_email="pune@hub.com", bank_details="Bank of India,\nPune", logo="")
+invoice_preference_data = dict(due_date=30, bcc_email="pune@cowoop.net", bank_details="Bank of India,\nPune", logo="")
 
 taxes = dict(tax=7.5, vat=5)
 
