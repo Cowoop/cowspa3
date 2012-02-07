@@ -1,5 +1,5 @@
 var history_table;
-var inv_id;
+var inv_id, sent;
 //****************************Get Invoice History*******************************
 function on_get_invoices_success(response) {
     history_table = $('#history_table').dataTable({
@@ -7,6 +7,7 @@ function on_get_invoices_success(response) {
         "bJQueryUI": true,
         "bDestroy": true,
         "sPaginationType": "full_numbers",
+        "aaSorting": [[ 0, "desc" ]],
         "aoColumns": [
             { "sTitle": "Number",
               "fnRender": function(obj) {
@@ -22,25 +23,32 @@ function on_get_invoices_success(response) {
                     return isodate2fdate(sReturn);
                     }   
             },
-            { "sTitle": "Link", "bSortable": false,
-              "fnRender": function(obj) {
-                    var id = obj.aData[obj.iDataColumn];
-                    inv_id = id;
-                    return "<A id='"+id+"' href='#' class='invoice-view'>View</A>|<A id='delete-"+id+"' href='#' class='invoice-delete'>X</A>";
-                    }
-            },
             { "sTitle": "Send",
               "fnRender": function(obj) {
-                    var sent = obj.aData[obj.iDataColumn];
+                    sent = obj.aData[obj.iDataColumn];
                     var link;
                     if(sent){
-                        link = "<A id='inv-"+inv_id+"' href='#' class='inv-send'>Resend</A>";
+                        link = "<A id='inv-"+inv_id+"' href='#' class='inv-send'>Resend</A>";                        
                     }
                     else{
                         link = "<A id='inv-"+inv_id+"' href='#' class='inv-send'>Send</A>";
                     }
                     return link;
                     }   
+            },
+            { "sTitle": "Actions", "bSortable": false,
+              "fnRender": function(obj) {
+                    var id = obj.aData[obj.iDataColumn];
+                    var link;
+                    inv_id = id;
+                    if(sent){
+                        link = "<A id='"+id+"' href='#' class='invoice-view'>View</A>";
+                    }
+                    else{
+                        link = "<A id='"+id+"' href='#' class='invoice-view'>View</A>|<A id='delete-"+id+"' href='#' class='invoice-delete'>X</A>";
+                    };
+                    return link;
+                    }
             },
         ]
     });
@@ -49,7 +57,7 @@ function on_get_invoices_success(response) {
     $('.invoice-view').click(function () {
         $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+$(this).attr('id')+'/html');
         $('#view_invoice_window').dialog({ 
-            title: "Invoice", 
+            title: "Invoice",
             width: 800,
             height: 600
          });
