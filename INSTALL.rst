@@ -11,18 +11,19 @@ superuser tasks
     ^d # back as superuser 
     ^d # back as initial user
     createdb <db-name>
-    wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
     
 
 Development env setup
 =====================
 ::
 
+    virtualenv apphome
+    cd apphome
+    . ./bin/activate
     git clone git@github.com:shon/cowspa3.git # Writable
     git clone git://github.com/shon/cowspa3.git # Read only
-    virtualenv cowspa3
     cd cowspa3
-    . ./bin/activate
+    wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
     pip install -r requirements.txt
     pip install -r dev-requirements.txt # optional packages useful in cowspa3 development
     bash wkhtmltox-installer.sh
