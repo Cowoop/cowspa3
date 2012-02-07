@@ -179,7 +179,10 @@ class Location(Object):
     unchanged = ('name', 'city', 'currency')
     renamed = dict(timezone='tz', url='website', telephone='phone', billing_address='address', homepage_description='long_description')
     def export(self):
-        self.new_data.update(dict(short_description='', email=self.data.name.lower() + '.hosts@the-hub.net', country=''))
+        self.new_data.update(dict(short_description='', country=''))
+        self.new_data['name'] = 'The Hub ' + self.new_data['name']
+        self.new_data['email'] = self.data.name.lower() + '.hosts@the-hub.net'
+        self.new_data['host_email'] = self.data.name.lower() + '.hosts@the-hub.net'
         self.new_data['country'] = country_code
         self.new_data['skip_default_tariff'] = True
         data = jsonrpc(auth_token, 'bizplace.new', **self.new_data)
@@ -202,12 +205,20 @@ class InvoicePref(Object):
         invlogo_filename = "location-invlogo-%s" % self.id
         invlogo = import_image(invlogo_filename)
         self.new_data['logo'] = invlogo
-
         self.new_data['tax_included'] = bool(self.data['vat_included'])
         self.new_data['taxes'] = dict(VAT=self.data['vat_default'])
         self.new_data['company_no'] = self.data['company_no']
         self.new_data['taxation_no'] = self.data['vat_no']
         jsonrpc(auth_token, 'invoicepref.update', **self.new_data)
+
+class MessageCust(Object):
+    table_name = 'message_customization'
+    unchanged = ('lang',)
+    renamed = dict(message='name', text='content')
+    def export(self):
+        self.new_data['owner'] = migrated.location[location_id]
+        jsonrpc(auth_token, 'messagecust.new', **self.new_data)
+        migrated.message['id'] = None
 
 class Resource(Object):
     table_name = 'resource'
@@ -326,6 +337,8 @@ class Invoice(Object):
     unchanged = ('number',)
     renamed = dict(start='start_date', end_time='end_date')
     def export(self):
+        if 'start' not in self.new_data:
+            self.new_data['start_date'] = self.new_data['end_date']
         self.new_data['member'] = migrated.member[self.data['user_id']]
         self.new_data['issuer'] = migrated.location[self.data['location_id']]
         ponumbers_s = self.data['ponumbers']
@@ -498,6 +511,18 @@ def migrate_location():
         print("migrating id:%d" % id)
         invoice = Invoice(id)
         invoice.migrate()
+
+    banner("Migrating usages")
+    q = 'SELECT id FROM message_customization WHERE location_id = %(location_id)s'
+    values = dict(location_id=location_id)
+    msg_ids = (row[0] for row in select(spacecur, q, values, False))
+    for id in msg_ids:
+        if id in migrated.messages:
+            print("Skipping id:%d" % id)
+            continue
+        print("migrating id:%d" % id)
+        messagecust = MessageCust(id)
+        messagecust.migrate()
 
 def before_exit():
     f = open(state_path, 'w')
