@@ -306,7 +306,7 @@ class ActivityAccess(PGStore):
     role_name TEXT,
     member_id INTEGER
     """
-    
+
 class OidGen(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
@@ -314,3 +314,9 @@ class OidGen(PGStore):
     PRIMARY KEY(id, type)
     """
 
+class MessageCust(PGStore):
+    create_sql = """
+    owner INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    lang TEXT
+    """
