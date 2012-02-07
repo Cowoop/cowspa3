@@ -96,7 +96,7 @@ class InvoiceCollection:
     
     def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
-        return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'id', 'sent'], hashrows=hashrows)
+        return invoice_store.get_by(crit, fields=['number', 'cost', 'created', 'sent', 'id'], hashrows=hashrows)
 
 class InvoiceResource:
 
@@ -123,7 +123,7 @@ class InvoiceResource:
         issuer = bizplace_store.get(invoice['issuer'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
         subject = issuer.name + ' | Invoice'
-        attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
+        attachment = os.getcwd() + '/be/repository/invoices/' + str(invoice_id) + '.pdf'
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
         if not invoice_store.get(invoice_id, 'number'):
             dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])

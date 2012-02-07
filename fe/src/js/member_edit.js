@@ -8,7 +8,7 @@ var usage_table;
 var invoice_table;
 var usage_edit_id = null;
 var mtype = null;
-var inv_id;
+var inv_id, sent;
 
 function on_member_profile(resp) {
     thismember = resp.result;
@@ -742,6 +742,7 @@ function get_invoice_tab_data(){
             "bJQueryUI": true,
             "bDestroy": true,
             "sPaginationType": "full_numbers",
+            "aaSorting": [[ 0, "desc" ]],
             "aoColumns": [
                 { "sTitle": "Number" },
                 { "sTitle": "Cost",
@@ -756,15 +757,9 @@ function get_invoice_tab_data(){
                         return isodate2fdate(sReturn);
                         }   
                 },
-                { "sTitle": "Link", "bSortable": false,
-                "fnRender": function(obj) {
-                        inv_id = obj.aData[obj.iDataColumn];
-                        return "<A id='"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-view'>View</A>|<A id='delete-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-delete'>X</A>";
-                        }
-                },
                 { "sTitle": "Send",
                 "fnRender": function(obj) {
-                        var sent = obj.aData[obj.iDataColumn];
+                        sent = obj.aData[obj.iDataColumn];
                         var link;
                         if(sent){
                             link = "<A id='inv-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='inv-send'>Resend</A>";
@@ -774,6 +769,18 @@ function get_invoice_tab_data(){
                         }
                         return link;
                         }      
+                },
+                { "sTitle": "Actions", "bSortable": false,
+                "fnRender": function(obj) {
+                        inv_id = obj.aData[obj.iDataColumn];
+                        if(sent){
+                            link = "<A id='"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-view'>View</A>";
+                        }
+                        else{
+                            link = "<A id='"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-view'>View</A>|<A id='delete-"+inv_id+"' href='#/"+thismember_id+"/invoices' class='invoice-delete'>X</A>";
+                        }
+                        return link;
+                        }
                 },
             ]
         });
