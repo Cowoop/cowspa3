@@ -70,11 +70,8 @@ function on_get_invoices_success(response) {
         function on_invoice_delete_success(){
             history_table.fnDeleteRow(history_table.fnGetPosition(row));
         };
-        function on_invoice_delete_error(resp){
-            alert("Error in deleting invoice: "+resp.error.data);
-        };
         if(confirm("Do you want to delete invoice?")){
-            jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success, on_invoice_delete_error);
+            jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success);
         };
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -85,23 +82,18 @@ function on_get_invoices_success(response) {
         number_td = $(this).parent().parent().children(":first-child");
         function on_send_invoice_success() {
             $("#"+box_id).text("Resend");
-            alert('Invoice sent successfully');
             params['attr'] = 'number';
             function on_get_number_success(resp){
                 $(number_td).text(resp.result);
             }
-            jsonrpc('invoice.get', params, on_get_number_success, on_send_invoice_failure);
-        };
-        function on_send_invoice_failure() {
-            alert('failed to send invoice');
+            jsonrpc('invoice.get', params, on_get_number_success);
         };
         $('#send_invoice-form').dialog({ 
-            title: "Send Invoice", 
-            width: 500, 
+            title: "Send Invoice" 
         });
         $("#send-btn").click(function(){
             var params = {invoice_id : box_id.split("-")[1], mailtext:$("#email_text").text()};
-            jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
+            jsonrpc('invoice.send', params, on_send_invoice_success);
         });
         $("#send_cancel-btn").click(function(){
             $('#send_invoice-form').dialog("close"); ;
