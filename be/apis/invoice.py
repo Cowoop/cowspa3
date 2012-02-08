@@ -18,7 +18,7 @@ bizplace_store = dbaccess.stores.bizplace_store
 invoicepref_store = dbaccess.stores.invoicepref_store
 memberpref_store = dbaccess.stores.memberpref_store
 
-invoice_storage_dir = "be/repository/invoices/"
+invoice_storage_dir = "be/repository/invoices"
 
 def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
@@ -29,10 +29,10 @@ def create_invoice_pdf(invoice_id):
     invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
             member=member, invoicepref=invoicepref, memberpref=memberpref)
-    html_path = invoice_storage_dir + str(invoice_id) + '.html'
+    html_path = "%s/invoice_%s.html" % (invoice_storage_dir, invoice_id)
     be.templates.invoice.Template(data).write(html_path)
     if invoice['number']:
-        pdf_path = invoice_storage_dir + str(invoice_id) + '.pdf'
+        pdf_path = "%s/invoice_%s.pdf" % (invoice_storage_dir, invoice_id)
         pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return True
 
@@ -124,7 +124,7 @@ class InvoiceResource:
         issuer = bizplace_store.get(invoice['issuer'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
         subject = issuer.name + ' | Invoice'
-        attachment = os.getcwd() + '/be/repository/invoices/invoice_' + str(invoice_id) + '.pdf'
+        attachment = "%s/%s/invoice_%s.pdf" % (os.getcwd(), invoice_storage_dir, invoice_id)
         bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
         if not invoice_store.get(invoice_id, 'number'):
             dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
