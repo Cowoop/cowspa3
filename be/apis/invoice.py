@@ -18,7 +18,7 @@ bizplace_store = dbaccess.stores.bizplace_store
 invoicepref_store = dbaccess.stores.invoicepref_store
 memberpref_store = dbaccess.stores.memberpref_store
 
-invoice_storage_dir = "be/repository/invoices"
+invoice_storage_dir = "be/repository/invoices/"
 
 def create_invoice_pdf(invoice_id):
     invoice = invoice_store.get(invoice_id)
@@ -29,10 +29,10 @@ def create_invoice_pdf(invoice_id):
     invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
     data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
             member=member, invoicepref=invoicepref, memberpref=memberpref)
-    html_path = "%s/invoice_%s.html" % (invoice_storage_dir, invoice_id)
+    html_path = invoice_storage_dir + str(invoice_id) + '.html'
     be.templates.invoice.Template(data).write(html_path)
     if invoice['number']:
-        pdf_path = "%s/invoice_%s.pdf" % (invoice_storage_dir, invoice_id)
+        pdf_path = invoice_storage_dir + str(invoice_id) + '.pdf'
         pdf = commonlib.helpers.html2pdf(html_path, pdf_path)
     return True
 
@@ -124,17 +124,18 @@ class InvoiceResource:
         issuer = bizplace_store.get(invoice['issuer'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
         subject = issuer.name + ' | Invoice'
-        attachment = "%s/%s/invoice_%s.pdf" % (os.getcwd(), invoice_storage_dir, invoice_id)
-        bcc = [invoicing_pref.bcc_email] if invoicing_pref.bcc_email else []
+        attachment = invoice_storage_dir + str(invoice_id) + '.pdf'
+        bcc = invoicing_pref.bcc_email if invoicing_pref.bcc_email else None
         if not invoice_store.get(invoice_id, 'number'):
             dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
-        member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email'])
+        member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email', 'website'])
         billingpref = billingpreflib.billingpref_resource.get_details(member_id)
-        data = dict(LOCATION_PHONE=billingpref.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email, LOCATION_URL=issuer.url, CURRENCY=issuer.currency)
-        mcust = mailtext or messagecustlib.get(issuer.id, 'invoice_mail')
-        text = string.Template(mcust.content).substitute(**data)
-        env.mailer.send(issuer.email, email, subject=subject, rich=text, plain='', cc=[], bcc=bcc, attachment=attachment)
+        data = dict(LOCATION_PHONE=billingpref.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email or issuer.email, LOCATION_URL=issuer.website or '', CURRENCY=issuer.currency)
+        mailtext = mailtext or messagecustlib.get(issuer.id, 'Invoice')
+        notification = commonlib.messaging.messages.Invoice(data, overrides=dict(plain=mailtext, bcc=bcc, attachment=attachment))
+        notification.build()
+        notification.email()
         return self.update(invoice_id, sent=datetime.datetime.now())
 
     def get(self, invoice_id, attr):
