@@ -333,6 +333,10 @@ class EditProfile(BasePage):
         invoice_history.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         invoices.invoice_summary = invoice_summary
         invoices.table = invoice_history
+        send_invoice = sphc.more.Form(id='send_invoice-form', classes=['vform', 'hidden'])
+        send_invoice.add_field("Email Text", tf.TEXTAREA(id="email_text"))
+        send_invoice.add_buttons(tf.INPUT(id="send-btn", type="button", value="Send"), tf.INPUT(id="send_cancel-btn", type="button", value="Cancel"))
+        invoices.send_invoice = send_invoice.build()
 
         # Profile Tabs
         container.tabs = tf.DIV(id="profile_tabs")
