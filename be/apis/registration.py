@@ -21,9 +21,9 @@ def _new(first_name, last_name, email):
 def new(first_name, last_name, email, sendmail=True):
     activation_url = _new(first_name, last_name, email)
     data = dict (first_name=first_name, activation_url=activation_url)
-    mail_data = messages.activation.build(data)
-    mail_data['to'] = (first_name, email)
-    env.mailer.send(**mail_data)
+    notification = messages.Activation(data, dict(to=(first_name, email)))
+    notification.build()
+    notification.email()
     activitylib.add('member_management', 'new_registration', data)
     return registered_id
 
