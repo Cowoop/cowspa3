@@ -316,6 +316,7 @@ class OidGen(PGStore):
 
 class MessageCust(PGStore):
     create_sql = """
+    name TEXT NOT NULL,
     owner INTEGER NOT NULL,
     content TEXT NOT NULL,
     lang TEXT
