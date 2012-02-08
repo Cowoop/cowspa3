@@ -37,7 +37,7 @@ class RStore(object): pass
 
 def make_rstore(store):
     rstore = RStore()
-    for attr in ('setup', 'add', 'add_many', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_all', 'update', 'update_many', 'update_by', 'count', 'query_exec'):
+    for attr in ('setup', 'add', 'add_many', 'remove', 'remove_by', 'remove_many', 'get', 'get_many', 'get_by', 'get_one_by', 'get_one_by_safe', 'get_all', 'update', 'update_many', 'update_by', 'count', 'query_exec'):
         method = getattr(store, attr)
         setattr(rstore, attr, method)
     return rstore
