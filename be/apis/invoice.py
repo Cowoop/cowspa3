@@ -129,8 +129,8 @@ class InvoiceResource:
         if not invoice_store.get(invoice_id, 'number'):
             dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
-        member = access.stores.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email'])
-        billingpref = billingpreflib.billingpref_resource.get_details(invoice_id)
+        member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email'])
+        billingpref = billingpreflib.billingpref_resource.get_details(member_id)
         data = dict(LOCATION_PHONE=billingpref.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email, LOCATION_URL=issuer.url, CURRENCY=issuer.currency)
         mcust = mailtext or messagecustlib.get(issuer.id, 'invoice_mail')
         text = string.Template(mcust.content).substitute(**data)
