@@ -34,7 +34,7 @@ def search(entity):
 
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoice(oid, format):
-    path = "%s/invoice_%s.%s" % (invoicelib.invoice_storage_dir, oid, format)
+    path = "%s/%s.%s" % (invoicelib.invoice_storage_dir, oid, format)
     if format == "pdf":
         content_type = "application/pdf"
     else:

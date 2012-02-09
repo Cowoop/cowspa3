@@ -1,7 +1,6 @@
 var history_table;
-var inv_id, sent;
-var box_id, number_td;
-var email_text;
+var invoice_send_link_id, invoice_no_column_id;
+var invoice_email_text;
 //****************************Get Invoice History*******************************
 function on_get_invoices_success(response) {
     history_table = $('#history_table').dataTable({
@@ -18,7 +17,12 @@ function on_get_invoices_success(response) {
                     }
             },
             { "sTitle": "Member" },
-            { "sTitle": "Cost" },
+            { "sTitle": "Cost",
+              "fnRender": function(obj) {
+                    var cost = format_currency(obj.aData[ obj.iDataColumn ]);
+                    return cost;
+                    }
+            },
             { "sTitle": "Date",
               "fnRender": function(obj) {
                     var sReturn = obj.aData[obj.iDataColumn];
@@ -27,8 +31,8 @@ function on_get_invoices_success(response) {
             },
             { "sTitle": "Send",
               "fnRender": function(obj) {
-                    sent = obj.aData[obj.iDataColumn];
-                    inv_id = obj.aData[obj.iDataColumn+1];
+                    var sent = obj.aData[obj.iDataColumn];
+                    var inv_id = obj.aData[obj.iDataColumn+1];
                     var link;
                     if(sent){
                         link = "<A id='inv-"+inv_id+"' href='#' class='inv-send'>Resend</A>";                        
@@ -37,10 +41,12 @@ function on_get_invoices_success(response) {
                         link = "<A id='inv-"+inv_id+"' href='#' class='inv-send'>Send</A>";
                     }
                     return link;
-                    }   
+                    }
             },
             { "sTitle": "Actions", "bSortable": false,
               "fnRender": function(obj) {
+                    var sent = obj.aData[obj.iDataColumn-1];
+                    var inv_id = obj.aData[obj.iDataColumn];
                     var link;
                     if(sent){
                         link = "<A id='"+inv_id+"' href='#' class='invoice-view'>View</A>";
@@ -77,27 +83,27 @@ function on_get_invoices_success(response) {
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     //****************************Send Invoice**********************************
     $('.inv-send').click(function () {
-        $("#email_text").text(email_text);
-        box_id = $(this).attr("id");
-        number_td = $(this).parent().parent().children(":first-child");
-        function on_send_invoice_success() {
-            $("#"+box_id).text("Resend");
-            params['attr'] = 'number';
-            function on_get_number_success(resp){
-                $(number_td).text(resp.result);
-            }
-            jsonrpc('invoice.get', params, on_get_number_success);
-        };
+        $("#email_text").text(invoice_email_text);
+        invoice_send_link_id = $(this).attr("id");
+        invoice_no_column_id = $(this).parent().parent().children(":first-child");
         $('#send_invoice-form').dialog({ 
             title: "Send Invoice" 
         });
-        $("#send-btn").click(function(){
-            var params = {invoice_id : box_id.split("-")[1], mailtext:$("#email_text").text()};
-            jsonrpc('invoice.send', params, on_send_invoice_success);
-        });
-        $("#send_cancel-btn").click(function(){
-            $('#send_invoice-form').dialog("close"); ;
-        });
+    });
+    function on_send_invoice_success() {
+        $("#"+invoice_send_link_id).text("Resend");
+        params['attr'] = 'number';
+        function on_get_number_success(resp){
+            $(invoice_no_column_id).text(resp.result);
+        }
+        jsonrpc('invoice.get', params, on_get_number_success);
+    };
+    $("#send-btn").click(function(){
+        var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
+        jsonrpc('invoice.send', params, on_send_invoice_success);
+    });
+    $("#send_cancel-btn").click(function(){
+        $('#send_invoice-form').dialog("close"); ;
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
@@ -107,7 +113,7 @@ jsonrpc('invoice.list', params, on_get_invoices_success, error);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //******************************Email text************************************
 function on_get_invoicepref_success(response) {
-    email_text = response['result']['email_text'];
+    invoice_email_text = response['result']['email_text'];
 };
 function on_get_invoicepref_error(){};
 jsonrpc('invoicepref.info', { 'owner' : current_ctx}, on_get_invoicepref_success, on_get_invoicepref_error);
