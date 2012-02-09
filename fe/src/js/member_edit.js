@@ -346,7 +346,6 @@ $("#tariff_cancel-btn").click(function() {
     $("#next-tariff-form").dialog("close"); 
 }); 
 
-var params1 = {}
 function success1(resp) {
     var tariffs = resp.result;
     for(ind in tariffs)
@@ -357,9 +356,7 @@ function success1(resp) {
     $("#tariff-options").tmpl(resp['result']).appendTo( "#next-tariff-form #tariff" );
     $("#tariff-options").tmpl(resp['result']).appendTo( "#change-tariff-form #tariff" );
     };
-function error1(){};
-params1['owner'] = current_ctx;
-jsonrpc('tariffs.list', params1, success1, error1);
+jsonrpc('tariffs.list', {owner: current_ctx}, success1);
     
 //*************************End Next Tariff**************************************
 
@@ -816,21 +813,13 @@ function get_invoice_tab_data(){
         invoice_send_link_id = $(this).attr("id");
         invoice_no_column_id = $(this).parent().parent().children(":first-child");
         $('#send_invoice-form').dialog({ 
-            title: "Send Invoice", 
-            width: 500, 
+            title: "Send Invoice",
+            width: 500
         });
     });
     function on_send_invoice_success() {
-        $("#"+invoice_send_link_id).text("Resend");
-        alert('Invoice sent successfully');
-        params['attr'] = 'number';
-        function on_get_number_success(resp){
-            $(invoice_no_column_id).text(resp.result);
-        }
-        jsonrpc('invoice.get', params, on_get_number_success, on_send_invoice_failure);
-    };
-    function on_send_invoice_failure() {
-        alert('failed to send invoice');
+        // removed code that using params variable as if it is global var
+        // TODO re-render invoice table ?
     };
     $("#send-btn").click(function(){
         var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
@@ -841,15 +830,14 @@ function get_invoice_tab_data(){
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     };
-    function get_invoice_history_error(){};
     var params = { 'issuer' : parseInt(current_ctx, 10), 'member' : parseInt(thismember_id, 10), 'hashrows':false};
-    jsonrpc('invoice.by_member', params, get_invoice_history_success, get_invoice_history_error);
+    jsonrpc('invoice.by_member', params, get_invoice_history_success);
     //******************************Email text************************************
-    function on_get_invoicepref_success(response) {
-        invoice_email_text = response['result']['email_text'];
+    function on_get_invoicemail_cust(response) {
+        invoice_email_text = response.result;
     };
-    function on_get_invoicepref_error(){};
-    jsonrpc('invoicepref.info', { 'owner' : current_ctx}, on_get_invoicepref_success, on_get_invoicepref_error);
+
+    jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
 };
 $("#new_invoice-btn").click(function(){
     var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme;
