@@ -823,7 +823,7 @@ function get_invoice_tab_data(){
     };
     $("#send-btn").click(function(){
         var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
-        jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
+        jsonrpc('invoice.send', params, on_send_invoice_success);
     });
     $("#send_cancel-btn").click(function(){
         $('#send_invoice-form').dialog("close");
