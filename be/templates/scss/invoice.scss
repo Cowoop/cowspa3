@@ -44,7 +44,7 @@ dt { font-weight: bold; }
 
 dt, dd {display: inline-block;}
 
-.note { font-style: italic; font-size: 90%; }
+.note { font-style: italic; font-size: 90%; font-weight: normal; }
 
 .box-bordered { 
     border: 1px solid $main-color; 
@@ -131,4 +131,8 @@ table.stripped {
 .invoice-logo { 
     height: 10em; width: 10em;
     border: 1px solid $main-color;
+}
+.footer {
+    font-size: small;
+    text-align: center;
 }

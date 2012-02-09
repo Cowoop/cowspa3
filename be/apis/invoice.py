@@ -49,8 +49,8 @@ class InvoiceCollection:
             usages.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
-        cost = decimal.Decimal(sum([usagelib.usage_resource.get(usage, 'cost') for usage in usages]))
-        data = dict(issuer=issuer, member=member, usages=usages, sent=None, cost=cost, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        total = decimal.Decimal(sum([row[0] for row in usage_store.get_many(usages, ['total'], False)]))
+        data = dict(issuer=issuer, member=member, usages=usages, sent=None, total=total, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         if number: data['number'] = number
         invoice_id = invoice_store.add(**data)
 
@@ -104,7 +104,6 @@ class InvoiceResource:
     def update(self, invoice_id, **mod_data):
         """
         """
-        invoice_store.update(invoice_id, **mod_data)
         if 'usages' in mod_data:
             old_usages = invoice_store.get(invoice_id, ['usages'])
             mod_data = dict(invoice=None)
@@ -113,6 +112,10 @@ class InvoiceResource:
             new_usages = mod_data['usages']
             mod_data = dict(invoice=invoice_id)
             usage_store.update_many(new_usages, **mod_data)
+
+            mod_data['total'] = decimal.Decimal(sum([row[0] for row in usagelib.usage_resource.get_many(new_usages, 'amount', False)]))
+
+        invoice_store.update(invoice_id, **mod_data)
         return True
 
     def send(self, invoice_id, mailtext=None):

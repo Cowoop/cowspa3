@@ -4,7 +4,7 @@ import commonlib.helpers
 import itertools
 import be.repository.access as dbaccess
 from operator import itemgetter
-from babel.numbers import get_currency_symbol, format_currency
+from babel.numbers import get_currency_symbol, format_currency, format_number
 odict = commonlib.helpers.odict
 tf = sphc.TagFactory()
 
@@ -18,9 +18,14 @@ class Template(sphc.more.HTML5Page):
 
     def main(self):
         data = odict(self.data)
+        currency = data.bizplace.currency
+        locale = data.memberpref[0].language
+        taxes_text = 'Inclusive of Taxes' if data.invoicepref.tax_included else 'Exclusive of Taxes'
+        total_cost = sum([usage.cost for usage in data.usages])
+        total_tax = data.invoice.total - total_cost
 
         def show_currency(num):
-            return str(format_currency(num,data.bizplace.currency,locale=data.memberpref[0].language))
+            return str(format_currency(num, currency, locale=locale))
 
         container = tf.DIV()
         container.title = tf.DIV("I N V O I C E", id="invoice-header")
@@ -57,24 +62,27 @@ class Template(sphc.more.HTML5Page):
         usages = tf.TABLE(id='usages_summary', Class="stripped")
         usages.caption = tf.h3("Usage Summary")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in ('Resource', 'Amount', 'Taxes(Inclusive)')]
+        usages.header.cell = tf.TH('Description')
+        usages.header.cell = tf.TH([('Amount (%s) ' % currency), tf.SPAN(taxes_text, Class='note')])
+        usages.header.cell = tf.TH('Taxes (%s)' % currency)
         for name, group in itertools.groupby(data.usages, itemgetter('resource_name')):
-            usage_row = tf.TR()
-            usage_row.td = tf.TD(name)
             group = list(group)
-            usage_row.td = tf.TD(show_currency(sum([usage.amount for usage in group])))
-            tax_keys = set([])
+            row = tf.TR()
+            row.td1 = tf.TD(name)
+            row.td2 = tf.TD(format_number(sum([usage.cost for usage in group])))
+            row.td3 = tf.TD()
+            #row.td3.tax = tf.DIV(format_number(sum(usage.tax_dict['total'] for usage in group)))
             for usage in group:
-                if usage.tax_dict:
-                    tax_keys = tax_keys.union(set([tax for tax in usage.tax_dict]))
-            tax_keys = list(tax_keys)
-            taxes = dict((key, sum([usage.tax_dict[key] if usage.tax_dict and key in usage.tax_dict else 0 for usage in group])) for key in tax_keys)
-            usage_row.td = tf.TD(', '.join([key + " : " + str(show_currency(taxes[key])) for key in tax_keys]) if taxes else "-")
-            usages.row = usage_row
-        usage_row = tf.TR()
-        usage_row.td = tf.TD("Sub Total")
-        usage_row.td = tf.TD(show_currency(data.invoice.cost))
-        usages.row = usage_row
+                breakdown = usage.tax_dict['breakdown']
+                for name, level, amount in breakdown:
+                    row.td3.taxline = tf.DIV('%s %s%%: %s' % (name, level, format_number(amount)))
+            usages.row = row
+
+        row = tf.TR()
+        row.td1 = tf.TD("Sub Total")
+        row.td2 = tf.TD(format_number(total_cost))
+        row.td3 = tf.TD(format_number(total_tax))
+        usages.row = row
         usage_summary.table = usages
         container.usage_summary = usage_summary
 
@@ -83,7 +91,7 @@ class Template(sphc.more.HTML5Page):
             container.terms_and_conditions.heading = tf.H3("Terms & Conditions")
             container.terms_and_conditions.data = tf.DIV(data.invoicepref.terms_and_conditions)
 
-        table_headers = ['Sr. No.', 'Resource', 'Quantity', 'Duration', 'Amount']
+        table_headers = ['Sr. no.', 'Resource', 'Quantity', 'Duration', 'Amount (%s)' % currency]
         multimember_invoice = False
         members = set(usage.member for usage in data.usages)
         if members != set([data.member.id]):
@@ -99,18 +107,28 @@ class Template(sphc.more.HTML5Page):
             usage_row = tf.TR()
             usage_row.td = tf.TD(str(sr_no))
             if multimember_invoice: usage_row.td = tf.TD(dbaccess.member_store.get(usage.member, "name"))
-            usage_row.td = tf.TD(str(usage.resource_name))
+            usage_row.td = tf.TD(usage.resource_name)
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
-            usage_row.td = tf.TD(show_currency(usage.amount))
+            usage_row.td = tf.TD(format_number(usage.cost))
             usages.row = usage_row
             sr_no += 1
+
+        if not data.invoicepref.tax_included:
+            usage_row = tf.TR()
+            usage_row.td = tf.TD()
+            usage_row.td = tf.TD()
+            usage_row.td = tf.TD()
+            usage_row.td = tf.TH("Taxes")
+            usage_row.td = tf.TD(show_currency(total_tax))
+            usages.row = usage_row
+
         usage_row = tf.TR()
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TH("Total")
-        usage_row.td = tf.TD(show_currency(data.invoice.cost))
+        usage_row.td = tf.TD(show_currency(data.invoice.total))
         usages.row = usage_row
         usage_details.table = usages
 
@@ -125,5 +143,10 @@ class Template(sphc.more.HTML5Page):
             container.payment_terms = tf.DIV()
             container.payment_terms.heading = tf.B("Payment Terms: ")
             container.payment_terms.data = tf.C("%s days" % data.invoicepref.due_date)
+
+        footer_items = [data.invoicepref.company_no, data.bizplace.website, data.bizplace.phone]
+        footer = ' | '.join(item for item in footer_items if item)
+        container.nl = tf.BR()
+        container.footer = tf.DIV(footer, Class='footer')
 
         return container
