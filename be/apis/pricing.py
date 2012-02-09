@@ -98,7 +98,7 @@ def member_tariff(member_id, bizplace_id, usage_time=None):
         usage_time = datetime.datetime.now()
     tariff_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     return dbaccess.get_tariff_pricings(tariff_id, usage_time)
-    
+
 def delete(pricing_id):
     pricing = pricing_store.get(pricing_id)
     if dbaccess.find_usage(start=pricing.starts, end=pricing.ends, resource_ids=[pricing.resource]):
@@ -200,7 +200,7 @@ class InitialCost(costlib.Rule):
         cost.new(self.name, amount)
         return costlib.flags.proceed
 
-def calculate_taxes(resource_id, resource_owner, cost):
+def apply_taxes(resource_id, resource_owner, cost):
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
     tax_included = tax_info['tax_included']
     taxes = tax_info['taxes'] if tax_info['taxes'] else {}
@@ -208,28 +208,31 @@ def calculate_taxes(resource_id, resource_owner, cost):
     total_tax_level = sum(map(float, taxes.values()))
     if tax_included:
         basic_cost = cost / ((100 + total_tax_level)/100.0)
-        tax_applied = dict((name, (basic_cost * float(float(level)/100.0))) for (name, level) in taxes.items()) if taxes else None
+        breakdown = tuple((name, level, (basic_cost * float(float(level)/100.0))) for (name, level) in taxes.items())
         total = cost
+        total_tax = sum(item[2] for item in breakdown)
     else:
-        amount_to_add = float(cost) * (total_tax_level/100.0)
-        tax_applied = dict((name, (cost * float(float(level)/100.0))) for name, level in taxes.items()) if taxes else None
-        total = cost + amount_to_add
+        total_tax = float(cost) * (total_tax_level/100.0)
+        breakdown = tuple((name, level, (cost * float(float(level)/100.0))) for (name, level) in taxes.items())
+        total = cost + total_tax
 
-    return dict(amount=costlib.to_decimal(total), taxes=tax_applied if tax_applied else None)
+    return costlib.to_decimal(total), dict(total=total_tax, breakdown=breakdown)
 
 rules = [CustomResource(), InitialCost()]
 
 def calculate_cost(member_id, resource_id, resource_owner, quantity, starts, ends=None, cost=None, return_taxes=False):
+    """
+    returns {calculate_cost: amount(decimal), taxes: ((Tax1, 10.00, 39.00), (Tax2,..), ..)}
+    """
     starts = commonlib.helpers.iso2datetime(starts)
     ends = commonlib.helpers.iso2datetime(ends) if ends else starts
     usage = odict(member_id=member_id, resource_id=resource_id, resource_owner=resource_owner, quantity=quantity, starts=starts, ends=ends, cost=cost)
     processor = costlib.Processor(usage, rules)
     calculated_cost = processor.run()
     cost = cost if cost else calculated_cost
+    result = dict(calculated_cost=costlib.to_decimal(calculated_cost))
     if return_taxes:
-        result = calculate_taxes(resource_id, resource_owner, cost)
-        result['calculated_cost'] = costlib.to_decimal(calculated_cost)
-    else:
-        result = costlib.to_decimal(calculated_cost)
-    return result 
-    
+        total, taxes = apply_taxes(resource_id, resource_owner, cost)
+        result['taxes'] = taxes
+        result['total'] = total
+    return result
