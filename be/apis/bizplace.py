@@ -14,7 +14,7 @@ class BizplaceCollection:
     def new(self, name, address, city, country, email, short_description, province=None,
             long_description=None, tags=None, website=None, blog=None,
             twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
-            skype=None, mobile=None, currency=None, host_email=None,
+            skype=None, mobile=None, currency='USD', host_email=None,
             booking_email=None, tz='UTC', skip_default_tariff=False):
 
         created = datetime.datetime.now()
