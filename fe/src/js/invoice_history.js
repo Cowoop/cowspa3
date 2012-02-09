@@ -107,13 +107,11 @@ function on_get_invoices_success(response) {
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
-function error(){};
 var params = { 'issuer' : current_ctx};
-jsonrpc('invoice.list', params, on_get_invoices_success, error);
+jsonrpc('invoice.list', params, on_get_invoices_success);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Get Invoice Historyxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //******************************Email text************************************
 function on_get_invoicepref_success(response) {
     invoice_email_text = response['result']['email_text'];
 };
-function on_get_invoicepref_error(){};
-jsonrpc('invoicepref.info', { 'owner' : current_ctx}, on_get_invoicepref_success, on_get_invoicepref_error);
+jsonrpc('invoicepref.info', { 'owner' : current_ctx}, on_get_invoicepref_success);
