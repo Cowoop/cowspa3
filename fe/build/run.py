@@ -11,12 +11,12 @@ commonlib.helpers.setdefaultencoding()
 
 import fe
 import fe.src.pages
-import fe.src.pages as pagelib
+import fe.src.pages as rootpages
 import fe.src.pages.invoicing
 import fe.src.pages.team
-import fe.src.member_pages as memberlib
+import fe.src.pages.member as memberpages
 import fe.src.pages.bizplace as bizplacepages
-import fe.src.plan_pages as planpages
+import fe.src.pages.plan as planpages
 import fe.src.pages.resource as resourcepages
 import fe.src.pages.booking as bookingpages
 import commonlib.shared.static as static
@@ -92,20 +92,20 @@ class JSBuilder(BuilderBase):
 
 prefix = '%(lang)s/%(theme)s/'
 
-pages = [PageBuilder(pagelib.InvoicingPage, prefix + 'invoices/home'),
-         PageBuilder(memberlib.MemberCreate, prefix + 'member/new'),
-         PageBuilder(pagelib.Login, 'login'),
-         PageBuilder(pagelib.Activation, 'activate'),
+pages = [PageBuilder(rootpages.InvoicingPage, prefix + 'invoices/home'),
+         PageBuilder(memberpages.MemberCreate, prefix + 'member/new'),
+         PageBuilder(rootpages.Login, 'login'),
+         PageBuilder(rootpages.Activation, 'activate'),
          PageBuilder(bizplacepages.Create, prefix + 'bizplace/new'),
          PageBuilder(bizplacepages.List, prefix + 'bizplaces'),
          PageBuilder(planpages.CreateTariff, prefix + 'tariff/new'),
          PageBuilder(planpages.ListTariff, prefix + 'tariffs'),
          PageBuilder(resourcepages.ResourceCreate, prefix + 'resource/new'),
          PageBuilder(resourcepages.ResourceManage, prefix + 'resources'),
-         PageBuilder(pagelib.Dashboard, prefix + 'dashboard'),
-         PageBuilder(memberlib.EditProfile, prefix + 'member/edit'),
+         PageBuilder(rootpages.Dashboard, prefix + 'dashboard'),
+         PageBuilder(memberpages.EditProfile, prefix + 'member/edit'),
          PageBuilder(fe.src.pages.invoicing.New, prefix + 'invoices/new'),
-         PageBuilder(pagelib.LogoutPage, 'logout'),
+         PageBuilder(rootpages.LogoutPage, 'logout'),
          PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoices/preferences'),
          PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoices/history'),
          PageBuilder(bookingpages.Booking, prefix + '/booking/new'),
