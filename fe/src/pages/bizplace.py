@@ -24,13 +24,11 @@ def get_location_form():
     tz_select.options = fe.src.common.tz_options
     about.add_field('Time zone', tz_select)
 
-    about.add_field('Short Description', sphc.tf.TEXTAREA(id='short_description',
-            name='short_description', rows=2, cols=25))
+    about.add_field('Short Description', sphc.tf.TEXTAREA(id='short_description', name='short_description', rows=2, cols=25))
     about.add_field('Website', sphc.tf.INPUT(name='website', id='website'))
     curr_select = sphc.tf.SELECT(id='currency', name='currency')
     for currency in data_lists.currencies:
-        curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")",
-                        value=currency['name'])
+        curr_select.option = sphc.tf.OPTION(currency['label']+" ("+currency['name']+")", value=currency['name'])
     about.add_field('Currency', curr_select)
 
     contact = form.add(sphc.more.Fieldset())
@@ -38,18 +36,15 @@ def get_location_form():
 
     contact.add_field('Phone', sphc.tf.INPUT(id='phone', name='phone'))
     contact.add_field('Fax', sphc.tf.INPUT(id='fax', name='fax'))
-    contact.add_field('Email', sphc.tf.INPUT(type='email', id='email',
-        name='email').set_required())
-    contact.add_field('Booking Email', sphc.tf.INPUT(type='email', id='booking_email',
-            name='booking_email'))
-    contact.add_field('Host Email', sphc.tf.INPUT(type='email', id='host_email',
-        name='host_email'))
-    
+    contact.add_field('Email', sphc.tf.INPUT(type='email', id='email', name='email').set_required())
+    contact.add_field('Booking Email', sphc.tf.INPUT(type='email', id='booking_email', name='booking_email'))
+    contact.add_field('Host Email', sphc.tf.INPUT(type='email', id='host_email', name='host_email'))
+
     return form
 
 class Create(BasePage):
     current_nav = 'Admin'
-    title = 'New Hub'
+    title = 'New ' + __('Coworking Place')
 
     def content(self):
         container = tf.DIV()
@@ -61,7 +56,7 @@ class Create(BasePage):
 
 class List(BasePage):
 
-    title = "Hubs"
+    title = __("Coworking Places")
     current_nav = 'Admin'
 
     def content(self):
@@ -73,27 +68,22 @@ class List(BasePage):
         # Tabs
         container.tabs = tf.DIV(id="location_tabs")
         container.tabs.list = tf.UL()
-        container.tabs.list.tab1 = tf.li(tf.A("My Locations",
-            href="#my-locations"))
-        container.tabs.list.tab2 = tf.li(tf.A("All Locations",
-            href="#all-locations"))
+        container.tabs.list.tab1 = tf.li(tf.A("My " + __("coworking places"), href="#my-locations"))
+        container.tabs.list.tab2 = tf.li(tf.A("All " + __("coworking places"), href="#all-locations"))
 
         # My Locations
         my_loc_list = tf.DIV(id='my_loc_list')
         my_loc_tmpl = sphc.more.jq_tmpl('my_loc_tmpl')
         my_loc_tmpl.box = tf.DIV(Class='location-box')
         my_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
-        my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', 
-                href='#/${id}', Class='location-title')
+        my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', href='#/${id}', Class='location-title')
         my_loc_tmpl.box.info.my_role = tf.DIV(Class='location-description')
         my_loc_tmpl.box.info.my_role.label = tf.LABEL("My Role(s) : ")
         my_loc_tmpl.box.info.my_role.role = tf.LABEL("${roles}")
 
         loc_buttons = tf.DIV(Class="buttons")
-        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff_btn-${id}',
-                Class='myloc_tariff-btn', type='button')
-        loc_buttons.team_btn = tf.BUTTON("Team", id='myloc_team_btn-${id}',
-                Class='myloc_team-btn', type='button')
+        loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff_btn-${id}', Class='myloc_tariff-btn', type='button')
+        loc_buttons.team_btn = tf.BUTTON("Team", id='myloc_team_btn-${id}', Class='myloc_team-btn', type='button')
         my_loc_tmpl.box.btn = tf.DIV(Class='loc_btns_part')
         my_loc_tmpl.box.btn.buttons = loc_buttons
 
@@ -107,7 +97,7 @@ class List(BasePage):
         fields = [edit]
 
         cancel = tf.DIV(Class="edit-link-box")
-        cancel.link = tf.A("List of Hubs", id='list-locations-link',
+        cancel.link = tf.A("List of " + __("Coworking Places"), id='list-locations-link',
                 href='/${lang}/${theme}/bizplaces/')
         fields.append(cancel)
 
@@ -165,7 +155,7 @@ class List(BasePage):
         # All Locations Tariff List
         tariff_container = tf.DIV(id='tariff_container')
         tariff_container.all_loc = tf.DIV(Class="edit-link-box")
-        tariff_container.all_loc.link = tf.A("List of Locations", id='all-list-locations-link',
+        tariff_container.all_loc.link = tf.A("List of " + __("coworking places"), id='all-list-locations-link',
                 href='/${lang}/${theme}/bizplaces#all-locations')
         tariff_container.clear = sphc.more.clear()
         tariff_container.tariff_box = tf.DIV(id='tariff-box')

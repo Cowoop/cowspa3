@@ -87,6 +87,7 @@ function show_tariff_details() {
                 tempObj['name'] = rec['name'];
                 tempObj['curr_price'] = guest_tariff['pricings'][rec['id']]['amount']
                 tempObj['prices'] = [];
+                tempObj['currency'] = locale_data.currency_symbol;
                 for (var res in resource_map) {
                     var amount = '-';
                     if (res in rec['pricings']) {

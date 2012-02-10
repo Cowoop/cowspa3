@@ -98,7 +98,7 @@ def get_total_memberships(bizplace, starts, ends, by_tariff=False):
     by_tariff --> True/False (To display count by grouping by tariff)
     """
     return dbaccess.get_count_of_memberships(bizplace, starts, ends, by_tariff)
-    
+
 memberships.new = new
 memberships.bulk_new = bulk_new
 memberships.list = list_memberships

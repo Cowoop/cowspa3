@@ -7,7 +7,23 @@ sys.path.append('.')
 
 import sphc
 import commonlib.helpers
+import commonlib.readconf
+import conf_default
+
 commonlib.helpers.setdefaultencoding()
+
+try:
+    import conf_test as conf_local
+except:
+    print('Warning: No local config found')
+    conf_local = None
+
+config = commonlib.readconf.parse_config(conf_default, conf_local)
+
+def sitecust(s):
+    return config.words.get(s, s)
+
+commonlib.helpers.push_to_builtins('__', sitecust)
 
 import fe
 import fe.src.pages
