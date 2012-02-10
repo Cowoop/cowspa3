@@ -180,7 +180,7 @@ class List(BasePage):
         tariff_col_tmpl = sphc.more.jq_tmpl('tariff_col_tmpl')
         tariff_col_tmpl.tariff_column = tf.DIV(Class='tariff_column')
         tariff_col_tmpl.tariff_column.name = tf.DIV("${name}", Class='title')
-        tariff_col_tmpl.tariff_column.currprice = tf.DIV("${curr_price}", Class='tariff-price')
+        tariff_col_tmpl.tariff_column.currprice = tf.DIV([tf.SPAN("${currency}"), tf.SPAN("${curr_price}", Class="text-xxl")], Class='tariff-price')
         tariff_col_tmpl.tariff_column.res_prices = "{{each prices}} <div class='resource-price'>${$value}</div> {{/each}}"
 
         tariff_container.tariff_col_tmpl = tariff_col_tmpl
