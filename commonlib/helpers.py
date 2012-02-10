@@ -1,3 +1,8 @@
+try:
+    import builtins
+except:
+    import __builtin__ as builtins # Python 2.x compatibility
+
 import datetime
 import collections
 import base64, random, hashlib
@@ -7,6 +12,9 @@ import simplejson
 from flask import current_app
 
 random_key_gen = None
+
+def push_to_builtins(name, o):
+    setattr(builtins, name, o)
 
 class odict(dict):
     def __getattr__(self, attr):

@@ -1,7 +1,3 @@
-try:
-    import builtins
-except:
-    import __builtin__ as builtins # Python 2.x compatibility
 import commonlib
 import commonlib.readconf as readconf
 import commonlib.helpers
@@ -38,7 +34,7 @@ def setup_env(conf):
     env.mailer = commonlib.messaging.email.Mailer(env.config.mail)
     env.mailer.start()
     env.context = localprov.local()
-    builtins.env = env
+    commonlib.helpers.push_to_builtins('env', env)
     return env
 
 def setup_stores():
@@ -56,7 +52,7 @@ def setup_pg_provider():
 def start(conf):
     commonlib.helpers.setdefaultencoding()
     env = setup_env(conf)
-    env.__cs_debug__ = conf != 'conf_prod'
+    env.__cs_debug__ = False # conf != 'conf_prod'
     provider = setup_pg_provider()
     provider.tr_start(env.context)
     setup_stores()

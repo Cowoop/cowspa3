@@ -130,10 +130,10 @@ class ResourceManage(BasePage):
 
         pricing.table = tf.DIV(id="old-pricings", Class="grid")
 
-        taxation = tf.DIV(id="res-taxes-content", Class="tab-content")        
+        taxation = tf.DIV(id="res-taxes-content", Class="tab-content")
         taxes = sphc.more.Form(id="taxation", Class="hform")
-        taxes.add(tf.DIV([tf.INPUT(id="tax_mode0", type="radio", name="tax_mode", value="0"), tf.label("Use Hub Level Taxes")]))
-        taxes.add(tf.DIV([tf.INPUT(id="tax_mode1", type="radio", name="tax_mode", value="1"), tf.label("Use Following Taxes")]))
+        taxes.add(tf.DIV([tf.INPUT(id="tax_mode0", type="radio", name="tax_mode", value="0"), tf.label("Use %s level taxes" % __("coworking place"))]))
+        taxes.add(tf.DIV([tf.INPUT(id="tax_mode1", type="radio", name="tax_mode", value="1"), tf.label("Use following taxes")]))
         add_tax = tf.DIV(id="add_tax")
         add_tax.name = tf.DIV(tf.INPUT(placeholder="Tax name", type="text", id='new_tax'), Class='tax-name')
         add_tax.value = tf.DIV([tf.INPUT(placeholder="Value: eg. 10 for 10%", type="number", id='new_value', step="0.1"), tf.span("%")], Class='tax-value')
@@ -145,7 +145,7 @@ class ResourceManage(BasePage):
         tax_template.new_tax.name = tf.DIV(tf.INPUT(type="text", value="${name}", Class="new-name").set_required(), Class='tax-name')
         tax_template.new_tax.value = tf.DIV([tf.INPUT(type="number", value="${value}", Class="new-value", step="0.1").set_required(), tf.span("%")], Class='tax-value')
         tax_template.new_tax.delete = tf.DIV(tf.A("X", href="#"), Class="tax-delete remove-tax")
-        
+
         taxation.taxes = taxes.build()
         taxation.template = tax_template
         

@@ -169,7 +169,7 @@ function on_roles_list(resp) {
         on_roles(result)
     }); // calling on_roles hook which might be defined (only once) at some other js
 
-    var ctx_label = 'My Hub';
+    var ctx_label = 'Options';
     if(result.length == 0) {
         $('#ctx-menu').show();
         set_0_locations_menu();
