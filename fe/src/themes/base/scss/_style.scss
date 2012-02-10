@@ -247,6 +247,7 @@ legend {
 }
 .heading3 { font-size: 120%; }
 .text-xl { font-size: 200%; }
+.text-xxl { font-size: 300%; }
 
 .tabs {
     border-bottom: 1px solid $main-color;
@@ -310,14 +311,13 @@ button#new-tariff, button#new_invoice-btn, button#new_usage-btn {float: right; m
         padding: 0.25em;
         color: $other-text-color;
         background: lighten($main-color, 15%);
-        width: 5em;
-        height: 3em;
+        width: 100%;
     }
     .tariff-price {
-        font-size: 160%;
         font-weight: bold;
+        font-family: 'Lucida Grande', Arial, Helvetica;
         border-bottom: 1px solid;
-        padding: 0.5em;
+        padding: 1em;
     }
     #resource_column {
         display: inline-block;
