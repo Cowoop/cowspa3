@@ -49,10 +49,10 @@ def setup_pg_provider():
     provider.startup()
     return provider
 
-def start(conf):
+def start(conf, debug=False):
     commonlib.helpers.setdefaultencoding()
     env = setup_env(conf)
-    env.__cs_debug__ = False # conf != 'conf_prod'
+    env.__cs_debug__ = debug
     provider = setup_pg_provider()
     provider.tr_start(env.context)
     setup_stores()
