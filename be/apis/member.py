@@ -14,7 +14,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None):
+    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by=''):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = created if created else datetime.datetime.now() # migration specific
@@ -29,7 +29,7 @@ class MemberCollection:
         memberpref_store.add(**data)
 
         #owner = user_id
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, province=province)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, province=province, biz_type=biz_type, introduced_by=introduced_by)
 
         if number: data['number'] = number # migration specific
         member_store.add(**data)

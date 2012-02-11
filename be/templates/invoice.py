@@ -1,3 +1,4 @@
+import datetime
 import sphc
 import sphc.more
 import commonlib.helpers
@@ -23,6 +24,8 @@ class Template(sphc.more.HTML5Page):
         taxes_text = 'Inclusive of Taxes' if data.invoicepref.tax_included else 'Exclusive of Taxes'
         total_cost = sum([usage.cost for usage in data.usages])
         total_tax = data.invoice.total - total_cost
+        date = date.invoice.sent or datetime.datetime.now()
+        due_date = date + datetime.timedelta(invoice.location.invoice_duedate)
 
         def show_currency(num):
             return str(format_currency(num, currency, locale=locale))
@@ -47,16 +50,17 @@ class Template(sphc.more.HTML5Page):
         container.top.col2.invoice = tf.DIV(id="invoice-details")
         container.top.col2.invoice.details = tf.TABLE(Class="defs")
         container.top.col2.invoice.details.row = tf.TR([tf.TD("Number"), tf.TD(str(data.invoice.number if data.invoice.number else "-"))])
-        container.top.col2.invoice.details.date = tf.TR([tf.TD("Date"), tf.TD(commonlib.helpers.date4human(data.invoice.created))])
         container.top.col2.invoice.details.period = tf.TR([tf.TD("Period"),
             tf.TD(commonlib.helpers.date4human(data.invoice.start_date)+" to "+commonlib.helpers.date4human(data.invoice.end_date))])
+        container.top.col2.invoice.details.date = tf.TR([tf.TD("Date"), tf.TD(commonlib.helpers.date4human(date))])
+        container.top.col2.invoice.details.date = tf.TR([tf.TD("Due Date"), tf.TD(commonlib.helpers.date4human(due_date))])
         if data.invoice.po_number:
             container.top.col2.invoice.details.po_number = tf.TR([tf.TD("P. O. Number"), tf.TD(data.invoice.po_number)])
 
         container.clear = sphc.more.clear()
 
-        if data.invoice.notice:
-            container.notice = tf.DIV(data.invoice.notice, Class="pre-wrap full box-bordered")
+        if data.invoicepref.freetext1:
+            container.notice = tf.DIV(data.invoicepref.freetext1, Class="pre-wrap full box-bordered")
 
         usage_summary = tf.DIV()
         usages = tf.TABLE(id='usages_summary', Class="stripped")
@@ -133,6 +137,9 @@ class Template(sphc.more.HTML5Page):
         usage_details.table = usages
 
         container.usage_details = usage_details
+
+        if data.invoicepref.freetext2:
+            container.notice = tf.DIV(data.invoicepref.freetext2, Class="pre-wrap full box-bordered")
 
         if data.invoicepref.bank_details:
             container.bank_details = tf.DIV()

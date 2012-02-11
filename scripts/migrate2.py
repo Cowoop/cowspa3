@@ -216,9 +216,15 @@ class MessageCust(Object):
     unchanged = ('lang',)
     renamed = dict(message='name', text='content')
     def export(self):
-        self.new_data['owner'] = migrated.location[location_id]
-        jsonrpc(auth_token, 'messagecust.new', **self.new_data)
-        migrated.message['id'] = None
+        if not self.data['message'].startswith('invoice_freetext'):
+            self.new_data['owner'] = migrated.location[location_id]
+            jsonrpc(auth_token, 'messagecust.new', **self.new_data)
+            migrated.message['id'] = None
+        else:
+            q = 'UPDATE invoice_pref SET %(name)s = %(content)s WHERE owner = %(owner)s'
+            name = 'freetext1' if self.data['message'] == 'invoice_freetext1'
+            values = dict(name=self.data['message'][8:], content=self.data['text'], owner=migrated.location[location_id])
+            qexec(cscur, q, values)
 
 class Resource(Object):
     table_name = 'resource'
@@ -272,6 +278,18 @@ class Member(Object):
             long_description = self.new_data['long_description']
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
         self.new_data['state'] = dict(enabled = bool(self.data['active']))
+
+        q = 'SELECT * from user_meta_data where user_id = %(user_id)s'
+        values = dict(user_id = self.id)
+        result = select(spacecur, q, values)
+        if result:
+            meta = result[0]
+            if 'introduced_by' in meta:
+                self.new_data['introduced_by'] = meta.introduced_by
+            if 'postcode' in meta:
+                self.new_data['pincode'] = meta.postcode
+            if 'biz_type' in meta:
+                self.new_data['biz_type'] = meta.biz_type
 
         result = jsonrpc(auth_token, 'member.new', **self.new_data)
         new_member_id = result['result']
