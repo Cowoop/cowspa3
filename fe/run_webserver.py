@@ -11,14 +11,9 @@ from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-static_root = 'pub'
-import be.bootstrap
-import be.apis.user as userlib
-be.bootstrap.start('conf_test')
-import be.apps
-cowspa = be.apps.cowspa
 import commonlib.helpers as helpers
-import be.apis.invoice as invoicelib
+
+static_root = 'pub'
 
 @app.route('/')
 def index():
@@ -51,13 +46,22 @@ def api_dispatch():
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description='Run cowspa webserver.')
+    parser = argparse.ArgumentParser(description='Run cowspa server.')
     parser.add_argument('-d', '--dev', action="store_true", default=False, help='Development mode. Caching turned off')
+    parser.add_argument('-c', '--conf', action="store", default="prod", help='Conf mode. Load conf from conf_<mode>.py')
     args = parser.parse_args()
     if args.dev :
         print('Development mode ON. Caching turned OFF')
     else:
         print('Production mode ON. Caching turned ON')
+
+    import be.bootstrap
+    import be.apis.user as userlib
+    be.bootstrap.start('conf_' + args.conf)
+    import be.apps
+    cowspa = be.apps.cowspa
+    import be.apis.invoice as invoicelib
+
 
     app = SharedDataMiddleware(app, {
             '/': static_root,
