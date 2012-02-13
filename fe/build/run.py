@@ -47,7 +47,7 @@ buildroot = 'build'
 contribroot = 'fe/contrib'
 srcroot = 'fe/src'
 contribs = ['js', 'css', 'images']
-roles = ['host']
+roles = ['admin', 'director', 'host', 'member', 'new']
 themeroot = static.themeroot
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
@@ -79,7 +79,7 @@ class BuilderBase(object):
         self.page = page
         self.path = path
     def gen_path_combinations(self):
-        build_data = dict(theme=theme_codes, lang=lang_codes)
+        build_data = dict(role=roles, theme=theme_codes, lang=lang_codes)
         pathvars = [var[2:-2] for var in self.path.split(os.path.sep) if var.startswith('%')]
         combinations = itertools.product(*([{var: v} for v in build_data[var]] for var in pathvars))
         return combinations
@@ -106,7 +106,7 @@ class JSBuilder(BuilderBase):
     """
     """
 
-prefix = '%(lang)s/%(theme)s/'
+prefix = '%(lang)s/%(role)s/%(theme)s/'
 
 pages = [PageBuilder(rootpages.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(memberpages.MemberCreate, prefix + 'member/new'),

@@ -92,6 +92,11 @@ def list_activities_by_roles(roles, limit=15):
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if len(a_ids)!=0 else []
 
 def find_activities(member_ids=[], roles=[], limit=15):
+    roles = []
+    for role in roles:
+        ctx = role['context']
+        for name in role['roles']:
+            roles.append((ctx, name))
     clause = ''
     if member_ids:
         clause += "(member_id = %s) "

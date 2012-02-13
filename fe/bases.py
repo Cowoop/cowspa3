@@ -6,7 +6,7 @@ tf = sphc.TagFactory()
 
 webshims_base = '/js/webshims-1.8.7'
 webshims = [webshims_base + "/extras/modernizr-custom.js", webshims_base + "/polyfiller.js"]
-ctxpath = '/${lang}/${theme}'
+ctxpath = '/${lang}/${role}/${theme}'
 
 class CSPage(sphc.more.HTML5Page):
     jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js',
@@ -99,9 +99,9 @@ class CSAuthedPage(CSPage):
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
         ('Members', '#', members_opt),
-        ('Bookings', '/${lang}/${theme}/booking/week', []),
+        ('Bookings', ctxpath + '/booking/week', []),
         ('Invoicing', '#', invoicing_opt),
-        ('Resources', '/${lang}/${theme}/resources', []),
+        ('Resources', ctxpath + '/resources', []),
         ('Admin', '#', locations_opt),
         ('Reports', '#', []),
         ]
@@ -130,11 +130,12 @@ class CSAuthedPage(CSPage):
         menu = tf.DIV(id="ctx-menu", Class="hidden")
         menu.opts = tf.DIV(id="ctx-opts")
         menu.more = tf.DIV(id="ctx-more")
-        menu.more.manage = tf.A("Manage", href="/${lang}/${theme}/bizplaces#my-locations", Class='ctx-more-item')
-        menu.more.manage = tf.A("Explore", href="/${lang}/${theme}/bizplaces#all-locations", Class='ctx-more-item')
-        menu.more.new = tf.A("+ New " + __("Coworking Place"), href="/${lang}/${theme}/bizplace/new", Class='ctx-more-item')
+        menu.more.manage = tf.A("Manage", href=ctxpath + "/bizplaces#my-locations", Class='ctx-more-item')
+        menu.more.manage = tf.A("Explore", href=ctxpath + "/bizplaces#all-locations", Class='ctx-more-item')
+        menu.more.new = tf.A("+ New " + __("Coworking Place"), href=ctxpath + "/bizplace/new", Class='ctx-more-item')
         menu.menu_tmpl = sphc.more.jq_tmpl("ctx-tmpl")
-        menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
+        #menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
+        menu.menu_tmpl.opt = tf.DIV("${label}", id="ctx_${id}", Class="ctx-opt")
         switcher.menu = menu
 
         return switcher

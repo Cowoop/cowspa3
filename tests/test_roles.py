@@ -17,9 +17,9 @@ def test_assign_role():
     role_data = get_role_data()
     rolelib.new_roles(**role_data)
     for role_dict in rolelib.get_roles(role_data['user_id']):
-        if role_dict['id'] == role_data['context']:
+        if role_dict['context'] == role_data['context']:
             break
-    assert set(role_data['roles']).issubset(role_dict['roles']) == True
+    assert set(role_data['roles']).issubset([role['role'] for role in role_dict['roles']]) == True
     env.context.pgcursor.connection.commit()
 
 def test_reassign_role():

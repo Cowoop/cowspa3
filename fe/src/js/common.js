@@ -2,7 +2,7 @@
 var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx"), 10):null;
 var current_userid = parseInt($.cookie("user_id"), 10);
 var member_name = $.cookie("member_name");
-var basepath = window.location.pathname.split('/').slice(0,3).join('/');
+var basepath = window.location.pathname.split('/').slice(0,4).join('/');
 var locale_data = {
                     currency_symbol:'$',
                     decimal_sep:'.',
@@ -30,15 +30,12 @@ function delete_cookie(cookie_name) {
     return $.cookie(cookie_name, null, cookie_opts);
 };
 function format_currency(num) {
-
-    return accounting.formatMoney(num,
-              {
-                symbol: locale_data.currency_symbol,
-                thousand: locale_data.group_sep,
-                decimal:locale_data.decimal_sep
-              }
-           );
-}
+    return accounting.formatMoney(num, {
+        symbol: locale_data.currency_symbol,
+        thousand: locale_data.group_sep,
+        decimal:locale_data.decimal_sep
+    });
+};
 //
 
 $.jsonRPC.setup({
@@ -57,9 +54,6 @@ function set_locale(ctx) {
 };
 
 function set_context(ctx) {
-    function error() {
-        alert('Error setting locale data');
-    }
     current_ctx = ctx;
     if (ctx == null) {
         delete_cookie("current_ctx");
@@ -177,20 +171,20 @@ function on_roles_list(resp) {
     else if(result.length == 1) {
         ctx_label = result[0].label;
         $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
-        set_context(result[0].id);
+        set_context(result[0].context);
         set_locale(current_ctx);
     }
     else {
         $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         if (current_ctx) {
             var valid_bizplaces = [];
-            for (idx in result) { valid_bizplaces.push(result[idx].id); };
+            for (idx in result) { valid_bizplaces.push(result[idx].context); };
             if (valid_bizplaces.indexOf(current_ctx) == -1) {
                 var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
                 set_context(ctx);
             };
             for (idx in result) {
-                if (result[idx].id == current_ctx) {
+                if (result[idx].context == current_ctx) {
                     ctx_label = result[idx].label;
                     set_context(current_ctx);
                     break;
@@ -198,9 +192,11 @@ function on_roles_list(resp) {
             }; 
         } else {
             ctx_label = result[0].label;
-            set_context(result[0].id);
+            set_context(result[0].context);
         };
-        set_locale(current_ctx);
+        if(current_ctx) {
+            set_locale(current_ctx);
+        };
     };
     $('#ctx-switcher-title').text(ctx_label + " ▼");
     $('#ctx-switcher-title').click( function () {
@@ -223,17 +219,6 @@ $(document).click( function (e) {
     };
 });
 
-function on_roles(roles) {}; // HOOK
-
-function error(){ };
-
-// TODO : Update role_filter when additional roles like accountant are added
-
-params = {'user_id':$.cookie('user_id'), 'role_filter':['director','host']};
-if(params['user_id']) {
-    function error() {};
-    jsonrpc('roles.list', params, on_roles_list, error); 
-};
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
