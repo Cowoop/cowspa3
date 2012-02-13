@@ -66,7 +66,7 @@ def set_context(id_or_username):
         user = user_store.get(id_or_username)
     env.context.user_id = user.id
     roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['context',  'role'], False)
-    env.context.roles = roles
+    env.context.roles = rolelib.get_roles(user.id)
     try:
         env.context.name = member_store.get(env.context.user_id, fields=['name'])
     except:

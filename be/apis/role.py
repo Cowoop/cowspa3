@@ -65,14 +65,20 @@ def get_roles_in_context(user_id, context):
 def get_roles(user_id, role_filter=[]):
     """
     role_filter: eg. ['host', 'director']
-    returns [{id: 1, label: '<name>', roles: ['<role1>', '<role2>']}, ...]
+    returns [{id: 1, label: '<name>', roles: [{role:'<role1>', label:<label1>, order: <int>}, {role:'<role2>', ..}, ...], ...]
+    order: <int> higher the order value lower are the permissions to that role
     """
     ctx_roles = collections.defaultdict(list)
     # TODO : roles should be list dicts containing role names and role labels
     for (role, context) in dbaccess.userrole_store.get_by(dict(user_id=user_id), ['role', 'context'], False):
-        if not role_filter or role in role_filter: ctx_roles[context].append(role)
+        if not role_filter or role in role_filter:
+            label = roledefs.all_roles[role].label
+            order = roledefs.ordered_roles.index(role)
+            ctx_roles[context].append(dict(label=label, role=role, order=order))
     sorter = lambda d: d['label']
-    return sorted((dict(label=dbaccess.oid2name(ctx), id=ctx, roles=roles) for ctx, roles in ctx_roles.items()), key=sorter)
+    role_sorter = lambda d: d['order']
+    return sorted((dict(label=dbaccess.oid2name(ctx), context=ctx, roles=sorted(roles, key=role_sorter)) \
+        for ctx, roles in ctx_roles.items()), key=sorter)
 
 def get_permissions(user_id):
     return dbaccess.userpermission_store.get_by(dict(user_id=user_id), ['context', 'permission'], hashrows=False)

@@ -76,10 +76,10 @@ class List(BasePage):
         my_loc_tmpl = sphc.more.jq_tmpl('my_loc_tmpl')
         my_loc_tmpl.box = tf.DIV(Class='location-box')
         my_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
-        my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', href='#/${id}', Class='location-title')
+        my_loc_tmpl.box.info.link = tf.A("${label}", id='edit-link_${id}', href='#/${context}', Class='location-title')
         my_loc_tmpl.box.info.my_role = tf.DIV(Class='location-description')
         my_loc_tmpl.box.info.my_role.label = tf.LABEL("My Role(s) : ")
-        my_loc_tmpl.box.info.my_role.role = tf.LABEL("${roles}")
+        my_loc_tmpl.box.info.my_role.role = tf.LABEL("{{each(i, role) roles}} ${roles[i].role} {{/each}}")
 
         loc_buttons = tf.DIV(Class="buttons")
         loc_buttons.tariff_btn = tf.BUTTON("Tariff", id='myloc_tariff_btn-${id}', Class='myloc_tariff-btn', type='button')

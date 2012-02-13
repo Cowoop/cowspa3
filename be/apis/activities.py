@@ -1,5 +1,6 @@
 import datetime
 import be.repository.access as dbaccess
+import be.apis.role as rolelib
 
 import events
 
@@ -38,7 +39,7 @@ def get_latest(for_member=None, limit=30):
     if for_member == env.context.user_id:
         roles = env.context.roles
     else:
-        roles = [row[0] for row in userrole_store.get_by(crit=dict(user_id=for_member), fields=['role'], hashrows=False)]
+        roles = rolelib.get_roles(for_member)
     activities = dbaccess.find_activities([for_member], roles)
     messages = []
     for act in activities:

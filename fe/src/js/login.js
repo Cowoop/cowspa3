@@ -1,5 +1,33 @@
+var ordered_roles = ['admin', 'director', 'host', 'member', 'new']
 var login_form = $('#login-form');
 var signup_form = $('#signup-form');
+
+function construct_nextpage(result) {
+    var lang = result.pref.language.split('_')[0];
+    var role = '';
+    if (result.length == 0) {
+        role = 'new';
+    } else {
+        if (current_ctx==null) {
+            current_ctx = result.roles[0].context;
+            role = result.roles[0].roles[0].role;
+        } else {
+            var context_matched = false;
+            for (idx in result.roles) {
+                if (result.roles[idx].context === current_ctx) {
+                    role = result.roles[idx].roles[0].role;
+                    context_matched = true;
+                    break;
+                };
+            };
+            if(!context_matched) {
+                current_ctx = result.roles[0].context;
+                role = result.roles[0].roles[0].role;
+            };
+        };
+    };
+    return "/" + lang + "/" + role + "/" + result.pref.theme + "/dashboard";
+};
 
 function login() {
     var action_status = $('#login-form .action-status');
@@ -14,13 +42,8 @@ function login() {
         set_cookie('user_id', resp.result.id)
         set_cookie('roles', resp.result.roles)
         set_member_name(resp.result.name);
-        var lang = resp.result.pref.language.split('_')[0];
-        // Following is hacked temporarily till we support build for more langs
-        if ($.inArray(lang, ['en','de']) == -1 ) {
-            lang = 'en'; // Build for this lang not available, return English as default
-        }
-//        var lang = resp.result.pref.language
-        window.location = "/" + lang + "/" + resp.result.pref.theme + "/dashboard";
+        var nextpage = construct_nextpage(resp.result);
+        window.location = nextpage;
     };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');

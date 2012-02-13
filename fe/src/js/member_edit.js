@@ -73,7 +73,7 @@ function act_on_route(id) {
         is_get_thismember_billingpref_done = false;
         select_member_box.hide();
         var params = {'member_id': id, 'bizplace_ids': [parseInt(current_ctx, 10)]};
-        jsonrpc('member.profile', params, on_member_profile, error);
+        jsonrpc('member.profile', params, on_member_profile);
     };
 };
 

@@ -50,8 +50,8 @@ class BizplaceCollection:
             owner = env.context.user_id
             roles = env.context.roles
         else:
-            roles = dbaccess.userrole_store.get_by(dict(user_id=owner), ['context',  'role'], False)
-        my_bizplace_ids = set(context for context, role in roles if context)
+            roles = rolelib.get_roles(owner)
+        my_bizplace_ids = set(role.context for role in roles if role.context)
         result = dbaccess.list_bizplaces(my_bizplace_ids)
         #DB returns country numeric code, which needs to be replaced by label
         #before it is returned
@@ -59,7 +59,6 @@ class BizplaceCollection:
             rec['country'] = static.countries_map[rec['country']]
 
         return result
-
 
     def all(self):
         """

@@ -63,6 +63,7 @@ director.permissions = [
     ]
 
 
+ordered_roles = ("admin", "director", "host", "member")
 all_roles = dict((v.name, v) for v in globals().values() if isinstance(v, Role))
 all_permissions = dict((v.name, v) for v in globals().values() if isinstance(v, Permission))
 
