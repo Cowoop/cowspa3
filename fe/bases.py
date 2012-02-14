@@ -135,7 +135,7 @@ class CSAuthedPage(CSPage):
         menu.more.new = tf.A("+ New " + __("Coworking Place"), href=ctxpath + "/bizplace/new", Class='ctx-more-item')
         menu.menu_tmpl = sphc.more.jq_tmpl("ctx-tmpl")
         #menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
-        menu.menu_tmpl.opt = tf.DIV("${label}", id="ctx_${id}", Class="ctx-opt")
+        menu.menu_tmpl.opt = tf.DIV("${label}", id="ctx_${context}", Class="ctx-opt")
         switcher.menu = menu
 
         return switcher
