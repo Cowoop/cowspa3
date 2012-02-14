@@ -13,6 +13,7 @@ Javascript
 - webshims
     Download webshims
     copy js-webshim/minified/ to fe/contrib/webshims-<version>
+- jquery TableTools http://www.datatables.net/download/build/TableTools.min.js
 
 Images
 ======
