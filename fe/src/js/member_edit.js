@@ -515,7 +515,7 @@ $("#calculate_cost-btn").click(function(){
         'ends' : fdate2iso($("#end_time").val())
     };
     function on_calculate_cost_success(resp){
-        $("#cost").val(resp['result']);
+        $("#cost").val(resp.result.calculated_cost);
         $("#submit-usage").removeAttr("disabled"); 
         $("#add-usage-form .action-status").text("").removeClass('status-fail status-success');
     };
@@ -673,7 +673,7 @@ $("#recalculate_cost-btn").click(function(){
         'ends' : fdate2iso($("#res_end_time").val())
     };
     function on_calculate_cost_success(resp){
-       $("#res_cost").val(resp['result']);
+       $("#res_cost").val(resp.result.calculated_cost);
        $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
     };
     function on_calculate_cost_error(){
