@@ -3,6 +3,7 @@ import fe.bases
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
+ctxpath = fe.bases.ctxpath
 
 def get_tariff_form(create_form=True):
     form  = sphc.more.Form(classes=['hform'], id="tariff_form", style="display:none")
@@ -31,7 +32,7 @@ class CreateTariff(BasePage):
 class ListTariff(BasePage):
     title = 'Tariffs'
     current_nav = 'Admin'
-    content_menu = [tf.A('Create New +', href="/${lang}/${theme}/tariff/new", Class="item big-button")]
+    content_menu = [tf.A('Create New +', href=ctxpath + "/tariff/new", Class="item big-button")]
     def content(self):
         container = tf.DIV()
 
