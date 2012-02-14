@@ -22,6 +22,8 @@ class UsageCollection:
             calculated_cost = result['calculated_cost']
             total = result['total']
             tax_dict = result['taxes']
+            if cost is None:
+                cost = calculated_cost
 
         pricing = pricinglib.pricings.get(member, resource_id, start_time) if resource_id else None
         data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing)
@@ -93,19 +95,21 @@ class UsageResource:
         usage = self.info(usage_id)
         recalculate = recalculate and not usage.cancelled_against
 
-        usage_data = dict(member_id=mod_data.get('member', usage.member),
-            resource_id=mod_data.get('resource_id', usage.resource_id),
-            resource_owner=mod_data.get('resource_owner', usage.resource_owner),
-            quantity=mod_data.get('quantity', usage.quantity),
-            starts=mod_data.get('start_time', usage.start_time),
-            ends=mod_data.get('end_time', usage.end_time),
-            cost=mod_data.get('cost', usage.cost))
         if recalculate:
+            usage_data = dict(member_id=mod_data.get('member', usage.member),
+                resource_id=mod_data.get('resource_id', usage.resource_id),
+                resource_owner=mod_data.get('resource_owner', usage.resource_owner),
+                quantity=mod_data.get('quantity', usage.quantity),
+                starts=mod_data.get('start_time', usage.start_time),
+                ends=mod_data.get('end_time', usage.end_time) )
             result = pricinglib.calculate_cost(return_taxes=True, **usage_data)
             mod_data.update(calculated_cost = result['calculated_cost'],
                 total = result['total'],
                 tax_dict = result['taxes'],
                 pricing = pricinglib.pricings.get(usage.member, usage.resource_id, usage.start_time) if usage.resource_id else None)
+
+        if not cost in mod_data and recalculate and usage.cost == usage.calculated_cost:
+            mod_data['cost'] = mod_data['calculated_cost']
 
         usage_store.update(usage_id, **mod_data)
 

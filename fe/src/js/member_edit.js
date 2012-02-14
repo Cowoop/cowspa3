@@ -743,7 +743,7 @@ function get_invoice_tab_data(){
             "aaSorting": [[ 0, "desc" ]],
             "aoColumns": [
                 { "sTitle": "Number" },
-                { "sTitle": "Cost",
+                { "sTitle": "Amount",
                     "fnRender": function(obj) {
                             var sReturn = format_currency(obj.aData[ obj.iDataColumn ]);
                             return sReturn;
