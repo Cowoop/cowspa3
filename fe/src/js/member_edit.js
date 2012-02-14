@@ -840,8 +840,7 @@ function get_invoice_tab_data(){
     jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
 };
 $("#new_invoice-btn").click(function(){
-    var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme;
-    window.location = base_url + '/invoices/new/#/invoicee/' + thismember_id;
+    window.location = basepath + '/invoices/new/#/invoicee/' + thismember_id;
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Invoicesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
