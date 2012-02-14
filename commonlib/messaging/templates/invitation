@@ -1,8 +1,8 @@
 author = ('The Hub Ops activation service', 'no-reply@the-hub.net')
 subject = "The Hub Ops | Activation Key"
-plain = """Hello {{ first_name }},
+plain = """Hello ${first_name},
 
-{{ inviter_name }} has invited you to join The Hub Ops platform.
-Please activate your account by visiting {{ activation_url }} .
+${inviter_name} has invited you to join The Hub Ops platform.
+Please activate your account by visiting ${activation_url} .
 
 Thank you."""
