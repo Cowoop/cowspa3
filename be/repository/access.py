@@ -164,11 +164,11 @@ def add_membership(member_id, plan_id):
     membership_store.add(**data)
     return True
 
-def find_bizplace_members(bizplace_ids, fields=['member', 'name']):
+def find_bizplace_members(bizplace_ids, fields=['member', 'name'], hashrows=True):
     bizplace_ids = tuple(bizplace_ids)
     clause = 'member IN (SELECT member_id FROM membership WHERE bizplace_id IN %s)'
     clause_values = (bizplace_ids,)
-    return memberprofile_store.get_by_clause(clause, clause_values, fields)
+    return member_store.get_by_clause(clause, clause_values, fields, hashrows)
 
 tariff_info_fields = ['id', 'name', 'owner', 'short_description']
 
