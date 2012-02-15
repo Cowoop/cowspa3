@@ -27,6 +27,12 @@ def search(entity):
     data = cowspa.dispatch(auth_token, params)
     return helpers.jsonify(data['result'])
 
+@app.route('/swf/<file_name>', methods=['GET', 'POST'])
+def get_swf(file_name):
+    path = "fe/contrib/swf/%s.swf" % (file_name)
+    content_type = "application/swf"
+    return file(path).read(), 200, {'Content-Type': content_type +'; charset=utf-8', 'Content-Disposition': 'filename=copy_cvs_xls_pdf.swf'}
+
 @app.route('/invoice/<oid>/<format>', methods=['GET', 'POST'])
 def get_invoice(oid, format):
     path = "%s/%s.%s" % (invoicelib.invoice_storage_dir, oid, format)
