@@ -5,7 +5,7 @@ var signup_form = $('#signup-form');
 function construct_nextpage(result) {
     var lang = result.pref.language.split('_')[0];
     var role = '';
-    if (result.length == 0) {
+    if (result.roles.length == 0) {
         role = 'new';
     } else {
         if (current_ctx==null) {
