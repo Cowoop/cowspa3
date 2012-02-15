@@ -515,7 +515,7 @@ $("#calculate_cost-btn").click(function(){
         'ends' : fdate2iso($("#end_time").val())
     };
     function on_calculate_cost_success(resp){
-        $("#cost").val(resp['result']);
+        $("#cost").val(resp.result.calculated_cost);
         $("#submit-usage").removeAttr("disabled"); 
         $("#add-usage-form .action-status").text("").removeClass('status-fail status-success');
     };
@@ -673,7 +673,7 @@ $("#recalculate_cost-btn").click(function(){
         'ends' : fdate2iso($("#res_end_time").val())
     };
     function on_calculate_cost_success(resp){
-       $("#res_cost").val(resp['result']);
+       $("#res_cost").val(resp.result.calculated_cost);
        $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
     };
     function on_calculate_cost_error(){
@@ -743,7 +743,7 @@ function get_invoice_tab_data(){
             "aaSorting": [[ 0, "desc" ]],
             "aoColumns": [
                 { "sTitle": "Number" },
-                { "sTitle": "Cost",
+                { "sTitle": "Amount",
                     "fnRender": function(obj) {
                             var sReturn = format_currency(obj.aData[ obj.iDataColumn ]);
                             return sReturn;
@@ -840,8 +840,7 @@ function get_invoice_tab_data(){
     jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
 };
 $("#new_invoice-btn").click(function(){
-    var base_url = "/" + thismember.preferences.language + "/" + thismember.preferences.theme;
-    window.location = base_url + '/invoices/new/#/invoicee/' + thismember_id;
+    window.location = basepath + '/invoices/new/#/invoicee/' + thismember_id;
 });
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Invoicesxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

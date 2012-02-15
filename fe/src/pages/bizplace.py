@@ -4,6 +4,7 @@ import commonlib.shared.static as data_lists
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
+ctxpath = fe.bases.ctxpath
 
 def get_location_form():
     form = sphc.more.Form(id='bizplace_form', classes=['hform'])
@@ -98,7 +99,7 @@ class List(BasePage):
 
         cancel = tf.DIV(Class="edit-link-box")
         cancel.link = tf.A("List of " + __("Coworking Places"), id='list-locations-link',
-                href='/${lang}/${theme}/bizplaces/')
+                href=ctxpath + '/bizplaces/')
         fields.append(cancel)
 
         form = get_location_form()
@@ -156,7 +157,7 @@ class List(BasePage):
         tariff_container = tf.DIV(id='tariff_container')
         tariff_container.all_loc = tf.DIV(Class="edit-link-box")
         tariff_container.all_loc.link = tf.A("List of " + __("coworking places"), id='all-list-locations-link',
-                href='/${lang}/${theme}/bizplaces#all-locations')
+                href=ctxpath + '/bizplaces#all-locations')
         tariff_container.clear = sphc.more.clear()
         tariff_container.tariff_box = tf.DIV(id='tariff-box')
         tariff_container.tariff_box.resource = tf.DIV(id='resource_column')

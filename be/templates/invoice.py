@@ -24,8 +24,8 @@ class Template(sphc.more.HTML5Page):
         taxes_text = 'Inclusive of Taxes' if data.invoicepref.tax_included else 'Exclusive of Taxes'
         total_cost = sum([usage.cost for usage in data.usages])
         total_tax = data.invoice.total - total_cost
-        date = date.invoice.sent or datetime.datetime.now()
-        due_date = date + datetime.timedelta(invoice.location.invoice_duedate)
+        date = data.invoice.sent or datetime.datetime.now()
+        due_date = date + datetime.timedelta(data.invoicepref.due_date)
 
         def show_currency(num):
             return str(format_currency(num, currency, locale=locale))
