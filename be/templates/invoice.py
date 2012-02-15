@@ -59,8 +59,11 @@ class Template(sphc.more.HTML5Page):
 
         container.clear = sphc.more.clear()
 
+        if data.invoice.notice:
+            container.notice = tf.DIV(data.invoice.notice, Class="pre-wrap full box-bordered")
+
         if data.invoicepref.freetext1:
-            container.notice = tf.DIV(data.invoicepref.freetext1, Class="pre-wrap full box-bordered")
+            container.freetext1 = tf.DIV(data.invoicepref.freetext1, Class="pre-wrap full box-bordered")
 
         usage_summary = tf.DIV()
         usages = tf.TABLE(id='usages_summary', Class="stripped")
