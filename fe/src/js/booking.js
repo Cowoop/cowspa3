@@ -60,8 +60,6 @@ function get_bookings(start, end, bizplace_id) {
 function mark_slot(usage) {
     var booking_id = usage.id;
     var start_time = iso2date(usage.start_time);
-    console.log(usage.start_time);
-    console.log(start_time);
     var end_time = iso2date(usage.end_time);
     for (i in shown_dates) {
         if (shown_dates[i] > start_time) {
@@ -170,12 +168,14 @@ function open_booking_form(resource_name, new_booking_date, start_time, end_time
 };
 
 function open_edit_booking_form(booking) {
+    new_booking_date = new_booking_date || iso2date(booking.start_time);
     $('#for-member').val((booking.member).toString());
     $('#booking-id').val((booking.id).toString());
     $('#for-member-search').val(booking.member_name);
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', (new_booking_date)));
     var booking_duration = (new Date(booking.end_time)) - (new Date(booking.start_time));
-    var upper_slots_time = booking_duration / 2;
+    var min15 = 15*60*1000;
+    var upper_slots_time = (Math.round((booking_duration / 2)/min15) * min15) - min15;
     if (booking_action == 'drop') {
         var dropped_slot_time = (dropped_slot.split(':')[0] * 60 * 60 * 1000) + (dropped_slot.split(':')[1] * 60 * 1000);
         if (dropped_slot_time > upper_slots_time) {
@@ -250,7 +250,7 @@ $('#for-member-search').autocomplete({
     }
 });
 
-function on_new_booking() {
+function on_new_booking(resp) {
     $('#new-booking').dialog('close');
     refresh_cal();
 };

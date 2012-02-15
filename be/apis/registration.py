@@ -38,9 +38,9 @@ def invite(first_name, last_name, email):
     activation_url = _new(first_name, last_name, email)
     data = dict(first_name=first_name, last_name=last_name, email=email, inviter_name=env.context.name, inviter_id=env.context.user_id, \
         activation_url=activation_url)
-    mail_data = messages.invitation.build(data)
-    mail_data['to'] = (first_name, email)
-    env.mailer.send(**mail_data)
+    invitation = messages.Invitation(data, overrides=dict(to=(first_name, email)))
+    invitation.build()
+    invitation.email()
     activitylib.add('member_management', 'member_invited', data)
 
 def info(key_or_id):

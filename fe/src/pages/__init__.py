@@ -5,6 +5,7 @@ import fe.src.forms as forms
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
+ctxpath = fe.bases.ctxpath
 
 class Login(fe.bases.CSAnonPage):
     title = "Cowspa | Login"
@@ -80,7 +81,7 @@ class Dashboard(BasePage):
 
     def sidebar(self):
         content = tf.DIV(tf.DIV("Getting started", Class="title"))
-        content.action = [tf.BR(), tf.A("Add your " + __("Coworking Place"), href="/${lang}/${theme}/bizplace/new", Class="big-button")]
+        content.action = [tf.BR(), tf.A("Add your " + __("Coworking Place"), href=ctxpath+"/bizplace/new", Class="big-button")]
         return content
 
 class GettingStarted(BasePage):

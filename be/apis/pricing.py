@@ -201,6 +201,7 @@ class InitialCost(costlib.Rule):
         return costlib.flags.proceed
 
 def apply_taxes(resource_id, resource_owner, cost):
+    cost = float(cost)
     tax_info = resource_lib.resource_resource.get_taxinfo(resource_id, resource_owner)
     tax_included = tax_info['tax_included']
     taxes = tax_info['taxes'] if tax_info['taxes'] else {}

@@ -4,6 +4,7 @@ import fe.bases
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
+ctxpath = fe.bases.ctxpath
 
 min2str = lambda m: "%02d:%02d" % ((m / 60), (m % 60))
 min15 = lambda day, minute: tf.DIV(Class='cal-min15 slot-available', id="slot_%s-%s.%s" % (day, min2str(minute), min2str(minute+15)))
@@ -45,11 +46,10 @@ def booking_form():
 class BookingPage(BasePage):
     current_nav = 'Bookings'
     title = 'Bookings'
-    content_menu = [tf.A('+ New', href="/${lang}/${theme}/booking/new", Class="item"),
+    content_menu = [tf.A('+ New', href=ctxpath + "/booking/new", Class="item"),
         tf.C('|', Class="item-w"),
         tf.C('Agenda', Class="item"),
-        tf.A("Week", href="/${lang}/${theme}/booking/week", Class="item"),
-        #tf.A("Month", href="/${lang}/${theme}/booking/month", Class="item")
+        tf.A("Week", href=ctxpath + "/booking/week", Class="item"),
         ]
 
 class Booking(BookingPage):

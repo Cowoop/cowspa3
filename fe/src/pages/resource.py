@@ -7,6 +7,7 @@ import commonlib.shared.static as static
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
+ctxpath = fe.bases.ctxpath
 
 class ResourceCreate(BasePage):
     current_nav = 'Resources'
@@ -37,7 +38,7 @@ class ResourceCreate(BasePage):
 class ResourceManage(BasePage):
     current_nav = 'Resources'
     title = 'Manage resources'
-    content_menu = [tf.A('+ Create New', href="/${lang}/${theme}/resource/new", Class="item")]
+    content_menu = [tf.A('+ Create New', href=ctxpath + "/resource/new", Class="item")]
     def content(self):
         container = tf.DIV()
 
@@ -148,7 +149,7 @@ class ResourceManage(BasePage):
 
         taxation.taxes = taxes.build()
         taxation.template = tax_template
-        
+
         container.list_container = tf.DIV(id="list-container", Class="hidden")
         container.list_container.types = types
         container.list_container.filters = filters
