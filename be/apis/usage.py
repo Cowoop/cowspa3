@@ -108,7 +108,7 @@ class UsageResource:
                 tax_dict = result['taxes'],
                 pricing = pricinglib.pricings.get(usage.member, usage.resource_id, usage.start_time) if usage.resource_id else None)
 
-        if not cost in mod_data and recalculate and usage.cost == usage.calculated_cost:
+        if not 'cost' in mod_data and recalculate and usage.cost == usage.calculated_cost:
             mod_data['cost'] = mod_data['calculated_cost']
 
         usage_store.update(usage_id, **mod_data)
