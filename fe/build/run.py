@@ -110,6 +110,7 @@ prefix = '%(lang)s/%(role)s/%(theme)s/'
 
 pages = [PageBuilder(rootpages.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(memberpages.MemberCreate, prefix + 'member/new'),
+         PageBuilder(memberpages.ListMember, prefix + 'member/list'),
          PageBuilder(rootpages.Login, 'login'),
          PageBuilder(rootpages.Activation, 'activate'),
          PageBuilder(bizplacepages.Create, prefix + 'bizplace/new'),

@@ -358,3 +358,13 @@ class EditProfile(BasePage):
 
         return container
 
+class ListMember(BasePage):
+    current_nav = 'Members'
+    title = 'List'
+    content_title = ''
+    script = "fe/src/js/member_list.js"
+
+    def content(self):
+        container = tf.DIV()
+        container.member_table = tf.TABLE(id="member_table")
+        return container

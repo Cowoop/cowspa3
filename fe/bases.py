@@ -12,8 +12,8 @@ class CSPage(sphc.more.HTML5Page):
     jslibs = ['/js/json2.js', '/js/jquery.min.js', '/js/jquery-ui.min.js',
             '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js',
             '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/moment.min.js',
-            '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js',
-            '/js/jquery.dataTables.min.js', '/js/accounting.js'] + webshims + ['/js/SS.min.js', '/js/common.js']
+            '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/jquery.dataTables.min.js', '/js/ZeroClipboard.js',
+            '/js/TableTools.min.js', '/js/accounting.js'] + webshims + ['/js/SS.min.js', '/js/common.js']
     # loading jq locally may be we should consider do that only when remote fails
     bottom_links = [('Twitter', 'http://twitter.com/cowspa'), ('API', '#API')]
 
@@ -47,7 +47,7 @@ class CSAnonPage(CSPage):
 members_opt = [
     #tf.INPUT(type="search", id= 'search', placeholder='Search..'),
     tf.A("New", href=ctxpath + '/member/new'),
-    tf.A("Export", href='#' + ctxpath + "/member/export")]
+    tf.A("List", href=ctxpath + "/member/list")]
 
 booking_opt = [
     #tf.INPUT(type="search", placeholder='Search..'),
