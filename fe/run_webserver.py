@@ -14,10 +14,44 @@ app.secret_key = os.urandom(24)
 import commonlib.helpers as helpers
 
 static_root = 'pub'
+landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='dashboard', admin='dashboard')
+
+def construct_home_url(auth_token, context):
+    home_url = 'login'
+    if auth_token:
+        json = dict(method='login', id=1, jsonrpc="2.0", params=dict(username=None, password=None, auth_token=auth_token))
+        data = cowspa.dispatch(auth_token, json)
+        if 'result' in data:
+            roles = data['result']['roles']
+            pref = data['result']['pref']
+            no_roles = len(roles)
+            if no_roles == 0:
+                rolename = 'new'
+            else:
+                for role in roles:
+                    if role['context'] == context:
+                        rolename = role['roles'][0]['role']
+                        break
+                else:
+                    rolename = roles[0]['roles'][0]['role']
+                    context = roles[0]['context']
+
+            home_url = '%(lang)s/%(rolename)s/%(theme)s/%(page)s' % \
+                dict(rolename=rolename, theme=pref.theme, lang='en', page=landing_pages[rolename])
+
+    return home_url, context
 
 @app.route('/')
 def index():
-    return redirect('login')
+    auth_token = request.cookies.get('authcookie')
+    context = int(request.cookies.get('current_ctx', 0))
+    next_url, context = construct_home_url(auth_token, context)
+    response = redirect(next_url)
+    if context is not None:
+        response.set_cookie('current_ctx',value=context)
+        response.set_cookie('user_id', value=env.context.user_id)
+        response.set_cookie('roles', value=env.context.roles)
+    return response
 
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
