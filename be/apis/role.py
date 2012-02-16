@@ -62,15 +62,21 @@ def get_roles_in_context(user_id, context):
     """
     return tuple(row[0] for row in dbaccess.userrole_store.get_by(dict(user_id=user_id, context=context), ['role'], False))
 
-def get_roles(user_id, role_filter=[]):
+def get_roles(user_id=None, role_filter=[]):
     """
     role_filter: eg. ['host', 'director']
     returns [{id: 1, label: '<name>', roles: [{role:'<role1>', label:<label1>, order: <int>}, {role:'<role2>', ..}, ...], ...]
     order: <int> higher the order value lower are the permissions to that role
     """
+    if user_id is None:
+        user_id = env.context.user_id
     ctx_roles = collections.defaultdict(list)
     # TODO : roles should be list dicts containing role names and role labels
-    for (role, context) in dbaccess.userrole_store.get_by(dict(user_id=user_id), ['role', 'context'], False):
+    memberships = dbaccess.get_member_current_memberships(user_id)
+    member_roles = [('member', membership.bizplace_id) for membership in memberships]
+    team_roles = dbaccess.userrole_store.get_by(dict(user_id=user_id), ['role', 'context'], False)
+    all_roles = team_roles + member_roles
+    for (role, context) in all_roles:
         if not role_filter or role in role_filter:
             label = roledefs.all_roles[role].label
             order = roledefs.ordered_roles.index(role)
