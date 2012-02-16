@@ -92,13 +92,10 @@ class BuilderBase(object):
 class PageBuilder(BuilderBase):
     def build(self):
         for path_data in self.gen_path_combinations():
-            d = {}
-            for elem in path_data:
-                d.update(elem)
-            path = pathjoin(pubroot, (self.path % d))
+            page_data = dict(d.items()[0] for d in path_data)
+            path = pathjoin(pubroot, (self.path % page_data))
             print("Building page: %s" % path)
-            page = self.page()
-            page_data = d
+            page = self.page(page_data)
             page_data['rroot'] = os.path.sep.join('..' for p in self.path.split(os.path.sep))
             page.write(path, page_data)
 
@@ -107,6 +104,7 @@ class JSBuilder(BuilderBase):
     """
 
 prefix = '%(lang)s/%(role)s/%(theme)s/'
+host_prefix = '%(lang)s/%(role)s/%(theme)s/'
 
 pages = [PageBuilder(rootpages.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(memberpages.MemberCreate, prefix + 'member/new'),
