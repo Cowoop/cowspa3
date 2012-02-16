@@ -93,6 +93,7 @@ host_nav = member_nav + [
 
 class CSAuthedPage(CSPage):
     top_links = [('Profile_Link', ctxpath + ''), ('Logout', '/logout')]
+    member_top_links = [('Logout', '/logout')]
     # 'http://fonts.googleapis.com/css?family=Ubuntu:300,300italic,400,400italic,500,500italic,700,700italic&amp;subset=latin,greek,cyrillic'
     # Ubuntu font link. Better policy would be use Ubuntu only if available. This eliminates one external heavy http req.
     css_links = ['/themes/${theme}/css/main.css']
@@ -112,15 +113,16 @@ class CSAuthedPage(CSPage):
 
     def topbar(self):
         topbar = tf.DIV(Class='topbar')
+        topbar.ctx_menu = self.ctx_switcher()
         #product_name = tf.DIV('c o w s p a', Class='logo')
         links = []
-        for label, link in self.top_links[:-1]:
+        top_links = self.member_top_links if self.data['role'] == 'member' else self.top_links
+        for label, link in top_links[:-1]:
             links.append(tf.A(label, href=link, id=label.lower()))
             links.append(' | ')
-        last_link = self.top_links[-1]
+        last_link = top_links[-1]
         links.append(tf.A(last_link[0], href=last_link[1]))
 
-        topbar.ctx_menu = self.ctx_switcher()
         topbar.links = links
         return topbar
 
@@ -130,9 +132,10 @@ class CSAuthedPage(CSPage):
         menu = tf.DIV(id="ctx-menu", Class="hidden")
         menu.opts = tf.DIV(id="ctx-opts")
         menu.more = tf.DIV(id="ctx-more")
-        menu.more.manage = tf.A("Manage", href=ctxpath + "/bizplaces#my-locations", Class='ctx-more-item')
-        menu.more.manage = tf.A("Explore", href=ctxpath + "/bizplaces#all-locations", Class='ctx-more-item')
-        menu.more.new = tf.A("+ New " + __("Coworking Place"), href=ctxpath + "/bizplace/new", Class='ctx-more-item')
+        if self.data['role'] != 'member':
+            menu.more.manage = tf.A("Manage", href=ctxpath + "/bizplaces#my-locations", Class='ctx-more-item')
+            menu.more.manage = tf.A("Explore", href=ctxpath + "/bizplaces#all-locations", Class='ctx-more-item')
+            menu.more.new = tf.A("+ New " + __("Coworking Place"), href=ctxpath + "/bizplace/new", Class='ctx-more-item')
         menu.menu_tmpl = sphc.more.jq_tmpl("ctx-tmpl")
         #menu.menu_tmpl.opt = tf.DIV("${label} (${roles})", id="ctx_${id}", Class="ctx-opt")
         menu.menu_tmpl.opt = tf.DIV("${label}", id="ctx_${context}", Class="ctx-opt")
@@ -141,7 +144,8 @@ class CSAuthedPage(CSPage):
         return switcher
 
     def nav(self):
-        if not self.nav_menu: return ''
+        if not self.nav_menu or self.data['role'] == 'member':
+            return ''
 
         menu = tf.DIV(Class="menu")
         submenu_container = tf.DIV(Class="submenu-container")
@@ -197,8 +201,9 @@ class CSAuthedPage(CSPage):
         return ''
 
     def search(self):
+        if self.data['role'] == 'member':
+            return ''
         container = tf.DIV()
         container.search_box = tf.DIV(Class="search-box")
         container.search_box.cell = tf.SPAN(tf.INPUT(id="search", type="text"), Class="search-input")
         return container
-
