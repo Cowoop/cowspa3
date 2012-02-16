@@ -204,9 +204,7 @@ option {
     margin: 0.5em;
 }
 
-
-
-a { text-shadow: 1px 0px 2px $other-text-color;
+a { text-shadow: 1px 0px 1px $other-text-color;
     text-decoration: none;
     &:hover { text-decoration: underline; }
 }
@@ -229,7 +227,7 @@ legend {
     @include reverse-colors;
     top: 0; left: 0; right: 0;
     overflow: hidden; // stops generating browser horizontal scrollbar when it's really not required
-    a {text-decoration: none; padding: 1em; color: $other-text-color;}
+    a {padding: 1em; color: $other-text-color;}
 }
 
 .container {
