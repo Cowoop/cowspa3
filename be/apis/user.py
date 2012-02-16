@@ -51,12 +51,17 @@ def session_lookup(token):
         user_id = None
     return user_id
 
-def login(username, password):
-    if authenticate(username, password):
-        auth_token = get_or_create_session(username)
-        set_context(username)
+def login(username, password, auth_token=None):
+    if auth_token:
+        set_context_by_session(auth_token)
         return dict(auth_token=auth_token, \
-            id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
+                id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
+    else:
+        if authenticate(username, password):
+            auth_token = get_or_create_session(username)
+            set_context(username)
+            return dict(auth_token=auth_token, \
+                id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
     raise errors.ErrorWithHint('Authentication failed')
 
 def set_context(id_or_username):
