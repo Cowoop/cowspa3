@@ -3,6 +3,7 @@ import sphc
 import sphc.more
 import commonlib.helpers
 import itertools
+import collections
 import be.repository.access as dbaccess
 from operator import itemgetter
 from babel.numbers import get_currency_symbol, format_currency, format_number
@@ -72,17 +73,23 @@ class Template(sphc.more.HTML5Page):
         usages.header.cell = tf.TH('Description')
         usages.header.cell = tf.TH([('Amount (%s) ' % currency), tf.SPAN(taxes_text, Class='note')])
         usages.header.cell = tf.TH('Taxes (%s)' % currency)
-        for name, group in itertools.groupby(data.usages, itemgetter('resource_name')):
+        sorter = lambda usage: usage.resource_name
+        for name, group in itertools.groupby(sorted(data.usages, key=sorter), itemgetter('resource_name')):
             group = list(group)
             row = tf.TR()
             row.td1 = tf.TD(name)
             row.td2 = tf.TD(format_number(sum([usage.cost for usage in group])))
             row.td3 = tf.TD()
             #row.td3.tax = tf.DIV(format_number(sum(usage.tax_dict['total'] for usage in group)))
+            tax_amount = collections.defaultdict(lambda: 0)
+            tax_level = {}
             for usage in group:
                 breakdown = usage.tax_dict['breakdown']
                 for name, level, amount in breakdown:
-                    row.td3.taxline = tf.DIV('%s %s%%: %s' % (name, level, format_number(amount)))
+                    tax_amount[name] += amount
+                    tax_level[name] = level
+            for (name, amount) in tax_amount.items():
+                row.td3.taxline = tf.DIV('%s %s%%: %s' % (name, tax_level[name], format_number(amount)))
             usages.row = row
 
         row = tf.TR()
