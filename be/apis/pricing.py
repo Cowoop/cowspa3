@@ -192,7 +192,7 @@ class InitialCost(costlib.Rule):
                 usage['quantity'] = (usage.ends - usage.starts).total_seconds() / 3600.0
             except AttributeError:
                 def get_total_seconds(td): return td.seconds + (td.days * 24 * 3600) # ignores microseconds
-                usage['quantity'] = get_total_seconds(usage.ends - usage.starts) / 3600
+                usage['quantity'] = get_total_seconds(usage.ends - usage.starts) / 3600.0
         elif resource.calc_mode == CalcMode.monthly:
             usage['quantity'] = ((usage.ends - usage.starts).days + 1) / float(calendar.monthrange(usage.starts.year, usage.starts.month)[1])
         rate = float(pricings.get(usage.member_id, usage.resource_id, usage.starts))
