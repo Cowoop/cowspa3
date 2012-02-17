@@ -20,4 +20,4 @@ email = not_empty_input("Email: ")
 password = not_empty_input("Password: ")
 name = raw_input("Name [%(name)s]: " % defaults) or defaults['name']
 
-app.mapper['setup'](username, password, email, name)
+app.dispatch(None, dict(method='setup', id=1, jsonrpc="2.0", params=dict(username=username, password=password, email=email, first_name=name)))
