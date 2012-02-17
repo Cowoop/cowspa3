@@ -52,9 +52,9 @@ class MemberCollection:
         raise NotImplemented
 
     def list(self, formember_id, bizplace_ids=[], hashrows=True):
-        #my_bizplace_ids = [ms.bizplace_id for ms in dbaccess.find_memberships(formember_id)]
-        #if bizplace_ids:
-        #    bizplace_ids = set(my_bizplace_ids).intersection(bizplace_ids)
+        my_bizplace_ids = [ms.bizplace_id for ms in dbaccess.find_memberships(formember_id)]
+        if bizplace_ids:
+            bizplace_ids = set(my_bizplace_ids).intersection(bizplace_ids)
         member_list = []
         for m_dict in dbaccess.find_bizplace_members(bizplace_ids, ['member', 'name', 'email'], hashrows):
             if isinstance(m_dict, dict): m_dict['id'] = m_dict.pop('member')

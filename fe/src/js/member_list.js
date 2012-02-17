@@ -1,6 +1,6 @@
 function on_get_member_list_success(response) {
 	$('#member_table').dataTable({
-		"sDom": 'T<"clear">lfrtip',
+		"sDom": '<"H"lT>rt<"F"ip>',
 		"oTableTools": {
 		    "sSwfPath": "/swf/copy_cvs_xls_pdf"
 		},
@@ -8,12 +8,13 @@ function on_get_member_list_success(response) {
         "bJQueryUI": true,
         "bDestroy": true,
         "sPaginationType": "full_numbers",
-        "aaSorting": [[ 1, "asc" ]],
+        "aaSorting": [[ 0, "asc" ]],
         "aoColumns": [
-                { "sTitle": "ID", "sWidth": "20%" },
-                { "sTitle": "Name", "sWidth": "40%"},
-                { "sTitle": "Email", "sWidth": "40%" }
+                { "sTitle": "Name", "sWidth": "25%" },
+                { "sTitle": "Membership ID", "sWidth": "25%"},
+                { "sTitle": "Membership", "sWidth": "25%" },
+                { "sTitle": "Email", "sWidth": "25%" }
                 ]
 	});
 };
-jsonrpc('member.list', {formember_id: current_userid, bizplace_ids: [current_ctx], hashrows: false}, on_get_member_list_success);
+jsonrpc('memberships.list_by_bizplace', {bizplace_id: current_ctx, hashrows: false}, on_get_member_list_success);
