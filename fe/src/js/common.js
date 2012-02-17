@@ -11,6 +11,7 @@ var locale_data = {
 var fdate_format = "MMM D, YYYY";
 var ftime_format = "hh:mm A";
 var fdatetime_format = fdate_format + ' ' + ftime_format;
+function error() {};
 //
 
 $.webshims.setOptions('forms', {
