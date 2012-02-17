@@ -229,7 +229,7 @@ class MessageCust(Object):
             q = q % name
             values = dict(content=self.data['text'], owner=migrated.location[location_id])
             qexec(cscur, q, values)
-            migrated.message['id'] = None
+            migrated.messagecust['id'] = None
 
 class Resource(Object):
     table_name = 'resource'
