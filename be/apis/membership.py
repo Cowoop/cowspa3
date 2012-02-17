@@ -85,6 +85,10 @@ def list_by_tariff(tariff_id, at_time=None):
         member_list.append(m_dict)
     return member_list
 
+def list_by_bizplace(bizplace_id, at_time=None, hashrows=True):
+    at_time = commonlib.helpers.iso2date(at_time) if at_time else at_time
+    return dbaccess.find_bizplace_members_with_membership(bizplace_id=bizplace_id, at_time=at_time, hashrows=hashrows)
+    
 def list_for_member(member_id, bizplace_ids=[], not_current=False):
     return dbaccess.get_member_memberships(member_id=member_id, bizplace_ids=bizplace_ids, not_current=not_current)
 
@@ -102,6 +106,7 @@ def get_total_memberships(bizplace, starts, ends, by_tariff=False):
 memberships.new = new
 memberships.bulk_new = bulk_new
 memberships.list = list_memberships
+memberships.list_by_bizplace = list_by_bizplace
 
 def info(membership_id):
     """

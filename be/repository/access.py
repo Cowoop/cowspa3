@@ -170,6 +170,13 @@ def find_bizplace_members(bizplace_ids, fields=['member', 'name'], hashrows=True
     clause_values = (bizplace_ids,)
     return member_store.get_by_clause(clause, clause_values, fields, hashrows)
 
+def find_bizplace_members_with_membership(bizplace_id, fields=['name', 'member_id', 'tariff_name', 'email'], at_time=None, hashrows=True):
+    at_time = at_time if at_time else datetime.datetime.now()
+    q = 'SELECT '+", ".join(fields)+' from member, membership WHERE member.id = membership.member_id'
+    q += ' AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL) AND bizplace_id = %(bizplace_id)s'
+    values = dict(at_time=at_time, bizplace_id=bizplace_id)
+    return member_store.query_exec(q=q, values=values, hashrows=hashrows)
+
 tariff_info_fields = ['id', 'name', 'owner', 'short_description']
 
 def find_bizplace_plans(bizplace_id, fields):
