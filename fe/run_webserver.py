@@ -49,8 +49,11 @@ def index():
     response = redirect(next_url)
     if context is not None:
         response.set_cookie('current_ctx',value=context)
+    try:
         response.set_cookie('user_id', value=env.context.user_id)
         response.set_cookie('roles', value=env.context.roles)
+    except:
+        pass
     return response
 
 @app.route('/search/<entity>', methods=['GET', 'POST'])
