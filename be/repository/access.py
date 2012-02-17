@@ -291,8 +291,8 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
     return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):
-    query = "SELECT invoice.number, member.name, invoice.cost, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
-    values = dict(issuer = issuer, limit = limit) 
+    query = "SELECT invoice.number, member.name, invoice.total, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
+    values = dict(issuer = issuer, limit = limit)
     return invoice_store.query_exec(query, values, hashrows=False)
 
 def search_member(query_parts, options, limit, mtype):
