@@ -39,7 +39,7 @@ def create_invoice_pdf(invoice_id):
 
 class InvoiceCollection:
 
-    def new(self, issuer, member, po_number, start_date, end_date, notice='', usages=[], new_usages=[], state=0, number=None):
+    def new(self, issuer, member, po_number, start_date, end_date, notice='', usages=[], new_usages=[], state=0):
         """
         usages --> The list of existing usage_ids
         new_usages --> The list of usage data which needs to create
@@ -51,7 +51,6 @@ class InvoiceCollection:
         created = datetime.datetime.now()
         total = decimal.Decimal(sum([row[0] for row in usage_store.get_many(usages, ['total'], False)]))
         data = dict(issuer=issuer, member=member, usages=usages, sent=None, total=total, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
-        if number: data['number'] = number
         invoice_id = invoice_store.add(**data)
 
         mod_data = dict(invoice=invoice_id)
@@ -61,6 +60,25 @@ class InvoiceCollection:
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
 
         create_invoice_pdf(invoice_id)
+
+        return invoice_id
+
+    def m_new(self, issuer, member, po_number, start_date, end_date, created, total, sent=None, notice='', usages=[], new_usages=[], state=0, number=None):
+        for usage in new_usages:
+            usage['member'] = member
+            usages.append(usagelib.usage_collection.new(**usage))
+
+        created = datetime.datetime.now()
+        data = dict(issuer=issuer, member=member, usages=usages, sent=sent, total=total, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
+        if number: data['number'] = number
+
+        invoice_id = invoice_store.add(**data)
+
+        mod_data = dict(invoice=invoice_id)
+        usage_store.update_many(usages, **mod_data)
+
+        data = dict(name=member_store.get(member, ['name']), issuer=bizplace_store.get(issuer, ['name']), invoice_id=invoice_id, member_id=member)
+        activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
 
         return invoice_id
 
