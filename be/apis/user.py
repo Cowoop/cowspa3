@@ -10,12 +10,21 @@ user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
 member_store = dbaccess.stores.member_store
 
+def new(username, password, state=None, enc_password=None):
+    if state is None: state = commonlib.shared.constants.member.enabled
+    if enc_password:
+        encrypted = enc_password
+    else:
+        if password is None:
+            password = helpers.random_key_gen()
+        encrypted = encrypt(password)
+    user_id = dbaccess.OidGenerator.next("Member")
+    data = dict(id=user_id, username=username, password=encrypted, state=state)
+    user_store.add(**data)
+    return user_id
+
 def encrypt(phrase):
     return commonlib.helpers.encrypt(phrase, env.config.random_str)
-
-def m_encrypt(phrase):
-    # to support migrated passwords
-    return hashlib.md5('ojas88').hexdigest()
 
 def authenticate(username, password):
     """
@@ -26,7 +35,7 @@ def authenticate(username, password):
     except IndexError, err:
         return False
     encrypted = encrypt(password)
-    return passphrase == encrypted or passphrase == m_encrypt(password)
+    return passphrase == encrypted or passphrase == hashlib.md5(password).hexdigest()
 
 def create_session(user_id):
     token  = commonlib.helpers.random_key_gen()
@@ -51,16 +60,16 @@ def session_lookup(token):
         user_id = None
     return user_id
 
-def login(username, password, auth_token=None):
-    if auth_token:
-        set_context_by_session(auth_token)
-        return dict(auth_token=auth_token, \
-                id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
-    else:
+def login(username=None, password=None, auth_token=None):
+    if username:
         if authenticate(username, password):
             auth_token = get_or_create_session(username)
             set_context(username)
             return dict(auth_token=auth_token, \
+                id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
+    elif auth_token:
+        set_context_by_session(auth_token)
+        return dict(auth_token=auth_token, \
                 id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
     raise errors.ErrorWithHint('Authentication failed')
 
@@ -86,19 +95,6 @@ def logout(token):
         session.delete()
     except Exception, err:
         print err
-
-def new(username, password, state=None, enc_password=None):
-    if state is None: state = commonlib.shared.constants.member.enabled
-    if enc_password:
-        encrypted = enc_password
-    else:
-        if password is None:
-            password = helpers.random_key_gen()
-        encrypted = encrypt(password)
-    user_id = dbaccess.OidGenerator.next("Member")
-    data = dict(id=user_id, username=username, password=encrypted, state=state)
-    user_store.add(**data)
-    return user_id
 
 def update(member_id, **mod_data):
     if 'password' in mod_data: mod_data['password'] = encrypt(mod_data['password'])
