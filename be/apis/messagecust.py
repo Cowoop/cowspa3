@@ -5,7 +5,7 @@ import commonlib.messaging.messages
 messagecust_store = dbaccess.stores.messagecust_store
 
 def new(owner_id, name, content):
-    return messagecust_store.new(owner=owner_id, name=name, content=content)
+    return messagecust_store.add(owner=owner_id, name=name, content=content)
 
 def get(owner_id, name):
     return messagecust_store.get_one_by_safe(crit=dict(owner=owner_id, name=name)) or \

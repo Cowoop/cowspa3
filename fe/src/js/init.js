@@ -6,8 +6,7 @@ function on_roles(roles) {}; // HOOK
 
 // TODO : Update role_filter when additional roles like accountant are added
 
-params = {'user_id':$.cookie('user_id')};
-if(params['user_id']) {
-    function error() {};
-    jsonrpc('roles.list', params, on_roles_list, error);
+if(current_userid) {
+    var params = {'user_id': current_userid};
+    jsonrpc('roles.list', params, on_roles_list);
 };
