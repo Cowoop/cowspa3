@@ -11,9 +11,14 @@ function on_get_member_list_success(response) {
         "aaSorting": [[ 0, "asc" ]],
         "aoColumns": [
                 { "sTitle": "Name", "sWidth": "25%" },
-                { "sTitle": "Membership ID", "sWidth": "25%"},
+                { "sTitle": "Membership No", "sWidth": "25%"},
                 { "sTitle": "Membership", "sWidth": "25%" },
-                { "sTitle": "Email", "sWidth": "25%" }
+                { "sTitle": "Email", "sWidth": "25%",
+                    "fnRender": function(obj) {
+                        var email = obj.aData[obj.iDataColumn];
+                        return "<A href='mailto:"+email+"'>"+email+"</A>";
+                        }
+                }
                 ]
 	});
 };
