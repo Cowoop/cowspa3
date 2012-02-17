@@ -29,14 +29,15 @@ def day(day_no):
 def week():
     return [tf.DIV([timecolumn(0, 24)] + [day(i) for i in range(7)], Class='cal-week')]
 
-def booking_form():
+def booking_form(self_booking=False):
     form = sphc.more.Form(id='new-booking-form', Class='vform')
     #form.add(tf.DIV(Class='heading3 data-resource-name'))
     #form.add(tf.HR())
     form.add(tf.DIV(id="new-booking-date"))
     form.add(tf.INPUT(id="booking-id", type="hidden"))
-    form.add(tf.INPUT(id="for-member", type="hidden"))
-    form.add_field("Member name", tf.INPUT(id="for-member-search").set_required(), "Type to autocomplete member name")
+    if not self_booking:
+        form.add(tf.INPUT(id="for-member", type="hidden"))
+        form.add_field("Member name", tf.INPUT(id="for-member-search").set_required(), "Type to autocomplete member name")
     form.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
     form.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900"))
     #form.add_field("Quantity", tf.INPUT(id="new-quantity", type="text"), "Not applicable for time based resources")
@@ -66,7 +67,8 @@ class Booking(BookingPage):
         booking_pane = tf.DIV(id="pane-booking")
         booking_pane.topbar = tf.DIV(id="booking-menu")
         booking_pane.new_booking = tf.DIV(id="new-booking", Class="hidden")
-        booking_pane.new_booking.form = booking_form()
+        self_booking = self.data['role'] == 'member'
+        booking_pane.new_booking.form = booking_form(self_booking=self_booking)
         booking_pane.calendar = tf.DIV(id="booking-cal", Class="opaq")
 
         calendar = booking_pane.calendar
