@@ -229,6 +229,8 @@ class Pricing(PGStore):
 class Usage(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
+    name TEXT,
+    notes TEXT,
     resource_id INTEGER,
     resource_name TEXT,
     resource_owner INTEGER NOT NULL,

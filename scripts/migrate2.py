@@ -331,8 +331,8 @@ class Member(Object):
 
 class Usage(Object):
     table_name = 'rusage'
-    unchanged = ('resource_name', 'end_time', 'quantity')
-    renamed = dict(start='start_time', date_booked='created')
+    unchanged = ('resource_name', 'end_time', 'quantity', 'notes')
+    renamed = dict(start='start_time', date_booked='created', meeting_name='name')
 
     def export(self):
         resource_id = migrated.resource[self.data['resource_id']]
