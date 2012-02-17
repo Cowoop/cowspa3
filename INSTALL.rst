@@ -23,14 +23,25 @@ Development env setup
     git clone git@github.com:shon/cowspa3.git # Writable
     git clone git://github.com/shon/cowspa3.git # Read only
     cd cowspa3
-    wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
+    # wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
     pip install -r requirements.txt
     pip install -r dev-requirements.txt # optional packages useful in cowspa3 development
     bash wkhtmltox-installer.sh
     vi conf_dev.py # Refer conf_default.py
     vi conf_test.py 
 
-    # Frontend
+    # Admin account setup
+    python bin/setup.py
+
+    # Frontend build
+    python fe/build/run.py
+
+    # Start web server
+    python fe/run_webserver.py -h
+    python fe/run_webserver.py -d -c test
+
+    # UI
+    # firefox http://127.0.0.1:5001
 
 
 shell
