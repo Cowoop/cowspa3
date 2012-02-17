@@ -34,6 +34,7 @@ import commonlib.shared.constants as constants
 
 TEST_RUN = False
 
+binaries_dir = 'binaries'
 mime = magic.Magic(mime=True)
 app = be.apps.cowspa
 
@@ -61,8 +62,8 @@ def jsonrpc(auth_token, apiname, **kw):
 def import_image(filename):
     if TEST_RUN:
         return 'data:'
-    path = '/tmp/' + filename
-    cmd = "scp admin-st@space-hub.nile.the-hub.net:/opt/apphomes/hubspace/hubspace/binaries/%s /tmp/" % filename
+    path = binaries_dir + '/' + filename
+    cmd = "scp admin-st@space-hub.nile.the-hub.net:/opt/apphomes/hubspace/hubspace/binaries/%s binaries/" % filename
     ret = os.system(cmd)
     logo = ('data:' + mime.from_file(path) + ';base64,' + base64.b64encode(open(path).read())) if ret == 0 else None
     return logo
@@ -78,7 +79,8 @@ def download_invoices(old_id, new_id):
     for path, format in paths:
         src = path % old_id
         dst = "%s/%s.%s" % (invoice_dir, new_id, format)
-        ret = wget(src, dst)
+        if not os.path.exists(dst):
+            ret = wget(src, dst)
 
 auth_token = jsonrpc(None, "login", username="admin", password="x")['result']['auth_token']
 
@@ -145,6 +147,7 @@ else:
     migrated.pending = mdict()
     migrated.pending.usage_created_by = {}
     migrated.pending.usage_invoices = {}
+    migrated.messagecust = {}
 
 class Object(object):
     unchanged = tuple()
@@ -213,18 +216,20 @@ class InvoicePref(Object):
 
 class MessageCust(Object):
     table_name = 'message_customization'
-    unchanged = ('lang',)
+    #unchanged = ('lang',)
     renamed = dict(message='name', text='content')
     def export(self):
         if not self.data['message'].startswith('invoice_freetext'):
-            self.new_data['owner'] = migrated.location[location_id]
+            self.new_data['owner_id'] = migrated.location[location_id]
             jsonrpc(auth_token, 'messagecust.new', **self.new_data)
-            migrated.message['id'] = None
+            migrated.messagecust['id'] = None
         else:
-            q = 'UPDATE invoice_pref SET %(name)s = %(content)s WHERE owner = %(owner)s'
-            name = 'freetext1' if self.data['message'] == 'invoice_freetext1'
-            values = dict(name=self.data['message'][8:], content=self.data['text'], owner=migrated.location[location_id])
+            q = 'UPDATE invoice_pref SET %s = %%(content)s WHERE owner = %%(owner)s'
+            name = 'freetext1' if self.data['message'].endswith('1') else 'freetext2'
+            q = q % name
+            values = dict(content=self.data['text'], owner=migrated.location[location_id])
             qexec(cscur, q, values)
+            migrated.message['id'] = None
 
 class Resource(Object):
     table_name = 'resource'
@@ -336,10 +341,9 @@ class Usage(Object):
         self.new_data['member'] = migrated.member[self.data['user_id']]
         if self.data['refund_for']:
             self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
-        customcost = self.data.get('customcost', None)
+        customcost = self.data.get('customcost', self.data['cost'])
         self.new_data['cost'] = customcost
         self.new_data['calculated_cost'] = self.data['cost']
-        self.new_data['amount'] = customcost if customcost is not None else self.data['cost']
         result = jsonrpc(auth_token, 'usage.m_new', **self.new_data)
         new_usage_id = result['result']
         migrated.usage[self.id] = new_usage_id
@@ -352,8 +356,8 @@ class Usage(Object):
 class Invoice(Object):
     table_name = 'invoice'
     # TODO cost/amount?
-    unchanged = ('number',)
-    renamed = dict(start='start_date', end_time='end_date')
+    unchanged = ('number', 'created', 'sent')
+    renamed = dict(start='start_date', end_time='end_date', amount='total')
     def export(self):
         if 'start' not in self.new_data:
             self.new_data['start_date'] = self.new_data['end_date']
@@ -366,12 +370,10 @@ class Invoice(Object):
         values = dict(invoice_id=self.id)
         anomolies = (117922, 117925) # resource owned by one location, invoiced by another
         self.new_data['usages'] = [migrated.usage[row[0]] for row in select(spacecur, q, values, False) if row[0] in migrated.usage]
-        result = jsonrpc(auth_token, 'invoice.new', **self.new_data)
+        result = jsonrpc(auth_token, 'invoice.m_new', **self.new_data)
         new_invoice_id = result['result']
         migrated.invoice[self.id] = new_invoice_id
         migrated.pending.usage_invoices[self.id] = [row[0] for row in select(spacecur, q, values, False) if row[0] not in migrated.usage]
-        if not TEST_RUN:
-            download_invoices(self.id, new_invoice_id)
 
     def post(self):
         print("Invoice %s migrattion | post" % self.id)
@@ -530,22 +532,29 @@ def migrate_location():
         invoice = Invoice(id)
         invoice.migrate()
 
-    banner("Migrating usages")
+    banner("Migrating message_customizations")
     q = 'SELECT id FROM message_customization WHERE location_id = %(location_id)s'
     values = dict(location_id=location_id)
     msg_ids = (row[0] for row in select(spacecur, q, values, False))
     for id in msg_ids:
-        if id in migrated.messages:
+        if id in migrated.messagecust:
             print("Skipping id:%d" % id)
             continue
         print("migrating id:%d" % id)
         messagecust = MessageCust(id)
         messagecust.migrate()
 
+    banner("Downloding Invoices")
+    for old_id, new_id in migrated.invoice.items():
+        print('downloding: %s' % old_id)
+        if not TEST_RUN: download_invoices(old_id, new_id)
+
 def before_exit():
     f = open(state_path, 'w')
     cPickle.dump(migrated, f)
     f.close()
 
+if not os.path.exists(binaries_dir):
+    os.mkdir(binaries_dir)
 atexit.register(before_exit)
 migrate_location()
