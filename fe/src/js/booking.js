@@ -243,12 +243,14 @@ function refresh_cal() {
     };
 };
 
-$('#for-member-search').autocomplete({
-    source: "/search/member",
-    select: function(event, ui) {
-        $('#for-member').val(ui.item.id);
-    }
-});
+if ($('#for-member-search')[0]) {
+    $('#for-member-search').autocomplete({
+        source: "/search/member",
+        select: function(event, ui) {
+            $('#for-member').val(ui.item.id);
+        }
+    });
+};
 
 function on_new_booking(resp) {
     $('#new-booking').dialog('close');
@@ -280,7 +282,11 @@ function make_booking() {
     params.end_time = date2iso(end_time)
 
     // params.quantity = $('#new-quantity').val() || 1;
-    params.member = $('#for-member').val();
+    if ($('#for-member')[0]) {
+        params.member = $('#for-member').val();
+    } else {
+        params.member = current_userid;
+    };
 
     var usage_id = $('#booking-id').val();
 
