@@ -8,7 +8,7 @@ var usage_table;
 var invoice_table;
 var usage_edit_id = null;
 var mtype = null;
-var invoice_send_link_id, invoice_no_column_id;
+var invoice_send_link_id;
 var invoice_email_text;
 
 function on_member_profile(resp) {
@@ -811,19 +811,28 @@ function get_invoice_tab_data(){
     $('.inv-send').click(function () {
         $("#email_text").text(invoice_email_text);
         invoice_send_link_id = $(this).attr("id");
-        invoice_no_column_id = $(this).parent().parent().children(":first-child");
+        $('#send_invoice-form .action-status').removeClass('status-fail');
+        $('#send_invoice-form .action-status').removeClass('status-success').text("");
         $('#send_invoice-form').dialog({ 
             title: "Send Invoice",
             width: 500
         });
     });
     function on_send_invoice_success() {
-        // removed code that using params variable as if it is global var
-        // TODO re-render invoice table ?
+        var params = { 'issuer' : parseInt(current_ctx, 10), 'member' : parseInt(thismember_id, 10), 'hashrows':false};
+        jsonrpc('invoice.by_member', params, get_invoice_history_success);
+        $('#send_invoice-form .action-status').removeClass('status-fail');
+        $('#send_invoice-form .action-status').addClass('status-success').text('Invoice sent successfully');
+    };
+    function on_send_invoice_failure() {
+        $('#send_invoice-form .action-status').removeClass('status-success');
+        $('#send_invoice-form .action-status').addClass('status-fail').text('failed to send invoice');
     };
     $("#send-btn").click(function(){
         var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
-        jsonrpc('invoice.send', params, on_send_invoice_success);
+        $('#send_invoice-form .action-status').removeClass('status-success');
+        $('#send_invoice-form .action-status').removeClass('status-fail').text('sending ...');
+        jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
     });
     $("#send_cancel-btn").click(function(){
         $('#send_invoice-form').dialog("close");

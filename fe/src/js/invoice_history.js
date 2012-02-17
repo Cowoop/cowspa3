@@ -1,5 +1,5 @@
 var history_table;
-var invoice_send_link_id, invoice_no_column_id;
+var invoice_send_link_id;
 var invoice_email_text;
 //****************************Get Invoice History*******************************
 function on_get_invoices_success(response) {
@@ -85,25 +85,27 @@ function on_get_invoices_success(response) {
     $('.inv-send').click(function () {
         $("#email_text").text(invoice_email_text);
         invoice_send_link_id = $(this).attr("id");
-        invoice_no_column_id = $(this).parent().parent().children(":first-child");
+        $('#send_invoice-form .action-status').removeClass('status-fail');
+        $('#send_invoice-form .action-status').removeClass('status-success').text("");
         $('#send_invoice-form').dialog({ 
             title: "Send Invoice" 
         });
     });
     function on_send_invoice_success() {
-        $("#"+invoice_send_link_id).text("Resend");
-        params['attr'] = 'number';
-        function on_get_number_success(resp){
-            $(invoice_no_column_id).text(resp.result);
-        }
-        jsonrpc('invoice.get', params, on_get_number_success);
+        jsonrpc('invoice.list', {issuer: current_ctx}, on_get_invoices_success);
+        $('#send_invoice-form .action-status').removeClass('status-fail');
+        $('#send_invoice-form .action-status').addClass('status-success').text('Invoice sent successfully');
+    };
+    function on_send_invoice_failure() {
+        $('#send_invoice-form .action-status').removeClass('status-success');
+        $('#send_invoice-form .action-status').addClass('status-fail').text('failed to send invoice');
     };
     $("#send-btn").click(function(){
         var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
-        jsonrpc('invoice.send', params, on_send_invoice_success);
+        jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
     });
     $("#send_cancel-btn").click(function(){
-        $('#send_invoice-form').dialog("close"); ;
+        $('#send_invoice-form').dialog("close");
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Delete Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 };
