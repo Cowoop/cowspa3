@@ -1,9 +1,11 @@
 var ordered_roles = ['admin', 'director', 'host', 'member', 'new']
 var login_form = $('#login-form');
 var signup_form = $('#signup-form');
+var first_pages = {member: 'booking/new', host: 'dashboard', director: 'dashboard', new: 'dashboard', admin:'dashboard'}
 
-function construct_nextpage(result) {
-    var lang = result.pref.language.split('_')[0];
+function construct_home_url(result) {
+    var lang = 'en'; // hard coding language for now
+    // var lang = result.pref.language.split('_')[0];
     var role = '';
     if (result.roles.length == 0) {
         role = 'new';
@@ -26,7 +28,7 @@ function construct_nextpage(result) {
             };
         };
     };
-    return "/" + lang + "/" + role + "/" + result.pref.theme + "/dashboard";
+    return "/" + lang + "/" + role + "/" + result.pref.theme + "/" + first_pages[role];
 };
 
 function login() {
@@ -42,7 +44,7 @@ function login() {
         set_cookie('user_id', resp.result.id)
         set_cookie('roles', resp.result.roles)
         set_member_name(resp.result.name);
-        var nextpage = construct_nextpage(resp.result);
+        var nextpage = construct_home_url(resp.result);
         window.location = nextpage;
     };
     function error() {
