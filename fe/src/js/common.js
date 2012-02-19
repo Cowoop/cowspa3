@@ -1,6 +1,7 @@
 // Globals
 var current_ctx = $.cookie("current_ctx")?parseInt($.cookie("current_ctx"), 10):null;
 var current_userid = parseInt($.cookie("user_id"), 10);
+var current_role = window.location.pathname.split('/').slice(2,3)[0];
 var member_name = $.cookie("member_name");
 var basepath = window.location.pathname.split('/').slice(0,4).join('/');
 var locale_data = {
