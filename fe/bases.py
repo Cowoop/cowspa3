@@ -4,7 +4,7 @@ import sphc.more
 
 tf = sphc.TagFactory()
 
-webshims_base = '/js/webshims-1.8.7'
+webshims_base = '/js/webshims-1.8.9'
 webshims = [webshims_base + "/extras/modernizr-custom.js", webshims_base + "/polyfiller.js"]
 ctxpath = '/${lang}/${role}/${theme}'
 
