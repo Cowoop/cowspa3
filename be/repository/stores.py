@@ -327,3 +327,10 @@ class MessageCust(PGStore):
     content TEXT NOT NULL,
     lang TEXT
     """
+
+class TaxExemption(PGStore):
+    table_name = 'tax_exemption'
+    create_sql = """
+    member INTEGER NOT NULL,
+    issuer INTEGER NOT NULL
+    """
