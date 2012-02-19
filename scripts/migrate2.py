@@ -469,7 +469,7 @@ def migrate_location():
 
 
     banner("Migrating members")
-    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s))'
+    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)) OR id IN (SELECT user_id FROM invoice WHERE location_id = %(location_id)s)'
     values = dict(location_id=location_id)
     member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     q = 'SELECT billto_id FROM tg_user WHERE id in %(member_ids)s AND billto_id IS NOT NULL'
