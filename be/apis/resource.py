@@ -18,8 +18,9 @@ class CalcMode:
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, default_price, state=None, long_description=None, calc_mode=CalcMode.monthly,
+    def new(self, name, short_description, type, owner, default_price=None, state=None, long_description=None, calc_mode=CalcMode.monthly,
             archived=False, picture=None, accnt_code=None):
+        #TODO make default_price parameter mandatory post migration
         created = datetime.datetime.now()
         if state is None:
             state = commonlib.shared.constants.resource.enabled
@@ -36,11 +37,14 @@ class ResourceCollection:
         else:
             activity_id = activitylib.add('resource_management', 'resource_created', data, created)
 
-        default_tariff_id = bizplace_store.get(owner, fields=['default_tariff'], hashrows=False)
-        # default_tariff_id would be None when we are creating default_tariff for a new location. This is because we are adding location and there is no default_tariff yet. Now this tariff is a resource so further we need to create pricing for it. In pricing we need to specify some tariff so tariff refers itself as default_tariff.
-        if default_tariff_id is None:
-            default_tariff_id = res_id
-        signals.send_signal('resource_created', res_id, default_tariff_id, None, default_price)
+        if default_price is not None:
+            default_tariff_id = bizplace_store.get(owner, fields=['default_tariff'], hashrows=False)
+            # default_tariff_id would be None when we are creating default_tariff for a new location. This is because we are adding location and there is no default_tariff yet. Now this tariff is a resource so further we need to create pricing for it. In pricing we need to specify some tariff so tariff refers itself as default_tariff.
+            if default_tariff_id is None:
+                default_tariff_id = res_id
+
+            signals.send_signal('resource_created', res_id, default_tariff_id, None, default_price)
+            # TODO this is not right way to send signals
 
         return res_id
 
