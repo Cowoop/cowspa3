@@ -440,6 +440,26 @@ def migrate_location():
     values = dict(bizplace_id=new_location_id, default_tariff=new_defaulttariff_id)
     jsonrpc(auth_token, 'bizplace.update', **values)
 
+    banner("Migrating members")
+    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)) OR id IN (SELECT user_id FROM invoice WHERE location_id = %(location_id)s)'
+    sorted_member_ids = []
+    q1 = 'SELECT id FROM tg_user WHERE billto_id=id OR billto_id IS NULL'
+    q2 = 'SELECT DISTINCT billto_id FROM tg_user WHERE id in (' + q + ') AND billto_id IS NOT NULL'
+    q3 = 'SELECT DISTINCT user_id FROM rusage'
+    for q in (q1, q2, q3):
+        values = dict(location_id=location_id)
+        member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        for id in member_ids:
+            if id not in sorted_member_ids:
+                sorted_member_ids.append(id)
+    for id in sorted_member_ids:
+        if id in migrated.member:
+            print("Skipping id:%d" % id)
+            continue
+        print("migrating id:%d" % id)
+        member = Member(id)
+        member.migrate()
+
     q = 'SELECT id FROM resource WHERE place_id=%(location_id)s AND id != %(defaulttariff_id)s'
     values = dict(location_id=location_id, defaulttariff_id=defaulttariff_id)
     all_resource_ids = tuple(row[0] for row in select(spacecur, q, values, False))
@@ -467,25 +487,6 @@ def migrate_location():
         pricing = Pricing(id)
         pricing.migrate()
 
-
-    banner("Migrating members")
-    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)) OR id IN (SELECT user_id FROM invoice WHERE location_id = %(location_id)s)'
-    values = dict(location_id=location_id)
-    member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-    q = 'SELECT billto_id FROM tg_user WHERE id in %(member_ids)s AND billto_id IS NOT NULL'
-    values = dict(member_ids=member_ids)
-    billto_member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-    final_member_ids = list(billto_member_ids)
-    for id in member_ids:
-        if id not in final_member_ids:
-            final_member_ids.append(id)
-    for id in final_member_ids:
-        if id in migrated.member:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        member = Member(id)
-        member.migrate()
 
     banner("Migrating usages")
     q = 'SELECT id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s) ORDER BY id'
