@@ -132,7 +132,7 @@ class InvoiceCreated(BaseEvent):
     name = "invoice_created"
     category = "invoice_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Invoice No.<a href='/invoice/%(invoice_id)s/html'>%(invoice_id)s</a> issued for <a href='./member/edit/#/%(member_id)s/info'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + "A <a href='/invoice/%(invoice_id)s/html'>New invoice</a> is created for <a href='./member/edit/#/%(member_id)s/info'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return dict(member_ids=[self.actor])
 
