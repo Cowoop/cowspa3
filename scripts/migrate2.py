@@ -293,6 +293,7 @@ class Member(Object):
             long_description = self.new_data['long_description']
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
         self.new_data['state'] = dict(enabled = bool(self.data['active']))
+        self.new_data['first_name'] = self.new_data['first_name'] or ''
 
         q = 'SELECT * from user_meta_data where user_id = %(user_id)s'
         values = dict(user_id = self.id)
