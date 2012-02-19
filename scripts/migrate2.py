@@ -339,6 +339,13 @@ class Member(Object):
 
         jsonrpc(auth_token, 'billingpref.update', **billing_pref)
 
+        q = "SELECT group_name from user_group, tg_group where user_id=%(member_id)s and group_id in (SELECT id from tg_group WHERE place_id = %(location_id)s and (group_name like '%%_director' or group_name like '_%%host')) and tg_group.id = user_group.group_id"
+        values = dict(location_id=location_id, member_id=self.id)
+        roles = [row[0].split('_')[1] for row in select(spacecur, q, values, False)]
+        if roles:
+            role_data = dict(user_id=new_member_id, roles=roles, context=migrated.location[location_id])
+            result = jsonrpc(auth_token, 'roles.add', **role_data)
+
 class Usage(Object):
     table_name = 'rusage'
     unchanged = ('resource_name', 'end_time', 'quantity', 'notes')
@@ -350,7 +357,8 @@ class Usage(Object):
         self.new_data['resource_owner'] = migrated.location[location_id]
         self.new_data['member'] = migrated.member[self.data['user_id']]
         if self.data['refund_for']:
-            self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
+            if migrated.usage.get(self.data['refund_for']): # there are some refunds which points to non-existent usage
+                self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
         customcost = self.data.get('customcost', self.data['cost'])
         self.new_data['cost'] = customcost
         self.new_data['calculated_cost'] = self.data['cost']
