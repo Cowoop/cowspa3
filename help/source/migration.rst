@@ -19,12 +19,13 @@ While there are many new good things with HubOps there are a few features of hub
 
 Our members uses hubspace to make the bookings and manage their profiles
 ------------------------------------------------------------------------
-HubOps is primarily Hosts platform
+HubOps is primarily Hosts platform.
 So till members platform work is complete, we agreed to setup a minimal booking page for members. This page will be available as a page within existing microsites. Other things such as search/profiles will not be available here.
 
 HubOps URL and access details
 -----------------------------
 http://ops.the-hub.net
+
 Credentials (i.e. username and password) are same as hubspace credentials.
 
 Member login URL
@@ -43,6 +44,7 @@ Things to check post Migration
 Whom to contact for Technical queries and other queries
 -------------------------------------------------------
 Tech queries: Shekhar pythonic@gmail.com (Checking list of known issues below may help)
+
 Other: Simon
 
 Are the members and hosts login details staying the same?
