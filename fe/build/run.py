@@ -51,10 +51,12 @@ roles = ['admin', 'director', 'host', 'member', 'new']
 themeroot = static.themeroot
 themedirs = [os.path.basename(name) for name in glob.glob(themeroot + '/*') if os.path.isdir(name)]
 themedirs.remove('base')
-try:	
-	compass_bin = (glob.glob('/var/lib/gems/*/gems/compass-*/bin/compass')[0])
-except:
-	print('Error: compass executable not found')
+compass_bin = os.path.join(os.environ['HOME'], 'gems/bin/compass')
+if not os.path.exists(compass_bin):
+    try:
+        compass_bin = (glob.glob('/var/lib/gems/*/gems/compass-*/bin/compass')[0])
+    except:
+        sys.exit('Error: compass executable not found')
 
 def exec_cmd(cmd, fail_on_err=True):
     print("Executing :" + cmd)
