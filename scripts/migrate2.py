@@ -113,7 +113,7 @@ def select(cur, q, values=None, hashrows=True):
     else:
         return rows
 
-def qexec(cur, q, values):
+def qexec(cur, q, values={}):
     if debug: print(q, values)
     try:
         cur.execute(q, values)
@@ -244,7 +244,6 @@ class Resource(Object):
             self.new_data['calc_mode'] = 2
         self.new_data['owner'] = migrated.location[location_id]
         self.new_data['short_description'] = ''
-        self.new_data['default_price'] = 0 # this will correct once we import all pricings
         result = jsonrpc(auth_token, 'resource.new', **self.new_data)
         new_resource_id = result['result']
         migrated.resource[self.id] = new_resource_id
@@ -263,11 +262,22 @@ class Pricing(Object):
     renamed = dict(periodstarts='starts', periodends='ends', cost='amount')
 
     def export(self):
-        print self.new_data
-        self.new_data['resource_id'] = migrated.resource[self.data['resource_id']]
+        new_resource_id = migrated.resource[self.data['resource_id']]
+        self.new_data['resource_id'] = new_resource_id
         self.new_data['tariff_id'] = migrated.resource[self.data['tariff_id']]
-        if self.new_data['starts'][:4] in ('1970', '9999'):
-            self.new_data['starts'] = None
+        for attr in ('starts', 'ends'):
+            if self.new_data[attr][:4] in ('1970', '9999'):
+                self.new_data[attr] = None
+
+        q = 'SELECT type FROM resource WHERE id=%(resource_id)s'
+        values = dict(resource_id=new_resource_id)
+        result = select(cscur, q, values, False)
+        type = result[0][0]
+        if type == 'tariff':
+            q = 'SELECT default_tariff FROM bizplace WHERE id = %(bizplace_id)s'
+            values = dict(bizplace_id=migrated.location[location_id])
+            result = select(cscur, q, values, False)
+            self.new_data['tariff_id'] = result[0][0]
 
         result = jsonrpc(auth_token, 'pricings.new', **self.new_data)
         migrated.pricing[self.id] = result['result']
@@ -484,7 +494,7 @@ def migrate_location():
     banner("Migrating memberships")
     member_ids = tuple(migrated.member.keys())
     q = "SELECT id, start, resource_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff') AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
-    for id in []:# member_ids:
+    for id in member_ids:
         memberships = []
         values = dict(member_id=id, location_id=location_id)
         tariff_usages_ = select(spacecur, q, values)
@@ -514,7 +524,7 @@ def migrate_location():
         print(memberships)
         for membership in memberships:
             data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
-                ends=(membership[2]-datetime.timedelta(1)).isoformat())
+                ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
             membership_hash = hash(frozenset(data.items()))
             if not membership_hash in migrated.membership:
                 result = jsonrpc(auth_token, 'memberships.new', **data)
@@ -543,6 +553,18 @@ def migrate_location():
         print("migrating id:%d" % id)
         messagecust = MessageCust(id)
         messagecust.migrate()
+
+    banner("Migrating EU Tax Exemptions")
+    q = 'SELECT * FROM eu_tax_exemption WHERE location_id = %(location_id)s'
+    values = dict(location_id=location_id)
+    exemptions = (exemption for exemption in select(spacecur, q, values))
+    q = 'INSERT INTO tax_exemption (issuer, member) VALUES (%(issuer)s, %(member)s)'
+    for exemption in exemptions:
+        print("migrating %s" % exemption.user_id)
+        values = dict(member=migrated.member[exemption.user_id], issuer=new_location_id)
+        qexec(cscur, q, values)
+    q = 'COMMIT'
+    qexec(cscur, q)
 
     banner("Downloding Invoices")
     for old_id, new_id in migrated.invoice.items():
