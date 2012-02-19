@@ -9,6 +9,11 @@ Welcome to HubOps Help's documentation!
 Contents:
 
 .. toctree::
+    :maxdepth: 1
+
+    migration
+
+.. toctree::
     :maxdepth: 2
 
     getting_started
