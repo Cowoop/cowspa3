@@ -16,9 +16,10 @@ membership_store = dbaccess.stores.membership_store
 membership = applib.Resource()
 memberships = applib.Collection()
 
-def new(tariff_id, member_id, starts, ends):
+def new(tariff_id, member_id, starts, ends, skip_usages=False):
     """
     """
+    # TODO skip_usages is there mainly to help migration. If there is no use case if must retire post migration 
     tariff = resource_store.get(tariff_id)
     bizplace = bizplace_store.get(tariff.owner)
     starts_dt = commonlib.helpers.iso2date(starts)
@@ -39,7 +40,8 @@ def new(tariff_id, member_id, starts, ends):
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     current_date = datetime.datetime.now().date()
-    return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, tariff.owner, member_id)
+    if not skip_usages:
+        return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, tariff.owner, member_id)
 
 def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner, member):
     # find start, end dates for every months month in start-end and create that many usages
@@ -50,7 +52,7 @@ def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner,
     # usage 4: 1 Apr - 05 Apr 2021
     current_date = datetime.datetime.now().date()
     current_months_last_date = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
-    if not ends or ends>current_months_last_date:
+    if not ends or ends > current_months_last_date: # Other usages would be created by scheduled job
         ends = current_months_last_date
     while starts <= ends:
         if starts.month == ends.month:
@@ -61,7 +63,7 @@ def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner,
         usagelib.usage_collection.new(**data)
         starts = new_ends + datetime.timedelta(1)
     return True
-    
+
 def bulk_new(tariff_id, member_ids, starts, ends):
     """
     """
@@ -88,7 +90,7 @@ def list_by_tariff(tariff_id, at_time=None):
 def list_by_bizplace(bizplace_id, at_time=None, hashrows=True):
     at_time = commonlib.helpers.iso2date(at_time) if at_time else at_time
     return dbaccess.find_bizplace_members_with_membership(bizplace_id=bizplace_id, at_time=at_time, hashrows=hashrows)
-    
+
 def list_for_member(member_id, bizplace_ids=[], not_current=False):
     return dbaccess.get_member_memberships(member_id=member_id, bizplace_ids=bizplace_ids, not_current=not_current)
 
