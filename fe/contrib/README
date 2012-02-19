@@ -12,7 +12,7 @@ Javascript
     cp build/*.min.js fe/contrib/js/SS.min.js
 - webshims
     Download webshims
-    copy js-webshim/minified/ to fe/contrib/webshims-<version>
+    copy demo/js-webshim/minified/ to fe/contrib/webshims-<version>
 - jquery TableTools http://www.datatables.net/download/build/TableTools.min.js
 
 Images

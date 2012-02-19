@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     import be.bootstrap
     import be.apis.user as userlib
-    be.bootstrap.start('conf_' + args.conf)
+    be.bootstrap.start('conf_' + args.conf, args.dev)
     import be.apps
     cowspa = be.apps.cowspa
     import be.apis.invoice as invoicelib
@@ -113,7 +113,7 @@ if __name__ == '__main__':
         }, fallback_mimetype="text/html", cache=not args.dev, cache_timeout=31536000)
 
     if env.config.threaded:
-        app.run('0.0.0.0',debug=False)
+        app.run('0.0.0.0', debug=args.dev)
 
     from gevent.wsgi import WSGIServer
 

@@ -32,6 +32,7 @@ activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 oidgen_store = stores_mod.OidGen()
 messagecust_store = stores_mod.MessageCust()
+taxexemption_store = stores_mod.TaxExemption()
 
 class RStore(object): pass
 
@@ -334,8 +335,8 @@ def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
     clause += ' ORDER BY ends DESC'
     values = dict(plan=plan_id, resource=resource_id, usage_time=usage_time, exclude_pricings=tuple(exclude_pricings))
     pricing = pricing_store.get_by_clause(clause, values,  fields=['id', 'plan', 'starts', 'ends', 'amount'])
-    return pricing[0] if pricing else None 
-           
+    return pricing[0] if pricing else None
+
 def get_default_pricing(resource_id, usage_time):
     bizplace_id = resource_store.get(resource_id).owner
     default_tariff_id = bizplace_store.get(bizplace_id).default_tariff

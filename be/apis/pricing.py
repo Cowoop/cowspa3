@@ -21,10 +21,11 @@ class CalcMode:
 
 def new(resource_id, tariff_id, starts, amount, ends=None):
 
+    if starts and ends:
+        assert(commonlib.helpers.iso2date(ends) > commonlib.helpers.iso2date(starts)), "Pricing end date should be greater than start date"
     old_pricing = dbaccess.get_resource_pricing(tariff_id, resource_id, starts)
     if starts and old_pricing:
         starts = commonlib.helpers.iso2date(starts)
-        ends = old_pricing.ends
         if old_pricing.starts and old_pricing.starts>= starts:
             msg = "Pricing start date should be greater than %s" % old_pricing.starts
             raise Exception(msg)#be.errors.ErrorWithHint(msg)
@@ -34,7 +35,7 @@ def new(resource_id, tariff_id, starts, amount, ends=None):
 
 def new_tariff_pricing(owner,tariff_id, starts, amount, ends=None):
     default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
-    return new(tariff_id,default_tariff_id,starts,amount,ends)
+    return new(tariff_id, default_tariff_id, starts, amount, ends)
 
 def destroy(tariff_id):
     raise NotImplemented
@@ -54,8 +55,7 @@ def by_tariff(tariff_id):
 
 def default_tariff_price(owner, tariff):
     default_tariff_id = dbaccess.bizplace_store.get(owner).default_tariff
-    result = dbaccess.pricing_store.get_by(crit=dict(plan=default_tariff_id,
-             resource=tariff), fields=['id','starts','amount'])
+    result = dbaccess.pricing_store.get_by(crit=dict(plan=default_tariff_id, resource=tariff), fields=['id','starts','amount'])
     return result
 
 def by_location(owner):
@@ -129,7 +129,7 @@ settable_attrs = ['starts', 'ends', 'cost']
 def info(pricing_id):
     return pricing_store.get(pricing_id)
 
-def set(pricing_id, attr, value):    
+def set(pricing_id, attr, value):
     if attr not in settable_attrs:
         return
     pricing_store.update(pricing_id, **{attr: value})
@@ -137,23 +137,23 @@ def set(pricing_id, attr, value):
 def update(pricing_id, **mod_data):
     pricing = pricing_store.get(pricing_id)
     new_starts = commonlib.helpers.iso2date(mod_data['starts']) if 'starts' in mod_data else pricing.starts
-    
+
     #Checking time interval for which pricing will change
     if pricing.starts == new_starts:
         changed_intervals_starts = pricing.starts
-        changed_intervals_ends = pricing.ends  
+        changed_intervals_ends = pricing.ends
     elif pricing.starts < new_starts:
         changed_intervals_starts = pricing.starts
         changed_intervals_ends = new_starts
     elif pricing.starts > new_starts:
         changed_intervals_starts = new_starts
         changed_intervals_ends = pricing.starts
-    
+
     #Checking usages for pricing changed time interval
     if dbaccess.find_usage(start=changed_intervals_starts, end=changed_intervals_ends, resource_ids=[pricing.resource]):
         msg = "Usages are associated with this pricing, you can't delete pricing."
         raise Exception(msg)#be.errors.ErrorWithHint(msg)
-        
+
     if new_starts != pricing.starts:
         mod_data['starts'] = new_starts
         crit = dict(plan=pricing.plan, resource=pricing.resource, ends=pricing.starts-datetime.timedelta(1))
@@ -167,7 +167,7 @@ def update(pricing_id, **mod_data):
             mod_data['ends'] = old_pricing.ends
             set(old_pricing.id, 'ends', mod_data['starts']-datetime.timedelta(1))
     pricing_store.update(pricing_id, **mod_data)
-    
+
 pricing = applib.Resource()
 pricing.info = info
 pricing.set = set

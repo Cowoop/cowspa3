@@ -5,10 +5,6 @@ var new_booking_date = null;
 var dropped_slot = null;
 var booking_action = 'click';
 
-function error(resp) {
-    alert('Remote error: ' + resp.error.message);
-};
-
 function add_days(adate, days) {
     return new Date(adate.getTime() + (days * day_miliseconds));
 };
@@ -27,10 +23,6 @@ function set_day_titles() {
         shown_dates[idx] = date_next;
     });
 };
-
-$('#booking-date-inp').datepicker( {
-    onSelect: refresh_cal
-});
 
 function get_selected_date() {
     return new Date($('#booking-date-inp').val());
@@ -70,7 +62,6 @@ function mark_slot(usage) {
     var day_id = 'day_' + matched_day_idx;
 
     var matched_slots = [];
-
     var this_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate());
     $('#' + day_id + ' .cal-min15').each( function () {
         var this_id = $(this).attr('id');
@@ -91,7 +82,11 @@ function mark_slot(usage) {
 
     var this_booking_slot = 'booking_' + booking_id;
     $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '" class="booking"></DIV>');
-    $('#' + this_booking_slot).draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
+    if (($.inArray(current_role, ['host', 'director']) != -1) || ((current_role == 'member') && (usage.member_id == current_userid))) {
+        var this_slot = $('#' + this_booking_slot)
+        this_slot.draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
+        this_slot.addClass('booking-editable');
+    };
 };
 
 function on_drop_booking(event, ui ) {
@@ -120,7 +115,7 @@ function mark_slots(usages) {
         mark_slot(usages[i]);
     };
     $('.slot-available').droppable({drop: on_drop_booking});
-    $('.booking').click( function () {
+    $('.booking-editable').click( function () {
         booking_action = 'click';
         var booking_id = parseInt($(this).attr('id').split('_')[1], 10);
         get_booking_info(booking_id);
@@ -135,15 +130,6 @@ function on_available_resources(resp) {
         resource_map[resource.id] = resource.name;
     };
 };
-
-$('#resource-select').change( function () {
-    refresh_cal();
-});
-
-var params = {owner: current_ctx, calc_mode: 1};
-jsonrpc("resources.available", params, on_available_resources, error);
-
-set_day_titles();
 
 function id2datetime(id) {
     var slot_no = id.split('_')[1];
@@ -297,6 +283,21 @@ function make_booking() {
         jsonrpc('usage.update', params, on_new_booking, error);
     };
 };
+
+// init
+
+$('#booking-date-inp').datepicker( {
+    onSelect: refresh_cal
+});
+
+$('#resource-select').change( function () {
+    refresh_cal();
+});
+
+var params = {owner: current_ctx, calc_mode: 1};
+jsonrpc("resources.available", params, on_available_resources, error);
+
+set_day_titles();
 
 $('#new-booking-form').submit( function () {
     $(this).checkValidity();

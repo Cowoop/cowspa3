@@ -15,6 +15,9 @@ import be.apis.invoicepref as invoicepreflib
 
 # dependencies bizplace plan resource
 
+a_start_date = datetime.date(2011,8,1)
+a_end_date = datetime.date(2015,8,1)
+
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
@@ -34,27 +37,52 @@ def test_add_new_tariff():
 
 def test_add_pricing_for_a_plan():
     amount = 20
-    starts = datetime.date(2011,8,1).isoformat() # this starts is ignored
-    pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount)
+    starts = a_start_date.isoformat()
+    ends = a_end_date.isoformat()
+    pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount, ends)
+    test_data.pricing_id = pricing_id
     info = pricinglib.pricing.info(pricing_id)
     env.context.pgcursor.connection.commit()
     assert info.resource == test_data.resource_id and isinstance(pricing_id, (int, long))
 
+def test_add_pricing_with_bad_end_date():
+    amount = 20
+    starts = a_start_date.isoformat()
+    ends = (a_start_date - datetime.timedelta(7)).isoformat() # end smaller than start
+    assert_raises(AssertionError, pricinglib.pricings.new, *(test_data.resource_id, test_data.plan_id, starts, amount, ends))
+
+def test_add_pricing_with_bad_start_date():
+    amount = 20
+    starts = a_start_date.isoformat() # starts that conflicts
+    assert_raises(Exception, pricinglib.pricings.new, (test_data.resource_id, test_data.plan_id, starts, amount))
+
+def test_change_in_previous_pricing():
+    # This checks if previous pricing date is adjusted or not
+    previous_pricing_info = pricinglib.pricing.info(test_data.pricing_id)
+    amount = 30
+    start_date = a_end_date - datetime.timedelta(365)
+    starts = start_date.isoformat()
+    pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount)
+    previous_pricing_info_now = pricinglib.pricing.info(test_data.pricing_id)
+    env.context.pgcursor.connection.commit()
+    assert (start_date - previous_pricing_info_now.ends) == datetime.timedelta(1)
+
 def test_add_pricing_for_a_plan_with_same_date():
     amount = 20
     test_data.price_w_plan = amount
-    starts = datetime.date(2011,8,1).isoformat()
+    starts = a_start_date.isoformat()
     try:
-        pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount) # adding this pricing must work not next
+        pricing_id  = pricinglib.pricings.new(test_data.resource_id, test_data.plan_id, starts, amount)
+        # adding this pricing must work not next
     except Exception, err:
-        assert True#isinstance(err, be.errors.ErrorWithHint)
+        assert True # isinstance(err, be.errors.ErrorWithHint)
     else:
-        assert False 
+        assert False
 
 def test_add_pricing_for_default_tariff():
     amount = 50
     test_data.price_wo_plan = amount
-    starts = datetime.date(2011,8,1).isoformat()
+    starts = a_start_date.isoformat()
     pricing_id = pricinglib.pricings.new(test_data.resource_id, test_data.default_tariff_id, starts, amount)
     info = pricinglib.pricing.info(pricing_id)
     test_data.default_pricing_id = pricing_id
