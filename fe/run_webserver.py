@@ -92,6 +92,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run cowspa server.')
     parser.add_argument('-d', '--dev', action="store_true", default=False, help='Development mode. Caching turned off')
     parser.add_argument('-c', '--conf', action="store", default="prod", help='Conf mode. Load conf from conf_<mode>.py')
+    parser.add_argument('-s', '--server', action="store", default="127.0.0.1", help='Start the server on <servername>')
+    parser.add_argument('-p', '--port', action="store", default="5001", help='start the server on <port>')
     args = parser.parse_args()
     if args.dev :
         print('Development mode ON. Caching turned OFF')
@@ -115,5 +117,5 @@ if __name__ == '__main__':
 
     from gevent.wsgi import WSGIServer
 
-    http_server = WSGIServer(('', 5001), app)
+    http_server = WSGIServer((args.server, int(args.port)), app)
     http_server.serve_forever()
