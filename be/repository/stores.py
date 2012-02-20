@@ -231,6 +231,7 @@ class Usage(PGStore):
     id SERIAL NOT NULL UNIQUE,
     name TEXT,
     notes TEXT,
+    description TEXT,
     resource_id INTEGER,
     resource_name TEXT,
     resource_owner INTEGER NOT NULL,
