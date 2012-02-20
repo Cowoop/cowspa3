@@ -289,6 +289,9 @@ class Member(Object):
     renamed = dict(id='number', display_name='name', email_address='email', user_name='username', skype_id='skype', description='long_description', organisation='organization', password='enc_password')
 
     def export(self):
+        billto_id = self.data['billto_id']
+        if billto_id not in (self.id, None) and billto_id not in migrated.member:
+            Member(billto_id).migrate()
         if self.new_data.get('long_description'):
             long_description = self.new_data['long_description']
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
@@ -350,7 +353,7 @@ class Member(Object):
 class Usage(Object):
     table_name = 'rusage'
     unchanged = ('resource_name', 'end_time', 'quantity', 'notes')
-    renamed = dict(start='start_time', date_booked='created', meeting_name='name')
+    renamed = dict(start='start_time', date_booked='created', meeting_name='name', meeting_description='description')
 
     def export(self):
         resource_id = migrated.resource[self.data['resource_id']]
@@ -442,18 +445,9 @@ def migrate_location():
     jsonrpc(auth_token, 'bizplace.update', **values)
 
     banner("Migrating members")
-    q = 'SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s OR id in (SELECT user_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)) OR id IN (SELECT user_id FROM invoice WHERE location_id = %(location_id)s)'
-    sorted_member_ids = []
-    q1 = 'SELECT id FROM tg_user WHERE billto_id=id OR billto_id IS NULL'
-    q2 = 'SELECT DISTINCT billto_id FROM tg_user WHERE id in (' + q + ') AND billto_id IS NOT NULL'
-    q3 = 'SELECT DISTINCT user_id FROM rusage'
-    for q in (q1, q2, q3):
-        values = dict(location_id=location_id)
-        member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-        for id in member_ids:
-            if id not in sorted_member_ids:
-                sorted_member_ids.append(id)
-    for id in sorted_member_ids:
+    q = 'SELECT id FROM tg_user'
+    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
+    for id in member_ids:
         if id in migrated.member:
             print("Skipping id:%d" % id)
             continue
