@@ -3,7 +3,7 @@ HubOps Migration FAQ
 
 What is getting transferred
 ---------------------------
-All the data relevant to Hub Operations (HubOps) plaform will be transferred.
+All the data relevant to Hub Operations (HubOps) platform will be transferred.
 This includes
 
 - Members
@@ -52,7 +52,7 @@ Are the members and hosts login details staying the same?
 Yes.
 But HubOps is primarily hosts only platform.
 
-For events - will there be a way of publicising these on the website - when will this happen? 
+For events - will there be a way of publishing these on the website - when will this happen? 
 ---------------------------------------------------------------------------------------------
 No. <Simon> for further questions.
             
