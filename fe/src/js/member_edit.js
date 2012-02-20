@@ -40,7 +40,7 @@ function on_member_profile(resp) {
     $('input[name="last_name"]').val(thismember.profile.last_name);
     $('input[name="short_description"]').val(thismember.profile.short_description);
     $('textarea[name="long_description"]').val(thismember.profile.long_description);
-    $('input[name="address"]').val(thismember.contact.address);
+    $('textarea[name="address"]').val(thismember.contact.address);
     $('input[name="city"]').val(thismember.contact.city);
     $('input[name="province"]').val(thismember.contact.province);
     $('input[name="email"]').val(thismember.contact.email);
