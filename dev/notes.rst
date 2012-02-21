@@ -1,3 +1,12 @@
+Activating env
+==============
+You need to initialize development environment before doing any of the tasks below sections
+
+::
+
+    . bin/activate
+    cd cowspa3
+
 Running tests
 =============
 ::
