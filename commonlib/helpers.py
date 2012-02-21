@@ -4,6 +4,7 @@ except:
     import __builtin__ as builtins # Python 2.x compatibility
 
 import datetime
+import itertools
 import collections
 import base64, random, hashlib
 import dateutil.parser
@@ -80,3 +81,7 @@ def iso2datetime(iso):
 def jsonify(obj):
     dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
     return current_app.response_class(simplejson.dumps(obj, use_decimal=True, default=dthandler), mimetype='application/json')
+
+def sortngroupby(iterable, keyfn, reverse=False):
+    l = sorted(iterable, key=keyfn)
+    return itertools.groupby(l, keyfn)
