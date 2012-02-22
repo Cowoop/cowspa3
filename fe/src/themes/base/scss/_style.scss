@@ -819,9 +819,14 @@ form.hform {
     input[type="button"], input[type="radio"], input[type="checkbox"], input[type="submit"] {
         width: auto;
     }
+    .field {
+        border-bottom: 1px solid lighten($main-color, 60%);
+    }
     .field-input {
         display: inline-block; 
         width: 70%;
+        border-left: 1px dotted lighten($main-color, 60%);
+        padding-left: 1em;
     };
     .field-label {
         display: inline-block; 
@@ -835,7 +840,9 @@ form.hform {
         font-style: italic;
         display: block;
         margin-left: 25%;
+        padding-left: 1em;
         font-size: medium;
+        border-left: 1px dotted lighten($main-color, 60%);
     }
 }
 
