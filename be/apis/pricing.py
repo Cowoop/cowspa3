@@ -22,7 +22,8 @@ class CalcMode:
 def new(resource_id, tariff_id, starts, amount, ends=None):
 
     if starts and ends:
-        assert(commonlib.helpers.iso2date(ends) > commonlib.helpers.iso2date(starts)), "Pricing end date should be greater than start date"
+        assert(commonlib.helpers.iso2date(ends) > commonlib.helpers.iso2date(starts)), \
+            "Pricing end date (%s) should be greater than start date (%s)" % (ends, starts)
     old_pricing = dbaccess.get_resource_pricing(tariff_id, resource_id, starts)
     if starts and old_pricing:
         starts = commonlib.helpers.iso2date(starts)
