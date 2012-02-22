@@ -14,8 +14,9 @@ $('#createmember_form').submit(function () {
         delete(params.first_name);
         delete(params.last_name);
     };
-    function success() {
+    function success(resp) {
         $('.action-status').text("Member Created successfully.").addClass('status-success');
+        window.location = basepath + '/member/edit/#/' + resp.result + '/info'
     };
     function error() {
         $('.action-status').text("Error in Member Creation").addClass('status-fail');
