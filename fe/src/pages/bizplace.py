@@ -141,7 +141,7 @@ class List(BasePage):
         all_loc_tmpl = sphc.more.jq_tmpl('all_loc_tmpl')
         all_loc_tmpl.box = tf.DIV(Class='location-box')
         all_loc_tmpl.box.info = tf.DIV(Class='loc_info_part')
-        all_loc_tmpl.box.info.link = tf.A("${name}", id='edit-link_${id}', href='#/${id}', Class='location-title')
+        all_loc_tmpl.box.info.link = tf.A("${name}", Class='location-title')
         all_loc_tmpl.box.info.city = tf.LABEL("${city}, ${country}", Class='location-info')
         all_loc_tmpl.box.info.short_description = tf.DIV("${short_description}", Class='location-description')
 
