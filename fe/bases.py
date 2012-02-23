@@ -103,9 +103,8 @@ class CSAuthedPage(CSPage):
         ('Bookings', ctxpath + '/booking/week', []),
         ('Invoicing', '#', invoicing_opt),
         ('Resources', ctxpath + '/resources', []),
-        ('Admin', '#', locations_opt),
-        ('Reports', '#', []),
-        ]
+        ('Admin', '#', locations_opt), ]
+        # ('Reports', '#', []), ]
     current_nav = '/Dashboard'
     content_title = ''
     content_subtitle = ''
@@ -188,13 +187,13 @@ class CSAuthedPage(CSPage):
         main.bar.title = tf.DIV([tf.c(title, id="content-title"), tf.SPAN(Class="content-subtitle")], Class=title_classes)
         main.bar.menu = tf.DIV(Class="menu")
         main.bar.menu.content = self.content_menu
+        main.initscript = sphc.more.script_fromfile("fe/src/js/init.js")
         main.contentbox = tf.DIV(Class="content")
         sidebar = self.sidebar()
         main.contentbox.pane1 = tf.DIV(Class=("pane1" if sidebar else "full"))
         main.contentbox.pane1.content = self.content()
         if sidebar:
             main.contentbox.sidebar = tf.DIV(sidebar, Class="sidebar", style="display: none;")
-        main.initscript = sphc.more.script_fromfile("fe/src/js/init.js")
         return main
 
     def sidebar(self):
