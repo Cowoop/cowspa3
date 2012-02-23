@@ -8,6 +8,7 @@ ctxpath = fe.bases.ctxpath
 
 min2str = lambda m: "%02d:%02d" % ((m / 60), (m % 60))
 min15 = lambda day, minute: tf.DIV(Class='cal-min15 slot-available', id="slot_%s-%s.%s" % (day, min2str(minute), min2str(minute+15)))
+start_hour = 7
 
 def hourrange(start, end):
     return ((((hr or 12) if hr < 12 else ((hr - 12) or hr)), ('AM' if hr < 12 else 'PM')) for hr in range(start, end))
@@ -23,11 +24,13 @@ def day(day_no):
             slot.add_classes(['hour-start'])
         elif remainder == 3:
             slot.add_classes(['hour-end'])
+        if i < (4*start_hour):
+            slot.add_classes(['hidden'])
     cells = [tf.DIV("title", Class='day-title slot-unavailable', id="day-title_%s" % day_no)] + slots
     return tf.DIV(cells, Class='cal-day', id="day_%s" % day_no)
 
 def week():
-    return [tf.DIV([timecolumn(0, 24)] + [day(i) for i in range(7)], Class='cal-week')]
+    return [tf.DIV([timecolumn(start_hour, 24)] + [day(i) for i in range(7)], Class='cal-week')]
 
 def booking_form(self_booking=False):
     form = sphc.more.Form(id='new-booking-form', Class='vform')
