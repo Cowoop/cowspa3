@@ -15,9 +15,9 @@ function construct_home_url(result) {
             role = result.roles[0].roles[0].role;
         } else {
             var context_matched = false;
-            for (idx in result.roles) {
-                if (result.roles[idx].context === current_ctx) {
-                    role = result.roles[idx].roles[0].role;
+            for (var i = 0; i < result.roles.length; i++) {
+                if (result.roles[i].context === current_ctx) {
+                    role = result.roles[i].roles[0].role;
                     context_matched = true;
                     break;
                 };

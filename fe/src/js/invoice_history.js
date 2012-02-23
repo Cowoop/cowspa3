@@ -92,7 +92,7 @@ function on_get_invoices_success(response) {
         });
     });
     function on_send_invoice_success() {
-        jsonrpc('invoice.list', {issuer: current_ctx}, on_get_invoices_success);
+        jsonrpc('invoice.list', {issuer: current_ctx, limit: -1}, on_get_invoices_success);
         $('#send_invoice-form .action-status').removeClass('status-fail');
         $('#send_invoice-form .action-status').addClass('status-success').text('Invoice sent successfully');
     };
