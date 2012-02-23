@@ -12,6 +12,7 @@ var locale_data = {
 var fdate_format = "MMM D, YYYY";
 var ftime_format = "hh:mm A";
 var fdatetime_format = fdate_format + ' ' + ftime_format;
+var allow_async = false;
 function error() {};
 //
 
@@ -50,6 +51,7 @@ function set_locale(ctx) {
         locale_data.currency_symbol = resp.result.symbol;
         locale_data.decimal_sep = resp.result.decimal;
         locale_data.group_sep = resp.result.group;
+        allow_async = true;
     };
     var params = {'bizplace_id': ctx, 'user_id': current_userid};
     jsonrpc('bizplace.currency', params, success, error);
@@ -72,11 +74,10 @@ function set_userid(uid) {
     set_cookie("user_id", uid);
 };
 
-function jsonrpc(apiname, params, success, error, async) {
+function jsonrpc(apiname, params, success, error) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
     if (typeof(error) === 'undefined') { error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; };
-    if (typeof(async) === 'undefined') { async = true; };
     var cs_success = function(args) {
         waiting_ele.removeClass('waiting');
         success(args);
@@ -89,7 +90,7 @@ function jsonrpc(apiname, params, success, error, async) {
         params: params,
         success: cs_success,
         error: cs_error,
-        async: async
+        async: allow_async
     });
 };
 
