@@ -72,10 +72,11 @@ function set_userid(uid) {
     set_cookie("user_id", uid);
 };
 
-function jsonrpc(apiname, params, success, error) {
+function jsonrpc(apiname, params, success, error, async) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
-    if (typeof(error) == 'undefined') { var error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; }
+    if (typeof(error) === 'undefined') { error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; };
+    if (typeof(async) === 'undefined') { async = true; };
     var cs_success = function(args) {
         waiting_ele.removeClass('waiting');
         success(args);
@@ -87,7 +88,8 @@ function jsonrpc(apiname, params, success, error) {
     $.jsonRPC.request(apiname, {
         params: params,
         success: cs_success,
-        error: cs_error
+        error: cs_error,
+        async: async
     });
 };
 
@@ -180,12 +182,12 @@ function on_roles_list(resp) {
         $('#ctx-tmpl').tmpl(result).appendTo('#ctx-opts');
         if (current_ctx) {
             var valid_bizplaces = [];
-            for (idx in result) { valid_bizplaces.push(result[idx].context); };
+            for (var idx=0; idx < result.length; idx++) { valid_bizplaces.push(result[idx].context); };
             if (valid_bizplaces.indexOf(current_ctx) == -1) {
                 var ctx = (valid_bizplaces.length == 0? null: valid_bizplaces[0]);
                 set_context(ctx);
             };
-            for (idx in result) {
+            for (var idx=0; idx < result.length; idx++) {
                 if (result[idx].context == current_ctx) {
                     ctx_label = result[idx].label;
                     set_context(current_ctx);
