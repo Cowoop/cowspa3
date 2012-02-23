@@ -110,6 +110,9 @@ class InvoiceCollection:
         return dbaccess.search_invoice(query_parts, options, limit)
 
     def list(self, issuer, limit=100):
+        """
+        limit: -1 is no limit
+        """
         data = dict(issuer=issuer, limit=limit)
         return dbaccess.list_invoices(**data)
 

@@ -128,6 +128,7 @@ pages = [PageBuilder(rootpages.InvoicingPage, prefix + 'invoices/home'),
          PageBuilder(rootpages.LogoutPage, 'logout'),
          PageBuilder(fe.src.pages.invoicing.Preferences, prefix + 'invoices/preferences'),
          PageBuilder(fe.src.pages.invoicing.History, prefix + 'invoices/history'),
+         PageBuilder(fe.src.pages.invoicing.Uninvoiced, prefix + 'invoices/uninvoiced'),
          PageBuilder(bookingpages.Booking, prefix + '/booking/new'),
          PageBuilder(bookingpages.WeekAgenda, prefix + '/booking/week'),
          PageBuilder(fe.src.pages.team.List, prefix + 'team'),
@@ -180,7 +181,7 @@ def build_themes():
         if each_file.endswith(".scss") and (not os.path.isfile(pathjoin(dst_scssdir, each_file)) or os.stat(pathjoin(src_scssdir, each_file)).st_mtime > os.stat(pathjoin(dst_scssdir, each_file)).st_mtime):
             change_in_base = True
             break
-    
+
     for themedir in themedirs:
         # cp -r fe/src/themes pub
         # cp -r contrib/css/* pub/themes/default/scss/
