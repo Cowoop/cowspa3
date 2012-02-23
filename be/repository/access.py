@@ -197,7 +197,7 @@ def find_tariff_members(plan_ids, at_time=None, fields=['member', 'name']):
     return memberprofile_store.get_by_clause(clause, clause_values, fields) # TODO not all member fields are necessary
 
 
-def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, exclude_credit_usages=False, calc_mode=[], exclude_cancelled_usages=False):
+def find_usage(start=None, end=None, starts_on_or_before=None, invoice_id=None, res_owner_ids=[], resource_ids=[], member_ids=[], resource_types=[], uninvoiced=False, exclude_credit_usages=False, calc_mode=[], exclude_cancelled_usages=False):
 
     clauses = []
     if resource_ids: clauses.append('(id IN %(resource_ids)s)')
@@ -218,6 +218,7 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
     if res_owner_ids: clauses.append('(resource_owner IN %(owner_ids)s)')
     if start: clauses.append('start_time::Date >= %(start_time)s')
     if end: clauses.append('start_time::Date <= %(end_time)s')
+    if starts_on_or_before: clauses.append('start_time::Date <= %(starts_on_or_before)s')
     if invoice_id: clauses.append('invoice = %(invoice_id)s')
     if member_ids: clauses.append('(member IN %(member_ids)s)')
     if uninvoiced: clauses.append('invoice IS null')
@@ -226,8 +227,8 @@ def find_usage(start=None, end=None, invoice_id=None, res_owner_ids=[], resource
 
     clauses_s = ' AND '.join(clauses) + ' ORDER BY start_time'
 
-    fields = ['member', 'resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id', 'created_by']
-    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter, owner_ids=tuple(res_owner_ids))
+    fields = ['member', 'resource_name', 'start_time', 'end_time', 'quantity', 'cost', 'id', 'resource_id', 'created_by', 'total']
+    clause_values = dict(start_time=start, end_time=end, invoice=invoice_id, member_ids=tuple(member_ids), resource_filter=resource_filter, owner_ids=tuple(res_owner_ids), starts_on_or_before=starts_on_or_before)
     usages = usage_store.get_by_clause(clauses_s, clause_values, fields=fields)
     member_ids = set([usage.member for usage in usages] + [usage.created_by for usage in usages])
     members = oids2names(member_ids)
@@ -299,7 +300,9 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
     return membership_store.get_by_clause(clause, values)
 
 def list_invoices(issuer ,limit):
-    query = "SELECT invoice.number, member.name, invoice.total, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC LIMIT %(limit)s"
+    query = "SELECT invoice.number, member.name, invoice.total, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC"
+    if limit is not -1:
+        query += " LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit)
     return invoice_store.query_exec(query, values, hashrows=False)
 
@@ -309,7 +312,7 @@ def search_member(query_parts, options, limit, mtype):
     clause = ""
     if [0,'admin'] not in env.context.roles and options['mybizplace']: # TODO: change this post 0.2
         query += ', membership'
-        clause = 'membership.member_id = Member.id AND membership.bizplace_id = (SELECT bizplace_id FROM membership where member_id = %(member_id)s) AND ' 
+        clause = 'membership.member_id = Member.id AND membership.bizplace_id = (SELECT bizplace_id FROM membership where member_id = %(member_id)s) AND '
     if len(query_parts) == 1:
         try:
             query_parts[0] = int(query_parts[0])
@@ -447,8 +450,21 @@ def get_count_of_memberships(bizplace, starts, ends, by_tariff=False):
     clause_values = dict(bizplace=bizplace, starts=starts, ends=ends)
     return membership_store.count_by_clause(clause, clause_values, group_by)
 
-def get_billto_members(member, members=[]):
+def get_billto_from_pref(pref):
+    return pref.owner if pref.mode in (0, 1) else pref.billto
+
+def get_billto_members(members):
+    """
+    members: list of member.ids
+    return dict keyed by member.id, billto
+        billto is same as member.id if billing is not redirected
+    """
+    clause = 'owner IN %(members)s'
+    clause_values = dict(members=tuple(members))
+    return dict((pref.owner, get_billto_from_pref(pref)) for pref in invoicepref_store.get_by_clause(clause, clause_values, fields=['owner', 'mode', 'billto']))
+
+def get_billfrom_members(member, members=[]):
     if member not in members: members.append(member)
     for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)):
-        get_billto_members(member_id, members)
+        get_billfrom_members(member_id, members)
     return members
