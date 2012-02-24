@@ -56,10 +56,10 @@ class UsageCollection:
     def delete(self, usage_id):
         usage = usage_store.get(usage_id, fields=['id', 'name', 'cancelled_against', 'invoice'])
         if not usage.invoice:
-            self._delete(usage_id)
+            return self._delete(usage_id)
         else:
             if not usage.cancelled_against:
-                self.cancel(usage_id)
+                return self.cancel(usage_id)
             else:
                 raise Exception('Can not delete usage which is already invoiced and canceled')
 
