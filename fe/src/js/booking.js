@@ -53,7 +53,7 @@ function mark_slot(usage) {
     var booking_id = usage.id;
     var start_time = iso2date(usage.start_time);
     var end_time = iso2date(usage.end_time);
-    for (i in shown_dates) {
+    for (var i=0; i < shown_dates.length; i++) {
         if (shown_dates[i] > start_time) {
             break;
         };
@@ -82,7 +82,7 @@ function mark_slot(usage) {
 
     var this_booking_slot = 'booking_' + booking_id;
     $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '" class="booking"></DIV>');
-    if (($.inArray(current_role, ['host', 'director']) != -1) || ((current_role == 'member') && (usage.member_id == current_userid))) {
+    if (($.inArray(current_role, ['host', 'director', 'admin']) != -1) || ((current_role == 'member') && (usage.member_id == current_userid))) {
         var this_slot = $('#' + this_booking_slot)
         this_slot.draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
         this_slot.addClass('booking-editable');
@@ -111,7 +111,7 @@ function on_booking_info(resp) {
 };
 
 function mark_slots(usages) {
-    for (i in usages) {
+    for (var i=0; i < usages.length; i++) {
         mark_slot(usages[i]);
     };
     $('.slot-available').droppable({drop: on_drop_booking});
@@ -125,8 +125,8 @@ function mark_slots(usages) {
 function on_available_resources(resp) {
     var resources = resp.result;
     $('#resource-opt').tmpl(resources).appendTo('#resource-select');
-    for (idx in resources) {
-        resource = resources[idx];
+    for (var i=0; i < resources.length; i++) {
+        resource = resources[i];
         resource_map[resource.id] = resource.name;
     };
 };
@@ -149,12 +149,15 @@ function open_booking_form(resource_name, new_booking_date, start_time, end_time
     $('#new-ends').attr('min', start_time);
     $('#new-booking').dialog({
         title: resource_name,
-        close: on_close_booking_form
+        close: on_close_booking_form,
+        width: 'auto'
     });
 };
 
 function open_edit_booking_form(booking) {
     new_booking_date = new_booking_date || iso2date(booking.start_time);
+    $('#booking-name').val(booking.name);
+    $('#booking-notes').val(booking.notes);
     $('#for-member').val((booking.member).toString());
     $('#booking-id').val((booking.id).toString());
     $('#for-member-search').val(booking.member_name);
@@ -184,7 +187,8 @@ function open_edit_booking_form(booking) {
     $('#new-ends').attr('min', start_iso);
     $('#new-booking').dialog({
         title: booking.resource_name,
-        close: on_close_booking_form
+        close: on_close_booking_form,
+        width: 'auto'
     });
 };
 
@@ -247,6 +251,8 @@ function make_booking() {
     
     var params = {};
 
+    params.name = $('#booking-name').val();
+    params.notes = $('#booking-notes').val();
     params.resource_owner = current_ctx;
     params.resource_id = parseInt($('#resource-select').val(), 10);
     params.resource_name = resource_map[params.resource_id];
