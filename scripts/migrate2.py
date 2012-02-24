@@ -13,6 +13,7 @@
 # find team, migrate
 # find message_cust, migrate
 # 
+import argparse
 import atexit
 import cPickle
 import datetime
@@ -34,30 +35,42 @@ import commonlib.shared.constants as constants
 
 TEST_RUN = False
 
+jsonrpc_cred = dict(username='admin', password='x')
+space_db_string =  'dbname=thehub user= password='
+cs_db_string = 'dbname=shon user= password'
+
 binaries_dir = 'binaries'
 mime = magic.Magic(mime=True)
 app = be.apps.cowspa
 
 def parse_args():
+    parser = argparse.ArgumentParser(description='Run cowspa server.')
     global TEST_RUN
-    if len(sys.argv) < 3:
-        sys.exit("usage: %s <location id> <country code>" % sys.argv[0])
-    location_id = int(sys.argv[1])
-    country_code = sys.argv[2]
-    TEST_RUN = '-t' in sys.argv
-    return location_id, country_code
+    parser.add_argument('location_id', action="store")
+    parser.add_argument('-t', action="store_true", dest='test', default=False)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-a', action="store_true", dest='all', default=False)
+    group.add_argument('-o', dest='objects', nargs='+', default=False)
+    return parser.parse_args()
 
-location_id, country_code = parse_args()
+args = parse_args()
+print args
+TEST_RUN = args.test
+location_id, country_code = args.location_id, '004'
+objects_to_import = args.all and ['member', 'resource', 'pricing', 'membership', 'team', 'usage', 'mcust', 'role', 'invoice']
 
 def jsonrpc(auth_token, apiname, **kw):
     params = {"jsonrpc": "2.0", "method": apiname, "params": kw, "id": 1}
     result = app.dispatch(auth_token, params)
     if 'error' in result:
+        print(apiname +' <- ' + str(kw))
         print(result)
         print('Failed: ' + apiname)
         print(result['error']['message'])
-        sys.exit(1)
+        raise('jsonrpc failed')
     return result
+
+auth_token = jsonrpc(None, "login", **jsonrpc_cred)['result']['auth_token']
 
 def import_image(filename):
     if TEST_RUN:
@@ -82,12 +95,10 @@ def download_invoices(old_id, new_id):
         if not os.path.exists(dst):
             ret = wget(src, dst)
 
-auth_token = jsonrpc(None, "login", username="admin", password="x")['result']['auth_token']
-
-spaceconn = psycopg2.connect("dbname=thehub")
+spaceconn = psycopg2.connect(space_db_string)
 spacecur = spaceconn.cursor()
 
-csconn = psycopg2.connect("dbname=shon")
+csconn = psycopg2.connect(cs_db_string)
 cscur = csconn.cursor()
 
 debug = True
@@ -152,6 +163,7 @@ else:
 class Object(object):
     unchanged = tuple()
     renamed = {}
+    anomolies = ()
     def __init__(self, id):
         self.id = id
         self.data = {}
@@ -172,6 +184,9 @@ class Object(object):
     def post(self): pass
     def export(self): pass
     def migrate(self):
+        if self.id in self.anomolies:
+            print('Skipping: %s [anomolies])' % self.id)
+            return
         self.data_import()
         self.pre()
         self.export()
@@ -188,6 +203,9 @@ class Location(Object):
         self.new_data['host_email'] = self.data.name.lower() + '.hosts@the-hub.net'
         self.new_data['country'] = country_code
         self.new_data['skip_default_tariff'] = True
+        if self.id == 36: self.new_data['city'] = 'Prague' # Hack for Prague
+        if self.id == 38: self.new_data['city'] = 'Oaxaca' # Hack for Prague
+        if self.id == 39: self.new_data['city'] = 'Rotterdam' # Hack for Prague
         data = jsonrpc(auth_token, 'bizplace.new', **self.new_data)
         new_location_id = data['result']
         migrated.location[self.id] = new_location_id
@@ -279,8 +297,13 @@ class Pricing(Object):
             result = select(cscur, q, values, False)
             self.new_data['tariff_id'] = result[0][0]
 
-        result = jsonrpc(auth_token, 'pricings.new', **self.new_data)
-        migrated.pricing[self.id] = result['result']
+        try:
+            result = jsonrpc(auth_token, 'pricings.new', **self.new_data)
+            migrated.pricing[self.id] = result['result']
+        except Exception as err:
+            if 'Pricing start date should be greater than' in err.message:
+                print("Pricing conflict: Skipping %s as it conflicts with previous pricing")
+            migrated.pricing[self.id] = None
 
 class Member(Object):
     # TODO: relationships dict
@@ -425,6 +448,18 @@ def migrate_location():
         invoicepref = InvoicePref(location_id)
         invoicepref.migrate()
 
+    banner("Migrating members")
+    q = 'SELECT id FROM tg_user'
+    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
+    if 'member' in objects_to_import:
+        for id in member_ids:
+            if id in migrated.member:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            member = Member(id)
+            member.migrate()
+
     banner("Migrating resources")
     # Create guest tariff
     # Create other tariffs
@@ -436,24 +471,15 @@ def migrate_location():
     defaulttariff_id = select(spacecur, q, values, False)[0][0]
 
     # Migrate default tariff
-    if not defaulttariff_id in migrated.resource:
-        resource = Resource(defaulttariff_id)
-        resource.migrate()
-    new_defaulttariff_id = migrated.resource[defaulttariff_id]
+    if 'resource' in objects_to_import:
+        if not defaulttariff_id in migrated.resource:
+            resource = Resource(defaulttariff_id)
+            resource.migrate()
+        new_defaulttariff_id = migrated.resource[defaulttariff_id]
 
-    values = dict(bizplace_id=new_location_id, default_tariff=new_defaulttariff_id)
-    jsonrpc(auth_token, 'bizplace.update', **values)
+        values = dict(bizplace_id=new_location_id, default_tariff=new_defaulttariff_id)
+        jsonrpc(auth_token, 'bizplace.update', **values)
 
-    banner("Migrating members")
-    q = 'SELECT id FROM tg_user'
-    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
-    for id in member_ids:
-        if id in migrated.member:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        member = Member(id)
-        member.migrate()
 
     q = 'SELECT id FROM resource WHERE place_id=%(location_id)s AND id != %(defaulttariff_id)s'
     values = dict(location_id=location_id, defaulttariff_id=defaulttariff_id)
@@ -462,101 +488,125 @@ def migrate_location():
     tariff_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     resource_ids = tuple(id for id in all_resource_ids if id not in tariff_ids)
 
-    for id in tariff_ids+resource_ids:
-        if id in migrated.resource:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        resource = Resource(id)
-        resource.migrate()
+    if 'resource' in objects_to_import:
+        for id in tariff_ids+resource_ids:
+            if id in migrated.resource:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            resource = Resource(id)
+            resource.migrate()
 
     q = 'SELECT id FROM pricing WHERE resource_id IN %(all_resource_ids)s'
     values = dict(all_resource_ids=all_resource_ids)
     pricings = tuple(row[0] for row in select(spacecur, q, values, False))
 
-    for id in pricings:
-        if id in migrated.pricing:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        pricing = Pricing(id)
-        pricing.migrate()
+    if 'pricing' in objects_to_import:
+        for id in pricings:
+            if id in migrated.pricing:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            pricing = Pricing(id)
+            pricing.migrate()
 
 
     banner("Migrating usages")
-    q = 'SELECT id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s) ORDER BY id'
-    values = dict(location_id=location_id)
-    usage_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-    for id in usage_ids:
-        if id in migrated.usage:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        usage = Usage(id)
-        usage.migrate()
+    if 'usage' in objects_to_import:
+        q = 'SELECT id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s) ORDER BY id'
+        values = dict(location_id=location_id)
+        usage_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        for id in usage_ids:
+            if id in migrated.usage:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            usage = Usage(id)
+            usage.migrate()
 
     banner("Migrating memberships")
-    member_ids = tuple(migrated.member.keys())
-    q = "SELECT id, start, resource_id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff') AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
-    for id in member_ids:
-        memberships = []
-        values = dict(member_id=id, location_id=location_id)
-        tariff_usages_ = select(spacecur, q, values)
-        if not tariff_usages_:
-            continue
-        # Found some tariff usages have same start,end. This is not acceptable in Ops
-        # So filtering here
-        tariff_usages = [tariff_usages_[0]]
-        for usage in tariff_usages_[1:]:
-            if usage.start == tariff_usages[-1].start:
-                tariff_usages[-1] = usage
-            else:
-                tariff_usages.append(usage)
-
-        usage = tariff_usages[0]
-        memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
-        for usage in tariff_usages[1:]:
-            last = memberships[-1]
-            if last[1].date() == usage.start.date():
+    if 'membership' in objects_to_import:
+        q = "SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff'"
+        values = dict(location_id=location_id)
+        resource_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        q = "SELECT DISTINCT user_id FROM rusage WHERE resource_id in %(resource_ids)s"
+        values = dict(resource_ids=resource_ids)
+        member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
+        for id in member_ids:
+            memberships = []
+            values = dict(member_id=id, location_id=location_id, resource_ids=resource_ids)
+            tariff_usages_ = select(spacecur, q, values)
+            if not tariff_usages_:
                 continue
-            if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
-                last[-1] = usage.end_time
-            else:
-                memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+            # Found some tariff usages have same start,end. This is not acceptable in Ops
+            # So filtering here
+            tariff_usages = [tariff_usages_[0]]
+            for usage in tariff_usages_[1:]:
+                if usage.start == tariff_usages[-1].start:
+                    tariff_usages[-1] = usage
+                else:
+                    tariff_usages.append(usage)
 
-        banner('Migrating memberships of %d' % id)
-        print(memberships)
-        for membership in memberships:
-            data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
-                ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
-            membership_hash = hash(frozenset(data.items()))
-            if not membership_hash in migrated.membership:
-                result = jsonrpc(auth_token, 'memberships.new', **data)
-                migrated.membership[membership_hash] = result['result']
+            usage = tariff_usages[0]
+            memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+            for usage in tariff_usages[1:]:
+                last = memberships[-1]
+                if last[1].date() == usage.start.date():
+                    continue
+                if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
+                    last[-1] = usage.end_time
+                else:
+                    memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+
+            banner('Migrating memberships of %d' % id)
+            for membership in memberships:
+                data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
+                    ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
+                membership_hash = hash(frozenset(data.items()))
+                if not membership_hash in migrated.membership:
+                    result = jsonrpc(auth_token, 'memberships.new', **data)
+                    migrated.membership[membership_hash] = result['result']
+
+    banner("Migrating roles")
+    if 'role' in objects_to_import:
+        for id in member_ids:
+            if id not in migrated.member:
+                continue
+            banner('Migrating team membership of %d' % id)
+            q = "SELECT group_name from user_group, tg_group where user_id=%(member_id)s and group_id in (SELECT id from tg_group WHERE place_id = %(location_id)s and (group_name like '%%_director' or group_name like '_%%host')) and tg_group.id = user_group.group_id"
+            values = dict(location_id=location_id, member_id=id)
+            roles = [row[0].split('_')[1] for row in select(spacecur, q, values, False)]
+            if roles:
+                role_data = dict(user_id=migrated.member[id], roles=roles, context=migrated.location[location_id])
+                result = jsonrpc(auth_token, 'roles.add', **role_data)
+
 
     banner("Migrating Invoices")
-    q = 'SELECT id FROM invoice WHERE location_id = %(location_id)s'
-    values = dict(location_id=location_id)
-    invoice_ids = (row[0] for row in select(spacecur, q, values, False))
-    for id in invoice_ids:
-        if id in migrated.invoice:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        invoice = Invoice(id)
-        invoice.migrate()
+    if 'invoice' in objects_to_import:
+        q = 'SELECT id FROM invoice WHERE location_id = %(location_id)s'
+        values = dict(location_id=location_id)
+        invoice_ids = (row[0] for row in select(spacecur, q, values, False))
+        for id in invoice_ids:
+            if id in migrated.invoice:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            invoice = Invoice(id)
+            invoice.migrate()
 
     banner("Migrating message_customizations")
-    q = 'SELECT id FROM message_customization WHERE location_id = %(location_id)s'
-    values = dict(location_id=location_id)
-    msg_ids = (row[0] for row in select(spacecur, q, values, False))
-    for id in msg_ids:
-        if id in migrated.messagecust:
-            print("Skipping id:%d" % id)
-            continue
-        print("migrating id:%d" % id)
-        messagecust = MessageCust(id)
-        messagecust.migrate()
+    if 'mcust' in objects_to_import:
+        q = 'SELECT id FROM message_customization WHERE location_id = %(location_id)s'
+        values = dict(location_id=location_id)
+        msg_ids = (row[0] for row in select(spacecur, q, values, False))
+        for id in msg_ids:
+            if id in migrated.messagecust:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            messagecust = MessageCust(id)
+            messagecust.migrate()
 
     banner("Migrating EU Tax Exemptions")
     q = 'SELECT * FROM eu_tax_exemption WHERE location_id = %(location_id)s'
@@ -571,9 +621,10 @@ def migrate_location():
     qexec(cscur, q)
 
     banner("Downloding Invoices")
-    for old_id, new_id in migrated.invoice.items():
-        print('downloding: %s' % old_id)
-        if not TEST_RUN: download_invoices(old_id, new_id)
+    if 'invoice' in objects_to_import:
+        for old_id, new_id in migrated.invoice.items():
+            print('downloding: %s' % old_id)
+            if not TEST_RUN: download_invoices(old_id, new_id)
 
 def before_exit():
     f = open(state_path, 'w')
