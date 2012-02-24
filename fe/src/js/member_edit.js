@@ -573,7 +573,7 @@ function get_uninvoiced_usages(){
     function success(response){
         is_get_thismember_usages_done = true;
         var aaData = [];
-        for (i in response.result) {
+        for (var i=0; i < response.result.length; i++) {
             var item = response.result[i];
             aaData[i] = [item.resource_name, item.start_time, item.end_time, item.quantity, item.cost, item.id];
         };
