@@ -210,6 +210,7 @@ class Membership(PGStore):
 class ResourceRelation(PGStore):
     # resourceA --relation--> resourceB
     create_sql = """
+    owner INTEGER NOT NULL,
     resourceA INTEGER,
     relation BOOLEAN,
     resourceB INTEGER
@@ -250,6 +251,10 @@ class Usage(PGStore):
     cancelled_against INTEGER DEFAULT NULL
     """
     pickle_cols = ['tax_dict']
+
+class Booking(PGStore):
+    create_sql = """
+    """
 
 class Invoice(PGStore):
     create_sql = """
