@@ -8,8 +8,8 @@ if [ "$arch" == "x86_64" ]; then
 fi
 
 google_repo="http://wkhtmltopdf.googlecode.com/files/"
-tox_src="libwkhtmltox-0.10.0_rc2-"$arch_spec".tar.bz2"
-pdf_src="wkhtmltopdf-0.10.0_rc2-static-amd64.tar.bz2"
+tox_src="libwkhtmltox-0.11.0_rc1-"$arch_spec".tar.bz2"
+pdf_src="wkhtmltopdf-0.11.0_rc1-static-"$arch_spec".tar.bz2"
 lib_name="libwkhtmltox.so"
 lib_dst=`pwd`"/lib"
 
