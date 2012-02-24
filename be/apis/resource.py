@@ -10,6 +10,8 @@ resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
 resourcerelation_store = dbaccess.stores.resourcerelation_store
 
+available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
+
 class CalcMode:
 
     quantity_based = 0
@@ -72,14 +74,18 @@ class ResourceCollection:
         return self.list(owner, type='tariff')
 
     def available_tariffs(self, owner):
-        available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
         return resource_store.get_by(crit=dict(owner=owner, state=available_state), fields=['id', 'name'])
 
     def available(self, owner, calc_mode=None):
-        available_state = commonlib.shared.constants.resource.to_flags( dict(enabled=True, repairs=False) )
         crit = dict(owner=owner, state=available_state)
         if calc_mode: crit['calc_mode'] = calc_mode
         return [res for res in resource_store.get_by(crit=crit, fields=['id', 'name', 'type']) if res.type != 'tariff']
+
+    def bookable(self, owner):
+        crit = dict(owner=owner, state=available_state)
+        resources = [res for res in resource_store.get_by(crit=crit, fields=['id', 'name', 'type']) if res.type != 'tariff']
+        dependent_resource_ids = [row[0] for row in resourcerelation_store.get_by(dict(owner=owner, relation=True), fields=['resourceB'], hashrows=False)]
+        return [res for res in resources if res.id not in dependent_resource_ids]
 
     def resources(self, owner, type=None):
         """
@@ -141,12 +147,13 @@ class ResourceResource:
         eg. Resource 12 contains resources 13, 14 and suggests 15.
         >>> set_relations(12, [(True, 13), (True, 14), (False, 15)])
         """
+        owner = resource_store.get(res_id, ['owner'])
         relation_dicts = dict((resb_id, relation) for relation, resb_id in relations)
         existing_relations = dict(resourcerelation_store.get_by(crit={'resourceA':res_id}, fields=['relation', 'resourceB'], hashrows=False))
         to_update = set(relation_dicts.keys()).intersection(existing_relations.keys())
         to_add = set(relation_dicts.keys()).difference(to_update)
         for resB_id in to_add:
-            resourcerelation_store.add(resourceA=res_id, relation=relation_dicts[resB_id], resourceB=resB_id)
+            resourcerelation_store.add(owner=owner, resourceA=res_id, relation=relation_dicts[resB_id], resourceB=resB_id)
         for resB_id in to_update:
             resourcerelation_store.update_by(resourceA=res_id, relation=relation_dicts[resB_id], resourceB=resB_id)
         return resourcerelation_store.get_by(crit={'resourceA':res_id})
