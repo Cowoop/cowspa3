@@ -32,6 +32,7 @@ def test_update_usage():
     assert new_cost == usagelib.usage_resource.info(test_data.usage_id)['cost']
 
 def test_delete_or_cancel_usage():
+    usagelib.usage_resource.update(test_data.usage_id, invoice=50000) # TODO usage uninvoiced will be deleted not canceled so to test usage cancelation we are setting non existing invoice id
     old_amount = usagelib.usage_resource.get(test_data.usage_id, 'total')
     usage_id = usagelib.usage_collection.delete(test_data.usage_id)
     assert usagelib.usage_resource.get(test_data.usage_id, 'total') == old_amount

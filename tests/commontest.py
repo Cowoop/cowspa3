@@ -30,7 +30,7 @@ def load_apis():
     import be.apps
     
 def setup_test_env():
-    be.bootstrap.start('conf_test')
+    be.bootstrap.start('conf_test', 1)
     load_apis()
 
 def setup_system_context():
