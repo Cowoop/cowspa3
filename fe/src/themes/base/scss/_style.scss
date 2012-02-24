@@ -723,8 +723,8 @@ button[disabled], button[disabled]:hover {
         .item-w { margin-right: 3em; margin-left: 3em; border-color: lighter($main-color, 20%); }
         a { // needed?
             @extend button;
-            color: $main-color;
-            background: $other-text-color;
+            background: $main-color;
+            color: $other-text-color;
             border: 1px solid $main-color;
             padding: 0.5em;
         }
@@ -834,7 +834,8 @@ form.hform {
         text-align: right;
         display: inline-block;
         vertical-align: top;
-        padding: 0 0.5em 0 0;
+        padding: 0.5em 0.5em 0 0;
+        line-height: 1.3em;
     };
     .field-help {
         font-style: italic;
@@ -1007,6 +1008,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #pane-resource { width: 20%; float: left; }
 #pane-booking { width: 75%; float: right; }
 #booking-date-inp { font-size: 80%; }
+#new-booking-date {font-size: 110%; text-align: center; }
 
 #booking-cal {
     width: 100%; 
