@@ -20,8 +20,8 @@ Development env setup
     virtualenv apphome
     cd apphome
     . ./bin/activate
-    git clone git@github.com:shon/cowspa3.git # Writable
-    git clone git://github.com/shon/cowspa3.git # Read only
+    git clone git@github.com:Cowoop/cowspa3.git # Writable
+    git clone git://github.com/Cowoop/cowspa3.git # Read only
     cd cowspa3
     # wget https://bitbucket.org/dvarrazzo/psycogreen/raw/77a9c05f5229/gevent/psyco_gevent.py
     pip install -r requirements.txt
