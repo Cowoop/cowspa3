@@ -39,7 +39,7 @@ class Template(sphc.more.HTML5Page):
         container.top.col2 = tf.DIV(id="top-col2")
 
         container.top.col1.sender = tf.DIV(id="issuer", Class="defs")
-        if data.invoicepref.logo:
+        if not data.invoicepref.logo == 'data:':
             container.top.col1.sender.logo = tf.DIV(tf.IMG(src=data.invoicepref.logo, Class="invoice-logo"))
         container.top.col1.sender.title = tf.DIV(tf.H1(data.bizplace.name))
 
@@ -61,10 +61,13 @@ class Template(sphc.more.HTML5Page):
         container.clear = sphc.more.clear()
 
         if data.invoice.notice:
-            container.notice = tf.DIV(data.invoice.notice, Class="pre-wrap full box-bordered")
+            container.notice = tf.DIV()
+            container.notice.header = tf.B('Note')
+            container.notice.notice = tf.DIV(data.invoice.notice, Class="pre-wrap full box-bordered")
+            container.notice.br = tf.BR()
 
         if data.invoicepref.freetext1:
-            container.freetext1 = tf.DIV(data.invoicepref.freetext1, Class="pre-wrap full box-bordered")
+            container.freetext1 = tf.DIV(data.invoicepref.freetext1, Class="pre-wrap full")
 
         usage_summary = tf.DIV()
         usages = tf.TABLE(id='usages_summary', Class="stripped")
@@ -99,11 +102,6 @@ class Template(sphc.more.HTML5Page):
         usages.row = row
         usage_summary.table = usages
         container.usage_summary = usage_summary
-
-        if data.invoicepref.terms_and_conditions:
-            container.terms_and_conditions = tf.DIV()
-            container.terms_and_conditions.heading = tf.H3("Terms & Conditions")
-            container.terms_and_conditions.data = tf.DIV(data.invoicepref.terms_and_conditions)
 
         table_headers = ['Sr. no.', 'Resource', 'Quantity', 'Duration', 'Amount (%s)' % currency]
         multimember_invoice = False
@@ -149,17 +147,17 @@ class Template(sphc.more.HTML5Page):
         container.usage_details = usage_details
 
         if data.invoicepref.freetext2:
-            container.notice = tf.DIV(data.invoicepref.freetext2, Class="pre-wrap full box-bordered")
+            container.notice = tf.DIV(data.invoicepref.freetext2, Class="pre-wrap full")
 
         if data.invoicepref.bank_details:
             container.bank_details = tf.DIV()
             container.bank_details.heading = tf.H3("Bank Details")
             container.bank_details.data = tf.DIV(data.invoicepref.bank_details)
 
-        if data.invoicepref.due_date:
-            container.payment_terms = tf.DIV()
-            container.payment_terms.heading = tf.B("Payment Terms: ")
-            container.payment_terms.data = tf.C("%s days" % data.invoicepref.due_date)
+        container.payment_terms = tf.DIV()
+        container.payment_terms.heading = tf.H3("Payment Terms")
+        container.payment_terms.data = tf.C(data.invoicepref.terms_and_conditions)
+        container.payment_terms.br = tf.BR()
 
         footer_items = [data.invoicepref.company_no, data.bizplace.website, data.bizplace.phone]
         footer = ' | '.join(item for item in footer_items if item)
