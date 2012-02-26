@@ -1,5 +1,5 @@
 //****************************Global Section************************************
-var invoice_pref_info, email_text;
+var invoice_pref_info, invoice_email_text;
 var changed_values = {};
 var image_size_limit = 128000;//128kb
 //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -13,7 +13,7 @@ $("#edit-link").click(function(){
 
 $("#cancel-btn").click(function(){
     $("#edit-section").hide();
-    $("#email_text").val(invoice_pref_info.email_text);
+    $("#invoice_email_text").val(invoice_email_text);
     $("#terms_and_conditions").val(invoice_pref_info.terms_and_conditions);
     $("#due_date").val(invoice_pref_info.due_date);
     $("#bank_details").val(invoice_pref_info.bank_details);
@@ -82,9 +82,11 @@ $('#logo').change(function handleFileSelect(evt) {
 //*************************Get Invoice Preference Info**************************
 function success(response) {
     invoice_pref_info = response.result;
-    $("#data-logo").attr('src', invoice_pref_info.logo);
-    $("#data-email_text").text(invoice_pref_info.email_text); 
-    $("#email_text").val(invoice_pref_info.email_text);
+    if (invoice_pref_info.logo=='data:') {
+        $("#data-logo").hide();
+    } else {
+        $("#data-logo").attr('src', invoice_pref_info.logo);
+    };
     $("#data-terms_and_conditions").text(invoice_pref_info.terms_and_conditions); 
     $("#terms_and_conditions").val(invoice_pref_info.terms_and_conditions);
     $("#data-due_date").text(invoice_pref_info.due_date); 
@@ -114,15 +116,15 @@ $("#edit-link2").click(function(){
     $("#edit-section2").show();
 });
 $("#cancel-btn2").click(function(){
-    $("#data-email_text").val(email_text);
+    $("#data-email_text").val(invoice_email_text);
     $("#edit-section2").hide();
     $("#view-section2").show();
 });
 $("#save-btn2").click(function(){
-    email_text = $("#email_text").text();
-    var params = {'owner_id':current_ctx, 'name':"invoice_mail", 'content':email_text};    
+    invoice_email_text = $("#invoice-email_text").val();
+    var params = {owner_id: current_ctx, name: "invoice_mail", content: invoice_email_text};
     function on_save_emailtext_success() {
-        $("#data-email_text").val(email_text);
+        $("#data-email_text").text(invoice_email_text);
         $("#edit-section2").hide();
         $("#view-section2").show();
     };
@@ -133,8 +135,9 @@ $("#save-btn2").click(function(){
 });
 
 function on_get_emailtext_success(response) {
-    email_text = response.result; 
-    $("#email_text").val(invoice_pref_info.email_text);    
+    invoice_email_text = response.result.content; 
+    $("#data-email_text").text(invoice_email_text);
+    $("#invoice-email_text").val(invoice_email_text);
 };
 var params1 = { 'owner_id' : current_ctx, 'name':"invoice_mail"};
 jsonrpc('messagecust.get', params1, on_get_emailtext_success);
