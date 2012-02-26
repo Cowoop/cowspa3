@@ -125,19 +125,18 @@ class Preferences(BasePage):
 
     title = "Invoice Preferences"
     current_nav = 'Invoicing'
-    
+
     def content(self):
         container = tf.DIV()
-        basic = tf.DIV(id="basic", Class="hidden")
-        
-        edit = tf.DIV(Class="edit-link-box")
-        edit.link = tf.A("Edit", id='edit-link', href='#basic')
-        basic.edit = edit
-        
-        view_section = tf.DIV(id='view-section')
+        main = tf.DIV(id="invoicepref-main")
+
+        view_section = tf.DIV(id='view-section', Class='floatfix')
+        view_section.edit = tf.DIV(Class="edit-link-box")
+        view_section.edit.link = tf.A("Edit", id='edit-link', href='#main')
+
         view_section.logo = tf.DIV(Class="field-container")
         view_section.logo.label = tf.DIV("Logo", Class="field-name")
-        view_section.logo.value = tf.IMG(Class="invoice-logo", id="data-logo", alt="Logo is not available")
+        view_section.logo.value = tf.IMG(Class="invoice-logo", id="data-logo", alt="Logo is not available", title="Image Not Found")
         view_section.terms = tf.DIV(Class="field-container")
         view_section.terms.label = tf.DIV("Terms And Conditions", Class="field-name")
         view_section.terms.value = tf.DIV(id="data-terms_and_conditions", Class="field-value")
@@ -156,8 +155,8 @@ class Preferences(BasePage):
         view_section.free_text2 = tf.DIV(Class="field-container")
         view_section.free_text2.label = tf.DIV("Free Text2", Class="field-name")
         view_section.free_text2.value = tf.DIV(id="data-freetext2", Class="field-value")
-        basic.view_form = view_section
-        
+        main.view = view_section
+
         edit_form = sphc.more.Form(id='preferences_edit_form', classes=['hform'], enctype='multipart/form-data')
         edit_form.add_field("Logo", tf.INPUT(name="logo", id="logo", type="file", accept="image/*"), "Suggested Image Dimensions : 150x150.")
         edit_form.add_field("Terms And Conditions", tf.TEXTAREA(Class="changed-data", name="terms_and_conditions", id="terms_and_conditions"))
@@ -170,42 +169,46 @@ class Preferences(BasePage):
         edit_section = tf.DIV(id='edit-section', Class='hidden')
         edit_section.form = edit_form.build()
         edit_section.msg = tf.SPAN(id="edit_invoicepref-msg")
-        basic.edit_form = edit_section
-        
+        main.edit_form = edit_section
+
+        email = tf.DIV(id="invoicepref-email")
+
+        view_section2 = tf.DIV(Class="floatfix", id='view-section2')
+        view_section2.edit = tf.DIV(Class="edit-link-box")
+        view_section2.edit.link = tf.A("Edit", id='edit-link2', href='#email')
+
+        view_section2.email_text = tf.DIV(Class="field-container")
+        view_section2.email_text.label = tf.DIV("Email Text", Class="field-name")
+        view_section2.email_text.value = tf.DIV(id="data-email_text", Class="field-value")
+        email.view_form2 = view_section2
+
+        edit_form2 = sphc.more.Form(id='preferences_edit_form2', classes=['hform'], enctype='multipart/form-data')
+        edit_form2.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="email_text"))
+
         tax_edit_template = sphc.more.jq_tmpl(id="tax_edit_template")
         tax_edit_template.field = tf.DIV(Class="field", id="tax-${id}")
         tax_edit_template.field.name = tf.DIV(tf.INPUT(id="tax_name-${id}" , type="text"), Class="tax-name")
         tax_edit_template.field.value = tf.DIV(tf.INPUT(id="tax_value-${id}", type="text"), Class="tax-value")
         tax_edit_template.field.value = tf.DIV(tf.A("X", id="tax_delete-${id}", href="#"), Class="tax-delete")
-        basic.tax_edit_template = tax_edit_template
-        
-        email = tf.DIV(id="email")
-        edit2 = tf.DIV(Class="edit-link-box")
-        edit2.link = tf.A("Edit", id='edit-link2', href='#email')
-        email.edit = edit2
-        
-        view_section2 = tf.DIV(id='view-section2')
-        view_section2.email_text = tf.DIV(Class="field-container")
-        view_section2.email_text.label = tf.DIV("Email Text", Class="field-name")
-        view_section2.email_text.value = tf.DIV(id="data-email_text", Class="field-value")
-        email.view_form2 = view_section2
-        
-        edit_form2 = sphc.more.Form(id='preferences_edit_form2', classes=['hform'], enctype='multipart/form-data')
-        edit_form2.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="email_text"))
+        main.tax_edit_template = tax_edit_template
+
+        edit_form2 = sphc.more.Form(id='preferences_edit_form2', classes=['hform'])
+        edit_form2.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="invoice-email_text"))
         edit_form2.add_buttons(tf.INPUT(type="button", value="Save", id='save-btn2'), tf.INPUT(type="button", value="Cancel", id='cancel-btn2'))
-        edit_section2 = tf.DIV(id='edit-section2', Class='hidden')
+        edit_section2 = tf.DIV(id='edit-section2', Class="hidden")
         edit_section2.form = edit_form2.build()
         email.edit_form = edit_section2
          # Tabs
         container.tabs = tf.DIV(id="invoicepref_tabs")
         container.tabs.list = tf.UL()
-        container.tabs.list.tab1 = tf.li(tf.A("Basic", href="#basic", Class="profile-tab"))
-        container.tabs.list.tab2 = tf.li(tf.A("Email Text", href="#email", Class="profile-tab"))
-        container.tabs.basic = basic
+        container.tabs.list.tab1 = tf.li(tf.A("Main", href="#invoicepref-main"))
+        container.tabs.list.tab2 = tf.li(tf.A("Email", href="#invoicepref-email"))
+        container.tabs.main = main
         container.tabs.email = email
-        
+
         container.script = tf.SCRIPT(open("fe/src/js/invoice_preferences.js").read(), escape=False)
-        
+        container.clear = sphc.more.clear()
+
         return container
 
 class History(BasePage):
@@ -232,6 +235,9 @@ class Uninvoiced(BasePage):
 
     def content(self):
         container = tf.DIV()
+        container.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
+        container.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
+
         container.dashboard = tf.DIV(id='invoicing-dashboard')
         form = sphc.more.Form(id='uninvoiced-form', action='#', classes=['hform'])
         form.add_field('Usage types to include', tf.SPAN([tf.INPUT(name='only_tariff', type='radio', value='on'), 'Only tariffs', tf.INPUT(name='only_tariff', type='radio', checked='checked', value='off'), 'All usages (including tariffs)']))
@@ -251,8 +257,8 @@ class Uninvoiced(BasePage):
         container.actions.bill_template.bill.name = tf.TD('${member.name}')
         container.actions.bill_template.bill.summary = tf.TD('${total}')
         container.actions.bill_template.bill.action = tf.TD(id='bill-status-${member.id}')
-        container.actions.bill_template.bill.action.usages = tf.C('Generating Invoice ..', id='gen-invoice-msg_{member.id}')
-        container.actions.bill_template.bill.action.invoice = tf.A('View Invoice', Class='hidden view-invoice', id='view-invoice_{member.id}')
-        container.actions.bill_template.bill.action.mail = tf.A('Invoice email', Class='hidden invoice-mail', id='invoice-email_{member.id}')
+        container.actions.bill_template.bill.action.usages = tf.C('Generating Invoice ..', id='gen-invoice-msg_${member.id}')
+        container.actions.bill_template.bill.action.invoice = tf.A('View Invoice', Class='hidden view-invoice', id='view-invoice_${member.id}')
+        container.actions.bill_template.bill.action.mail = tf.A('Invoice email', Class='hidden invoice-mail', id='invoice-email_${member.id}')
         container.script = sphc.more.script_fromfile("fe/src/js/uninvoiced.js")
         return container
