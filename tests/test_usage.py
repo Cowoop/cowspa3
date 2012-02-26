@@ -73,3 +73,16 @@ def test_delete_usage():
     ret = usagelib.usage_collection._delete(1)
     assert ret == True
 
+def test_custom_usage():
+    data = test_data.usage
+    data['member'] = test_data.member_id
+    data['resource_id'] = 0
+    data['resource_name'] = 'Test Custom Usage'
+    data['resource_owner'] = test_data.bizplace_id
+    data['start_time'] = datetime.datetime.now().isoformat()
+    data['end_time'] = datetime.datetime.now().isoformat()
+    test_data.usage_id = usagelib.usage_collection.new(**data)
+    env.context.pgcursor.connection.commit()
+    assert isinstance(test_data.usage_id, (int, long))
+
+
