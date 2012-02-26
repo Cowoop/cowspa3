@@ -15,5 +15,7 @@ config = {
     'http_baseurl': 'http://127.0.0.1:5000',
     'system_username': 'system',
     'threaded': False,
-    'words': {}
+    'words': {},
+    'hostname': '127.0.0.1',
+    'port': 5001
 }
