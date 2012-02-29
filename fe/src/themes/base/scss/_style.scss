@@ -501,6 +501,8 @@ ul.as-selections li.as-original input { width: 100%; }
     .field-value {
         font-size: 110%;
         border-bottom: 0.2px groove;
+        border-left: 1px dotted lighten($main-color, 60%);
+        padding-left: 1em;
         white-space: pre-wrap;
         @include columns(5, 11);
         @include divsizing;
@@ -1129,6 +1131,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 }
 
 // Hacks goes here
+.floatfix {overflow: hidden;}
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
 #signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
 #signup-box.ui-widget-content label{color:$other-text-color;}

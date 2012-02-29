@@ -39,7 +39,7 @@ function get_usages(resource_id) {
         start: date2isodate(add_days(get_selected_date(), -3)),
         end: date2isodate(add_days(get_selected_date(), 3))
     };
-    jsonrpc("usages.find", params, on_get_usages, error);
+    jsonrpc("usages.find", params, on_get_usages);
 };
 
 function get_bookings(start, end, bizplace_id) {
@@ -127,7 +127,7 @@ function on_available_resources(resp) {
     $('#resource-opt').tmpl(resources).appendTo('#resource-select');
     for (var i=0; i < resources.length; i++) {
         resource = resources[i];
-        resource_map[resource.id] = resource.name;
+        resource_map[resource.id] = resource;
     };
 };
 
@@ -141,12 +141,14 @@ function id2datetime(id) {
     return [thedate, start, end];
 };
 
-function open_booking_form(resource_name, new_booking_date, start_time, end_time) {
+function open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time) {
     $('#booking_id').val('0'); // important
     $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
     $('#new-starts').val(start_time);
     $('#new-ends').val(end_time);
     $('#new-ends').attr('min', start_time);
+    $('#contained-usages-tmpl').tmpl(resource_map[resource_id]['contained']).appendTo('#contained-usages')
+    $('#suggested-usages-tmpl').tmpl(resource_map[resource_id]['suggested']).appendTo('#suggested-usages')
     $('#new-booking').dialog({
         title: resource_name,
         close: on_close_booking_form,
@@ -204,8 +206,9 @@ function on_select_slots(ev, ui) {
     var start_time = date_start_end[1];
     var end_time = id2datetime(end)[2];
 
-    var resource_name = resource_map[$('#resource-select').val()];
-    open_booking_form(resource_name, new_booking_date, start_time, end_time);
+    var resource_id = $('#resource-select').val();
+    var resource_name = resource_map[resource_id].name;
+    open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time);
 };
 
 function on_close_booking_form() {
@@ -251,11 +254,10 @@ function make_booking() {
     
     var params = {};
 
-    params.name = $('#booking-name').val();
     params.notes = $('#booking-notes').val();
     params.resource_owner = current_ctx;
     params.resource_id = parseInt($('#resource-select').val(), 10);
-    params.resource_name = resource_map[params.resource_id];
+    params.resource_name = resource_map[params.resource_id].name;
 
     var start_time = new Date(new_booking_date.getTime());
     var hrs_mins = $('#new-starts').val().split(':');
@@ -282,6 +284,11 @@ function make_booking() {
 
     var usage_id = $('#booking-id').val();
 
+    params.event_data = {};
+    params.event_data.name = $('#booking-name').val();
+    params.event_data.start_time = params.start_time;
+    params.event_data.end_time = params.end_time;
+
     if (usage_id == 0) {
         jsonrpc('usage.new', params, on_new_booking, error);
     } else {
@@ -300,8 +307,8 @@ $('#resource-select').change( function () {
     refresh_cal();
 });
 
-var params = {owner: current_ctx, calc_mode: 1};
-jsonrpc("resources.available", params, on_available_resources, error);
+var params = {owner: current_ctx};
+jsonrpc("resources.available_for_booking", params, on_available_resources);
 
 set_day_titles();
 

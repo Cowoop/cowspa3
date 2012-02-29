@@ -135,7 +135,7 @@ $("#save-btn2").click(function(){
 });
 
 function on_get_emailtext_success(response) {
-    invoice_email_text = response.result.content; 
+    invoice_email_text = response.result; 
     $("#data-email_text").text(invoice_email_text);
     $("#invoice-email_text").val(invoice_email_text);
 };

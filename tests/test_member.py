@@ -27,12 +27,11 @@ def test_member_object():
     assert m.first_name, m.last_name == ('Kit', 'Walker')
 
 def test_update_member():
-    old_state = memberlib.member_resource.get(test_data.member_id, 'state')
-    new_state = dict(enabled=False, hidden=True)
-    mod_data = dict(state=new_state)
-    memberlib.member_resource.update(test_data.member_id, **mod_data)
-    assert old_state == test_data.member['state']
-    assert new_state == memberlib.member_resource.get(test_data.member_id, 'state')
+    old_state = memberlib.member_resource.get(test_data.member_id, 'enabled')
+    new_state = dict(enabled=False)
+    memberlib.member_resource.update(test_data.member_id, **new_state)
+    assert old_state == test_data.member['enabled']
+    assert new_state['enabled'] == memberlib.member_resource.get(test_data.member_id, 'enabled')
 
 def test_auth():
     assert userlib.authenticate(test_data.member['username'], 'password') != True

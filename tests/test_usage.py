@@ -41,9 +41,10 @@ def test_delete_or_cancel_usage():
     assert usagelib.usage_collection.delete(usage_id) == True
 
 def test_add_more_usage():
+    resource_id = test_data.more_resource_ids[0]
     for data in test_data.more_usages:
         data['member'] = test_data.member_id
-        data['resource_id'] = test_data.resource_id
+        data['resource_id'] = resource_id
         data['resource_owner'] = test_data.bizplace_id
         data['start_time'] = datetime.datetime.now().isoformat()
         data['end_time'] = datetime.datetime.now().isoformat()

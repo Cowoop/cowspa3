@@ -25,6 +25,7 @@ membership_store = stores_mod.Membership()
 resource_store = stores_mod.Resource()
 resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
+event_store = stores_mod.Event()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
@@ -55,11 +56,9 @@ def find_memberships(member_id):
     return membership_store.get_by(crit=dict(member_id=member_id))
 
 def biz_info(biz_id):
-    return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
+    return biz_store.get(biz_id, ['name', 'enabled', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
 
-bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency',
-'address', 'city', 'province', 'country', 'email', 'phone', 'fax','host_email',
-'booking_email', 'website', 'tz']
+bizplace_info_fields = ['id', 'name', 'enabled', 'short_description', 'currency', 'address', 'city', 'province', 'country', 'email', 'phone', 'fax','host_email', 'booking_email', 'website', 'tz']
 
 def bizplace_info(bizplace_id):
     return bizplace_store.get(bizplace_id, bizplace_info_fields)
