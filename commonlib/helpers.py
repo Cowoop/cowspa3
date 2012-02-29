@@ -66,8 +66,15 @@ def html2pdf(input_file ,output_file):
     pdf.convert()
     return True
 
-def date4human(date):
-    return date.strftime("%b %d, %Y")
+def date4human(date_or_iso):
+    if not isinstance(date_or_iso, (datetime.date, datetime.datetime)):
+        date_or_iso = iso2date(date_or_iso)
+    return date_or_iso.strftime("%b %d, %Y")
+
+def time4human(date_or_iso):
+    if not isinstance(date_or_iso, (datetime.date, datetime.datetime)):
+        date_or_iso = iso2datetime(date_or_iso)
+    return date_or_iso.strftime("%I:%M%p")
 
 def datetime4human(date):
     return date.strftime("%b %d, %Y %I:%M%p")

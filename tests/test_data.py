@@ -13,7 +13,7 @@ plan_id = None
 more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
 new_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
 
-member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', state=dict(enabled=True, hidden=False))
+member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
 member_id = None
 
 more_member = [
@@ -36,11 +36,11 @@ more_invoice_data = [
     dict(member=3, usages=[3])
     ]
 
-resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', state=dict(repairs=True, host_only=False), default_price=10, calc_mode=1)
+resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', enabled=True, host_only=False, default_price=10, calc_mode=1)
 resource_id = None
 
 more_resources = [dict(name='RES1', short_description='Resource 1', type='Type1', default_price=10),
-    dict(name='RES2', short_description='Resource 2', type='Type2', state=dict(enabled=True, host_only=True), default_price=10.10),
+    dict(name='RES2', short_description='Resource 2', type='Type2', enabled=True, host_only=True, default_price=10.10),
     dict(name='RES3', short_description='Resource 3', type='Type1', default_price=11)]
 more_resource_ids = []
 

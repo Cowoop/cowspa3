@@ -2,7 +2,7 @@ import os.path
 import copy
 from jinja2 import Environment
 
-tenv = Environment('<%', '%>', '${', '}', '%')
+tenv = Environment('<%', '%>', '${', '}', '%%')
 template_path = 'commonlib/messaging/templates'
 
 def render(content, data):
@@ -28,6 +28,8 @@ class Message(object):
     def build(self):
         self.message_dict.update(self.overrides)
         for k,v in self.message_dict.items():
+            if v is None:
+                continue
             if isinstance(v, (list, tuple)):
                 v = tuple(render(s, self.macros_data) for s in v)
             else:
@@ -42,3 +44,5 @@ class Invitation(Message):
     name = 'invitation'
 class Invoice(Message):
     name = 'invoice'
+class Booking(Message):
+    name = 'booking'
