@@ -13,7 +13,8 @@ function set_day_titles() {
     var date_selected = get_selected_date();
     $('.day-title').each( function (idx) {
         var date_next = add_days(date_selected, (idx - 3));
-        var date_text = $.datepicker.formatDate('D d', date_next)
+        // var date_text = $.datepicker.formatDate('D d', date_next)
+        var date_text = moment(date_next).format("MMM D");
         $(this).text(date_text);
         if (idx == 3) {
             $(this).addClass('today');
@@ -102,7 +103,7 @@ function on_drop_booking(event, ui ) {
 
 function get_booking_info(booking_id) {
     var params = {usage_id: booking_id};
-    jsonrpc('usage.info', params, on_booking_info, error);
+    jsonrpc('usage.details', params, on_booking_info, error);
 };
 
 function on_booking_info(resp) {
@@ -142,13 +143,14 @@ function id2datetime(id) {
 };
 
 function open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time) {
-    $('#booking_id').val('0'); // important
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+    $('#booking-id').val('0'); // important
+    $('#new-booking-form').reset();
+    // $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+    $('#new-booking-date').text(moment(new_booking_date).format("ddd, MMMM Do, YYYY"));
     $('#new-starts').val(start_time);
     $('#new-ends').val(end_time);
     $('#new-ends').attr('min', start_time);
-    $('#contained-usages-tmpl').tmpl(resource_map[resource_id]['contained']).appendTo('#contained-usages')
-    $('#suggested-usages-tmpl').tmpl(resource_map[resource_id]['suggested']).appendTo('#suggested-usages')
+    // $('#contained-usages-tmpl').tmpl(resource_map[resource_id]['contained']).appendTo('#contained-usages')
     $('#new-booking').dialog({
         title: resource_name,
         close: on_close_booking_form,
@@ -160,10 +162,12 @@ function open_edit_booking_form(booking) {
     new_booking_date = new_booking_date || iso2date(booking.start_time);
     $('#booking-name').val(booking.name);
     $('#booking-notes').val(booking.notes);
+    $('#booking-no_of_people').val(booking.no_of_people);
     $('#for-member').val((booking.member).toString());
     $('#booking-id').val((booking.id).toString());
     $('#for-member-search').val(booking.member_name);
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', (new_booking_date)));
+    // $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', (new_booking_date)));
+    $('#new-booking-date').text(moment(new_booking_date).format("ddd, MMMM Do, YYYY"));
     var booking_duration = (new Date(booking.end_time)) - (new Date(booking.start_time));
     var min15 = 15*60*1000;
     var upper_slots_time = (Math.round((booking_duration / 2)/min15) * min15) - min15;
@@ -187,6 +191,15 @@ function open_edit_booking_form(booking) {
     $('#new-starts').val(start_iso);
     $('#new-ends').val(end_iso);
     $('#new-ends').attr('min', start_iso);
+    for (var i=0; i< booking.usages_suggested.length; i++) {
+        var usage = booking.usages_suggested[i];
+        var ele = $('#resource-'+usage.resource_id);
+        if (ele[0].type == 'text') {
+            ele[0].value = usage.quantity;
+        } else {
+            ele.attr('checked', 'checked');
+        };
+    };
     $('#new-booking').dialog({
         title: booking.resource_name,
         close: on_close_booking_form,
@@ -213,6 +226,7 @@ function on_select_slots(ev, ui) {
 
 function on_close_booking_form() {
     $('.ui-selected').removeClass('ui-selected');
+    new_booking_date = null;
 };
 
 function init_cal() {
@@ -254,7 +268,9 @@ function make_booking() {
     
     var params = {};
 
+    params.name = $('#booking-name').val();
     params.notes = $('#booking-notes').val();
+    params.no_of_people = $('#booking-no_of_people').val();
     params.resource_owner = current_ctx;
     params.resource_id = parseInt($('#resource-select').val(), 10);
     params.resource_name = resource_map[params.resource_id].name;
@@ -282,18 +298,30 @@ function make_booking() {
         params.member = current_userid;
     };
 
+    params.usages = [];
+    var suggested_resources = resource_map[params.resource_id].suggested;
+    for (var i=0; i<suggested_resources.length; i++) {
+        var this_res = suggested_resources[i];
+        var ele = $('#resource-'+this_res.id)[0];
+        var quantity = 0;
+        if (this_res.calc_mode == 0) {
+            quantity = parseInt(ele.value, 10);
+        } else {
+            if (ele.checked) { quantity = 1; };
+        };
+        if (quantity>0) {
+            params.usages.push({resource_id: this_res.id, quantity: quantity});
+        };
+
+    };
+
     var usage_id = $('#booking-id').val();
 
-    params.event_data = {};
-    params.event_data.name = $('#booking-name').val();
-    params.event_data.start_time = params.start_time;
-    params.event_data.end_time = params.end_time;
-
     if (usage_id == 0) {
-        jsonrpc('usage.new', params, on_new_booking, error);
+        jsonrpc('usage.new', params, on_new_booking);
     } else {
         params.usage_id = usage_id;
-        jsonrpc('usage.update', params, on_new_booking, error);
+        jsonrpc('usage.update', params, on_new_booking);
     };
 };
 
@@ -305,9 +333,12 @@ $('#booking-date-inp').datepicker( {
 
 $('#resource-select').change( function () {
     refresh_cal();
+    var resource_id = $('#resource-select').val();
+    $('#suggested-usages').empty();
+    $('#suggested-usages-tmpl').tmpl(resource_map[resource_id]['suggested']).appendTo('#suggested-usages')
 });
 
-var params = {owner: current_ctx};
+var params = {owner: current_ctx, for_member: current_userid};
 jsonrpc("resources.available_for_booking", params, on_available_resources);
 
 set_day_titles();

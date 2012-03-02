@@ -71,15 +71,21 @@ class ResourceCollection:
         fields = ['id', 'name', 'type', 'calc_mode']
         return [res for res in resource_store.get_by(crit=crit, fields=fields) if res.type != 'tariff']
 
-    def available_for_booking(self, owner):
+    def available_for_booking(self, owner, for_member):
         contained_resource_ids = [row[0] for row in resourcerelation_store.get_by(dict(owner=owner), fields=['resourceB'], hashrows=False)]
         crit = dict(owner=owner, enabled=True, archived=False)
         fields = ['id', 'name', 'type', 'calc_mode']
         resources = [res for res in resource_store.get_by(crit=crit, fields=fields) if res.type != 'tariff' and res.id not in contained_resource_ids]
+        pricings = dbaccess.get_pricings_for_member(owner, for_member)
         for resource in resources:
             relations = resource_resource.get_relations(resource.id)
             resource['contained'] = relations[True]
             resource['suggested'] = relations[False]
+            resource['price'] = pricings[resource.id].price
+            for c_resource in resource['contained']:
+                c_resource['price'] = pricings[resource.id].price
+            for s_resource in resource['suggested']:
+                s_resource['price'] = pricings[resource.id].price
         return resources
 
     def bookable(self, owner):

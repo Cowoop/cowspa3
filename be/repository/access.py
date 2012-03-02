@@ -25,7 +25,6 @@ membership_store = stores_mod.Membership()
 resource_store = stores_mod.Resource()
 resourcerelation_store = stores_mod.ResourceRelation()
 usage_store = stores_mod.Usage()
-event_store = stores_mod.Event()
 invoice_store = stores_mod.Invoice()
 pricing_store = stores_mod.Pricing()
 activity_store = stores_mod.Activity()
@@ -348,14 +347,14 @@ def get_resource_pricings(resource_id, usage_time):
     # Along with tariff_id we also need tariff_name so we have a join (clause_resource)
     # instead of join if there are 2 independent queries, would it be any faster?
     q = 'SELECT pricing.id, amount, starts, ends, pricing.plan as tariff_id, resource.name as tariff_name from pricing, resource WHERE'
-    clause_pricing = 'resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
+    clause_pricing = 'resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends is NULL)'
     clause_resource = 'pricing.plan = resource.id ORDER BY resource.name ASC'
     q = ' '.join((q, clause_pricing, 'AND', clause_resource))
     values = dict(resource=resource_id, usage_time=usage_time)
     return pricing_store.query_exec(q, values)
 
 def get_tariff_pricings(tariff_id, usage_time):
-    clause = 'plan = %(tariff_id)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
+    clause = 'plan= %(tariff_id)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(tariff_id=tariff_id, usage_time=usage_time)
     pricings = dict(pricing_store.get_by_clause(clause, values, fields=['resource', 'amount'], hashrows=False))
     resource_ids = list(pricings.keys())
@@ -363,6 +362,16 @@ def get_tariff_pricings(tariff_id, usage_time):
     for res in resources:
         res['price'] = pricings[res.id]
     return resources
+
+def get_pricings_for_member(bizplace_id, member_id):
+    now = datetime.datetime.now()
+    tariff_id = get_member_plan_id(member_id, bizplace_id, now)
+    tariff_pricing = dict((res.id, res) for res in get_tariff_pricings(tariff_id, now))
+    default_tariff_id = bizplace_store.get(bizplace_id, 'default_tariff')
+    default_tariff_pricing = dict((res.id, res) for res in get_tariff_pricings(default_tariff_id, now))
+    member_pricing = default_tariff_pricing
+    member_pricing.update(tariff_pricing)
+    return member_pricing
 
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?

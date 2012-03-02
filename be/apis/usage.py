@@ -4,32 +4,35 @@ import be.repository.access as dbaccess
 import be.apis.pricing as pricinglib
 import be.apis.resource as resourcelib
 import be.apis.billingpref as billingpreflib
-import be.apis.event as eventlib
 import be.apis.messagecust as messagecustlib
 
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
 bizplace_store = dbaccess.stores.bizplace_store
 
-def add_suggested_usages(suggesting_usage, suggested_resources, usages):
+def add_suggested_usages(resource_owner, suggesting_usage, suggested_resources, usages):
     suggested_usages_data = []
-    usages_dict = dict((usage.resource.id, usage) for usage in usages)
+    usages_dict = dict((usage['resource_id'], usage) for usage in usages)
+    start_time = suggesting_usage['start_time']
+    start_time = start_time.isoformat() if isinstance(start_time, datetime.datetime) else start_time
+    end_time = suggesting_usage['end_time']
+    end_time = end_time.isoformat() if isinstance(end_time, datetime.datetime) else end_time
     for resource in suggested_resources:
         if resource.id in usages_dict:
             usage = usages_dict[resource.id]
             new_data = dict(resource_id=resource.id,
                 resource_name=resource.name,
                 resource_owner=resource_owner,
-                member=member,
+                member=suggesting_usage['member'],
                 start_time=start_time,
-                end_time=start_time if resource.calc_mode == resourcelib.CalcMode.quantity_based else data['end_time'],
+                end_time=(start_time if resource.calc_mode == resourcelib.CalcMode.quantity_based else end_time),
                 quantity=usage.get('quantity', 1))
             suggested_usages_data.append(new_data)
-    return [self.new(**new_data) for new_data in suggested_usages_data]
+    return [usage_collection.new(**new_data) for new_data in suggested_usages_data]
 
 class UsageCollection:
 
-    def new(self, resource_id, resource_name, resource_owner, member, start_time, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, calculated_cost=None, notes=None, usages=[], event_data={}, suppress_notification=False):
+    def new(self, resource_id, resource_name, resource_owner, member, start_time, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, calculated_cost=None, notes=None, usages=[], name=None, description=None, no_of_people=0, suppress_notification=False):
         # TODO shouldn't we name the parameter member_id and not member
 
         resource = resourcelib.resource_resource.info(resource_id) if resource_id else None
@@ -48,14 +51,14 @@ class UsageCollection:
                 cost = calculated_cost
 
         pricing = pricinglib.pricings.get(member, resource_id, start_time) if resource_id else None
-        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing, notes=notes)
+        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, tax_dict=tax_dict, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, pricing=pricing, notes=notes, name=name, description=description, no_of_people=no_of_people,)
         if resource and (resource.calc_mode == resourcelib.CalcMode.quantity_based):
             data['end_time'] == start_time
         else:
             data['quantity'] == 1
 
         if not cancelled_against:
-            usages_dict = dict((usage.resource.id, usage) for usage in usages)
+            usages_dict = dict((usage['resource_id'], usage) for usage in usages)
             relations = resourcelib.resource_resource.get_relations(resource_id)
             contained_usages_data = []
             suggested_usages_data = []
@@ -73,18 +76,12 @@ class UsageCollection:
                 contained_usages_data.append(new_data)
 
             contained_usage_ids = [self.new(**new_data) for new_data in contained_usages_data]
-            suggested_usage_ids = add_suggested_usages(data, relations[False], usages)
+            suggested_usage_ids = add_suggested_usages(resource.owner, data, relations[False], usages)
 
             also_booked_text = ', '.join(resource.name for resource in relations[False] if resource.id in usages_dict)
 
             data['usages_contained'] = contained_usage_ids
             data['usages_suggested'] = suggested_usage_ids
-
-            if event_data:
-                event_data['start_time'] = data['start_time']
-                event_data['end_time'] = data['end_time']
-                event_id = eventlib.new(**event_data)
-                data['event'] = event_id
 
         usage_id = usage_store.add(**data)
 
@@ -92,10 +89,10 @@ class UsageCollection:
             (resource and resource.calc_mode != resourcelib.CalcMode.time_based)
         if not suppress_email:
             member = member_store.get(member, ['first_name', 'name', 'email'])
-            owner = bizplace_store.get(resource_owner, ['id', 'booking_email', 'currency', 'host_email', 'phone'])
+            owner = bizplace_store.get(resource_owner, ['id', 'name', 'booking_email', 'currency', 'host_email', 'phone'])
 
             also_booked_text = 'Also booked: ' + also_booked_text if also_booked_text else ''
-            email_data = dict(MEMBER_EMAIL=member.email, BOOKING_CONTACT=owner.booking_email or owner.host_email, MEMBER_FIRST_NAME=member.first_name, RESOURCE=resource_name, BOOKING_START=commonlib.helpers.time4human(start_time), BOOKING_END=commonlib.helpers.time4human(end_time), BOOKING_DATE=commonlib.helpers.date4human(start_time), CURRENCY=owner.currency, COST=cost, HOSTS_EMAIL=owner.host_email, LOCATION_PHONE=owner.phone)
+            email_data = dict(LOCATION=owner.name, MEMBER_EMAIL=member.email, BOOKING_CONTACT=owner.booking_email or owner.host_email, MEMBER_FIRST_NAME=member.first_name, RESOURCE=resource_name, BOOKING_START=commonlib.helpers.time4human(start_time), BOOKING_END=commonlib.helpers.time4human(end_time), BOOKING_DATE=commonlib.helpers.date4human(start_time), CURRENCY=owner.currency, COST=cost, HOSTS_EMAIL=owner.host_email, LOCATION_PHONE=owner.phone)
             mailtext = messagecustlib.get(owner.id, 'booking_confirmation')
             notification = commonlib.messaging.messages.Booking(email_data, overrides=dict(plain=mailtext, bcc='cowspa.dev@gmail.com'))
             notification.build()
@@ -103,16 +100,10 @@ class UsageCollection:
 
         return usage_id
 
-    def m_new(self, resource_id, resource_name, resource_owner, member, start_time, total=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None, notes=None, event_data={}):
+    def m_new(self, resource_id, resource_name, resource_owner, member, start_time, total=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None, notes=None, name=None, description=None, no_of_people=0):
 
         if not end_time: end_time = start_time
         data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, notes=notes)
-
-        if event_data:
-            event_data['start_time'] = data['start_time']
-            event_data['end_time'] = data['end_time']
-            event_id = eventlib.new(**event_data)
-            data['event'] = event_id
 
         return usage_store.add(**data)
 
@@ -132,7 +123,6 @@ class UsageCollection:
         del(data['usages_suggested'])
         del(data['created_by'])
         del(data['id'])
-        del(data['event'])
         del(data['total'])
         del(data['created'])
         del(data['invoice'])
@@ -203,11 +193,16 @@ class UsageResource:
         usage['member_name'] = dbaccess.oid2name(usage.member)
         return usage
 
+    def details(self, usage_id):
+        usage = self.info(usage_id)
+        usage['usages_suggested'] = usage_store.get_many(usage.usages_suggested, ['id', 'resource_id', 'start_time', 'end_time', 'quantity'])
+        return usage
+
     def update(self, usage_id, **mod_data):
         # attrs that force cost recalculation
         cost_affecting_attrs = set(('start_time', 'end_time', 'resource_id', 'quantity', 'member'))
         recalculate = bool(cost_affecting_attrs.intersection(mod_data.keys()))
-        usage = self.info(usage_id)
+        usage = usage_store.get(usage_id)
         recalculate = recalculate and not usage.cancelled_against
 
         if recalculate:
@@ -223,8 +218,11 @@ class UsageResource:
                 tax_dict = result['taxes'],
                 pricing = pricinglib.pricings.get(usage.member, usage.resource_id, usage.start_time) if usage.resource_id else None)
         if 'usages' in mod_data:
-            relations = resourcelib.resource_resource.get_relations(resource_id)
-            mod_data['usages_suggested'] = add_suggested_usages(usage, relations[False], usages)
+            usages = mod_data.pop('usages')
+            for suggested_usage_id in usage.usages_suggested:
+                usage_collection.delete(suggested_usage_id)
+            relations = resourcelib.resource_resource.get_relations(usage.resource_id)
+            mod_data['usages_suggested'] = add_suggested_usages(usage.resource_owner, usage, relations[False], usages)
 
         if not 'cost' in mod_data and recalculate and usage.cost == usage.calculated_cost:
             mod_data['cost'] = mod_data['calculated_cost']

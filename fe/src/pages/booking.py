@@ -53,8 +53,8 @@ def host_booking_form():
     form = sphc.more.Form(id="new-booking-form", Class='hform')
 
     booking = form.add(sphc.more.Fieldset())
+    booking.add(tf.DIV(id="new-booking-date"))
     booking.add(tf.LEGEND("Booking"))
-    form.add(tf.DIV(id="new-booking-date"))
     booking.add(tf.INPUT(id="booking-id", type="hidden"))
     booking.add_field("Booking name", tf.INPUT(id="booking-name", type="text"))
     booking.add(tf.INPUT(id="for-member", type="hidden"))
@@ -62,14 +62,11 @@ def host_booking_form():
     booking.add_field("Starts", tf.INPUT(id="new-starts", type="time", step="900").set_required(), "Use arrow keys to change values")
     booking.add_field("Ends", tf.INPUT(id="new-ends", type="time", step="900"))
     booking.add_field("Additional Information", tf.TEXTAREA(id="booking-notes"))
+    booking.add_field("Number of People", tf.INPUT(type='number', value='0', id="booking-no_of_people"))
 
     usages = form.add(sphc.more.Fieldset())
-    usages.add(tf.LEGEND("Usages"))
-    usages.add(tf.DIV("Included"))
-    usages.add(tf.HR())
+    usages.add(tf.LEGEND("Extras"))
     usages.add(tf.DIV(id='contained-usages'))
-    usages.add(tf.DIV("Extras", Class="full"))
-    usages.add(tf.HR())
     usages.add(tf.DIV(id='suggested-usages'))
 
     form.add_buttons(tf.INPUT(type="submit", value="Save"))
@@ -98,7 +95,7 @@ class Booking(BookingPage):
 
         contained_usages_tmpl = sphc.more.jq_tmpl('contained-usages-tmpl')
         contained_usages_tmpl.usage = tf.DIV(Class='field-container')
-        contained_usages_tmpl.usage.label = tf.DIV('${name} ${calc_mode}', Class='field-name')
+        contained_usages_tmpl.usage.label = tf.DIV('${name} (${locale_data.currency_symbol} ${price})', Class='field-name')
         contained_usages_tmpl.usage.cond = '{{if (calc_mode == 0)}}'
         contained_usages_tmpl.usage.value = tf.DIV(tf.INPUT(type='number', min='1', value='1', Class='selected-usage-resources', id='resource-${id}'), Class='field-value')
         contained_usages_tmpl.usage.cond_end = '{{/if}}'
@@ -108,7 +105,8 @@ class Booking(BookingPage):
 
         suggested_usages_tmpl = sphc.more.jq_tmpl('suggested-usages-tmpl')
         suggested_usages_tmpl.usage = tf.DIV(Class='field-container')
-        suggested_usages_tmpl.usage.label = tf.DIV('${name} ${calc_mode}', Class='field-name')
+        suggested_usages_tmpl.usage.label = tf.DIV('${name} (${locale_data.currency_symbol} ${price})', \
+            Class='field-name')
         suggested_usages_tmpl.usage.cond = '{{if (calc_mode == 0)}}'
         suggested_usages_tmpl.usage.value = tf.DIV(tf.INPUT(type='number', value="0", Class='selected-usage-resources', id='resource-${id}'), Class='field-value')
         suggested_usages_tmpl.usage.cond_end = '{{/if}}'
