@@ -252,20 +252,12 @@ class Usage(PGStore):
     cancelled_against INTEGER DEFAULT NULL,
     usages_contained INTEGER[],
     usages_suggested INTEGER[],
-    event INTEGER
-    """
-    pickle_cols = ['tax_dict']
-
-class Event(PGStore):
-    create_sql = """
-    id SERIAL NOT NULL UNIQUE,
     name TEXT,
     description TEXT,
-    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITHOUT TIME ZONE,
     public BOOLEAN DEFAULT false,
     no_of_people INTEGER
     """
+    pickle_cols = ['tax_dict']
 
 class Invoice(PGStore):
     create_sql = """
