@@ -36,13 +36,14 @@ class Message(object):
                 v = render(v, self.macros_data)
             self.message_dict[k] = v
     def email(self):
-        return env.mailer.send(**self.message_dict)
+        if env.config.mail['mail.on']:
+            return env.mailer.send(**self.message_dict)
 
-class Activation(Message):
+class activation(Message):
     name = 'activation'
-class Invitation(Message):
+class invitation(Message):
     name = 'invitation'
-class Invoice(Message):
+class invoice(Message):
     name = 'invoice'
-class Booking(Message):
-    name = 'booking'
+class booking_confirmation(Message):
+    name = 'booking_confirmation'

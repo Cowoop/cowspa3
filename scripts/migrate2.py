@@ -247,7 +247,8 @@ class MessageCust(Object):
             migrated.messagecust['id'] = None
         else:
             q = 'UPDATE invoice_pref SET %s = %%(content)s WHERE owner = %%(owner)s'
-            name = 'freetext1' if self.data['message'].endswith('1') else 'freetext2'
+            new_names = dict(invoice_freetext_1='freetext1', invoice_freetext_2='freetext2', invoice_mail='invoice')
+            name = new_names.get(self.data['message'], self.data['message'])
             q = q % name
             values = dict(content=self.data['text'], owner=migrated.location[location_id])
             qexec(cscur, q, values)
@@ -380,22 +381,21 @@ class Member(Object):
 class Usage(Object):
     table_name = 'rusage'
     unchanged = ('resource_name', 'end_time', 'quantity', 'notes')
-    renamed = dict(start='start_time', date_booked='created')
+    renamed = dict(start='start_time', date_booked='created', meeting_name='name', meeting_description='description', number_of_people='no_of_people')
 
     def export(self):
-        event_data = {}
-        meeting_name = self.data['meeting_name']
-        if meeting_name or self.data['meeting_description']:
-            event_data['name'] = meeting_name
-            event_data['description'] = self.data['meeting_description']
-            event_data['no_of_people'] = self.data['number_of_people']
-        if event_data:
-            self.new_data['event_data'] = event_data
-
+        repetition_id = self.data['repetition_id']
+        if repetition_id not in (self.id, None) and repetition_id not in migrated.member:
+            q = 'SELECT id FROM rusage WHERE id = %(repetition_id)s'
+            values = dict(repetition_id=repetition_id)
+            if select(spacecur, q, values, False):
+                Usage(repetition_id).migrate()
+                self.new_data['repetition_id'] = migrated.usage[repetition_id]
         resource_id = migrated.resource[self.data['resource_id']]
         self.new_data['resource_id'] = resource_id
         self.new_data['resource_owner'] = migrated.location[location_id]
         self.new_data['member'] = migrated.member[self.data['user_id']]
+        self.new_data['public'] = bool(self.data['public_field'])
         if self.data['refund_for']:
             if migrated.usage.get(self.data['refund_for']): # there are some refunds which points to non-existent usage
                 self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
@@ -583,6 +583,7 @@ def migrate_location():
         q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
         for id in member_ids:
             memberships = []
+            old_member_id = id
             values = dict(member_id=id, location_id=location_id, resource_ids=resource_ids)
             tariff_usages_ = select(spacecur, q, values)
             if not tariff_usages_:
@@ -612,10 +613,19 @@ def migrate_location():
                 data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
                     ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
                 membership_hash = hash(frozenset(data.items()))
-                print membership_hash
                 if not membership_hash in migrated.membership:
                     result = jsonrpc(auth_token, 'memberships.new', **data)
                     migrated.membership[membership_hash] = result['result']
+
+            if not memberships:
+                q = 'SELECT homeplace_id FROM tg_user WHERE id = %(member_id)s'
+                values = dict(member_id=old_member_id)
+                homeplace_id = select(spacecur, q, values)[0]
+                if location_id == homeplace_id:
+                    new_member_id = migrated.member[old_member_id]
+                    data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[id], starts=None, \
+                        ends=None, skip_usages=True)
+                    jsonrpc(auth_token, 'memberships.new' **data)
 
     banner("Migrating roles")
     if 'role' in objects_to_import:
