@@ -5,7 +5,7 @@ admin = None
 
 #country code 466 for "Mali"
 
-bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@example.com', short_description='An awesome Coworking place at Timbaktu')
+bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@localhost.localdomain', short_description='An awesome Coworking place at Timbaktu', booking_email='booking@localhost.localdomain', host_email='hosts@localhost.localdomain')
 bizplace_id = None
 
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
@@ -13,21 +13,21 @@ plan_id = None
 more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
 new_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
 
-member = dict(username='kit', password='secret', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
+member = dict(username='kit', password='x', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
 member_id = None
 
 more_member = [
-    dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@example.com'),
-    dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@example.com'),
+    dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@localhost.localdomain'),
+    dict(username='cljo', password='secret', first_name='Clark', last_name='Kent', email='peter@localhost.localdomain'),
     ]
 more_member_ids = []
 
 even_more_members = [
-    dict(username='mama', password='secret', first_name='Mandrake', last_name='Magician', email='mama@example.com'),
-    dict(username='lothar', password='secret', first_name='Lothar', last_name='', email='lothar@example.com'),
+    dict(username='mama', password='secret', first_name='Mandrake', last_name='Magician', email='mama@localhost.localdomain'),
+    dict(username='lothar', password='secret', first_name='Lothar', last_name='', email='lothar@localhost.localdomain'),
     ]
 
-member_to_register = dict(first_name='Bruce', last_name='Wayne', email='bat@example.com')
+member_to_register = dict(first_name='Bruce', last_name='Wayne', email='bat@localhost.localdomain')
 
 invoice_data = dict(member=1, usages=[1,3])
 
