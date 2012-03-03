@@ -546,9 +546,6 @@ def migrate_location():
 
     banner("Migrating usages")
     if 'usage' in objects_to_import:
-        #q = "SELECT id,name FROM resource WHERE resgroup_id IN (SELECT id FROM resourcegroup WHERE location_id = %(location_id)s AND group_type IN ('member_calendar', 'host_calendar'))"
-        #values = dict(location_id=location_id)
-        #bookable_resource_ids = tuple(row[0] for row in select(spacecur, q, values, False))
 
         q = 'SELECT id FROM rusage WHERE resource_id IN %(all_resource_ids)s ORDER BY id'
         values = dict(location_id=location_id, all_resource_ids=all_resource_ids)
@@ -580,52 +577,64 @@ def migrate_location():
         q = "SELECT DISTINCT user_id FROM rusage WHERE resource_id in %(resource_ids)s"
         values = dict(resource_ids=resource_ids)
         member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-        q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
-        for id in member_ids:
+        q = "SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s AND active = 1"
+        values = dict(location_id=location_id)
+        home_place_member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        member_ids_w_memberships = set(member_ids + home_place_member_ids)
+        for id in member_ids_w_memberships:
+            banner('Migrating memberships of %d' % id)
+            q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
             memberships = []
             old_member_id = id
             values = dict(member_id=id, location_id=location_id, resource_ids=resource_ids)
             tariff_usages_ = select(spacecur, q, values)
-            if not tariff_usages_:
-                continue
-            # Found some tariff usages have same start,end. This is not acceptable in Ops
-            # So filtering here
-            tariff_usages = [tariff_usages_[0]]
-            for usage in tariff_usages_[1:]:
-                if usage.start == tariff_usages[-1].start:
-                    tariff_usages[-1] = usage
-                else:
-                    tariff_usages.append(usage)
+            if tariff_usages_:
+                # Found some tariff usages have same start,end. This is not acceptable in Ops
+                # So filtering here
+                tariff_usages = [tariff_usages_[0]]
+                for usage in tariff_usages_[1:]:
+                    if usage.start == tariff_usages[-1].start:
+                        tariff_usages[-1] = usage
+                    else:
+                        tariff_usages.append(usage)
 
-            usage = tariff_usages[0]
-            memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
-            for usage in tariff_usages[1:]:
-                last = memberships[-1]
-                if last[1].date() == usage.start.date():
-                    continue
-                if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
-                    last[-1] = usage.end_time
-                else:
-                    memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+                usage = tariff_usages[0]
+                memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+                for usage in tariff_usages[1:]:
+                    last = memberships[-1]
+                    if last[1].date() == usage.start.date():
+                        continue
+                    if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
+                        last[-1] = usage.end_time
+                    else:
+                        memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
 
-            banner('Migrating memberships of %d' % id)
-            for membership in memberships:
-                data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
-                    ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
-                membership_hash = hash(frozenset(data.items()))
-                if not membership_hash in migrated.membership:
-                    result = jsonrpc(auth_token, 'memberships.new', **data)
-                    migrated.membership[membership_hash] = result['result']
+                for membership in memberships:
+                    data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], \
+                        starts=membership[1].isoformat(), \
+                        ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
+                    membership_hash = hash(frozenset(data.items()))
+                    if not membership_hash in migrated.membership:
+                        result = jsonrpc(auth_token, 'memberships.new', **data)
+                        migrated.membership[membership_hash] = result['result']
 
-            if not memberships:
-                q = 'SELECT homeplace_id FROM tg_user WHERE id = %(member_id)s'
-                values = dict(member_id=old_member_id)
-                homeplace_id = select(spacecur, q, values)[0]
-                if location_id == homeplace_id:
-                    new_member_id = migrated.member[old_member_id]
-                    data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[id], starts=None, \
-                        ends=None, skip_usages=True)
-                    jsonrpc(auth_token, 'memberships.new' **data)
+
+                if not memberships or \
+                        (tariff_usages[-1].end_time != None or tariff_usages[-1].end_time <= datetime.datetime.now()):
+                    starts = datetime.datetime.now()
+                    if tariff_usages[-1].end_time != None:
+                        starts = tariff_usages[-1].end_time.date() + datetime.timedelta(1)
+
+                    data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[old_member_id],
+                        starts=starts.isoformat(), ends=None, skip_usages=True)
+                    jsonrpc(auth_token, 'memberships.new', **data)
+
+            else: # not tariff_usages
+                data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[old_member_id],
+                    starts=datetime.datetime.now().isoformat(), ends=None, skip_usages=True)
+                jsonrpc(auth_token, 'memberships.new', **data)
+
+
 
     banner("Migrating roles")
     if 'role' in objects_to_import:
