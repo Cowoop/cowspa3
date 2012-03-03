@@ -255,6 +255,7 @@ class Usage(PGStore):
     name TEXT,
     description TEXT,
     public BOOLEAN DEFAULT false,
+    repetition_id INTEGER,
     no_of_people INTEGER
     """
     pickle_cols = ['tax_dict']
