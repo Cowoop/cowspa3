@@ -51,7 +51,7 @@ function on_member_profile(resp) {
     $('input[name="username"]').val(thismember.account.username);
     $('select[name="theme"]').val(thismember.preferences.theme);
     $('select[name="language"]').val(thismember.preferences.language);
-    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"Guest");
+    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"-");
     for(i in thismember.memberships){
         thismember.memberships[i].starts = isodate2fdate(thismember.memberships[i].starts);
         thismember.memberships[i].ends = isodate2fdate(thismember.memberships[i].ends);
