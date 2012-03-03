@@ -42,11 +42,12 @@ html {
 }
 
 body { 
-    line-height: 140%;
+    line-height: 130%;
     font-family: 'Ubuntu', 'Ubuntu Beta', UbuntuBeta, Ubuntu, 'Bitstream Vera Sans', 'DejaVu Sans', Tahoma, sans-serif;
-    font-size: 100%;
+    font-size: 90%;
 }
 .waiting { cursor: wait !important; }
+.full { width: 100%; }
 
 .current-ctx:before { content: "✓ ";}
 #ctx-switcher {
