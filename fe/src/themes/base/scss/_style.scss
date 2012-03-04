@@ -1011,7 +1011,8 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #pane-resource { width: 20%; float: left; }
 #pane-booking { width: 75%; float: right; }
 #booking-date-inp { font-size: 80%; }
-#new-booking-date {font-size: 110%; text-align: center; }
+#new-booking-date {font-size: 110%; text-align: left; }
+.booking-delete-section {float: right;}
 
 #booking-cal {
     width: 100%; 
