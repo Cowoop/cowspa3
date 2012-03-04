@@ -45,7 +45,7 @@ function load_team() {
         $(".remove_staff").click(function() {
             //TODO : Implement jQuery modal dialog box
             //Reference : stackoverflow.com/questions/887029/how-to-implement-confirmation-dialog-in-jquery-ui-dialog
-            if (confirm("Remove user from Team?")) {
+            if (confirm("Remove member from Team?")) {
                 user_id_to_remove = this.id.split('-')[1];
                 remove_from_team();
             } else {
