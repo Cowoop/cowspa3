@@ -130,7 +130,14 @@ class UsageCollection:
         return self.new(**data)
 
     def delete(self, usage_id):
-        usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice'])
+        usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice', 'usages_suggested'])
+        for suggested_usage_id in usage.usages_suggested:
+            self.delete(suggested_usage_id)
+        suggesting_usage = dbaccess.find_suggesting_usage(usage_id)
+        if suggesting_usage:
+            suggesting_usage.usages_suggested.remove(usage_id)
+            usage_store.update(suggesting_usage.id, usages_suggested=suggesting_usage.usages_suggested)
+            # ^ calling usage.update will cause recursion
         if not usage.invoice:
             return self._delete(usage_id)
         else:

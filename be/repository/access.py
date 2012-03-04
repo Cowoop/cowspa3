@@ -238,6 +238,12 @@ def find_usage(start=None, end=None, starts_on_or_before=None, invoice_id=None, 
         del usage['member']
     return usages
 
+def find_suggesting_usage(suggested_usage):
+    clause = '%(suggested_usage)s = ANY(usages_suggested)'
+    clause_values = dict(suggested_usage=suggested_usage)
+    suggesting_usages = usage_store.get_by_clause(clause, clause_values, fields=['id', 'usages_suggested'])
+    return suggesting_usages[0] if suggesting_usages else None
+
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(member_id=member_id, date=date, bizplace_id=bizplace_id)

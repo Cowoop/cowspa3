@@ -60,7 +60,7 @@ def host_booking_form():
     form = sphc.more.Form(id="new-booking-form", Class='hform')
 
     booking = form.add(sphc.more.Fieldset())
-    booking.add(tf.DIV([tf.SPAN(id="new-booking-date"), tf.SPAN(tf.BUTTON("Cancel", id="booking-delete"), Class="booking-delete-section hidden")]))
+    booking.add(tf.DIV([tf.SPAN(id="new-booking-date"), tf.SPAN(tf.INPUT(value="Cancel", type="BUTTON", id="booking-delete"), Class="booking-delete-section hidden")]))
     booking.add(tf.LEGEND("Booking"))
     booking.add(tf.INPUT(id="booking-id", type="hidden"))
     booking.add_field("Booking name", tf.INPUT(id="booking-name", type="text"))
