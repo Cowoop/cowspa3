@@ -79,7 +79,8 @@ def host_booking_form():
     usages.add(tf.DIV(id='contained-usages'))
     usages.add(tf.DIV(id='suggested-usages'))
 
-    form.add_buttons(tf.INPUT(type="submit", value="Save"))
+    form.add_buttons(tf.INPUT(type="submit", id="add-booking-btn", value="Add Booking"),
+        tf.INPUT(id="booking-progress-btn", value="Creating Booking ...", Class="hidden", disabled="disabled", type="submit"))
     return form.build()
 
 
