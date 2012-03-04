@@ -272,6 +272,8 @@ if ($('#for-member-search')[0]) {
 };
 
 function on_new_booking(resp) {
+    $('#add-booking-btn').toggle();
+    $('#booking-progress-btn').toggle();
     $('#new-booking').dialog('close');
     refresh_cal();
 };
@@ -336,11 +338,17 @@ function make_booking() {
 
     var usage_id = $('#booking-id').val();
 
+    function error() {
+        $('#booking-progress-btn').toggle();
+    };
+
+    $('#add-booking-btn').hide();
+    $('#booking-progress-btn').toggle();
     if (usage_id == 0) {
-        jsonrpc('usage.new', params, on_new_booking);
+        jsonrpc('usage.new', params, on_new_booking, error);
     } else {
         params.usage_id = usage_id;
-        jsonrpc('usage.update', params, on_new_booking);
+        jsonrpc('usage.update', params, on_new_booking, error);
     };
 };
 
