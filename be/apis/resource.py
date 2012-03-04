@@ -83,9 +83,9 @@ class ResourceCollection:
             resource['suggested'] = relations[False]
             resource['price'] = pricings[resource.id].price
             for c_resource in resource['contained']:
-                c_resource['price'] = pricings[resource.id].price
+                c_resource['price'] = pricings[c_resource.id].price
             for s_resource in resource['suggested']:
-                s_resource['price'] = pricings[resource.id].price
+                s_resource['price'] = pricings[s_resource.id].price
         return resources
 
     def bookable(self, owner):
