@@ -14,7 +14,7 @@ app.secret_key = os.urandom(24)
 import commonlib.helpers as helpers
 
 static_root = 'pub'
-landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='dashboard', admin='dashboard')
+landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='new', admin='dashboard')
 
 def construct_home_url(auth_token, context):
     home_url = 'login'
@@ -40,6 +40,10 @@ def construct_home_url(auth_token, context):
                 dict(rolename=rolename, theme=pref.theme, lang='en', page=landing_pages[rolename])
 
     return home_url, context
+
+@app.route('/new')
+def new():
+    return return "You have no membership yet.", 200, {'Content-Type': 'text/html' +'; charset=utf-8'}
 
 @app.route('/')
 def index():
