@@ -37,6 +37,7 @@ class UsageCollection:
         # TODO shouldn't we name the parameter member_id and not member
 
         resource = resourcelib.resource_resource.info(resource_id) if resource_id else None
+        member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
         if resource:
             resource_owner = resource.owner
 
@@ -91,7 +92,6 @@ class UsageCollection:
         suppress_email = cancelled_against or suppress_notification or resource_id == 0 or \
             (resource and resource.calc_mode != resourcelib.CalcMode.time_based)
         if not suppress_email:
-            member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
             owner = bizplace_store.get(resource_owner, ['id', 'name', 'booking_email', 'currency', 'host_email', 'phone'])
 
             also_booked_text = 'Also booked: ' + also_booked_text if also_booked_text else ''
