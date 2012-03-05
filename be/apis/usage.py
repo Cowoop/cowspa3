@@ -131,7 +131,7 @@ class UsageCollection:
 
     def delete(self, usage_id):
         usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice', 'usages_suggested'])
-        for suggested_usage_id in usage.usages_suggested:
+        for suggested_usage_id in (usage.usages_suggested or []): # None guard
             self.delete(suggested_usage_id)
         suggesting_usage = dbaccess.find_suggesting_usage(usage_id)
         if suggesting_usage:
