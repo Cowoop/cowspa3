@@ -5,6 +5,7 @@ import be.apis.pricing as pricinglib
 import be.apis.resource as resourcelib
 import be.apis.billingpref as billingpreflib
 import be.apis.messagecust as messagecustlib
+import be.apis.activities as activitylib
 
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
@@ -36,6 +37,8 @@ class UsageCollection:
         # TODO shouldn't we name the parameter member_id and not member
 
         resource = resourcelib.resource_resource.info(resource_id) if resource_id else None
+        if resource:
+            resource_owner = resource.owner
 
         if not end_time: end_time = start_time
         created = datetime.datetime.now()
@@ -88,15 +91,18 @@ class UsageCollection:
         suppress_email = cancelled_against or suppress_notification or resource_id == 0 or \
             (resource and resource.calc_mode != resourcelib.CalcMode.time_based)
         if not suppress_email:
-            member = member_store.get(member, ['first_name', 'name', 'email'])
+            member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
             owner = bizplace_store.get(resource_owner, ['id', 'name', 'booking_email', 'currency', 'host_email', 'phone'])
 
             also_booked_text = 'Also booked: ' + also_booked_text if also_booked_text else ''
-            email_data = dict(LOCATION=owner.name, MEMBER_EMAIL=member.email, BOOKING_CONTACT=owner.booking_email or owner.host_email, MEMBER_FIRST_NAME=member.first_name, RESOURCE=resource_name, BOOKING_START=commonlib.helpers.time4human(start_time), BOOKING_END=commonlib.helpers.time4human(end_time), BOOKING_DATE=commonlib.helpers.date4human(start_time), CURRENCY=owner.currency, COST=cost, HOSTS_EMAIL=owner.host_email, LOCATION_PHONE=owner.phone)
+            email_data = dict(LOCATION=owner.name, MEMBER_EMAIL=member_dict.email, BOOKING_CONTACT=owner.booking_email or owner.host_email, MEMBER_FIRST_NAME=member_dict.first_name, RESOURCE=resource_name, BOOKING_START=commonlib.helpers.time4human(start_time), BOOKING_END=commonlib.helpers.time4human(end_time), BOOKING_DATE=commonlib.helpers.date4human(start_time), CURRENCY=owner.currency, COST=cost, HOSTS_EMAIL=owner.host_email, LOCATION_PHONE=owner.phone)
             mailtext = messagecustlib.get(owner.id, 'booking_confirmation')
             notification = commonlib.messaging.messages.booking_confirmation(email_data, overrides=dict(plain=mailtext, bcc='cowspa.dev@gmail.com'))
             notification.build()
             notification.email()
+
+        a_data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, member_id=member_dict.id, member_name=member_dict.name, start_time=start_time, end_time=end_time, actor_id=env.context.user_id, actor_name=env.context.name, created=created)
+        activity_id = activitylib.add('booking', 'booking_created', a_data, created)
 
         return usage_id
 

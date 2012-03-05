@@ -7,6 +7,12 @@ member_store = dbaccess.stores.member_store
 def make_date_element(date):
     return "<c class='date'>%s</c> " % commonlib.helpers.date4human(date)
 
+def make_booking_date_element(start_time, end_time):
+    booking_date = commonlib.helpers.date4human(start_time)
+    booking_start = commonlib.helpers.time4human(start_time)
+    booking_end = commonlib.helpers.time4human(end_time)
+    return "from %(booking_start)s to %(booking_end)s on %(booking_date)s" % locals()
+
 class BaseEvent(object):
     name = "base"
     category = ""
@@ -39,7 +45,7 @@ class MemberCreated(BaseEvent):
     name = "member_created"
     category = "member_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New member <a href='./member/edit/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
+        return make_date_element(self.data.created) + " New member <a href='./member/info/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
 
 class MemberInvited(BaseEvent):
     name = "member_invited"
@@ -79,7 +85,7 @@ class OrganizationCreated(BaseEvent):
     name = "organization_created"
     category = "organization_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New organization <a href='./member/edit/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
+        return make_date_element(self.data.created) + " New organization <a href='./member/info/#/%(id)s/info'>%(name)s</a> created by %(actor_name)s."
 
 class OrganizationUpdated(BaseEvent):
     name = "organization_updated"
@@ -100,7 +106,7 @@ class BizplaceCreated(BaseEvent):
     name = "bizplace_created"
     category = "bizplace_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " New Hub <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/edit/#/%(actor)s/info'>%(actor_name)s</a>."
+        return make_date_element(self.data.created) + " New Hub <a href='./bizplaces/#/%(id)s'>%(name)s</a> created by <a href='./member/info/#/%(actor)s/info'>%(actor_name)s</a>."
 
 class BizplaceUpdated(BaseEvent):
     name = "bizplace_updated"
@@ -128,11 +134,19 @@ class TariffCreated(BaseEvent):
     def _access(self):
         return dict(member_ids = [self.actor], roles=[(self.data.bizplace_id, 'host'), (self.data.bizplace_id, 'director')])
 
+class BookingCreated(BaseEvent):
+    name = "booking_created"
+    category = "booking"
+    def _msg_tmpl(self):
+        return make_date_element(self.data.created) + " <span class='highlight'>%(resource_name)s</span> is booked " + make_booking_date_element(self.data.start_time, self.data.end_time) + " for %(member_name)s by %(actor_name)s"
+    def _access(self):
+        return dict(member_ids = [self.actor], roles=[(self.data.resource_owner, 'host'), (self.data.resource_owner, 'director')])
+
 class InvoiceCreated(BaseEvent):
     name = "invoice_created"
     category = "invoice_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + "A <a href='/invoice/%(invoice_id)s/html'>New invoice</a> is created for <a href='./member/edit/#/%(member_id)s/info'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + "A <a href='/invoice/%(invoice_id)s/html'>New invoice</a> is created for <a href='./member/info/#/%(member_id)s/info'>%(name)s</a> by %(actor_name)s."
     def _access(self):
         return dict(member_ids=[self.actor])
 
@@ -148,7 +162,7 @@ class BillingprefUpdated(BaseEvent):
     name = "billingpref_updated"
     category = "billingpref_management"
     def _msg_tmpl(self):
-        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/edit/#/%(member_id)s/billing'>%(name)s</a> by %(actor_name)s."
+        return make_date_element(self.data.created) + " Billing Preferences updated for <a href='./member/info/#/%(member_id)s/billing'>%(name)s</a> by %(actor_name)s."
 
 class Categories(dict):
     """
@@ -182,9 +196,11 @@ role_categories = dict(
         bizplace_management = ['bizplace_created'],
         security = [],
         resource_management = ['resource_created'],
+        booking = ['booking_created'],
         organization_management = ['organization_created', 'organization_updated'] ),
     member = dict(
         member_management = ['member_updated'],
         security = ['password_changed'],
-        organization_management = ['organization_created', 'organization_updated'])
+        organization_management = ['organization_created', 'organization_updated'],
+        booking = ['booking_created'])
     )

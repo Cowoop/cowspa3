@@ -338,8 +338,11 @@ function make_booking() {
 
     var usage_id = $('#booking-id').val();
 
-    function error() {
+    function error(resp) {
+        $('#add-booking-btn').toggle();
         $('#booking-progress-btn').toggle();
+        var status_msg = 'Remote error: ' + resp.error.message;
+        $('.action-status').text(status_msg).addClass('status-fail');
     };
 
     $('#add-booking-btn').hide();
