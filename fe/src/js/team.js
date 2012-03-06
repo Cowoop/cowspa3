@@ -91,9 +91,7 @@ function add_roles() {
     function success() {
         var action_status = $('#team_form .action-status');
         action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
-        setTimeout(function(){
-            window.location.reload()
-        }, 1000);
+        load_team();
     };
     function error() {
         var action_status = $('#team_form .action-status');
@@ -118,9 +116,7 @@ function update_roles() {
 
     function success() {
         action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
-        setTimeout(function(){
-            window.location.reload()
-        }, 1000);
+        load_team();
     };
     function error() {
         var action_status = $('#team_form .action-status');
@@ -144,7 +140,6 @@ function remove_from_team() {
         var action_status = $('#team_form .action-status');
         action_status.text("Member successfully removed from team").attr('class', 'status-success');
         load_team();
-        // setTimeout(function(){ window.location.reload(); }, 1000);
     };
     function error() {
         var action_status = $('#team_form .action-status');
