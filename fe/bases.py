@@ -77,6 +77,7 @@ locations_opt = [
     tf.A("Team", href=ctxpath + '/team'),
     tf.A("Tariffs", href=ctxpath + '/tariffs'),
     tf.A("Taxes", href=ctxpath + '/taxes'),
+    #tf.A("Messages", href=ctxpath + '/messages'),
     ]
 
 new_nav = [ ('Dashboard', ctxpath + '/dashboard', []) ]
@@ -100,7 +101,7 @@ class CSAuthedPage(CSPage):
     nav_menu = [
         ('Dashboard', ctxpath + '/dashboard', []),
         ('Members', '#', members_opt),
-        ('Bookings', ctxpath + '/booking/week', []),
+        ('Bookings', ctxpath + '/booking/new', []),
         ('Invoicing', '#', invoicing_opt),
         ('Resources', ctxpath + '/resources', []),
         ('Admin', '#', locations_opt), ]
