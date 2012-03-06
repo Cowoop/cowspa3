@@ -49,9 +49,8 @@ function load_team() {
             if (confirm("Remove member from Team?")) {
                 user_id_to_remove = this.id.split('-')[1];
                 remove_from_team();
-            } else {
-                return false;
-            }
+            };
+            return false;
         });
         $(".update_staff").click(update_roles);
     };
@@ -92,6 +91,8 @@ function add_roles() {
         var action_status = $('#team_form .action-status');
         action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
         load_team();
+        $('#team_form').hide();
+        $('#team_list').show();
     };
     function error() {
         var action_status = $('#team_form .action-status');
