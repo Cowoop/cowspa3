@@ -26,7 +26,7 @@ function set_day_titles() {
 };
 
 function get_selected_date() {
-    return new Date($('#booking-date-inp').val());
+    return $('#booking-date-inp').datepicker('getDate');
 };
 
 function on_get_usages(resp) {
