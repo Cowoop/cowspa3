@@ -40,6 +40,7 @@ function init_checkboxes(result) {
 
 function load_team() {
     function success(resp) {
+        $('#team_list').empty();
         $('#team_tmpl').tmpl(resp['result']).appendTo('#team_list');
         init_checkboxes(resp['result']);
         $(".remove_staff").click(function() {
@@ -88,18 +89,21 @@ function add_roles() {
     params['roles'] =  roles
 
     function success() {
+        var action_status = $('#team_form .action-status');
         action_status.text("New role(s) assigned successfully").attr('class', 'status-success');
         setTimeout(function(){
             window.location.reload()
         }, 1000);
     };
     function error() {
+        var action_status = $('#team_form .action-status');
         action_status.text("Error assigning role(s)").attr('class', 'status-fail');
     };
     jsonrpc('roles.add', params, success, error);
 };
 
 function update_roles() {
+    var action_status = $('#team_form .action-status');
     var member_id = this.id.split('-')[1];
     var action_status = $('#roles-'+member_id+' .action-status');
     var roles = [];
@@ -119,6 +123,7 @@ function update_roles() {
         }, 1000);
     };
     function error() {
+        var action_status = $('#team_form .action-status');
         action_status.text("Error assigning role(s)").attr('class', 'status-fail');
     };
 
@@ -136,13 +141,14 @@ function remove_from_team() {
     params['user_id'] = user_id_to_remove
 
     function success() {
-        action_status.text("User successfully removed from team").attr('class', 'status-success');
-        setTimeout(function(){
-            window.location.reload()
-        }, 1000);
+        var action_status = $('#team_form .action-status');
+        action_status.text("Member successfully removed from team").attr('class', 'status-success');
+        load_team();
+        // setTimeout(function(){ window.location.reload(); }, 1000);
     };
     function error() {
-        action_status.text("Error removing user from team").attr('class', 'status-fail');
+        var action_status = $('#team_form .action-status');
+        action_status.text("Error removing team member").attr('class', 'status-fail');
     };
     jsonrpc('roles.remove', params, success, error);
 };
