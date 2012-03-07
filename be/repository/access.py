@@ -336,6 +336,20 @@ def search_member(query_parts, options, limit, mtype):
 
     return member_store.query_exec(query, values)
 
+def search_members(words, context, options, limit):
+    pat = ''.join((word + '%') for word in words)
+    values = dict(pat=pat, context=context, limit=limit)
+    values.update(options)
+    options_clause = "member.enabled = %(enabled)s" + (" AND type = %(type)s" if options['type'] else "")
+    fields_s = "member.id, member.name, member.name as label"
+    if context:
+        # Query below purposely leave starts clause. Including starts makes it 10x slower.
+        q = "SELECT DISTINCT " + fields_s + " FROM member, membership WHERE membership.bizplace_id = %(context)s AND " + options_clause +" AND  member.id = membership.member_id AND (ends >= now() OR ends IS NULL) AND member.name ilike %(pat)s"
+    else:
+        q = "SELECT DISTINCT " + fields_s + " FROM member WHERE " + options_clause + " AND member.name ilike %(pat)s"
+    q += " LIMIT %(limit)s"
+    return member_store.query_exec(q, values)
+
 def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends IS NULL)'
     if exclude_pricings: clause += ' AND id NOT IN %(exclude_pricings)s'

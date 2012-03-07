@@ -34,6 +34,9 @@ function on_member_profile(resp) {
     $('#content-title').text(thismember.profile.name);
     $('.data-id').text(thismember_id);
     $('.data-username').text(thismember.account.username);
+    $('.data-work').text(thismember.contact.work);
+    $('.data-home').text(thismember.contact.home);
+    $('.data-mobile').text(thismember.contact.mobile);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="name"]').val(thismember.profile.name);
     $('input[name="company_no"]').val(thismember.profile.company_no);
@@ -44,7 +47,10 @@ function on_member_profile(resp) {
     $('input[name="city"]').val(thismember.contact.city);
     $('input[name="province"]').val(thismember.contact.province);
     $('input[name="email"]').val(thismember.contact.email);
-    $('input[name="phone"]').val(thismember.contact.phone);
+    $('input[name="work"]').val(thismember.contact.work);
+    $('input[name="home"]').val(thismember.contact.home);
+    $('input[name="mobile"]').val(thismember.contact.mobile);
+    $('input[name="fax"]').val(thismember.contact.fax);
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('#country').val(thismember.contact.country);
     $('#member-info').slideDown();
