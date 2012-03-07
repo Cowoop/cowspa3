@@ -1,4 +1,4 @@
-var new_member_id = null;
+var new_team_member_id = null;
 
 $('#team_form').hide();
 $('#team_list').show();
@@ -9,18 +9,30 @@ $('#new-team').click(function() {
 });
 
 
+    $('input#search').autoSuggest("/search/member", {
+        selectedItemProp: "name",
+        selectedValuesProp: "id",
+        searchObjProps: "name, email, id",
+        minChars: 2,
+        selectionLimit: 0,
+        extraParams: '&context=' + current_ctx,
+        startText: "Search member",
+        resultClick: function (data) {
+            var id = data['attributes']['id'];
+            window.location = basepath + "/member/edit/#/" +id+ "/info";
+        }
+    });
+
 function search_members_autocomplete() {
     $('input#member_name').autoSuggest("/search/member", {
         selectedItemProp: "name",
         selectedValuesProp: "id", 
         searchObjProps: "name, email, id",
-        minChars: 1,
+        minChars: 2,
         selectionLimit: 0, 
-        startText: "Search member by name, email or id",
+        startText: "Search member",
         resultClick: function (data) {
-            //TODO : Not working
-           $('#member_name').val(data['attributes']['name']);
-            new_member_id = data['attributes']['id'];
+            new_team_member_id = data['attributes']['id'];
         } 
     });
 };
@@ -78,14 +90,11 @@ var theform = $('#team_form');
 function add_roles() {
     var action_status = $('#team_form .action-status');
     var roles = [];
-    var params = {};
     $('#roles :checked').each(function() {
        roles.push($(this).val());
      });
 
-    params['context'] = current_ctx
-    params['user_id'] =  new_member_id
-    params['roles'] =  roles
+    var params = {context: current_ctx, user_id: new_team_member_id, roles: roles};
 
     function success() {
         var action_status = $('#team_form .action-status');

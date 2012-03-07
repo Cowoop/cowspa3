@@ -104,9 +104,10 @@ function init_autocomplete() {
         selectedItemProp: "name",
         selectedValuesProp: "id",
         searchObjProps: "name, email, id",
-        minChars: 1,
+        minChars: 2,
         selectionLimit: 0,
-        startText: "Search member by name, email or id",
+        extraParams: '&context=' + current_ctx,
+        startText: "Search member",
         resultClick: function (data) {
             var id = data['attributes']['id'];
             window.location = basepath + "/member/edit/#/" +id+ "/info";

@@ -56,7 +56,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': False}, limit=5, mtype="member"):
+    def search_deprecated(self, q, options={'mybizplace': False}, limit=5, mtype="member"):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -70,10 +70,24 @@ class MemberCollection:
         query_parts = q.split()
         return dbaccess.search_member(query_parts, options, limit, mtype)
 
+    def search(self, q, context, options, limit=10):
+        """
+        q: partial/full first name or last name or both # TODO search email
+        options:
+            enabled: True/False (True)
+            type: member/organization (None). None ignores type
+        limit: number of results to return
+        return -> list of tuples containing member's display name and member id
+        """
+        words = q.split()
+        options_default = dict(enabled=True, type=None)
+        options = dict((k, options.get(k, v)) for k,v in options_default.items())
+        return dbaccess.search_members(words, context, options, limit)
+
 class MemberResource:
 
     get_attributes = ['id', 'created', 'enabled', 'hidden', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'province', 'country', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype']
-    set_attributes = ['enabled', 'hidden', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'country', 'province', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype']
+    set_attributes = ['enabled', 'hidden', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'country', 'province', 'pincode', 'work', 'home', 'mobile', 'fax', 'email', 'skype']
 
     def update(self, member_id, **mod_data):
         if 'username' in mod_data or 'password' in mod_data:
