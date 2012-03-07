@@ -20,9 +20,10 @@ def contact_form():
     select.options = fe.src.common.country_options
     form.add_field("Country", select)
     form.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
-    form.add_field("Phone", tf.INPUT(name='phone', type="text"))
+    form.add_field("Work Phone", tf.INPUT(name='work', type="text"))
+    form.add_field("Home Phone", tf.INPUT(name='home', type="text"))
     form.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
-    form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
+    form.add_field("Fax", tf.INPUT(name='fax', type="text"))
     form.add_field("Email", tf.INPUT(name='email', type="email").set_required())
     form.add_field("Skype", tf.INPUT(name='skype', type="text"))
     form.add_buttons(tf.BUTTON("Update", type="submit"))
@@ -205,7 +206,8 @@ class MemberCreate(BasePage):
         section.add_field("State/Province", tf.INPUT(name='province', type="text"))
         section.add_field("Country", tf.SELECT(fe.src.common.country_options, id='country', name='country'))
         section.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
-        section.add_field("Phone", tf.INPUT(name='phone', type="text"))
+        section.add_field("Work Phone", tf.INPUT(name='work', type="text"))
+        section.add_field("Home Phone", tf.INPUT(name='home', type="text"))
         section.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
         section.add_field("Fax", tf.INPUT(name='mobile', type="text"))
         section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
@@ -244,8 +246,11 @@ class EditProfile(BasePage):
         info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
         info.membership = tf.DIV([tf.DIV("Membership", Class="label"), tf.C(Class="data-membership")], Class="individual")
         info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        info.work = tf.DIV([tf.DIV("Work Phone", Class="label"), tf.C(Class="data-work")])
+        info.home = tf.DIV([tf.DIV("Home Phone", Class="label"), tf.C(Class="data-home")])
+        info.mobile = tf.DIV([tf.DIV("Mobile", Class="label"), tf.C(Class="data-mobile")])
         info.line = tf.hr(Class="light")
-        
+
         # Profile
         profile = tf.DIV(id="profile")
 

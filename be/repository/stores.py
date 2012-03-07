@@ -34,6 +34,8 @@ class Contact(PGStore):
     pincode TEXT,
     phone TEXT,
     mobile TEXT,
+    work TEXT,
+    home TEXT,
     fax TEXT,
     email TEXT NOT NULL,
     skype TEXT
