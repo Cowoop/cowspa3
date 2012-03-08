@@ -27,18 +27,18 @@ class Contact(PGStore):
     table_name = "contact"
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    address TEXT,
-    city TEXT,
-    province TEXT,
-    country TEXT,
-    pincode TEXT,
-    phone TEXT,
-    mobile TEXT,
-    work TEXT,
-    home TEXT,
-    fax TEXT,
+    address TEXT DEFAULT '',
+    city TEXT DEFAULT '',
+    province TEXT DEFAULT '',
+    country TEXT DEFAULT '',
+    pincode TEXT DEFAULT '',
+    phone TEXT DEFAULT '',
+    mobile TEXT DEFAULT '',
+    work TEXT DEFAULT '',
+    home TEXT DEFAULT '',
+    fax TEXT DEFAULT '',
     email TEXT NOT NULL,
-    skype TEXT
+    skype TEXT DEFAULT ''
     """
 
 class MemberPref(PGStore):
