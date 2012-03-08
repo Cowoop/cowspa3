@@ -109,7 +109,7 @@ class UsageCollection:
     def m_new(self, resource_id, resource_name, resource_owner, member, start_time, total=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None, notes=None, name=None, description=None, no_of_people=0, repetition_id=None, public=False):
 
         if not end_time: end_time = start_time
-        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, notes=notes, repetition_id=repetition_id, public=public)
+        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, notes=notes, repetition_id=repetition_id, public=public, description=description, no_of_people=no_of_people)
 
         return usage_store.add(**data)
 
