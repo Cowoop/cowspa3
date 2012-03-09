@@ -118,4 +118,4 @@ function on_get_invoicemail_cust(response) {
     invoice_email_text = response.result;
 };
 
-jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
+jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'invoice'}, on_get_invoicemail_cust);

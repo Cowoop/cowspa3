@@ -385,7 +385,7 @@ class Usage(Object):
 
     def export(self):
         repetition_id = self.data['repetition_id']
-        if repetition_id not in (self.id, None) and repetition_id not in migrated.member:
+        if repetition_id not in (self.id, None) and repetition_id not in migrated.usage:
             q = 'SELECT id FROM rusage WHERE id = %(repetition_id)s'
             values = dict(repetition_id=repetition_id)
             if select(spacecur, q, values, False):
