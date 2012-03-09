@@ -17,7 +17,7 @@ function login() {
             lang = 'en'; // Build for this lang not available, return English as default
         }
 //        var lang = resp.result.pref.language
-        window.location = "/" + lang + "/" + resp.result.pref.theme + "/dashboard";
+        window.location = "/" + lang + "/host/" + resp.result.pref.theme + "/dashboard";
         };
     function error() {
         action_status.text("Authentication Error. Try again").attr('class', 'status-fail');

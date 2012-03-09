@@ -65,8 +65,7 @@ function on_get_invoices_success(response) {
         $('#view_invoice_window #invoice-iframe').attr('src', '/invoice/'+$(this).attr('id')+'/html');
         $('#view_invoice_window').dialog({ 
             title: "Invoice",
-            width: 800,
-            height: 600
+            width: 'auto'
          });
     });
     //xxxxxxxxxxxxxxxxxxxxxxxxxxEnd View Invoicexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -88,7 +87,8 @@ function on_get_invoices_success(response) {
         $('#send_invoice-form .action-status').removeClass('status-fail');
         $('#send_invoice-form .action-status').removeClass('status-success').text("");
         $('#send_invoice-form').dialog({ 
-            title: "Send Invoice" 
+            title: "Send Invoice",
+            width: 800
         });
     });
     function on_send_invoice_success() {
