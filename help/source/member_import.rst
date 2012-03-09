@@ -29,6 +29,8 @@ Example CSV file content
 Field details
 =============
 
+Here is the list of various fields that can be included in CSV file. Most are self explanatory.
+
 Mandatory fields
 ----------------
 
