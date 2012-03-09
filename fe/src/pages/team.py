@@ -34,7 +34,7 @@ class List(BasePage):
         team_tmpl.box.roles.stat = tf.LABEL(" ", Class='action-status')
         team_tmpl.box.btns = tf.DIV(Class='team_delete_btn_part')
         team_tmpl.box.btns.upd = tf.BUTTON("Update", id='upd_team-${user_id}', type='button', Class='update_staff')
-        team_tmpl.box.btns.remove = tf.A("X", id='delete_link-${user_id}', href='', Class='remove_staff')
+        team_tmpl.box.btns.remove = tf.A("X", id='delete_link-${user_id}', href='#', Class='remove_staff')
 
         container.team_tmpl = team_tmpl
 
