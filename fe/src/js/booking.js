@@ -13,8 +13,7 @@ function set_day_titles() {
     var date_selected = get_selected_date();
     $('.day-title').each( function (idx) {
         var date_next = add_days(date_selected, (idx - 3));
-        // var date_text = $.datepicker.formatDate('D d', date_next)
-        var date_text = moment(date_next).format("MMM D");
+        var date_text = moment(date_next).format("ddd D");
         $(this).text(date_text);
         if (idx == 3) {
             $(this).addClass('today');
