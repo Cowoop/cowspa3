@@ -252,6 +252,12 @@ def build_all():
     for page in pages:
         page.build()
 
+def build_help(help_format='html'):
+    ''' Builds the help files in /help substituting the params from site config. '''
+    base_dir = 'help/'
+    cmd = "make -C %s %s" % (base_dir, help_format)
+    exec_cmd(cmd)
+
 def main():
     if not os.path.exists(pubroot):
         os.makedirs(pubroot)
@@ -261,6 +267,6 @@ def main():
     if not option_no_themes: build_themes()
     build_scripts()
     build_all()
-
+    build_help()
 if __name__ == '__main__':
     main()
