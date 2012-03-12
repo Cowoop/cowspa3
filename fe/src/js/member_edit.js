@@ -857,7 +857,7 @@ function get_invoice_tab_data(){
         invoice_email_text = response.result;
     };
 
-    jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
+    jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'invoice'}, on_get_invoicemail_cust);
 };
 $("#new_invoice-btn").click(function(){
     window.location = basepath + '/invoices/new/#/invoicee/' + thismember_id;
