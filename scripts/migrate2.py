@@ -279,6 +279,26 @@ class Resource(Object):
             mod_data['follow_owner_taxes'] = False
         jsonrpc(auth_token, 'resource.update', **mod_data)
 
+class ResourceGroup(Object):
+    table_name = 'resourcegroup'
+
+    def export(self):
+        q = 'SELECT id FROM resource WHERE resgroup_id = %(resgroup_id)s AND place_id = %(location_id)s'
+        values = dict(resgroup_id=self.id, location_id=location_id)
+        resource_ids = [row[0] for row in select(spacecur, q, values, False)]
+        resgrp_type = self.data['group_type']
+        # group_types = ['member_calendar', 'host_calendar', 'extras_quantity', 'extras_one_off', 'archive']
+        new_resource_ids = [migrated.resource[id] for id in resource_ids]
+        if resgrp_type == 'archive':
+            for resource_id in new_resource_ids:
+                params = dict(res_id=resource_id, archived=True)
+                jsonrpc(auth_token, 'resource.update', **params)
+        elif resgrp_type in ('host_calendar', 'member_calendar'):
+            host_only=bool(resgrp_type == 'host_calendar')
+            for resource_id in new_resource_ids:
+                params = dict(res_id=resource_id, host_only=host_only, calendar=True)
+                jsonrpc(auth_token, 'resource.update', **params)
+
 class Pricing(Object):
     table_name = 'pricing'
     renamed = dict(periodstarts='starts', periodends='ends', cost='amount')
@@ -462,18 +482,6 @@ def migrate_location():
         invoicepref = InvoicePref(location_id)
         invoicepref.migrate()
 
-    banner("Migrating members")
-    q = 'SELECT id FROM tg_user'
-    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
-    if 'member' in objects_to_import:
-        for id in member_ids:
-            if id in migrated.member:
-                print("Skipping id:%d" % id)
-                continue
-            print("migrating id:%d" % id)
-            member = Member(id)
-            member.migrate()
-
     banner("Migrating resources")
     # Create guest tariff
     # Create other tariffs
@@ -495,7 +503,7 @@ def migrate_location():
         jsonrpc(auth_token, 'bizplace.update', **values)
 
 
-    q = 'SELECT id FROM resource WHERE place_id=%(location_id)s'
+    q = "SELECT id FROM resource WHERE place_id=%(location_id)s AND name != 'calendar'"
     values = dict(location_id=location_id, defaulttariff_id=defaulttariff_id)
     all_resource_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     q = "SELECT id FROM resource WHERE place_id=%(location_id)s AND type = 'tariff'"
@@ -530,6 +538,13 @@ def migrate_location():
             params = dict(res_id=resource_id, relations=relations)
             jsonrpc(auth_token, 'resource.set_relations', **params)
 
+    banner("Migrating resource groups")
+    if 'resource' in objects_to_import:
+        q = 'SELECT id FROM resourcegroup WHERE location_id = %(location_id)s'
+        values = dict(location_id=location_id)
+        for resgroup_id in [row[0] for row in select(spacecur, q, values, False)]:
+            ResourceGroup(resgroup_id).migrate()
+
     q = 'SELECT id FROM pricing WHERE resource_id IN %(all_resource_ids)s'
     values = dict(all_resource_ids=all_resource_ids)
     pricings = tuple(row[0] for row in select(spacecur, q, values, False))
@@ -542,6 +557,18 @@ def migrate_location():
             print("migrating id:%d" % id)
             pricing = Pricing(id)
             pricing.migrate()
+
+    banner("Migrating members")
+    q = 'SELECT id FROM tg_user'
+    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
+    if 'member' in objects_to_import:
+        for id in member_ids:
+            if id in migrated.member:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            member = Member(id)
+            member.migrate()
 
 
     banner("Migrating usages")
