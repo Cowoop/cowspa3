@@ -93,7 +93,12 @@ $(".profile-tab").click(function(){
 //-------------------------------End Tabs---------------------------------------
 function show_info() { $("#profile_tabs").tabs('select', 0); };
 function show_profile() { $("#profile_tabs").tabs('select', 1); };
-function show_memberships() { $("#profile_tabs").tabs('select', 2); };
+function show_memberships() {
+    $('.tariff_row').remove();
+    $('#tariff-loading').show();
+    $("#profile_tabs").tabs('select', 2); 
+    load_tariff_records();
+};
 function show_billing() {
     $("#billing .action-status").text("").removeClass('status-fail status-success');
     if(!is_get_thismember_billingpref_done && mtype!="Organization"){
@@ -368,10 +373,9 @@ jsonrpc('tariffs.list', {owner: current_ctx}, success1);
 
 
 //**************************Tariff History**************************************
-$('#load-tariff-history').attr("href", "#/"+thismember_id+"/memberships");
-$('#load-tariff-history').click(function(){
+function load_tariff_records() {
     var params = {}
-    function success2(response) {
+    function success(response) {
         memberships = response.result;
         for(i in memberships){
             memberships[i].starts = isodate2fdate(memberships[i].starts);
@@ -381,14 +385,15 @@ $('#load-tariff-history').click(function(){
         $('#tariff-list').show();
         $('#load-tariff-history').hide();
         bind_cancel_and_change_tariff();
+        $('#tariff-loading').hide();
     };
-    function error2(resp){
+    function error(resp){
         alert("Error loading memberships: " + resp.error.message);
     };
     params['for_member'] = thismember_id;
     params['bizplace_ids'] = [parseInt(current_ctx, 10)];
-    jsonrpc('memberships.list', params, success2, error2); 
-});
+    jsonrpc('memberships.list', params, success, error); 
+};
 //***************************End Tariff History*********************************
 //************************Cancel/Change Tariff**********************************
 $('#change-tariff-form #starts-vis').datepicker( {

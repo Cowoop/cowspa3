@@ -102,32 +102,23 @@ def add_tariffs_section(container):
     header.th = tf.TH("Actions")
 
     tariff_row = sphc.more.jq_tmpl("tariff-row")
-    tariff_row.tr = tf.TR(id="tariff_row-${id}")
+    tariff_row.tr = tf.TR(id="tariff_row-${id}", Class="tariff_row")
     tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
     tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
     tariff_row.tr.td = tf.TD("${tariff_name}", id="tariff_name")
     cell = tf.TD()
     cell.a = tf.A("Change", href="#/${member_id}/memberships", Class="change-sub", id="change_sub-${id}")
     cell.c = tf.C(" | ")
-    cell.a = tf.A('X', title="Cancel tariff", href="#/${member_id}/memberships", Class="cancel-sub", id="cancel_sub-${id}")    
+    cell.a = tf.A('X', title="Cancel tariff", href="#/${member_id}/memberships", Class="cancel-sub", id="cancel_sub-${id}")
     tariff_row.tr.td = cell
-    
-    tariff_load_history = tf.DIV()
-    tariff_load_history.link = tf.A("View all records", id='load-tariff-history', href='#memberships')
 
-    tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em", Class="stripped")
-    tariff_info.caption = tf.CAPTION("Current")
-    tariff_info.header = header
-    
     tariff_list = tf.TABLE(id="tariff-list", cellspacing="1em", Class="stripped hidden")
-    tariff_list.caption = tf.CAPTION("Records")
     tariff_list.header = header
 
     tariff_box.new = new
     tariff_box.tmpl = tariff_row
-    tariff_box.info = tariff_info
+    tariff_box.status = tf.SPAN("Loading...", id="tariff-loading", Class="highlight")
     tariff_box.list = tariff_list
-    tariff_box.history = tariff_load_history
 
     container.tariff_box = tariff_box
 
