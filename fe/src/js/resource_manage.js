@@ -206,12 +206,11 @@ $("#resource_edit_form #update_resource-btn").click(function(){
         resource_list[res_id]['short_description'] = params['short_description'];
         $("#short_description_"+params['res_id']).text(params['short_description']);
         resource_list[res_id].state = params.state
-        resource_list[res_id]['long_description'] = params['long_description'];
-        resource_list[res_id]['accnt_code'] = params['accnt_code'];
-        resource_list[res_id].flag = resource_list[res_id].state['enabled']?1:0;
-        resource_list[res_id].flag |= resource_list[res_id].state['host_only']?2:0;
-        resource_list[res_id].flag |= resource_list[res_id].state['repairs']?4:0;
-        resource_list[res_id]['calc_mode'] = params['calc_mode'];
+        resource_list[res_id].long_description = params.long_description;
+        resource_list[res_id].accnt_code = params.accnt_code;
+        resource_list[res_id].enabled = resource_list[res_id].enabled;
+        resource_list[res_id].host_only = resource_list[res_id].host_only;
+        resource_list[res_id].calc_mode = params.calc_mode;
         if(picture){
             resource_list[res_id]['picture'] = picture;
             $("#picture_"+res_id).show();
@@ -248,10 +247,8 @@ $("#resource_edit_form #update_resource-btn").click(function(){
     params['long_description'] = $("#long_desc").val();
     params['accnt_code'] = $("#accnt_code").val();
     params['calc_mode'] = time_based_map[$("#time_based:checked").val()];
-    params.state = {};
-    params.state['enabled'] = checked_map[$("#state_enabled:checked").val()];
-    params.state['host_only'] = checked_map[$("#state_host_only:checked").val()];
-    params.state['repairs'] = checked_map[$("#state_repairs:checked").val()];
+    params['enabled'] = checked_map[$("#state_enabled:checked").val()];
+    params['host_only'] = checked_map[$("#state_host_only:checked").val()];
     if(picture)
         params['picture'] = picture;
     jsonrpc('resource.update', params, success, error); 
@@ -270,9 +267,8 @@ function resource_editing() {
     $("#long_desc").val(this_resource.long_description);
     $("#accnt_code").val(this_resource.accnt_code);
     $("#time_based").attr('checked', this_resource.calc_mode==calc_map.time_based);
-    $("#state_enabled").attr('checked', this_resource.state.enabled);
-    $("#state_host_only").attr('checked', this_resource.state.host_only);
-    $("#state_repairs").attr('checked', this_resource.state.repairs);
+    $("#state_enabled").attr('checked', this_resource.enabled);
+    $("#state_host_only").attr('checked', this_resource.host_only);
 };
 
 function on_resource_pricings(resp) {
