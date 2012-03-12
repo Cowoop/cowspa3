@@ -18,10 +18,10 @@ class CalcMode:
 
 class ResourceCollection:
 
-    def new(self, name, short_description, type, owner, default_price=None, enabled=True, host_only=False, long_description=None, calc_mode=CalcMode.monthly, archived=False, picture=None, accnt_code=None):
+    def new(self, name, short_description, type, owner, default_price=None, enabled=True, calendar=False, host_only=False, long_description=None, calc_mode=CalcMode.monthly, archived=False, picture=None, accnt_code=None):
         #TODO make default_price parameter mandatory post migration
         created = datetime.datetime.now()
-        data = dict(name=name, owner=owner, created=created, short_description=short_description, enabled=enabled, host_only=host_only, long_description=long_description, type=type, calc_mode=calc_mode, archived=archived, picture=picture, accnt_code=accnt_code)
+        data = dict(name=name, owner=owner, created=created, short_description=short_description, enabled=enabled, calendar=calendar, host_only=host_only, long_description=long_description, type=type, calc_mode=calc_mode, archived=archived, picture=picture, accnt_code=accnt_code)
         res_id = resource_store.add(**data)
 
         data = dict(id=res_id, name=name, bizplace_name=dbaccess.oid2name(owner), bizplace_id=owner, user_id=env.context.user_id, created=created, type=type)
@@ -72,10 +72,9 @@ class ResourceCollection:
         return [res for res in resource_store.get_by(crit=crit, fields=fields) if res.type != 'tariff']
 
     def available_for_booking(self, owner, for_member):
-        contained_resource_ids = [row[0] for row in resourcerelation_store.get_by(dict(owner=owner), fields=['resourceB'], hashrows=False)]
-        crit = dict(owner=owner, enabled=True, archived=False)
+        crit = dict(owner=owner, enabled=True, archived=False, calendar=True, calc_mode=CalcMode.time_based)
         fields = ['id', 'name', 'type', 'calc_mode']
-        resources = [res for res in resource_store.get_by(crit=crit, fields=fields) if res.type != 'tariff' and res.id not in contained_resource_ids]
+        resources = [res for res in resource_store.get_by(crit=crit, fields=fields) if res.type != 'tariff']
         pricings = dbaccess.get_pricings_for_member(owner, for_member)
         for resource in resources:
             relations = resource_resource.get_relations(resource.id)
@@ -106,17 +105,17 @@ class ResourceCollection:
 
 class ResourceResource:
 
-    get_attributes = ['name', 'short_description', 'type', 'owner', 'enabled',
+    get_attributes = ['name', 'short_description', 'type', 'owner', 'enabled', 'archived', 'host_only', 'calendar',
             'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code', 'taxes']
-    set_attributes = ['name', 'short_description', 'type', 'owner', 'enabled',
+    set_attributes = ['name', 'short_description', 'type', 'owner', 'enabled', 'archived', 'host_only', 'calendar',
             'long_description', 'calc_mode', 'archived', 'picture', 'accnt_code', 'taxes']
 
     def info(self, res_id):
         """
         returns dict containing essential information of specified business
         """
-        info_attributes = ['name', 'owner', 'short_description', 'long_description', 'enabled', 'id', 'type',
-                'calc_mode', 'accnt_code']
+        info_attributes = ['name', 'owner', 'short_description', 'long_description', 'enabled', 'id', 'type', 'host_only',
+                'archived', 'calc_mode', 'accnt_code']
         info = resource_store.get(res_id, info_attributes)
         # TODO change owner ref to name
         info['owner_id'] = info['owner']
