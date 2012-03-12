@@ -1,5 +1,6 @@
 import datetime
 import commonlib.helpers
+import be.errors
 import be.repository.access as dbaccess
 import be.apis.pricing as pricinglib
 import be.apis.resource as resourcelib
@@ -40,6 +41,8 @@ class UsageCollection:
         member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
         if resource:
             resource_owner = resource.owner
+            if not resource.enabled or resource.archived:
+                raise errors.ErrorWithHint('Resource is either not enabled or is archived')
 
         if not end_time: end_time = start_time
         created = datetime.datetime.now()
@@ -109,7 +112,7 @@ class UsageCollection:
     def m_new(self, resource_id, resource_name, resource_owner, member, start_time, total=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None, notes=None, name=None, description=None, no_of_people=0, repetition_id=None, public=False):
 
         if not end_time: end_time = start_time
-        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, notes=notes, repetition_id=repetition_id, public=public, description=description, no_of_people=no_of_people)
+        data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, name=name, notes=notes, repetition_id=repetition_id, public=public, description=description, no_of_people=no_of_people)
 
         return usage_store.add(**data)
 
