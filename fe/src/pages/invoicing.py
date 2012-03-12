@@ -182,9 +182,6 @@ class Preferences(BasePage):
         view_section2.email_text.value = tf.DIV(id="data-email_text", Class="field-value")
         email.view_form2 = view_section2
 
-        edit_form2 = sphc.more.Form(id='preferences_edit_form2', classes=['hform'], enctype='multipart/form-data')
-        edit_form2.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="email_text"))
-
         tax_edit_template = sphc.more.jq_tmpl(id="tax_edit_template")
         tax_edit_template.field = tf.DIV(Class="field", id="tax-${id}")
         tax_edit_template.field.name = tf.DIV(tf.INPUT(id="tax_name-${id}" , type="text"), Class="tax-name")
@@ -193,7 +190,7 @@ class Preferences(BasePage):
         main.tax_edit_template = tax_edit_template
 
         edit_form2 = sphc.more.Form(id='preferences_edit_form2', classes=['hform'])
-        edit_form2.add_field("Email Text", tf.TEXTAREA(Class="changed-data", name="email_text", id="invoice-email_text"))
+        edit_form2.add_field("Email Text", tf.TEXTAREA(name="email_text", id="invoice-email_text"))
         edit_form2.add_buttons(tf.INPUT(type="button", value="Save", id='save-btn2'), tf.INPUT(type="button", value="Cancel", id='cancel-btn2'))
         edit_section2 = tf.DIV(id='edit-section2', Class="hidden")
         edit_section2.form = edit_form2.build()

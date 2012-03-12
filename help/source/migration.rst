@@ -1,5 +1,5 @@
-HubOps Migration FAQ
-===========================
+Migration FAQ (The Hub Specific)
+================================
 
 What is getting transferred
 ---------------------------
