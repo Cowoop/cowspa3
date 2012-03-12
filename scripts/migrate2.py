@@ -241,14 +241,16 @@ class MessageCust(Object):
     #unchanged = ('lang',)
     renamed = dict(message='name', text='content')
     def export(self):
+        new_names = dict(invoice_freetext_1='freetext1', invoice_freetext_2='freetext2', invoice_mail='invoice')
+        name = new_names.get(self.data['message'], self.data['message'])
         if not self.data['message'].startswith('invoice_freetext'):
             self.new_data['owner_id'] = migrated.location[location_id]
+            self.new_data['name'] = name
             jsonrpc(auth_token, 'messagecust.new', **self.new_data)
             migrated.messagecust['id'] = None
         else:
             q = 'UPDATE invoice_pref SET %s = %%(content)s WHERE owner = %%(owner)s'
             new_names = dict(invoice_freetext_1='freetext1', invoice_freetext_2='freetext2', invoice_mail='invoice')
-            name = new_names.get(self.data['message'], self.data['message'])
             q = q % name
             values = dict(content=self.data['text'], owner=migrated.location[location_id])
             qexec(cscur, q, values)

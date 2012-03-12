@@ -122,7 +122,7 @@ $("#cancel-btn2").click(function(){
 });
 $("#save-btn2").click(function(){
     invoice_email_text = $("#invoice-email_text").val();
-    var params = {owner_id: current_ctx, name: "invoice_mail", content: invoice_email_text};
+    var params = {owner_id: current_ctx, name: "invoice", content: invoice_email_text};
     function on_save_emailtext_success() {
         $("#data-email_text").text(invoice_email_text);
         $("#edit-section2").hide();
@@ -139,5 +139,5 @@ function on_get_emailtext_success(response) {
     $("#data-email_text").text(invoice_email_text);
     $("#invoice-email_text").val(invoice_email_text);
 };
-var params1 = { 'owner_id' : current_ctx, 'name':"invoice_mail"};
+var params1 = { 'owner_id' : current_ctx, 'name':"invoice"};
 jsonrpc('messagecust.get', params1, on_get_emailtext_success);

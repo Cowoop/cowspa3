@@ -17,7 +17,8 @@ def list(owner_id): # TODO: support names
 def update(owner_id, name, content):
     #msg = get(name, owner_id)
     # TODO send notification with old content
-    if get(owner_id, name):
+    mcust = messagecust_store.get_one_by_safe(crit=dict(owner=owner_id, name=name))
+    if mcust:
         messagecust_store.update_by(crit=dict(owner=owner_id, name=name), content=content)
     else:
         new(owner_id, name, content)
