@@ -187,6 +187,7 @@ class Resource(PGStore):
     enabled BOOLEAN DEFAULT True,
     hidden BOOLEAN DEFAULT False,
     host_only BOOLEAN DEFAULT False,
+    calendar BOOLEAN DEFAULT False,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     type TEXT,
     owner INTEGER NOT NULL,
