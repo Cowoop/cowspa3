@@ -303,12 +303,12 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
     values = dict(member_id=member_id, since=since, bizplace_ids=tuple(bizplace_ids), current_date=current_date)
     return membership_store.get_by_clause(clause, values)
 
-def list_invoices(issuer ,limit):
-    query = "SELECT invoice.number, member.name, invoice.total, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC"
+def list_sent_invoices(issuer, limit):
+    query = "SELECT invoice.id, invoice.number, member.id as member_id, member.name as member_name, invoice.total, invoice.sent FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s AND sent IS NOT NULL ORDER BY sent DESC"
     if limit is not -1:
         query += " LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit)
-    return invoice_store.query_exec(query, values, hashrows=False)
+    return invoice_store.query_exec(query, values)
 
 def search_member(query_parts, options, limit, mtype):
     fields = ['id', 'name']
