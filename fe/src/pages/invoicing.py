@@ -210,12 +210,22 @@ class Preferences(BasePage):
 
 class History(BasePage):
 
-    title = "Invoice History"
+    title = "Sent Invoices"
     current_nav = 'Invoicing'
 
     def content(self):
         container = tf.DIV()
+        container.invoice_row = sphc.more.jq_tmpl('invoice_row-tmpl')
+        container.invoice_row.tmpl = tf.TR()
+        container.invoice_row.tmpl.number = tf.TD('${number || "-"}')
+        container.invoice_row.tmpl.name = tf.TD('${member_name}')
+        container.invoice_row.tmpl.total = tf.TD('${total}')
+        container.invoice_row.tmpl.sent = tf.TD('${isodate2fdate(sent) || "-"}')
+        container.invoice_row.tmpl.view = tf.TD(tf.A('View', id='view-${id}', Class='view-invoice'))
+        container.invoice_row.tmpl.actions = tf.TD(tf.A('Resend', id='send-${id}', Class='send-invoice'))
         container.table = tf.TABLE(id="history_table")
+        container.table.head = tf.THEAD()
+        container.table.head.cols = tf.TR([tf.TH(name) for name in ('Number', 'Member', 'Amount', 'Sent', 'View', '')])
         container.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
         container.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         send_invoice = sphc.more.Form(id='send_invoice-form', classes=['vform', 'hidden'])
