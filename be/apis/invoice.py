@@ -112,9 +112,10 @@ class InvoiceCollection:
     def list(self, issuer, limit=100):
         """
         limit: -1 is no limit
+        returns list of invoice dicts
         """
         data = dict(issuer=issuer, limit=limit)
-        return dbaccess.list_invoices(**data)
+        return dbaccess.list_sent_invoices(**data)
 
     def by_member(self, issuer, member, hashrows=True):
         crit = dict(issuer=issuer, member=member)
