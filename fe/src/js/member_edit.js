@@ -483,16 +483,16 @@ function bind_cancel_and_change_tariff() {
 //***********************End Cancel/Change Tariff*******************************
 //****************************Usage Management********************************** 
 //-----------------------------Get Resources------------------------------------
-function on_get_resources_success(res) {
-    $('#resource-tmpl').tmpl(res['result']).appendTo('#add-usage-form #resource_select');
-    $('#resource-tmpl').tmpl(res['result']).appendTo('#edit_usage-form #res_select');
+function on_get_resources_success(resp) {
+    $('#resource-tmpl').tmpl(resp.result).appendTo('#add-usage-form #resource_select');
+    $('#resource-tmpl').tmpl(resp.result).appendTo('#edit_usage-form #res_select');
     var custom_resource = [{'id':0, 'name':'Custom'}];
     $('#resource-tmpl').tmpl(custom_resource).appendTo('#add-usage-form #resource_select');
     $('#resource-tmpl').tmpl(custom_resource).appendTo('#edit_usage-form #res_select');
     $("#resource_name").val($("#add-usage-form #resource_select option:first").text());
 };
 function on_get_resources_error(){};
-jsonrpc('resources_and_tariffs.list', {'owner':current_ctx}, on_get_resources_success, on_get_resources_error);
+jsonrpc('resource.list', {owner: current_ctx, exclude_tariffs: true}, on_get_resources_success, on_get_resources_error);
 //--------------------------------Add Usage-------------------------------------
 $("#add_usage [for='cost']").text($("[for='cost']").text()+' (' +locale_data.currency_symbol+')');
 $("#resource_select").change(function(){
@@ -543,14 +543,15 @@ $("#calculate_cost-btn").click(function(){
 $('#submit-usage').click(function(){
     var action_status = $('#add-usage-form .action-status');
     params = {
-        'resource_id' : parseInt($("#resource_select").val(), 10),
-        'resource_name' : $("#resource_name").val(),
-        'resource_owner' : parseInt(current_ctx, 10),
-        'quantity' : parseFloat($("#quantity").val()),
-        'cost' : parseFloat($("#cost").val()),
-        'member' : thismember_id,
-        'start_time' : fdate2iso($("#start_time").val()),
-        'end_time' : fdate2iso($("#end_time").val())
+        resource_id: parseInt($("#resource_select").val(), 10),
+        resource_name: $("#resource_name").val(),
+        resource_owner: parseInt(current_ctx, 10),
+        quantity: parseFloat($("#quantity").val()),
+        cost: parseFloat($("#cost").val()),
+        member: thismember_id,
+        start_time: fdate2iso($("#start_time").val()),
+        end_time: fdate2iso($("#end_time").val()),
+        suppress_notification: true
     };
     function on_add_usage_success(resp){
         action_status.text("Add usage is successful.").addClass('status-success');
