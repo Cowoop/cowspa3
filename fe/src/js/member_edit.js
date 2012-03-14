@@ -34,6 +34,9 @@ function on_member_profile(resp) {
     $('#content-title').text(thismember.profile.name);
     $('.data-id').text(thismember_id);
     $('.data-username').text(thismember.account.username);
+    $('.data-work').text(thismember.contact.work);
+    $('.data-home').text(thismember.contact.home);
+    $('.data-mobile').text(thismember.contact.mobile);
     $('input[name="first_name"]').val(thismember.profile.first_name);
     $('input[name="name"]').val(thismember.profile.name);
     $('input[name="company_no"]').val(thismember.profile.company_no);
@@ -44,14 +47,17 @@ function on_member_profile(resp) {
     $('input[name="city"]').val(thismember.contact.city);
     $('input[name="province"]').val(thismember.contact.province);
     $('input[name="email"]').val(thismember.contact.email);
-    $('input[name="phone"]').val(thismember.contact.phone);
+    $('input[name="work"]').val(thismember.contact.work);
+    $('input[name="home"]').val(thismember.contact.home);
+    $('input[name="mobile"]').val(thismember.contact.mobile);
+    $('input[name="fax"]').val(thismember.contact.fax);
     $('.data-email-link').attr('href', 'mailto:'+thismember.contact.email).text(thismember.contact.email);
     $('#country').val(thismember.contact.country);
     $('#member-info').slideDown();
     $('input[name="username"]').val(thismember.account.username);
     $('select[name="theme"]').val(thismember.preferences.theme);
     $('select[name="language"]').val(thismember.preferences.language);
-    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"Guest");
+    $('.data-membership').text(thismember.memberships.length>0?thismember.memberships[0].tariff_name:"-");
     for(i in thismember.memberships){
         thismember.memberships[i].starts = isodate2fdate(thismember.memberships[i].starts);
         thismember.memberships[i].ends = isodate2fdate(thismember.memberships[i].ends);
@@ -87,7 +93,12 @@ $(".profile-tab").click(function(){
 //-------------------------------End Tabs---------------------------------------
 function show_info() { $("#profile_tabs").tabs('select', 0); };
 function show_profile() { $("#profile_tabs").tabs('select', 1); };
-function show_memberships() { $("#profile_tabs").tabs('select', 2); };
+function show_memberships() {
+    $('.tariff_row').remove();
+    $('#tariff-loading').show();
+    $("#profile_tabs").tabs('select', 2); 
+    load_tariff_records();
+};
 function show_billing() {
     $("#billing .action-status").text("").removeClass('status-fail status-success');
     if(!is_get_thismember_billingpref_done && mtype!="Organization"){
@@ -362,10 +373,9 @@ jsonrpc('tariffs.list', {owner: current_ctx}, success1);
 
 
 //**************************Tariff History**************************************
-$('#load-tariff-history').attr("href", "#/"+thismember_id+"/memberships");
-$('#load-tariff-history').click(function(){
+function load_tariff_records() {
     var params = {}
-    function success2(response) {
+    function success(response) {
         memberships = response.result;
         for(i in memberships){
             memberships[i].starts = isodate2fdate(memberships[i].starts);
@@ -375,14 +385,15 @@ $('#load-tariff-history').click(function(){
         $('#tariff-list').show();
         $('#load-tariff-history').hide();
         bind_cancel_and_change_tariff();
+        $('#tariff-loading').hide();
     };
-    function error2(resp){
+    function error(resp){
         alert("Error loading memberships: " + resp.error.message);
     };
     params['for_member'] = thismember_id;
     params['bizplace_ids'] = [parseInt(current_ctx, 10)];
-    jsonrpc('memberships.list', params, success2, error2); 
-});
+    jsonrpc('memberships.list', params, success, error); 
+};
 //***************************End Tariff History*********************************
 //************************Cancel/Change Tariff**********************************
 $('#change-tariff-form #starts-vis').datepicker( {
@@ -846,7 +857,7 @@ function get_invoice_tab_data(){
         invoice_email_text = response.result;
     };
 
-    jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'Invoice'}, on_get_invoicemail_cust);
+    jsonrpc('messagecust.get', {owner_id: current_ctx, name: 'invoice'}, on_get_invoicemail_cust);
 };
 $("#new_invoice-btn").click(function(){
     window.location = basepath + '/invoices/new/#/invoicee/' + thismember_id;

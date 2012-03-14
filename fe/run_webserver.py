@@ -14,7 +14,7 @@ app.secret_key = os.urandom(24)
 import commonlib.helpers as helpers
 
 static_root = 'pub'
-landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='dashboard', admin='dashboard')
+landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='/new', admin='dashboard')
 
 def construct_home_url(auth_token, context):
     home_url = 'login'
@@ -36,10 +36,18 @@ def construct_home_url(auth_token, context):
                     rolename = roles[0]['roles'][0]['role']
                     context = roles[0]['context']
 
-            home_url = '%(lang)s/%(rolename)s/%(theme)s/%(page)s' % \
-                dict(rolename=rolename, theme=pref.theme, lang='en', page=landing_pages[rolename])
+            landing_page = landing_pages[rolename]
+            if landing_page.startswith('/'):
+                home_url = landing_page
+            else:
+                home_url = '%(lang)s/%(rolename)s/%(theme)s/%(page)s' % \
+                    dict(rolename=rolename, theme=pref.theme, lang='en', page=landing_pages[rolename])
 
     return home_url, context
+
+@app.route('/new')
+def new():
+    return "You have no membership yet.", 200, {'Content-Type': 'text/html' +'; charset=utf-8'}
 
 @app.route('/')
 def index():
@@ -59,8 +67,11 @@ def index():
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
-    q = request.args.get('q') or request.args.get('term')
-    params = {"jsonrpc": "2.0", "method": "members.search", "params": {'q':q, 'mtype':entity}, "id": 1}
+    params = dict(
+        q = request.args.get('q') or request.args.get('term'),
+        context = request.args.get('context'),
+        options = request.args.get('options', {}) )
+    params = {"jsonrpc": "2.0", "method": "members.search", "params": params, "id": 1}
     data = cowspa.dispatch(auth_token, params)
     return helpers.jsonify(data['result'])
 

@@ -24,6 +24,11 @@ $.webshims.setOptions('forms', {
 //or load only a specific feature with $.webshims.polyfill('feature-name');
 $.webshims.polyfill();// forms-ext');
 
+// extending jq
+jQuery.fn.reset = function () {
+    $(this).each (function() { this.reset(); });
+};
+
 // Cookies
 var cookie_opts = { path : '/'};
 function set_cookie(cookie_name, value) {
@@ -99,9 +104,10 @@ function init_autocomplete() {
         selectedItemProp: "name",
         selectedValuesProp: "id",
         searchObjProps: "name, email, id",
-        minChars: 1,
+        minChars: 2,
         selectionLimit: 0,
-        startText: "Search member by name, email or id",
+        extraParams: '&context=' + current_ctx,
+        startText: "Search member",
         resultClick: function (data) {
             var id = data['attributes']['id'];
             window.location = basepath + "/member/edit/#/" +id+ "/info";
@@ -227,10 +233,6 @@ $(document).click( function (e) {
      
 //******************************************End**********************************************************
 //*******************************************Date Formatting*********************************************
-function format_date(thedate, format) {
-    // http://docs.jquery.com/UI/Datepicker/formatDate
-    return $.datepicker.formatDate(format, thedate);
-};
 
 var iso_date_format = "YYYY-MM-DD"; // momentjs only
 var iso_format = iso_date_format + "\THH:mm:ss"; // momentjs only
@@ -272,14 +274,14 @@ function date2iso(date){
     if(jQuery.trim(date) == ""){
         return null;
     };
-    return format_date(date, 'yy-mm-dd') + 'T' + date2isotime(date);
+    return moment(date).format("YYYY-MM-DD") + 'T' + date2isotime(date);
 };
 
 function date2isodate(date){
     if(jQuery.trim(date) == ""){
         return null;
     };
-    return format_date(date, 'yy-mm-dd')
+    return moment(date).format("YYYY-MM-DD");
 };
 
 function fdate2datetime(fdate){

@@ -27,12 +27,11 @@ def test_member_object():
     assert m.first_name, m.last_name == ('Kit', 'Walker')
 
 def test_update_member():
-    old_state = memberlib.member_resource.get(test_data.member_id, 'state')
-    new_state = dict(enabled=False, hidden=True)
-    mod_data = dict(state=new_state)
-    memberlib.member_resource.update(test_data.member_id, **mod_data)
-    assert old_state == test_data.member['state']
-    assert new_state == memberlib.member_resource.get(test_data.member_id, 'state')
+    old_state = memberlib.member_resource.get(test_data.member_id, 'enabled')
+    new_state = dict(enabled=False)
+    memberlib.member_resource.update(test_data.member_id, **new_state)
+    assert old_state == test_data.member['enabled']
+    assert new_state['enabled'] == memberlib.member_resource.get(test_data.member_id, 'enabled')
 
 def test_auth():
     assert userlib.authenticate(test_data.member['username'], 'password') != True
@@ -59,10 +58,10 @@ def test_info():
     assert info.id == m_id and test_data.member['first_name'] in info.name
 
 def test_search():
-    result = memberlib.member_collection.search("pet")
-    assert len(result) == 2
-    result = memberlib.member_collection.search(str(test_data.member_id))
+    result = memberlib.member_collection.search("pet", 0)
+    assert len(result) >= 1
+    result = memberlib.member_collection.search_deprecated(str(test_data.member_id))
     assert test_data.member['first_name'] in result[0]['name']
-    result = memberlib.member_collection.search(test_data.member['first_name'])
-    assert result[0]['id'] == test_data.member_id
-    assert len(memberlib.member_collection.search("XYZ")) == 0
+    result = memberlib.member_collection.search(test_data.member['first_name'], 0)
+    assert len(result) == 0 # user kit is not enabled
+    assert len(memberlib.member_collection.search("Nobody", 0)) == 0

@@ -14,6 +14,8 @@
 # find message_cust, migrate
 # 
 import argparse
+import collections
+import itertools
 import atexit
 import cPickle
 import datetime
@@ -36,8 +38,8 @@ import commonlib.shared.constants as constants
 TEST_RUN = False
 
 jsonrpc_cred = dict(username='admin', password='x')
-space_db_string =  'dbname=thehub user= password='
-cs_db_string = 'dbname=shon user= password'
+space_db_string =  'dbname=thehub'
+cs_db_string = 'dbname=shon'
 
 binaries_dir = 'binaries'
 mime = magic.Magic(mime=True)
@@ -46,7 +48,7 @@ app = be.apps.cowspa
 def parse_args():
     parser = argparse.ArgumentParser(description='Run cowspa server.')
     global TEST_RUN
-    parser.add_argument('location_id', action="store")
+    parser.add_argument('location_id', action="store", type=int)
     parser.add_argument('-t', action="store_true", dest='test', default=False)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-a', action="store_true", dest='all', default=False)
@@ -57,7 +59,7 @@ args = parse_args()
 print args
 TEST_RUN = args.test
 location_id, country_code = args.location_id, '004'
-objects_to_import = args.all and ['member', 'resource', 'pricing', 'membership', 'team', 'usage', 'mcust', 'role', 'invoice']
+objects_to_import = args.all and ['member', 'resource', 'pricing', 'membership', 'team', 'usage', 'mcust', 'role', 'invoice'] or args.objects
 
 def jsonrpc(auth_token, apiname, **kw):
     params = {"jsonrpc": "2.0", "method": apiname, "params": kw, "id": 1}
@@ -128,6 +130,7 @@ def qexec(cur, q, values={}):
     if debug: print(q, values)
     try:
         cur.execute(q, values)
+        cur.execute('COMMIT')
     except psycopg2.ProgrammingError, err:
         try:
             print(cur.mogrify(q, values))
@@ -215,14 +218,15 @@ class Location(Object):
         logo_data = dict(bizplace_id=new_location_id, logo=logo)
         jsonrpc(auth_token, 'bizplace.update', **logo_data)
 
-        # defaulttariff_id
 
 class InvoicePref(Object):
     table_name = 'location'
-    renamed = dict(invoice_bcc='bcc_email', vat_included='tax_included', invoice_duedate='due_date', payment_terms='terms_and_conditions')
+    unchanged = dict(payment_terms='payment_terms')
+    renamed = dict(invoice_bcc='bcc_email', vat_included='tax_included', invoice_duedate='due_date')
     later = dict(defaulttariff_id='default_tariff')
     def export(self):
         self.new_data['owner'] = migrated.location[self.id]
+        self.new_data['start_number'] = self.id
         invlogo_filename = "location-invlogo-%s" % self.id
         invlogo = import_image(invlogo_filename)
         self.new_data['logo'] = invlogo
@@ -237,13 +241,16 @@ class MessageCust(Object):
     #unchanged = ('lang',)
     renamed = dict(message='name', text='content')
     def export(self):
+        new_names = dict(invoice_freetext_1='freetext1', invoice_freetext_2='freetext2', invoice_mail='invoice')
+        name = new_names.get(self.data['message'], self.data['message'])
         if not self.data['message'].startswith('invoice_freetext'):
             self.new_data['owner_id'] = migrated.location[location_id]
+            self.new_data['name'] = name
             jsonrpc(auth_token, 'messagecust.new', **self.new_data)
             migrated.messagecust['id'] = None
         else:
             q = 'UPDATE invoice_pref SET %s = %%(content)s WHERE owner = %%(owner)s'
-            name = 'freetext1' if self.data['message'].endswith('1') else 'freetext2'
+            new_names = dict(invoice_freetext_1='freetext1', invoice_freetext_2='freetext2', invoice_mail='invoice')
             q = q % name
             values = dict(content=self.data['text'], owner=migrated.location[location_id])
             qexec(cscur, q, values)
@@ -268,12 +275,31 @@ class Resource(Object):
 
         image_filename = "resource-resimage-%s" % self.id
         image = import_image(image_filename)
-        state = dict(enabled = bool(self.data['active']))
-        mod_data = dict(res_id=new_resource_id, picture=image, state=state)
+        mod_data = dict(res_id=new_resource_id, picture=image, enabled = bool(self.data['active']))
         if self.data['vat']:
             mod_data['taxes'] = dict(VAT=self.data['vat'])
             mod_data['follow_owner_taxes'] = False
         jsonrpc(auth_token, 'resource.update', **mod_data)
+
+class ResourceGroup(Object):
+    table_name = 'resourcegroup'
+
+    def export(self):
+        q = 'SELECT id FROM resource WHERE resgroup_id = %(resgroup_id)s AND place_id = %(location_id)s'
+        values = dict(resgroup_id=self.id, location_id=location_id)
+        resource_ids = [row[0] for row in select(spacecur, q, values, False)]
+        resgrp_type = self.data['group_type']
+        # group_types = ['member_calendar', 'host_calendar', 'extras_quantity', 'extras_one_off', 'archive']
+        new_resource_ids = [migrated.resource[id] for id in resource_ids]
+        if resgrp_type == 'archive':
+            for resource_id in new_resource_ids:
+                params = dict(res_id=resource_id, archived=True)
+                jsonrpc(auth_token, 'resource.update', **params)
+        elif resgrp_type in ('host_calendar', 'member_calendar'):
+            host_only=bool(resgrp_type == 'host_calendar')
+            for resource_id in new_resource_ids:
+                params = dict(res_id=resource_id, host_only=host_only, calendar=True)
+                jsonrpc(auth_token, 'resource.update', **params)
 
 class Pricing(Object):
     table_name = 'pricing'
@@ -310,6 +336,7 @@ class Member(Object):
     table_name = 'tg_user'
     unchanged = ('first_name', 'last_name', 'mobile', 'fax', 'website', 'address')
     renamed = dict(id='number', display_name='name', email_address='email', user_name='username', skype_id='skype', description='long_description', organisation='organization', password='enc_password')
+    anomolies = (5701,)
 
     def export(self):
         billto_id = self.data['billto_id']
@@ -318,7 +345,7 @@ class Member(Object):
         if self.new_data.get('long_description'):
             long_description = self.new_data['long_description']
             self.new_data['long_description'] = docutils.core.publish_parts(long_description, writer_name="html")['html_body']
-        self.new_data['state'] = dict(enabled = bool(self.data['active']))
+        self.new_data['enabled'] = bool(self.data['active'])
         self.new_data['first_name'] = self.new_data.get('first_name', '')
 
         q = 'SELECT * from user_meta_data where user_id = %(user_id)s'
@@ -376,13 +403,21 @@ class Member(Object):
 class Usage(Object):
     table_name = 'rusage'
     unchanged = ('resource_name', 'end_time', 'quantity', 'notes')
-    renamed = dict(start='start_time', date_booked='created', meeting_name='name', meeting_description='description')
+    renamed = dict(start='start_time', date_booked='created', meeting_name='name', meeting_description='description', number_of_people='no_of_people')
 
     def export(self):
+        repetition_id = self.data['repetition_id']
+        if repetition_id not in (self.id, None) and repetition_id not in migrated.usage:
+            q = 'SELECT id FROM rusage WHERE id = %(repetition_id)s'
+            values = dict(repetition_id=repetition_id)
+            if select(spacecur, q, values, False):
+                Usage(repetition_id).migrate()
+                self.new_data['repetition_id'] = migrated.usage[repetition_id]
         resource_id = migrated.resource[self.data['resource_id']]
         self.new_data['resource_id'] = resource_id
         self.new_data['resource_owner'] = migrated.location[location_id]
         self.new_data['member'] = migrated.member[self.data['user_id']]
+        self.new_data['public'] = bool(self.data['public_field'])
         if self.data['refund_for']:
             if migrated.usage.get(self.data['refund_for']): # there are some refunds which points to non-existent usage
                 self.new_data['cancelled_against'] = migrated.usage[self.data['refund_for']]
@@ -392,6 +427,7 @@ class Usage(Object):
         result = jsonrpc(auth_token, 'usage.m_new', **self.new_data)
         new_usage_id = result['result']
         migrated.usage[self.id] = new_usage_id
+
         if self.data['bookedby_id'] not in migrated.member:
             migrated.pending.usage_created_by[self.id] = self.data['bookedby_id']
         else:
@@ -413,12 +449,12 @@ class Invoice(Object):
         self.new_data['po_number'] = ponumbers[0:1] or None
         q = 'SELECT id FROM rusage WHERE invoice_id = %(invoice_id)s'
         values = dict(invoice_id=self.id)
-        anomolies = (117922, 117925) # resource owned by one location, invoiced by another
-        self.new_data['usages'] = [migrated.usage[row[0]] for row in select(spacecur, q, values, False) if row[0] in migrated.usage]
+        usage_ids = [row[0] for row in select(spacecur, q, values, False)]
+        self.new_data['usages'] = [migrated.usage[id] for id in usage_ids if id in migrated.usage]
         result = jsonrpc(auth_token, 'invoice.m_new', **self.new_data)
         new_invoice_id = result['result']
         migrated.invoice[self.id] = new_invoice_id
-        migrated.pending.usage_invoices[self.id] = [row[0] for row in select(spacecur, q, values, False) if row[0] not in migrated.usage]
+        migrated.pending.usage_invoices[self.id] = [id for id in usage_ids if id not in migrated.usage]
 
     def post(self):
         print("Invoice %s migrattion | post" % self.id)
@@ -448,18 +484,6 @@ def migrate_location():
         invoicepref = InvoicePref(location_id)
         invoicepref.migrate()
 
-    banner("Migrating members")
-    q = 'SELECT id FROM tg_user'
-    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
-    if 'member' in objects_to_import:
-        for id in member_ids:
-            if id in migrated.member:
-                print("Skipping id:%d" % id)
-                continue
-            print("migrating id:%d" % id)
-            member = Member(id)
-            member.migrate()
-
     banner("Migrating resources")
     # Create guest tariff
     # Create other tariffs
@@ -481,21 +505,47 @@ def migrate_location():
         jsonrpc(auth_token, 'bizplace.update', **values)
 
 
-    q = 'SELECT id FROM resource WHERE place_id=%(location_id)s AND id != %(defaulttariff_id)s'
+    q = "SELECT id FROM resource WHERE place_id=%(location_id)s AND name != 'calendar'"
     values = dict(location_id=location_id, defaulttariff_id=defaulttariff_id)
     all_resource_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-    q = "SELECT id FROM resource WHERE place_id=%(location_id)s AND type = 'tariff' AND id != %(defaulttariff_id)s"
+    q = "SELECT id FROM resource WHERE place_id=%(location_id)s AND type = 'tariff'"
     tariff_ids = tuple(row[0] for row in select(spacecur, q, values, False))
     resource_ids = tuple(id for id in all_resource_ids if id not in tariff_ids)
 
     if 'resource' in objects_to_import:
-        for id in tariff_ids+resource_ids:
+        for id in all_resource_ids:
             if id in migrated.resource:
                 print("Skipping id:%d" % id)
                 continue
             print("migrating id:%d" % id)
             resource = Resource(id)
             resource.migrate()
+
+    if 'resource' in objects_to_import:
+        relations_dict = collections.defaultdict(list)
+        q = 'SELECT * FROM resource_dependencies WHERE dependend_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)'
+        values = dict(location_id=location_id)
+        dependencies = select(spacecur, q, values)
+        for dependency in dependencies:
+            relations_dict[dependency.dependend_id].append((True, dependency.required_id))
+        q = 'SELECT * FROM resource_suggestions WHERE suggesting_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s)'
+        values = dict(location_id=location_id)
+        suggestions = select(spacecur, q, values)
+        for suggestion in suggestions:
+            relations_dict[suggestion.suggesting_id].append((False, suggestion.suggested_id))
+
+        for resource_id, relations in relations_dict.items():
+            resource_id = migrated.resource[resource_id]
+            relations = [(relation[0], migrated.resource[relation[1]]) for relation in relations]
+            params = dict(res_id=resource_id, relations=relations)
+            jsonrpc(auth_token, 'resource.set_relations', **params)
+
+    banner("Migrating resource groups")
+    if 'resource' in objects_to_import:
+        q = 'SELECT id FROM resourcegroup WHERE location_id = %(location_id)s'
+        values = dict(location_id=location_id)
+        for resgroup_id in [row[0] for row in select(spacecur, q, values, False)]:
+            ResourceGroup(resgroup_id).migrate()
 
     q = 'SELECT id FROM pricing WHERE resource_id IN %(all_resource_ids)s'
     values = dict(all_resource_ids=all_resource_ids)
@@ -510,11 +560,24 @@ def migrate_location():
             pricing = Pricing(id)
             pricing.migrate()
 
+    banner("Migrating members")
+    q = 'SELECT id FROM tg_user'
+    member_ids = tuple(row[0] for row in select(spacecur, q, {}, False))
+    if 'member' in objects_to_import:
+        for id in member_ids:
+            if id in migrated.member:
+                print("Skipping id:%d" % id)
+                continue
+            print("migrating id:%d" % id)
+            member = Member(id)
+            member.migrate()
+
 
     banner("Migrating usages")
     if 'usage' in objects_to_import:
-        q = 'SELECT id FROM rusage WHERE resource_id IN (SELECT id FROM resource WHERE place_id = %(location_id)s) ORDER BY id'
-        values = dict(location_id=location_id)
+
+        q = 'SELECT id FROM rusage WHERE resource_id IN %(all_resource_ids)s ORDER BY id'
+        values = dict(location_id=location_id, all_resource_ids=all_resource_ids)
         usage_ids = tuple(row[0] for row in select(spacecur, q, values, False))
         for id in usage_ids:
             if id in migrated.usage:
@@ -524,6 +587,17 @@ def migrate_location():
             usage = Usage(id)
             usage.migrate()
 
+        q = 'SELECT usagesuggestedby_id, id FROM rusage WHERE usagesuggestedby_id IS NOT null AND resource_id IN %(resource_ids)s ORDER BY usagesuggestedby_id limit 3'
+        values = dict(resource_ids=resource_ids)
+        suggestions = select(spacecur, q, values, False)
+        suggestions_grouped = itertools.groupby(suggestions, lambda s: s[0])
+        for usage_id, grp in suggestions_grouped:
+            suggested = [item[1] for item in grp]
+            values = dict(usage_id=migrated.usage[usage_id], usages=[migrated.usage[id] for id in suggested])
+            q = 'UPDATE usage SET usages_suggested = %(usages)s WHERE id = %(usage_id)s'
+            qexec(cscur, q, values)
+
+
     banner("Migrating memberships")
     if 'membership' in objects_to_import:
         q = "SELECT id FROM resource WHERE place_id = %(location_id)s AND type='tariff'"
@@ -532,41 +606,64 @@ def migrate_location():
         q = "SELECT DISTINCT user_id FROM rusage WHERE resource_id in %(resource_ids)s"
         values = dict(resource_ids=resource_ids)
         member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
-        q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
-        for id in member_ids:
+        q = "SELECT id FROM tg_user WHERE homeplace_id = %(location_id)s AND active = 1"
+        values = dict(location_id=location_id)
+        home_place_member_ids = tuple(row[0] for row in select(spacecur, q, values, False))
+        member_ids_w_memberships = set(member_ids + home_place_member_ids)
+        for id in member_ids_w_memberships:
+            banner('Migrating memberships of %d' % id)
+            q = "SELECT id, start, end_time, resource_id FROM rusage WHERE resource_id IN %(resource_ids)s AND user_id = %(member_id)s AND cancelled = 0 AND refund = 0 ORDER BY start"
             memberships = []
+            old_member_id = id
             values = dict(member_id=id, location_id=location_id, resource_ids=resource_ids)
             tariff_usages_ = select(spacecur, q, values)
-            if not tariff_usages_:
-                continue
-            # Found some tariff usages have same start,end. This is not acceptable in Ops
-            # So filtering here
-            tariff_usages = [tariff_usages_[0]]
-            for usage in tariff_usages_[1:]:
-                if usage.start == tariff_usages[-1].start:
-                    tariff_usages[-1] = usage
-                else:
-                    tariff_usages.append(usage)
+            if tariff_usages_:
+                # Found some tariff usages have same start,end. This is not acceptable in Ops
+                # So filtering here
+                tariff_usages = [tariff_usages_[0]]
+                for usage in tariff_usages_[1:]:
+                    if usage.start == tariff_usages[-1].start:
+                        tariff_usages[-1] = usage
+                    else:
+                        tariff_usages.append(usage)
 
-            usage = tariff_usages[0]
-            memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
-            for usage in tariff_usages[1:]:
-                last = memberships[-1]
-                if last[1].date() == usage.start.date():
-                    continue
-                if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
-                    last[-1] = usage.end_time
-                else:
-                    memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+                usage = tariff_usages[0]
+                memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
+                for usage in tariff_usages[1:]:
+                    last = memberships[-1]
+                    if last[1].date() == usage.start.date():
+                        continue
+                    if usage.resource_id == last[0] and usage.start.date() == last[-1].date():
+                        last[-1] = usage.end_time
+                    else:
+                        memberships.append([usage.resource_id, usage.start, get_month_end(usage.start)])
 
-            banner('Migrating memberships of %d' % id)
-            for membership in memberships:
-                data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], starts=membership[1].isoformat(), \
-                    ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
-                membership_hash = hash(frozenset(data.items()))
-                if not membership_hash in migrated.membership:
-                    result = jsonrpc(auth_token, 'memberships.new', **data)
-                    migrated.membership[membership_hash] = result['result']
+                for membership in memberships:
+                    data = dict(tariff_id=migrated.resource[membership[0]], member_id=migrated.member[id], \
+                        starts=membership[1].isoformat(), \
+                        ends=(membership[2]-datetime.timedelta(1)).isoformat(), skip_usages=True)
+                    membership_hash = hash(frozenset(data.items()))
+                    if not membership_hash in migrated.membership:
+                        result = jsonrpc(auth_token, 'memberships.new', **data)
+                        migrated.membership[membership_hash] = result['result']
+
+
+                if not memberships or \
+                        (tariff_usages[-1].end_time != None or tariff_usages[-1].end_time <= datetime.datetime.now()):
+                    starts = datetime.datetime.now()
+                    if tariff_usages[-1].end_time != None:
+                        starts = tariff_usages[-1].end_time.date() + datetime.timedelta(1)
+
+                    data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[old_member_id],
+                        starts=starts.isoformat(), ends=None, skip_usages=True)
+                    jsonrpc(auth_token, 'memberships.new', **data)
+
+            else: # not tariff_usages
+                data = dict(tariff_id=migrated.resource[defaulttariff_id], member_id=migrated.member[old_member_id],
+                    starts=datetime.datetime.now().isoformat(), ends=None, skip_usages=True)
+                jsonrpc(auth_token, 'memberships.new', **data)
+
+
 
     banner("Migrating roles")
     if 'role' in objects_to_import:
@@ -617,8 +714,6 @@ def migrate_location():
         print("migrating %s" % exemption.user_id)
         values = dict(member=migrated.member[exemption.user_id], issuer=new_location_id)
         qexec(cscur, q, values)
-    q = 'COMMIT'
-    qexec(cscur, q)
 
     banner("Downloding Invoices")
     if 'invoice' in objects_to_import:

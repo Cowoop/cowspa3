@@ -6,6 +6,7 @@ superuser tasks
     apt-get install libevent-dev python-dev git postgresql python-psycopg2 python-virtualenv rubygems python-turbomail ruby curl
     gem install compass # for dev setups only
     gem install compass-susy-plugin # for dev setups only
+    sudo apt-get purge libhaml-ruby1.8 # specific for Ubunti 11.10
     su - postgres
     createuser -S -d -R -P <login-user>
     ^d # back as superuser 

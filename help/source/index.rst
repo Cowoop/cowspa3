@@ -11,12 +11,15 @@ Contents:
 .. toctree::
     :maxdepth: 1
 
+    member_import
+
     migration
 
 .. toctree::
     :maxdepth: 2
 
     getting_started
+    usage
     contribute
 
 Indices and tables

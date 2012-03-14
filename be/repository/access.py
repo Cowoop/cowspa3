@@ -55,11 +55,9 @@ def find_memberships(member_id):
     return membership_store.get_by(crit=dict(member_id=member_id))
 
 def biz_info(biz_id):
-    return biz_store.get(biz_id, ['name', 'state', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
+    return biz_store.get(biz_id, ['name', 'enabled', 'short_description', 'currency', 'address', 'city', 'country', 'email'])
 
-bizplace_info_fields = ['id', 'name', 'state', 'short_description', 'currency',
-'address', 'city', 'province', 'country', 'email', 'phone', 'fax','host_email',
-'booking_email', 'website', 'tz']
+bizplace_info_fields = ['id', 'name', 'enabled', 'short_description', 'currency', 'address', 'city', 'province', 'country', 'email', 'phone', 'fax','host_email', 'booking_email', 'website', 'tz']
 
 def bizplace_info(bizplace_id):
     return bizplace_store.get(bizplace_id, bizplace_info_fields)
@@ -240,6 +238,12 @@ def find_usage(start=None, end=None, starts_on_or_before=None, invoice_id=None, 
         del usage['member']
     return usages
 
+def find_suggesting_usage(suggested_usage):
+    clause = '%(suggested_usage)s = ANY(usages_suggested)'
+    clause_values = dict(suggested_usage=suggested_usage)
+    suggesting_usages = usage_store.get_by_clause(clause, clause_values, fields=['id', 'usages_suggested'])
+    return suggesting_usages[0] if suggesting_usages else None
+
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'
     values = dict(member_id=member_id, date=date, bizplace_id=bizplace_id)
@@ -299,12 +303,12 @@ def get_member_memberships(member_id, bizplace_ids=[], since=None, not_current=F
     values = dict(member_id=member_id, since=since, bizplace_ids=tuple(bizplace_ids), current_date=current_date)
     return membership_store.get_by_clause(clause, values)
 
-def list_invoices(issuer ,limit):
-    query = "SELECT invoice.number, member.name, invoice.total, invoice.created as created, invoice.sent, invoice.id FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s ORDER BY created DESC"
+def list_sent_invoices(issuer, limit):
+    query = "SELECT invoice.id, invoice.number, member.id as member_id, member.name as member_name, invoice.total, invoice.sent FROM member, invoice WHERE member.id = invoice.member AND issuer = %(issuer)s AND sent IS NOT NULL ORDER BY sent DESC"
     if limit is not -1:
         query += " LIMIT %(limit)s"
     values = dict(issuer = issuer, limit = limit)
-    return invoice_store.query_exec(query, values, hashrows=False)
+    return invoice_store.query_exec(query, values)
 
 def search_member(query_parts, options, limit, mtype):
     fields = ['id', 'name']
@@ -332,6 +336,20 @@ def search_member(query_parts, options, limit, mtype):
 
     return member_store.query_exec(query, values)
 
+def search_members(words, context, options, limit):
+    pat = ''.join((word + '%') for word in words)
+    values = dict(pat=pat, context=context, limit=limit)
+    values.update(options)
+    options_clause = "member.enabled = %(enabled)s" + (" AND type = %(type)s" if options['type'] else "")
+    fields_s = "member.id, member.name, member.name as label"
+    if context:
+        # Query below purposely leave starts clause. Including starts makes it 10x slower.
+        q = "SELECT DISTINCT " + fields_s + " FROM member, membership WHERE membership.bizplace_id = %(context)s AND " + options_clause +" AND  member.id = membership.member_id AND (ends >= now() OR ends IS NULL) AND member.name ilike %(pat)s"
+    else:
+        q = "SELECT DISTINCT " + fields_s + " FROM member WHERE " + options_clause + " AND member.name ilike %(pat)s"
+    q += " LIMIT %(limit)s"
+    return member_store.query_exec(q, values)
+
 def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends IS NULL)'
     if exclude_pricings: clause += ' AND id NOT IN %(exclude_pricings)s'
@@ -349,14 +367,14 @@ def get_resource_pricings(resource_id, usage_time):
     # Along with tariff_id we also need tariff_name so we have a join (clause_resource)
     # instead of join if there are 2 independent queries, would it be any faster?
     q = 'SELECT pricing.id, amount, starts, ends, pricing.plan as tariff_id, resource.name as tariff_name from pricing, resource WHERE'
-    clause_pricing = 'resource = %(resource)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
+    clause_pricing = 'resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends is NULL)'
     clause_resource = 'pricing.plan = resource.id ORDER BY resource.name ASC'
     q = ' '.join((q, clause_pricing, 'AND', clause_resource))
     values = dict(resource=resource_id, usage_time=usage_time)
     return pricing_store.query_exec(q, values)
 
 def get_tariff_pricings(tariff_id, usage_time):
-    clause = 'plan = %(tariff_id)s AND starts <= %(usage_time)s AND (ends >= %(usage_time)s OR ends is NULL)'
+    clause = 'plan= %(tariff_id)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends is NULL)'
     values = dict(tariff_id=tariff_id, usage_time=usage_time)
     pricings = dict(pricing_store.get_by_clause(clause, values, fields=['resource', 'amount'], hashrows=False))
     resource_ids = list(pricings.keys())
@@ -364,6 +382,16 @@ def get_tariff_pricings(tariff_id, usage_time):
     for res in resources:
         res['price'] = pricings[res.id]
     return resources
+
+def get_pricings_for_member(bizplace_id, member_id):
+    now = datetime.datetime.now()
+    tariff_id = get_member_plan_id(member_id, bizplace_id, now)
+    tariff_pricing = dict((res.id, res) for res in get_tariff_pricings(tariff_id, now))
+    default_tariff_id = bizplace_store.get(bizplace_id, 'default_tariff')
+    default_tariff_pricing = dict((res.id, res) for res in get_tariff_pricings(default_tariff_id, now))
+    member_pricing = default_tariff_pricing
+    member_pricing.update(tariff_pricing)
+    return member_pricing
 
 def get_price(resource_id, member_id, usage_time):
     # TODO: if resource owner is not bizplace then?

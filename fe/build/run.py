@@ -75,7 +75,7 @@ def compile_scss(prjdir):
 themes = static.themes
 theme_map = dict((theme['name'], theme) for theme in themes)
 theme_codes = themedirs
-languages = [dict(label=label, name=code) for label, code in [ ('English', 'en'), ('German', 'de') ]]
+languages = [dict(label=label, name=code) for label, code in [ ('English', 'en') ]]
 lang_map = dict((lang['name'], lang) for lang in languages)
 lang_codes = tuple(lang_map.keys())
 

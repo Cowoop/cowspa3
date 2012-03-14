@@ -14,22 +14,17 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, state=None, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, phone=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by=''):
+    def new(self, email, username=None, password=None, first_name=None, enabled=True, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, work=None, home=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by=''):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = created if created else datetime.datetime.now() # migration specific
-        if state is None:
-            state = commonlib.shared.constants.member.enabled
-        else:
-            state = commonlib.shared.constants.member.to_flags(state)
-
-        user_id = userlib.new(username, password, state, enc_password)
+        user_id = userlib.new(username, password, enabled, enc_password)
 
         data = dict(member=user_id, language=language, theme=theme)
         memberpref_store.add(**data)
 
         #owner = user_id
-        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, phone=phone, mobile=mobile, fax=fax, skype=skype, created=created, state=state, type=mtype, province=province, biz_type=biz_type, introduced_by=introduced_by)
+        data = dict(member=user_id, first_name=first_name, last_name=last_name, name=name, short_description=short_description, long_description=long_description, interests=interests, expertise=expertise, website=website, twitter=twitter, facebook=facebook, blog=blog, linkedin=linkedin, use_gravtar=use_gravtar, id=user_id, email=email, address=address, city=city, country=country, pincode=pincode, work=work, home=home, mobile=mobile, fax=fax, skype=skype, created=created, enabled=enabled, type=mtype, province=province, biz_type=biz_type, introduced_by=introduced_by)
 
         if number: data['number'] = number # migration specific
         member_store.add(**data)
@@ -61,7 +56,7 @@ class MemberCollection:
             member_list.append(m_dict)
         return member_list
 
-    def search(self, q, options={'mybizplace': False}, limit=5, mtype="member"):
+    def search_deprecated(self, q, options={'mybizplace': False}, limit=5, mtype="member"):
         """
         q: (first or last name or both) or member_id or email or organization. N members whose respective properties starts with provided word (q) where N is limit.
         options:
@@ -75,18 +70,26 @@ class MemberCollection:
         query_parts = q.split()
         return dbaccess.search_member(query_parts, options, limit, mtype)
 
+    def search(self, q, context, options={}, limit=10):
+        """
+        q: partial/full first name or last name or both # TODO search email
+        options:
+            enabled: True/False (True)
+            type: member/organization (None). None ignores type
+        limit: number of results to return
+        return -> list of tuples containing member's display name and member id
+        """
+        words = q.split()
+        options_default = dict(enabled=True, type=None)
+        options = dict((k, options.get(k, v)) for k,v in options_default.items())
+        return dbaccess.search_members(words, context, options, limit)
+
 class MemberResource:
 
-    get_attributes = ['id', 'created', 'state', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests',\
-                      'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city',\
-                      'province', 'country', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype']
-    set_attributes = ['state', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise',\
-                       'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'country',\
-                       'province', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype']
+    get_attributes = ['id', 'created', 'enabled', 'hidden', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'province', 'country', 'pincode', 'phone', 'mobile', 'fax', 'email', 'skype']
+    set_attributes = ['enabled', 'hidden', 'first_name', 'last_name', 'name', 'short_description', 'long_description', 'interests', 'expertise', 'website', 'blog', 'twitter', 'facebook', 'linkedin', 'use_gravtar', 'organization', 'address', 'city', 'country', 'province', 'pincode', 'work', 'home', 'mobile', 'fax', 'email', 'skype']
 
     def update(self, member_id, **mod_data):
-        if 'state' in mod_data:
-            mod_data['state'] = commonlib.shared.constants.member.to_flags(mod_data['state'])
         if 'username' in mod_data or 'password' in mod_data:
             userlib.update(member_id, **mod_data)
         elif 'theme' in mod_data or 'language' in mod_data:
@@ -101,8 +104,7 @@ class MemberResource:
         activity_id = activitylib.add(member_activities[mtype]['category'], member_activities[mtype]['name'], data)
 
     def info(self, member_id):
-        info = member_store.get(member_id, ['id', 'number', 'state', 'name'])
-        info['state'] = commonlib.shared.constants.member.to_dict(info['state'])
+        info = member_store.get(member_id, ['id', 'number', 'enabled', 'name'])
         return info
 
     def details(self, member_id, bizplace_ids=[]):
@@ -119,13 +121,11 @@ class MemberResource:
 
     def get(self, member_id, attrname):
         if not attrname in self.get_attributes: return
-        if attrname == 'state':
-            return commonlib.shared.constants.member.to_dict(member_store.get(member_id, fields=['state']))
         return member_store.get(member_id, fields=[attrname])
 
     def set(self, member_id, attrname, v):
         if not attrname in self.set_attributes: return
         self.update(member_id, **{attrname: v})
-        
+
 member_resource = MemberResource()
 member_collection = MemberCollection()

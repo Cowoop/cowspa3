@@ -20,9 +20,10 @@ def contact_form():
     select.options = fe.src.common.country_options
     form.add_field("Country", select)
     form.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
-    form.add_field("Phone", tf.INPUT(name='phone', type="text"))
+    form.add_field("Work Phone", tf.INPUT(name='work', type="text"))
+    form.add_field("Home Phone", tf.INPUT(name='home', type="text"))
     form.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
-    form.add_field("Fax", tf.INPUT(name='mobile', type="text"))
+    form.add_field("Fax", tf.INPUT(name='fax', type="text"))
     form.add_field("Email", tf.INPUT(name='email', type="email").set_required())
     form.add_field("Skype", tf.INPUT(name='skype', type="text"))
     form.add_buttons(tf.BUTTON("Update", type="submit"))
@@ -101,32 +102,23 @@ def add_tariffs_section(container):
     header.th = tf.TH("Actions")
 
     tariff_row = sphc.more.jq_tmpl("tariff-row")
-    tariff_row.tr = tf.TR(id="tariff_row-${id}")
+    tariff_row.tr = tf.TR(id="tariff_row-${id}", Class="tariff_row")
     tariff_row.tr.td = tf.TD("${starts}", Class="date", id="starts")
     tariff_row.tr.td = tf.TD("${ends}", Class="date", id="ends")
     tariff_row.tr.td = tf.TD("${tariff_name}", id="tariff_name")
     cell = tf.TD()
     cell.a = tf.A("Change", href="#/${member_id}/memberships", Class="change-sub", id="change_sub-${id}")
     cell.c = tf.C(" | ")
-    cell.a = tf.A('X', title="Cancel tariff", href="#/${member_id}/memberships", Class="cancel-sub", id="cancel_sub-${id}")    
+    cell.a = tf.A('X', title="Cancel tariff", href="#/${member_id}/memberships", Class="cancel-sub", id="cancel_sub-${id}")
     tariff_row.tr.td = cell
-    
-    tariff_load_history = tf.DIV()
-    tariff_load_history.link = tf.A("View all records", id='load-tariff-history', href='#memberships')
 
-    tariff_info = tf.TABLE(id="tariff-info", cellspacing="1em", Class="stripped")
-    tariff_info.caption = tf.CAPTION("Current")
-    tariff_info.header = header
-    
     tariff_list = tf.TABLE(id="tariff-list", cellspacing="1em", Class="stripped hidden")
-    tariff_list.caption = tf.CAPTION("Records")
     tariff_list.header = header
 
     tariff_box.new = new
     tariff_box.tmpl = tariff_row
-    tariff_box.info = tariff_info
+    tariff_box.status = tf.SPAN("Loading...", id="tariff-loading", Class="highlight")
     tariff_box.list = tariff_list
-    tariff_box.history = tariff_load_history
 
     container.tariff_box = tariff_box
 
@@ -205,7 +197,8 @@ class MemberCreate(BasePage):
         section.add_field("State/Province", tf.INPUT(name='province', type="text"))
         section.add_field("Country", tf.SELECT(fe.src.common.country_options, id='country', name='country'))
         section.add_field("Zipcode", tf.INPUT(name='pincode', type="text"))
-        section.add_field("Phone", tf.INPUT(name='phone', type="text"))
+        section.add_field("Work Phone", tf.INPUT(name='work', type="text"))
+        section.add_field("Home Phone", tf.INPUT(name='home', type="text"))
         section.add_field("Mobile", tf.INPUT(name='mobile', type="text"))
         section.add_field("Fax", tf.INPUT(name='mobile', type="text"))
         section.add_field("Email", tf.INPUT(name='email', type="email").set_required())
@@ -244,8 +237,11 @@ class EditProfile(BasePage):
         info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
         info.membership = tf.DIV([tf.DIV("Membership", Class="label"), tf.C(Class="data-membership")], Class="individual")
         info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])
+        info.work = tf.DIV([tf.DIV("Work Phone", Class="label"), tf.C(Class="data-work")])
+        info.home = tf.DIV([tf.DIV("Home Phone", Class="label"), tf.C(Class="data-home")])
+        info.mobile = tf.DIV([tf.DIV("Mobile", Class="label"), tf.C(Class="data-mobile")])
         info.line = tf.hr(Class="light")
-        
+
         # Profile
         profile = tf.DIV(id="profile")
 

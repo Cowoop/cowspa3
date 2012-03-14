@@ -10,8 +10,7 @@ user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
 member_store = dbaccess.stores.member_store
 
-def new(username, password, state=None, enc_password=None):
-    if state is None: state = commonlib.shared.constants.member.enabled
+def new(username, password, enabled=True, enc_password=None):
     if enc_password:
         encrypted = enc_password
     else:
@@ -19,7 +18,7 @@ def new(username, password, state=None, enc_password=None):
             password = helpers.random_key_gen()
         encrypted = encrypt(password)
     user_id = dbaccess.OidGenerator.next("Member")
-    data = dict(id=user_id, username=username, password=encrypted, state=state)
+    data = dict(id=user_id, username=username, password=encrypted, enabled=enabled)
     user_store.add(**data)
     return user_id
 
