@@ -1,12 +1,12 @@
 author = "${HOSTS_EMAIL}"
 to = "${MEMBER_EMAIL}"
-subject = "The Hub | Invoice"
+subject = "${LOCATION} | Invoice"
 plain = """\
 Dear ${MEMBER_FIRST_NAME},
 
-Please find your Hub invoice attached.
+Please find your invoice attached.
 
-If you have any questions, please don't hesitate to contact The Hub's hosting team on ${HOSTS_EMAIL} or ${LOCATION_PHONE}.
+If you have any questions, please don't hesitate to contact hosting team on ${HOSTS_EMAIL} or ${LOCATION_PHONE}.
 
 We would always welcome your feedback and ideas on how we can improve your experience here.
 

@@ -2,7 +2,7 @@ import os.path
 import copy
 from jinja2 import Environment
 
-tenv = Environment('<%', '%>', '${', '}', '%')
+tenv = Environment('<%', '%>', '${', '}', '%%')
 template_path = 'commonlib/messaging/templates'
 
 def render(content, data):
@@ -28,17 +28,22 @@ class Message(object):
     def build(self):
         self.message_dict.update(self.overrides)
         for k,v in self.message_dict.items():
+            if v is None:
+                continue
             if isinstance(v, (list, tuple)):
                 v = tuple(render(s, self.macros_data) for s in v)
             else:
                 v = render(v, self.macros_data)
             self.message_dict[k] = v
     def email(self):
-        return env.mailer.send(**self.message_dict)
+        if env.config.mail['mail.on']:
+            return env.mailer.send(**self.message_dict)
 
-class Activation(Message):
+class activation(Message):
     name = 'activation'
-class Invitation(Message):
+class invitation(Message):
     name = 'invitation'
-class Invoice(Message):
+class invoice(Message):
     name = 'invoice'
+class booking_confirmation(Message):
+    name = 'booking_confirmation'

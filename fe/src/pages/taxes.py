@@ -5,7 +5,7 @@ tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
 
 class Taxes(BasePage):
-    current_nav = 'Taxes'
+    current_nav = 'Admin'
     title = 'Taxes'
 
     def content(self):

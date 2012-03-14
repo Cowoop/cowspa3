@@ -10,9 +10,9 @@ memberpref_store = dbaccess.stores.memberpref_store
 modes = commonlib.helpers.odict(**{'self':0, 'custom':1, 'another':2, 'organization':3})
 
 class InvoiceprefCollection:
-    def new(self, owner, start_number=None, terms_and_conditions="", due_date=15, bcc_email="", bank_details="", mode=modes.self, freetext1='', freetext2='', billto=None, details=None, company_no=None):
+    def new(self, owner, start_number=None, payment_terms="", due_date=15, bcc_email="", bank_details="", mode=modes.self, freetext1='', freetext2='', billto=None, details=None, company_no=None):
 
-        data = dict(owner=owner, terms_and_conditions=terms_and_conditions, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, start_number=start_number, mode=mode, freetext1=freetext1, freetext2=freetext2, billto=billto, details=details, company_no=company_no)
+        data = dict(owner=owner, payment_terms=payment_terms, due_date=due_date, bcc_email=bcc_email, bank_details=bank_details, start_number=start_number, mode=mode, freetext1=freetext1, freetext2=freetext2, billto=billto, details=details, company_no=company_no)
 
         invoicepref_store.add(**data)
 
@@ -29,7 +29,7 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        fields = ['company_no', 'terms_and_conditions', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included', 'freetext1', 'freetext2', 'email_text']
+        fields = ['company_no', 'payment_terms', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included', 'freetext1', 'freetext2', 'email_text']
         return invoicepref_store.get_by(dict(owner=owner), fields)[0]
 
     def get(self, owner, attrname):

@@ -8,8 +8,8 @@ def new(owner_id, name, content):
     return messagecust_store.add(owner=owner_id, name=name, content=content)
 
 def get(owner_id, name):
-    return messagecust_store.get_one_by_safe(crit=dict(owner=owner_id, name=name)) or \
-        getattr(commonlib.messaging.messages, name).content_dict['plain']
+    mcust = messagecust_store.get_one_by_safe(crit=dict(owner=owner_id, name=name))
+    return mcust.content if mcust else getattr(commonlib.messaging.messages, name).content_dict['plain']
 
 def list(owner_id): # TODO: support names
     return messagecust_store.get_by(crit=dict(owner=owner_id, name=name))
@@ -17,7 +17,8 @@ def list(owner_id): # TODO: support names
 def update(owner_id, name, content):
     #msg = get(name, owner_id)
     # TODO send notification with old content
-    if get(owner_id, name):
+    mcust = messagecust_store.get_one_by_safe(crit=dict(owner=owner_id, name=name))
+    if mcust:
         messagecust_store.update_by(crit=dict(owner=owner_id, name=name), content=content)
     else:
         new(owner_id, name, content)

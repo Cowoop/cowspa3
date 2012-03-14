@@ -40,7 +40,8 @@ def new(tariff_id, member_id, starts, ends, skip_usages=False):
     membership_store.add(tariff_id=tariff_id, starts=starts_dt, ends=ends_dt,member_id=member_id,\
                          bizplace_id=tariff.owner, bizplace_name=bizplace.name, tariff_name=tariff.name)
     current_date = datetime.datetime.now().date()
-    if not skip_usages:
+    is_guest_tariff = tariff.id == bizplace.default_tariff
+    if not is_guest_tariff and not skip_usages:
         return create_membership_usages(starts_dt, ends_dt, tariff_id, tariff.name, tariff.owner, member_id)
 
 def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner, member):

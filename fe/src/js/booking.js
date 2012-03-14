@@ -13,7 +13,7 @@ function set_day_titles() {
     var date_selected = get_selected_date();
     $('.day-title').each( function (idx) {
         var date_next = add_days(date_selected, (idx - 3));
-        var date_text = $.datepicker.formatDate('D d', date_next)
+        var date_text = moment(date_next).format("ddd D");
         $(this).text(date_text);
         if (idx == 3) {
             $(this).addClass('today');
@@ -25,7 +25,7 @@ function set_day_titles() {
 };
 
 function get_selected_date() {
-    return new Date($('#booking-date-inp').val());
+    return $('#booking-date-inp').datepicker('getDate');
 };
 
 function on_get_usages(resp) {
@@ -39,7 +39,7 @@ function get_usages(resource_id) {
         start: date2isodate(add_days(get_selected_date(), -3)),
         end: date2isodate(add_days(get_selected_date(), 3))
     };
-    jsonrpc("usages.find", params, on_get_usages, error);
+    jsonrpc("usages.find", params, on_get_usages);
 };
 
 function get_bookings(start, end, bizplace_id) {
@@ -102,7 +102,7 @@ function on_drop_booking(event, ui ) {
 
 function get_booking_info(booking_id) {
     var params = {usage_id: booking_id};
-    jsonrpc('usage.info', params, on_booking_info, error);
+    jsonrpc('usage.details', params, on_booking_info, error);
 };
 
 function on_booking_info(resp) {
@@ -127,7 +127,7 @@ function on_available_resources(resp) {
     $('#resource-opt').tmpl(resources).appendTo('#resource-select');
     for (var i=0; i < resources.length; i++) {
         resource = resources[i];
-        resource_map[resource.id] = resource.name;
+        resource_map[resource.id] = resource;
     };
 };
 
@@ -141,27 +141,43 @@ function id2datetime(id) {
     return [thedate, start, end];
 };
 
-function open_booking_form(resource_name, new_booking_date, start_time, end_time) {
-    $('#booking_id').val('0'); // important
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+function open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time) {
+    $('.booking-delete-section').hide();
+    $('#booking-id').val('0'); // important
+    $('#new-booking-form').reset();
+    // $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
+    $('#new-booking-date').text(moment(new_booking_date).format("ddd, MMMM Do, YYYY"));
     $('#new-starts').val(start_time);
     $('#new-ends').val(end_time);
     $('#new-ends').attr('min', start_time);
+    $('#booking-cost').text(locale_data.currency_symbol + ' ' + resource_map[resource_id].price);
+    // $('#contained-usages-tmpl').tmpl(resource_map[resource_id]['contained']).appendTo('#contained-usages')
     $('#new-booking').dialog({
         title: resource_name,
         close: on_close_booking_form,
-        width: 'auto'
+        width: '60em'
     });
 };
 
 function open_edit_booking_form(booking) {
     new_booking_date = new_booking_date || iso2date(booking.start_time);
+    $('.booking-delete-section').show();
     $('#booking-name').val(booking.name);
+    $('#booking-public').attr('checked', 'checked');
+    $('#booking-description').val(booking.description);
     $('#booking-notes').val(booking.notes);
+    $('#booking-no_of_people').val(booking.no_of_people);
+    var booking_cost_ele = $('#booking-cost')[0];
+    if (booking_cost_ele.tagName != 'input') {
+        booking_cost_ele.textContent = locale_data.currency_symbol + ' ' + resource_map[booking.resource_id].price;
+    } else {
+        booking_cost_ele.value = booking.cost;
+    };
     $('#for-member').val((booking.member).toString());
     $('#booking-id').val((booking.id).toString());
     $('#for-member-search').val(booking.member_name);
-    $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', (new_booking_date)));
+    // $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', (new_booking_date)));
+    $('#new-booking-date').text(moment(new_booking_date).format("ddd, MMMM Do, YYYY"));
     var booking_duration = (new Date(booking.end_time)) - (new Date(booking.start_time));
     var min15 = 15*60*1000;
     var upper_slots_time = (Math.round((booking_duration / 2)/min15) * min15) - min15;
@@ -185,10 +201,20 @@ function open_edit_booking_form(booking) {
     $('#new-starts').val(start_iso);
     $('#new-ends').val(end_iso);
     $('#new-ends').attr('min', start_iso);
+    $('#booking-cost').val(booking.cost);
+    for (var i=0; i< booking.usages_suggested.length; i++) {
+        var usage = booking.usages_suggested[i];
+        var ele = $('#resource-'+usage.resource_id);
+        if (ele[0].type == 'text') {
+            ele[0].value = usage.quantity;
+        } else {
+            ele.attr('checked', 'checked');
+        };
+    };
     $('#new-booking').dialog({
         title: booking.resource_name,
         close: on_close_booking_form,
-        width: 'auto'
+        width: '60em'
     });
 };
 
@@ -204,12 +230,14 @@ function on_select_slots(ev, ui) {
     var start_time = date_start_end[1];
     var end_time = id2datetime(end)[2];
 
-    var resource_name = resource_map[$('#resource-select').val()];
-    open_booking_form(resource_name, new_booking_date, start_time, end_time);
+    var resource_id = $('#resource-select').val();
+    var resource_name = resource_map[resource_id].name;
+    open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time);
 };
 
 function on_close_booking_form() {
     $('.ui-selected').removeClass('ui-selected');
+    new_booking_date = null;
 };
 
 function init_cal() {
@@ -243,6 +271,8 @@ if ($('#for-member-search')[0]) {
 };
 
 function on_new_booking(resp) {
+    $('#add-booking-btn').toggle();
+    $('#booking-progress-btn').toggle();
     $('#new-booking').dialog('close');
     refresh_cal();
 };
@@ -252,10 +282,13 @@ function make_booking() {
     var params = {};
 
     params.name = $('#booking-name').val();
+    params.public = $('#booking-public')[0].checked;
+    params.description = $('#booking-description').val();
     params.notes = $('#booking-notes').val();
+    params.no_of_people = $('#booking-no_of_people').val();
     params.resource_owner = current_ctx;
     params.resource_id = parseInt($('#resource-select').val(), 10);
-    params.resource_name = resource_map[params.resource_id];
+    params.resource_name = resource_map[params.resource_id].name;
 
     var start_time = new Date(new_booking_date.getTime());
     var hrs_mins = $('#new-starts').val().split(':');
@@ -273,6 +306,11 @@ function make_booking() {
     end_time.setMinutes(mins);
     params.end_time = date2iso(end_time)
 
+    var cost = $('#booking-cost').val();
+    if (cost != "") { // cost 0 is acceptable but if cost is blank it means automatic calculation should be done
+        params.cost = parseFloat(cost);
+    };
+
     // params.quantity = $('#new-quantity').val() || 1;
     if ($('#for-member')[0]) {
         params.member = $('#for-member').val();
@@ -280,14 +318,45 @@ function make_booking() {
         params.member = current_userid;
     };
 
+    params.usages = [];
+    var suggested_resources = resource_map[params.resource_id].suggested;
+    for (var i=0; i<suggested_resources.length; i++) {
+        var this_res = suggested_resources[i];
+        var ele = $('#resource-'+this_res.id)[0];
+        var quantity = 0;
+        if (this_res.calc_mode == 0) {
+            quantity = parseInt(ele.value, 10);
+        } else {
+            if (ele.checked) { quantity = 1; };
+        };
+        if (quantity>0) {
+            params.usages.push({resource_id: this_res.id, quantity: quantity});
+        };
+
+    };
+
     var usage_id = $('#booking-id').val();
 
+    function error(resp) {
+        $('#add-booking-btn').toggle();
+        $('#booking-progress-btn').toggle();
+        var status_msg = 'Remote error: ' + resp.error.message;
+        $('.action-status').text(status_msg).addClass('status-fail');
+    };
+
+    $('#add-booking-btn').hide();
+    $('#booking-progress-btn').toggle();
     if (usage_id == 0) {
         jsonrpc('usage.new', params, on_new_booking, error);
     } else {
         params.usage_id = usage_id;
         jsonrpc('usage.update', params, on_new_booking, error);
     };
+};
+
+function on_delete(resp) {
+    $('#new-booking').dialog('close');
+    refresh_cal();
 };
 
 // init
@@ -298,10 +367,13 @@ $('#booking-date-inp').datepicker( {
 
 $('#resource-select').change( function () {
     refresh_cal();
+    var resource_id = $('#resource-select').val();
+    $('#suggested-usages').empty();
+    $('#suggested-usages-tmpl').tmpl(resource_map[resource_id]['suggested']).appendTo('#suggested-usages')
 });
 
-var params = {owner: current_ctx, calc_mode: 1};
-jsonrpc("resources.available", params, on_available_resources, error);
+var params = {owner: current_ctx, for_member: current_userid};
+jsonrpc("resources.available_for_booking", params, on_available_resources);
 
 set_day_titles();
 
@@ -309,4 +381,13 @@ $('#new-booking-form').submit( function () {
     $(this).checkValidity();
     make_booking();
     return false;
+});
+
+$('#booking-delete').click( function () {
+    var params = {usage_id: parseInt($('#booking-id').val(), 10)};
+    if (confirm("Are you sure you want to cancel this booking?")) {
+        jsonrpc('usages.delete', params, on_delete);
+    } else {
+        return false
+    };
 });

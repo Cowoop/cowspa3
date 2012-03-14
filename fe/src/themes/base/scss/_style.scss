@@ -42,11 +42,12 @@ html {
 }
 
 body { 
-    line-height: 140%;
+    line-height: 130%;
     font-family: 'Ubuntu', 'Ubuntu Beta', UbuntuBeta, Ubuntu, 'Bitstream Vera Sans', 'DejaVu Sans', Tahoma, sans-serif;
-    font-size: 100%;
+    font-size: 90%;
 }
 .waiting { cursor: wait !important; }
+.full { width: 100%; }
 
 .current-ctx:before { content: "✓ ";}
 #ctx-switcher {
@@ -187,6 +188,7 @@ h2 { font-size: 120%; }
 h3 { font-weight: bold; }
 
 .note { font-style: italic; font-size: 90%; }
+.highlight { background: yellow; font-weight: bold; }
 
 select { 
     padding: 0.2em;
@@ -501,6 +503,8 @@ ul.as-selections li.as-original input { width: 100%; }
     .field-value {
         font-size: 110%;
         border-bottom: 0.2px groove;
+        border-left: 1px dotted lighten($main-color, 60%);
+        padding-left: 1em;
         white-space: pre-wrap;
         @include columns(5, 11);
         @include divsizing;
@@ -572,6 +576,10 @@ textarea {
     border: 1px solid lighten($main-color, 10%);
     @include divsizing;
     height: 6em;
+}
+
+textarea#email_text {
+    height: 20em;
 }
 
 form.profile-forms {
@@ -740,11 +748,12 @@ table.stripped {
         border-bottom: 1px solid lighten($main-color, 20%);
         &:nth-child(odd) { background-color: darken($page-background, 10%); }
         &:hover { background-color: darken($page-background, 10%);  }
+        border-left: 1px dotted lighten($main-color, 20%);
     }
     th, td {
         padding: 0 0.3em 0 0.3em;
         text-align: left;
-        // &:nth-child(odd) { background-color: $page-background; }
+        border-left: 1px dotted lighten($main-color, 20%);
     }
 }
 
@@ -1008,7 +1017,8 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 #pane-resource { width: 20%; float: left; }
 #pane-booking { width: 75%; float: right; }
 #booking-date-inp { font-size: 80%; }
-#new-booking-date {font-size: 110%; text-align: center; }
+#new-booking-date {font-size: 110%; text-align: left; }
+.booking-delete-section {float: right;}
 
 #booking-cal {
     width: 100%; 
@@ -1129,6 +1139,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
 }
 
 // Hacks goes here
+.floatfix {overflow: hidden;}
 #ui-datepicker-div, .hidden { display: none; visibility: none; z-index: 1021 !important;} // ugly hack
 #signup-box.ui-widget-content{color:$other-text-color;background-color:$main-color;background:$main-color;}
 #signup-box.ui-widget-content label{color:$other-text-color;}

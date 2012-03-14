@@ -23,9 +23,9 @@ Successful account activation/Login should land you to Dashboard. Dashboard page
 
 Next suggested action is adding memberships details.
 
-Adding memberships
-------------------
-After adding |BIZPLACE| you will notice more options in navigation menu bar. Click Admin and select Tariffs from Admin submenu. Create new memberships.
+Creating new tariffs
+---------------------
+After adding |BIZPLACE| you will notice more options in navigation menu bar. Click Admin and select Tariffs from Admin submenu. Create new Tariffs.
 
 Taxes
 -----
@@ -51,33 +51,5 @@ Notice context selector on top left corner in topbar showing your |BIZPLACE|'s n
 Managing own profile
 --------------------
 To edit own profile one should click name appearing in top right corner just before logout link.
-
-Usage
-=====
-
-Adding members
---------------
-Members -> New
-
-  .. image:: images/member_new.png
-
-
-Adding memberships
-------------------
-- Search for member name.  
-- Selecting member from the list of members found redirects to member page. 
-- Open "Memberships" tab and assign desired membership.
-
-Adding usage
-------------
-- Search for member name.  
-- Selecting member from the list of members found redirects to member page. 
-- Open "Usages" tab. On usages section you can add new usages as well as manage existing ones.
-
-Invoicing a member
-------------------
-- Search for member name.  
-- Selecting member from the list of members found redirects to member page. 
-- Open "Invoices" tab. On usages section you can add new usages as well as manage existing ones.
 
 

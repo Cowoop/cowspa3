@@ -20,23 +20,25 @@ class User(PGStore):
     id INTEGER NOT NULL UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    state INTEGER default 1 NOT NULL
+    enabled BOOLEAN DEFAULT True
     """
 
 class Contact(PGStore):
     table_name = "contact"
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    address TEXT,
-    city TEXT,
-    province TEXT,
-    country TEXT,
-    pincode TEXT,
-    phone TEXT,
-    mobile TEXT,
-    fax TEXT,
+    address TEXT DEFAULT '',
+    city TEXT DEFAULT '',
+    province TEXT DEFAULT '',
+    country TEXT DEFAULT '',
+    pincode TEXT DEFAULT '',
+    phone TEXT DEFAULT '',
+    mobile TEXT DEFAULT '',
+    work TEXT DEFAULT '',
+    home TEXT DEFAULT '',
+    fax TEXT DEFAULT '',
     email TEXT NOT NULL,
-    skype TEXT
+    skype TEXT DEFAULT ''
     """
 
 class MemberPref(PGStore):
@@ -88,7 +90,8 @@ class Member(PGStore):
     id INTEGER NOT NULL,
     number SERIAL NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    state INTEGER default 1 NOT NULL,
+    enabled BOOLEAN DEFAULT True,
+    hidden BOOLEAN DEFAULT False,
     type TEXT NOT NULL
     """
     parent_stores = [MemberProfile(), Contact()]
@@ -143,7 +146,8 @@ class BizPlace(PGStore):
     create_sql = """
     id INTEGER NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    state INTEGER default 1 NOT NULL,
+    enabled BOOLEAN DEFAULT True,
+    hidden BOOLEAN DEFAULT False,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     langs TEXT[],
     tz TEXT,
@@ -180,7 +184,10 @@ class Resource(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
     name TEXT NOT NULL,
-    state INTEGER default 1 NOT NULL,
+    enabled BOOLEAN DEFAULT True,
+    hidden BOOLEAN DEFAULT False,
+    host_only BOOLEAN DEFAULT False,
+    calendar BOOLEAN DEFAULT False,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     type TEXT,
     owner INTEGER NOT NULL,
@@ -223,24 +230,21 @@ class Pricing(PGStore):
     resource INTEGER NOT NULL,
     starts DATE,
     ends DATE,
-    amount NUMERIC(16, 2) NOT NULL,
-    state INTEGER default 1 NOT NULL
+    amount NUMERIC(16, 2) NOT NULL
     """
 
 class Usage(PGStore):
     create_sql = """
     id SERIAL NOT NULL UNIQUE,
-    name TEXT,
-    notes TEXT,
-    description TEXT,
     resource_id INTEGER,
     resource_name TEXT,
     resource_owner INTEGER NOT NULL,
+    notes TEXT,
     quantity REAL,
     calculated_cost NUMERIC(16, 2),
     cost NUMERIC(16, 2),
     total NUMERIC(16, 2),
-    tax_dict bytea,
+    tax_dict BYTEA,
     invoice INTEGER,
     start_time  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time  TIMESTAMP WITHOUT TIME ZONE,
@@ -248,13 +252,16 @@ class Usage(PGStore):
     created_by INTEGER NOT NULL,
     pricing INTEGER,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    cancelled_against INTEGER DEFAULT NULL
+    cancelled_against INTEGER DEFAULT NULL,
+    usages_contained INTEGER[],
+    usages_suggested INTEGER[],
+    name TEXT,
+    description TEXT,
+    public BOOLEAN DEFAULT false,
+    repetition_id INTEGER,
+    no_of_people INTEGER
     """
     pickle_cols = ['tax_dict']
-
-class Booking(PGStore):
-    create_sql = """
-    """
 
 class Invoice(PGStore):
     create_sql = """
@@ -284,7 +291,7 @@ class InvoicePref(PGStore):
     email_text TEXT,
     freetext1 TEXT,
     freetext2 TEXT,
-    terms_and_conditions TEXT,
+    payment_terms TEXT,
     due_date INTEGER,
     bcc_email TEXT,
     bank_details TEXT,
