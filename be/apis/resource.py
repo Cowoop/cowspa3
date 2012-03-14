@@ -49,14 +49,14 @@ class ResourceCollection:
         Deletes a resource. Only if there are no usages/members.
         """
 
-    def list(self, owner, type=None):
+    def list(self, owner, type=None, exclude_tariffs=True):
         """
         type: filter by specified type
         returns list of resource info dicts
         """
         fields=['id', 'name', 'short_description', 'long_description',
                 'calc_mode', 'type', 'enabled', 'host_only', 'picture', 'archived', 'accnt_code']
-        resource_list = dbaccess.list_resources_and_tariffs(owner, fields, type)
+        resource_list = dbaccess.list_resources_and_tariffs(owner, fields, type, exclude_tariffs)
         return resource_list
 
     def tariffs(self, owner):
