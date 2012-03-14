@@ -87,6 +87,23 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 
+# RST prolog options to be included at the start of every source file
+def set_rst_prolog(conf_local=None):
+    import conf_default
+    import commonlib.readconf as readconf
+    if conf_local is not None:
+        conf_local = __import__(conf_local)
+    config = readconf.parse_config(conf_default, conf_local)
+    network = config.words['NETWORK']
+    bizplace = config.words['BIZPLACE']
+    product = config.words['PRODUCT']
+    prolog_1 = ".. |NETWORK| replace:: '%s'\n" % network
+    prolog_2 = ".. |BIZPLACE| replace:: '%s'\n" % bizplace
+    prolog_3 = ".. |PRODUCT| replace:: '%s'\n" % product
+    prolog = prolog_1 + prolog_2 + prolog_3
+    return prolog
+
+rst_prolog = set_rst_prolog('conf_test')
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
