@@ -114,12 +114,16 @@ def find_activities(member_ids=[], roles=[], limit=15):
     clause_values = dict(a_ids = a_ids, limit=limit)
     return activity_store.get_by_clause(clause, clause_values, fields=[], hashrows=True) if a_ids else []
 
-def list_resources_and_tariffs(owner, fields, type=None):
+def list_resources_and_tariffs(owner, fields, type=None, exclude_tariffs=True):
+    if type == 'tariff':
+        exclude_tariffs = False
     clause = "owner = %(owner)s"
     clause_values = dict(owner=owner)
     if type:
         clause += " AND type = %(type)s"
         clause_values['type'] = type
+    if exclude_tariffs:
+        clause += " AND type != 'tariff'"
     clause += " ORDER BY name"
     return resource_store.get_by_clause(clause, clause_values, fields)
 
