@@ -1,17 +1,18 @@
 var history_table;
-var invoice_send_link_id;
+var invoice_to_send;
 var invoice_email_text;
+var send_status = $('#send_invoice-form .action-status');
 //****************************Get Invoice History*******************************
 
 function on_send_invoice_success() {
     jsonrpc('invoice.list', {issuer: current_ctx, limit: -1}, on_get_invoices_success);
-    $('#send_invoice-form .action-status').removeClass('status-fail');
-    $('#send_invoice-form .action-status').addClass('status-success').text('Invoice sent successfully');
+    send_status.removeClass('status-fail');
+    send_status.addClass('status-success').text('Invoice sent successfully');
 };
 
 function on_send_invoice_failure() {
-    $('#send_invoice-form .action-status').removeClass('status-success');
-    $('#send_invoice-form .action-status').addClass('status-fail').text('failed to send invoice');
+    send_status.removeClass('status-success');
+    send_status.addClass('status-fail').text('failed to send invoice');
 };
 
 
@@ -33,9 +34,9 @@ function rebind_actions() {
     send_invoice_links.unbind();
     send_invoice_links.click(function () {
         $("#email_text").text(invoice_email_text);
-        invoice_send_link_id = $(this).attr('id').split('-')[1];
-        $('#send_invoice-form .action-status').removeClass('status-fail');
-        $('#send_invoice-form .action-status').removeClass('status-success').text("");
+        invoice_to_send = $(this).attr('id').split('-')[1];
+        send_status.removeClass('status-fail');
+        send_status.removeClass('status-success').text("");
         $('#send_invoice-form').dialog({ 
             title: "Send Invoice",
             width: 800
@@ -57,7 +58,9 @@ function on_get_invoices_success(response) {
     });
 
     $("#send-btn").click(function(){
-        var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
+        var params = {invoice_id : invoice_to_send, mailtext:$("#email_text").text()};
+        send_status.text("Sending invoice.. please wait");
+        $(this).attr('disabled', 'disabled');
         jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
     });
 
