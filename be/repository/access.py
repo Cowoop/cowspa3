@@ -493,7 +493,7 @@ def get_billto_members(members):
     """
     clause = 'owner IN %(members)s'
     clause_values = dict(members=tuple(members))
-    return dict((pref.owner, get_billto_from_pref(pref)) for pref in invoicepref_store.get_by_clause(clause, clause_values, fields=['owner', 'mode', 'billto']))
+    return dict((pref.owner, get_billto_from_pref(pref)) for pref in invoicepref_store.get_by_clause(clause, clause_values, fields=['owner', 'mode', 'billto'])) if members else {}
 
 def get_billfrom_members(member, members=[]):
     if member not in members: members.append(member)
