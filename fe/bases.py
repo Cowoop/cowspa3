@@ -64,7 +64,7 @@ booking_opt = [
 
 invoicing_opt = [
     tf.A("New", href=ctxpath+'/invoices/new/'),
-    tf.A("Sent", href=ctxpath+'/invoices/history'),
+    tf.A("History", href=ctxpath+'/invoices/history'),
     # tf.A("Received", href='#'),
     tf.A("Settings", href=ctxpath+'/invoices/preferences'),
     # tf.A("Auto-Generate", href='#'),

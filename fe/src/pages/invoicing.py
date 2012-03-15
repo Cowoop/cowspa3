@@ -86,21 +86,6 @@ class New(BasePage):
 
         content.usage_tmpl = usage_tmpl
 
-        #add_usage_form = sphc.more.Form(id='new-usage-form', action='#', classes=['vform'])
-        #usage_name = tf.DIV(id="usage_name")
-        #usage_name.select = tf.SELECT(id="resource_select", name="resource_select")
-        #usage_name.link = tf.A("Custom", id="custom", href="#")
-        #add_usage_form.add_field("Resource Name", tf.DIV((usage_name, tf.INPUT(name='resource_name', id='resource_name', placeholder="Resource name", Class="hidden").set_required())))
-        #add_usage_form.add_field("Rate", tf.INPUT(name='rate', id='rate', nv_attrs=('required',), placeholder="eg. 12.00"), "Do not include currency")
-        #add_usage_form.add_field("Quantity", tf.INPUT(name='quantity', id='quantity', nv_attrs=('required',), placeholder="eg. 10. Not applicable for time based resource"), fhelp="For non time based resources. Do not include unit")
-        #add_usage_form.add_field("Start", tf.INPUT(name='start_time', id='start_time', nv_attrs=('required',)))
-        #add_usage_form.add_field("End", tf.INPUT(name='end_time', id='end_time'), "Optional. Only for time based resources.")
-        #add_usage_form.add_buttons(tf.INPUT(type="button", value="Add", id='submit-usage'))
-        #add_usage_section = tf.DIV(id='new-usage-section', Class='hidden')
-        #add_usage_section.form = add_usage_form.build()
-
-        #content.add_usage_form = add_usage_section
-
         invoice_buttons = tf.DIV(Class="invoice-buttons")
         invoice_buttons.status = tf.DIV("Invoice is not saved yet.", id="inv-action-status")
         invoice_buttons.buttons = [ tf.BUTTON("Save", Class="big-button", id="invoice-save"), '→',
@@ -210,7 +195,7 @@ class Preferences(BasePage):
 
 class History(BasePage):
 
-    title = "Sent Invoices"
+    title = "Invoice History"
     current_nav = 'Invoicing'
 
     def content(self):
@@ -221,11 +206,18 @@ class History(BasePage):
         container.invoice_row.tmpl.name = tf.TD('${member_name}')
         container.invoice_row.tmpl.total = tf.TD('${total}')
         container.invoice_row.tmpl.sent = tf.TD('${isodate2fdate(sent) || "-"}')
-        container.invoice_row.tmpl.view = tf.TD(tf.A('View', id='view-${id}', Class='view-invoice'))
-        container.invoice_row.tmpl.actions = tf.TD(tf.A('Resend', id='send-${id}', Class='send-invoice'))
+        container.invoice_row.tmpl.cond = '{{if (sent)}}'
+        container.invoice_row.tmpl.actions = tf.TD([tf.A('View ', id='view-${id}', Class='view-invoice'), ' | ', \
+            tf.A('Resend', id='send-${id}', Class='send-invoice')])
+        container.invoice_row.tmpl.cond_end = '{{/if}}'
+        container.invoice_row.tmpl.cond = '{{if (!sent)}}'
+        container.invoice_row.tmpl.actions = tf.TD([tf.A('View', id='view-${id}', Class='view-invoice'), ' | ', \
+            tf.A('Send', id='send-${id}', Class='send-invoice'), ' | ', \
+            tf.A('X', id='delete-${id}', Class='cancel-x delete-invoice')])
+        container.invoice_row.tmpl.cond_end = '{{/if}}'
         container.table = tf.TABLE(id="history_table")
         container.table.head = tf.THEAD()
-        container.table.head.cols = tf.TR([tf.TH(name) for name in ('Number', 'Member', 'Amount', 'Sent', 'View', '')])
+        container.table.head.cols = tf.TR([tf.TH(name) for name in ('Number', 'Member', 'Amount', 'Sent', 'Actions')])
         container.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
         container.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
         send_invoice = sphc.more.Form(id='send_invoice-form', classes=['vform', 'hidden'])
@@ -254,18 +246,23 @@ class Uninvoiced(BasePage):
         form.add_buttons(tf.INPUT(id="send-btn", type="submit", value="Generate Invoices"))
         container.dashboard.form = form.build()
 
-        container.actions = tf.DIV(id="invoicing-actions", Class='hidden')
-        container.actions.buttons = tf.DIV([tf.BUTTON("Send selected"), tf.BUTTON("Delete selected")])
+        config_form = sphc.more.Form(Class='vform', id='invoice-config-form_${member.id}')
+        config_form.add_field("P.O. Number", tf.INPUT(type='text', id='invoice-ponumber_${member.id}', Class='invoice-ponumber'), "Optional: Purchase order number")
+        config_form.add_field("Email text", tf.TEXTAREA('${invoice_email_text_default}', id='invoice-email-text_${member.id}', Class='invoice-email-text email-text'), "Optional: Customize invoice email text")
+        config_form.add_buttons(tf.INPUT(value="Save", type="submit", id="save-inv-config_${member.id}", Class='save-inv-config'))
+        container.actions = tf.DIV(Class='invoicing-actions hidden')
+        container.actions.buttons = tf.DIV([tf.BUTTON("Send selected", id="send-invoices"), tf.BUTTON("Delete selected", id="delete-invoices")], Class="button-bar")
         container.actions.bills = tf.TABLE(id='bills-section', Class='stripped')
-        container.actions.bills.header = tf.TR([tf.TH(tf.INPUT(type='checkbox')), tf.TH("Name"), tf.TH("Amount"), tf.TH()])
+        container.actions.bills.header = tf.TR([tf.TH(tf.INPUT(type='checkbox', id='invoice-select-all')), \
+            tf.TH("Name"), tf.TH("Amount"), tf.TH()])
         container.actions.bill_template = sphc.more.jq_tmpl(id='bill-template')
         container.actions.bill_template.bill = tf.TR(id='bill-${member.id}')
-        container.actions.bill_template.bill.select = tf.TD(tf.INPUT(type='checkbox'), id='select-${member.id}')
+        container.actions.bill_template.bill.select = tf.TD(tf.INPUT(type='checkbox', id='select-${member.id}', Class='invoice-select'))
         container.actions.bill_template.bill.name = tf.TD('${member.name}')
         container.actions.bill_template.bill.summary = tf.TD('${total}')
-        container.actions.bill_template.bill.action = tf.TD(id='bill-status-${member.id}')
-        container.actions.bill_template.bill.action.usages = tf.C('Generating Invoice ..', id='gen-invoice-msg_${member.id}')
-        container.actions.bill_template.bill.action.invoice = tf.A('View Invoice', Class='hidden view-invoice', id='view-invoice_${member.id}')
-        container.actions.bill_template.bill.action.mail = tf.A('Invoice email', Class='hidden invoice-mail', id='invoice-email_${member.id}')
+        container.actions.bill_template.bill.status = tf.TD(id='bill-status-${member.id}')
+        container.actions.bill_template.bill.status.msg = tf.C('Generating Invoice ..', id='gen-invoice-msg_${member.id}')
+        container.actions.bill_template.bill.status.actions = tf.DIV([tf.A('View', id='view-invoice_${member.id}'), ' | ',  tf.A('Email', id='email-invoice_${member.id}')], id='invoice-actions_${member.id}', Class='hidden')
+        container.actions.bill_template.bill.status.config = tf.DIV(config_form.build(), id='invoice-config_${member.id}', Class='hidden')
         container.script = sphc.more.script_fromfile("fe/src/js/uninvoiced.js")
         return container

@@ -5,7 +5,11 @@ var send_status = $('#send_invoice-form .action-status');
 //****************************Get Invoice History*******************************
 
 function on_send_invoice_success() {
-    jsonrpc('invoice.list', {issuer: current_ctx, limit: -1}, on_get_invoices_success);
+    function success() {
+        invoice_to_send = null;
+        $("#send-btn").removeAttr('disabled');
+        window.location.reload();
+    };
     send_status.removeClass('status-fail');
     send_status.addClass('status-success').text('Invoice sent successfully');
 };
@@ -51,7 +55,7 @@ function on_get_invoices_success(response) {
         "bJQueryUI": true,
         "bDestroy": true,
         "sPaginationType": "full_numbers",
-        "aaSorting": [[ 0, "desc" ]],
+        "aaSorting": [[ 3, "asc" ]],
         "fnDrawCallback": function() {
             rebind_actions();
         }
@@ -68,19 +72,19 @@ function on_get_invoices_success(response) {
         $('#send_invoice-form').dialog("close");
     });
 
-
-    $('.invoice-delete').click(function () {
+    $('.delete-invoice').click(function () {
+        var invoice_id = $(this).attr('id').split("-")[1];
         var row = $(this).closest("tr").get(0);
         function on_invoice_delete_success(){
             history_table.fnDeleteRow(history_table.fnGetPosition(row));
         };
         if(confirm("Do you want to delete invoice?")){
-            jsonrpc("invoice.delete", {'invoice_id':$(this).attr('id').split("-")[1]}, on_invoice_delete_success);
+            jsonrpc("invoice.delete", {invoice_id: invoice_id}, on_invoice_delete_success);
         };
     });
 };
 
-jsonrpc('invoice.list', {issuer: current_ctx, limit: -1}, on_get_invoices_success);
+jsonrpc('invoice.list', {issuer: current_ctx, limit: 1000}, on_get_invoices_success);
 
 function on_get_invoicemail_cust(response) {
     invoice_email_text = response.result;

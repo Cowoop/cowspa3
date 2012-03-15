@@ -578,7 +578,7 @@ textarea {
     height: 6em;
 }
 
-textarea#email_text {
+textarea#email_text, textarea.email-text {
     height: 20em;
 }
 
@@ -742,6 +742,7 @@ button[disabled], button[disabled]:hover {
 
 table.stripped {
     margin: 0 0 0.7em;
+    width: 90%;
     th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
     caption {font-size: 120%; border-bottom: 1px solid; padding: 0.3em; }
     tr {
@@ -767,6 +768,7 @@ table.grid {
     color: $imp-color;
     font-size: 110%;
     text-decoration: dotted;
+    cursor: pointer;
 }
 
 .right-action {float: right; position: static;}
@@ -806,6 +808,7 @@ form.vform {
     input[type="button"], input[type="checkbox"], input[type="submit"] {
         width: auto;
         display: inline-block;
+        padding: 0.5em;
     }
 }
 
@@ -934,6 +937,9 @@ form.hform {
     width: 100%;
     td, th { padding: 0.3em; }
 }
+
+.invoicing-actions { text-align: center; }
+
 .status-success:before { font-size: 120%; content: "☑ ";}
 .status-fail { color: $imp-color; }
 .invoice-logo { height: 10em; }
@@ -1137,6 +1143,14 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     text-align: center;
     padding-top: 0.5em;
 }
+
+.button-bar {
+    width: 100%;
+    text-align: center;
+    padding: 0.5em;
+    button {margin: 1em;}
+}
+
 
 // Hacks goes here
 .floatfix {overflow: hidden;}
