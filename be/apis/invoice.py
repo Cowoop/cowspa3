@@ -60,9 +60,10 @@ class InvoiceCollection:
                 usages_updated = True
         usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'total'])
 
-        if not all((usage.member == member) for usage in usages_linked):
-            msg = "One of the usages %s does not have member_id matching %s" % (str(usages), member)
-            raise Exception(msg)
+        # below test does not take billto settings in account hence commenting out for now
+        #if not all((usage.member == member) for usage in usages_linked):
+        #    msg = "One of the usages %s does not have member_id matching %s" % (str(usages), member)
+        #    raise Exception(msg)
 
         total = decimal.Decimal(sum(usage.total for usage in usages_linked))
         start_date = start_date or min(usage.start_time.date() for usage in usages_linked)

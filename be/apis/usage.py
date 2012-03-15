@@ -174,7 +174,7 @@ class UsageCollection:
         find uninvoiced usages of a member
         """
         member_ids = dbaccess.get_billfrom_members(member_id)
-        return self.find(starts_on_or_before=start, end=end, res_owner_ids=[res_owner_id], member_ids=member_ids, uninvoiced=True)
+        return self.find(start=start, end=end, res_owner_ids=[res_owner_id], member_ids=member_ids, uninvoiced=True)
 
     def uninvoiced_members(self, res_owner_id, start, zero_usage_members=False, only_tariff=False):
         """
@@ -236,15 +236,17 @@ class UsageResource:
                 total = result['total'],
                 tax_dict = result['taxes'],
                 pricing = pricinglib.pricings.get(usage.member, usage.resource_id, usage.start_time) if usage.resource_id else None)
+            if not 'cost' in mod_data:
+                if usage.cost is None:
+                    mod_data['cost'] = result['calculated_cost']
+                    total = result['total']
+
         if 'usages' in mod_data:
             usages = mod_data.pop('usages')
             for suggested_usage_id in usage.usages_suggested:
                 usage_collection.delete(suggested_usage_id)
             relations = resourcelib.resource_resource.get_relations(usage.resource_id)
             mod_data['usages_suggested'] = add_suggested_usages(usage.resource_owner, usage, relations[False], usages)
-
-        if not 'cost' in mod_data and recalculate and usage.cost == usage.calculated_cost:
-            mod_data['cost'] = mod_data['calculated_cost']
 
         usage_store.update(usage_id, **mod_data)
 
