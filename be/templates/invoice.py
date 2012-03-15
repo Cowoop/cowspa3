@@ -152,7 +152,7 @@ class Template(sphc.more.HTML5Page):
         if data.invoicepref.bank_details:
             container.bank_details = tf.DIV()
             container.bank_details.heading = tf.H3("Bank Details")
-            container.bank_details.data = tf.DIV(data.invoicepref.bank_details)
+            container.bank_details.data = tf.DIV(data.invoicepref.bank_details, Class="pre-wrap")
 
         container.payment_terms = tf.DIV()
         container.payment_terms.heading = tf.H3("Payment Terms")
