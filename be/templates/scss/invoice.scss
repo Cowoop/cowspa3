@@ -2,9 +2,8 @@
 @import "compass/css3";
 @import "compass/utilities/color";
 
-
-$main-color: #3D5229;
-$page-background: white;
+$main-color: #560005;
+$page-background: #f1f1f1;
 $other-text-color: white;
 
 @mixin divsizing {
@@ -129,7 +128,7 @@ table.stripped {
 }
 .full {width: 100%;}
 .invoice-logo { 
-    height: 10em; width: 10em;
+    height: 10em;
     border: 1px solid $main-color;
 }
 .footer {
