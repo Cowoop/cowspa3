@@ -10,6 +10,7 @@ import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.billingpref as billingpreflib
 import be.apis.messagecust as messagecustlib
+import be.apis.pricing as pricinglib
 
 invoice_store = dbaccess.stores.invoice_store
 usage_store = dbaccess.stores.usage_store
@@ -39,7 +40,7 @@ def create_invoice_pdf(invoice_id):
 
 class InvoiceCollection:
 
-    def new(self, issuer, member, po_number, start_date, end_date, notice='', usages=[], new_usages=[], state=0):
+    def new(self, issuer, member, po_number=None, start_date=None, end_date=None, notice='', usages=[], new_usages=[], state=0):
         """
         usages --> The list of existing usage_ids
         new_usages --> The list of usage data which needs to create
@@ -49,7 +50,23 @@ class InvoiceCollection:
             usages.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
-        total = decimal.Decimal(sum([row[0] for row in usage_store.get_many(usages, ['total'], False)]))
+        usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'total'])
+
+        # safe guard
+        usages_updated = False
+        for usage in usages_linked:
+            if None in (usage.total, usage.cost):
+                usagelib.usage_resource.update(usage.id, recalculate=True)
+                usages_updated = True
+        usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'total'])
+
+        if not all((usage.member == member) for usage in usages_linked):
+            msg = "One of the usages %s does not have member_id matching %s" % (str(usages), member)
+            raise Exception(msg)
+
+        total = decimal.Decimal(sum(usage.total for usage in usages_linked))
+        start_date = start_date or min(usage.start_time.date() for usage in usages_linked)
+        end_date = end_date or min((usage.end_time or usage.start_time).date() for usage in usages_linked)
         data = dict(issuer=issuer, member=member, usages=usages, sent=None, total=total, tax_dict={}, start_date=start_date, end_date=end_date, state=state, created=created, notice=notice, po_number=po_number)
         invoice_id = invoice_store.add(**data)
 
@@ -81,6 +98,10 @@ class InvoiceCollection:
         activity_id = activitylib.add('invoice_management', 'invoice_created', data, created)
 
         return invoice_id
+
+    def generate(self, issuer, member, usages_before):
+        usages = usagelib.usage_collection.uninvoiced(member_id=member, res_owner_id=issuer, start=usages_before, end=None)
+        return self.new(issuer, member, start_date=None, end_date=None, usages=[usage.id for usage in usages])
 
     def delete(self, invoice_id):
         """
