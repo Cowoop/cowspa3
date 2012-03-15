@@ -79,9 +79,10 @@ function set_userid(uid) {
     set_cookie("user_id", uid);
 };
 
-function jsonrpc(apiname, params, success, error) {
+function jsonrpc(apiname, params, success, error, async) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
+    if (typeof(error) === 'undefined') { async = allow_async; };
     if (typeof(error) === 'undefined') { error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; };
     var cs_success = function(args) {
         waiting_ele.removeClass('waiting');
@@ -95,7 +96,7 @@ function jsonrpc(apiname, params, success, error) {
         params: params,
         success: cs_success,
         error: cs_error,
-        async: allow_async
+        async: async
     });
 };
 
