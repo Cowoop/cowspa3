@@ -83,6 +83,8 @@ def iso2date(iso):
     return datetime.datetime.strptime(iso[0:10], "%Y-%m-%d").date() if iso else None
 
 def iso2datetime(iso):
+    if isinstance(iso, datetime.datetime):
+        return iso
     return dateutil.parser.parse(iso) if iso else None
 
 def jsonify(obj):
