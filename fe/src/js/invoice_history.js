@@ -79,7 +79,8 @@ function on_get_invoices_success(response) {
         };
     });
 };
-jsonrpc('invoice.list', {issuer: current_ctx}, on_get_invoices_success);
+
+jsonrpc('invoice.list', {issuer: current_ctx, limit: -1}, on_get_invoices_success);
 
 function on_get_invoicemail_cust(response) {
     invoice_email_text = response.result;
