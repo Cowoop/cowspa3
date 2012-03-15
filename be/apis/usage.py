@@ -112,6 +112,7 @@ class UsageCollection:
     def m_new(self, resource_id, resource_name, resource_owner, member, start_time, total=None, end_time=None, quantity=1, cost=None, invoice=None, cancelled_against=None, calculated_cost=None, created=None, notes=None, name=None, description=None, no_of_people=0, repetition_id=None, public=False):
 
         if not end_time: end_time = start_time
+        if cost is None: cost = calculated_cost
         data = dict(resource_id=resource_id, resource_name=resource_name, resource_owner=resource_owner, quantity=quantity, calculated_cost=calculated_cost, cost=cost, total=total, invoice=invoice, start_time=start_time, end_time=end_time, member=member, created_by=env.context.user_id, created=created, cancelled_against=cancelled_against, name=name, notes=notes, repetition_id=repetition_id, public=public, description=description, no_of_people=no_of_people)
 
         return usage_store.add(**data)
@@ -173,7 +174,7 @@ class UsageCollection:
         find uninvoiced usages of a member
         """
         member_ids = dbaccess.get_billfrom_members(member_id)
-        return self.find(start=start, end=end, res_owner_ids=[res_owner_id], member_ids=member_ids, uninvoiced=True)
+        return self.find(starts_on_or_before=start, end=end, res_owner_ids=[res_owner_id], member_ids=member_ids, uninvoiced=True)
 
     def uninvoiced_members(self, res_owner_id, start, zero_usage_members=False, only_tariff=False):
         """
@@ -214,12 +215,14 @@ class UsageResource:
         usage['usages_suggested'] = usage_store.get_many(usage.usages_suggested, ['id', 'resource_id', 'start_time', 'end_time', 'quantity'])
         return usage
 
-    def update(self, usage_id, **mod_data):
-        # attrs that force cost recalculation
-        cost_affecting_attrs = set(('start_time', 'end_time', 'resource_id', 'quantity', 'member'))
-        recalculate = bool(cost_affecting_attrs.intersection(mod_data.keys()))
+    def update(self, usage_id, recalculate=False, **mod_data):
         usage = usage_store.get(usage_id)
-        recalculate = recalculate and not usage.cancelled_against
+
+        if not recalculate:
+            # attrs that force cost recalculation
+            cost_affecting_attrs = set(('start_time', 'end_time', 'resource_id', 'quantity', 'member'))
+            recalculate = bool(cost_affecting_attrs.intersection(mod_data.keys()))
+            recalculate = recalculate and not usage.cancelled_against
 
         if recalculate:
             usage_data = dict(member_id=mod_data.get('member', usage.member),
