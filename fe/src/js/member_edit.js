@@ -102,6 +102,7 @@ function show_memberships() {
 function show_billing() {
     $("#billing .action-status").text("").removeClass('status-fail status-success');
     if(!is_get_thismember_billingpref_done && mtype!="Organization"){
+        $('#billing_pref').reset();
         get_billing_preferences();
         get_billing_pref_details();
     };
@@ -272,9 +273,8 @@ function get_billing_preferences(){
         }   
         is_get_thismember_billingpref_done = true;
     };
-    function on_get_billingpref_error(){};
     var params = {'member': thismember_id};
-    jsonrpc('billingpref.info', params, on_get_billingpref_success, on_get_billingpref_error);
+    jsonrpc('billingpref.info', params, on_get_billingpref_success);
 };
 //-------------------------Get Billing Preferences Details----------------------
 function get_billing_pref_details(){
@@ -283,9 +283,8 @@ function get_billing_pref_details(){
             $('#details_2 #member').val(resp['result']['name']);
         };
     };
-    function on_error(){};
     var args = {'member': thismember_id};
-    jsonrpc('billingpref.details', args, on_success, on_error);
+    jsonrpc('billingpref.details', args, on_success);
 };
 //------------------------Existing Member Search--------------------------------
 $('#details_2 #member').autocomplete({
