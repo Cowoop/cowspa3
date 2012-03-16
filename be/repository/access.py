@@ -351,15 +351,24 @@ def search_members(words, context, options, limit):
     pat = ''.join((word + '%') for word in words)
     values = dict(pat=pat, context=context, limit=limit)
     values.update(options)
+    # TODO work on JOIN and options
     options_clause = "member.enabled = %(enabled)s" + (" AND type = %(type)s" if options['type'] else "")
     fields_s = "member.id, member.name, member.name as label"
     if context:
+        q = "SELECT id FROM member WHERE member.name ilike %(pat)s"
+        member_ids = tuple(row[0] for row in member_store.query_exec(q, values, hashrows=False))
         # Query below purposely leave starts clause. Including starts makes it 10x slower.
-        q = "SELECT DISTINCT " + fields_s + " FROM member, membership WHERE membership.bizplace_id = %(context)s AND " + options_clause +" AND  member.id = membership.member_id AND (ends >= now() OR ends IS NULL) AND member.name ilike %(pat)s"
+        q = "SELECT DISTINCT member_id FROM membership WHERE membership.bizplace_id = %(context)s AND (ends >= now() OR ends IS NULL) AND member_id IN %(member_ids)s"
+        q_values = dict(context=context, member_ids=member_ids)
+        member_ids = tuple(row[0] for row in member_store.query_exec(q, q_values, hashrows=False))
+        q = "SELECT " + fields_s + " FROM member WHERE id IN %(member_ids)s LIMIT %(limit)s"
+        q_values = dict(member_ids=member_ids, limit=limit)
+        return member_store.query_exec(q, q_values)
     else:
-        q = "SELECT DISTINCT " + fields_s + " FROM member WHERE " + options_clause + " AND member.name ilike %(pat)s"
-    q += " LIMIT %(limit)s"
-    return member_store.query_exec(q, values)
+        q = "SELECT " + fields_s + " FROM member WHERE member.name ilike %(pat)s"
+        q += " LIMIT %(limit)s"
+        return member_store.query_exec(q, values)
+
 
 def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
     clause = 'plan = %(plan)s AND resource = %(resource)s AND (starts <= %(usage_time)s OR starts IS NULL) AND (ends >= %(usage_time)s OR ends IS NULL)'
@@ -502,7 +511,9 @@ def get_billto_members(members):
     clause_values = dict(members=tuple(members))
     return dict((pref.owner, get_billto_from_pref(pref)) for pref in invoicepref_store.get_by_clause(clause, clause_values, fields=['owner', 'mode', 'billto'])) if members else {}
 
-def get_billfrom_members(member, members=[]):
+def get_billfrom_members(member, members=None):
+    if members is None:
+        members = []
     if member not in members: members.append(member)
     for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)):
         get_billfrom_members(member_id, members)
