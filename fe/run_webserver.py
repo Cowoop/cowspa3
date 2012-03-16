@@ -67,9 +67,14 @@ def index():
 @app.route('/search/<entity>', methods=['GET', 'POST'])
 def search(entity):
     auth_token = request.cookies.get('authcookie')
+    context = request.args.get('context')
+    try:
+        context = int(context)
+    except:
+        pass
     params = dict(
         q = request.args.get('q') or request.args.get('term'),
-        context = request.args.get('context'),
+        context = context,
         options = request.args.get('options', {}) )
     params = {"jsonrpc": "2.0", "method": "members.search", "params": params, "id": 1}
     data = cowspa.dispatch(auth_token, params)
