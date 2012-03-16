@@ -14,7 +14,7 @@ $("#edit-link").click(function(){
 $("#cancel-btn").click(function(){
     $("#edit-section").hide();
     $("#invoice_email_text").val(invoice_email_text);
-    $("#terms_and_conditions").val(invoice_pref_info.terms_and_conditions);
+    $("#payment_terms").val(invoice_pref_info.payment_terms);
     $("#due_date").val(invoice_pref_info.due_date);
     $("#bank_details").val(invoice_pref_info.bank_details);
     $("#bcc_invoice").val(invoice_pref_info.bcc_email);
@@ -87,8 +87,8 @@ function success(response) {
     } else {
         $("#data-logo").attr('src', invoice_pref_info.logo);
     };
-    $("#data-terms_and_conditions").text(invoice_pref_info.terms_and_conditions); 
-    $("#terms_and_conditions").val(invoice_pref_info.terms_and_conditions);
+    $("#data-payment_terms").text(invoice_pref_info.payment_terms); 
+    $("#payment_terms").val(invoice_pref_info.payment_terms);
     $("#data-due_date").text(invoice_pref_info.due_date); 
     $("#due_date").val(invoice_pref_info.due_date);
     $("#data-bank_details").text(invoice_pref_info.bank_details); 

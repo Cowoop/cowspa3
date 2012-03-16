@@ -156,7 +156,7 @@ class Template(sphc.more.HTML5Page):
 
         container.payment_terms = tf.DIV()
         container.payment_terms.heading = tf.H3("Payment Terms")
-        container.payment_terms.data = tf.C(data.invoicepref.payment_terms)
+        container.payment_terms.data = tf.C(data.invoicepref.payment_terms, Class="pre-wrap")
         container.payment_terms.br = tf.BR()
 
         footer_items = [data.invoicepref.company_no, data.bizplace.website, data.bizplace.phone]
