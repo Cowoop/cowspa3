@@ -37,6 +37,7 @@ class UsageCollection:
     def new(self, resource_id, resource_name, resource_owner, member, start_time, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, calculated_cost=None, notes=None, usages=[], name=None, description=None, no_of_people=0, suppress_notification=False, public=False, repetition_id=None):
         # TODO shouldn't we name the parameter member_id and not member
 
+        if quantity is None: quantity = 1
         resource = resourcelib.resource_resource.info(resource_id) if resource_id else None
         member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
         if resource:
