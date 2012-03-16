@@ -46,7 +46,7 @@ class Template(sphc.more.HTML5Page):
         container.top.col1.receiver = tf.DIV(id="receiver")
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
         container.top.col1.receiver.data.caption = tf.CAPTION(data.member.name)
-        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.invoice.member))])
+        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.member.number))])
 
         container.top.col2.invoice = tf.DIV(id="invoice-details")
         container.top.col2.invoice.details = tf.TABLE(Class="defs")
