@@ -177,6 +177,8 @@ class InvoiceResource:
         subject = issuer.name + ' | Invoice ' + str(invoice.number)
         attachment = ((invoice_storage_dir + str(invoice_id) + '.pdf'), "invoice-%s.pdf" % invoice.number)
         bcc = invoicing_pref.bcc_email if invoicing_pref.bcc_email else None
+        if bcc_email and ',' in bcc_email: # we have multiple email addresses
+            bcc_email = bcc_email.split(',')[:2] # max 2
         member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email', 'website'])
         billingpref = billingpreflib.billingpref_resource.get_details(member_id)
         data = dict(LOCATION_PHONE=issuer.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email or issuer.email, LOCATION_URL=issuer.website or '', CURRENCY=issuer.currency)
