@@ -88,11 +88,24 @@ pygments_style = 'sphinx'
 
 
 # RST prolog options to be included at the start of every source file
-def set_rst_prolog(conf_local=None):
-    import conf_default
+def set_rst_prolog():
     import commonlib.readconf as readconf
-    if conf_local is not None:
-        conf_local = __import__(conf_local)
+
+    CONF_DEFAULT = 'conf_default'
+    CONF_TEST = 'conf_test'
+    CONF_PRODUCTION = 'conf_pro'
+    CONF_DEVELOPMENT = 'conf_dev'
+
+    conf_default = __import__(CONF_DEFAULT)
+    config = readconf.parse_config(conf_default)
+
+    if config.conf_mode == 'testing':
+        conf_local = __import__(CONF_TEST)
+    elif config.conf_mode == 'production':
+        conf_local = __import__(CONF_PRODUCTION)
+    elif config.conf_mode == 'development':
+        conf_local = __import__(CONF_DEVELOPMENT)
+ 
     config = readconf.parse_config(conf_default, conf_local)
     network = config.words['NETWORK']
     bizplace = config.words['BIZPLACE']
@@ -103,7 +116,7 @@ def set_rst_prolog(conf_local=None):
     prolog = prolog_1 + prolog_2 + prolog_3
     return prolog
 
-rst_prolog = set_rst_prolog('conf_test')
+rst_prolog = set_rst_prolog()
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
