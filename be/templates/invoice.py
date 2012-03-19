@@ -130,6 +130,7 @@ class Template(sphc.more.HTML5Page):
         if not data.invoicepref.tax_included:
             usage_row = tf.TR()
             usage_row.td = tf.TD()
+            if multimember_invoice: usage_row.td = tf.TD()
             usage_row.td = tf.TD()
             usage_row.td = tf.TD()
             usage_row.td = tf.TH("Taxes")
@@ -138,6 +139,7 @@ class Template(sphc.more.HTML5Page):
 
         usage_row = tf.TR()
         usage_row.td = tf.TD()
+        if multimember_invoice: usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TH("Total")
