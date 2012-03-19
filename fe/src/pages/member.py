@@ -89,6 +89,14 @@ def billing_pref_form():
     billing_pref_form.add_buttons(tf.INPUT(id="update-billingpref", type="button", value="Update"))
     return billing_pref_form.build()
 
+def taxation_form():
+    form = sphc.more.Form(id="taxation_form", Class="hform")
+    fieldset = form.add(sphc.more.Fieldset())
+    fieldset.add(tf.LEGEND("Taxation Settings"))
+    fieldset.add_field('Tax exemption applicable', tf.INPUT(type="checkbox", id="tax_exemption"), "Tick if applicable")
+    form.add_buttons(tf.INPUT(id="update-tax-exemption", type="button", value="Update"))
+    return form.build()
+
 def add_tariffs_section(container):
     tariff_box = tf.DIV()
 
@@ -279,6 +287,7 @@ class EditProfile(BasePage):
         # Billing
         billing = tf.DIV(id="billing")
         billing.form = billing_pref_form()
+        billing.taxation_form = taxation_form()
 
         # Memberships
         memberships = tf.DIV(id="memberships")

@@ -70,13 +70,14 @@ class New(BasePage):
         usages = tf.TABLE(id='usages', Class="stripped")
         usages.caption = tf.CAPTION("Usages")
         usages.header = tf.TR()
-        usages.header.cells = [tf.TH(name) for name in (tf.INPUT(type="checkbox", Class="all_usages-checkbox", checked="on"), 'Resource', 'Qty', 'Start-End', 'Total')]
+        usages.header.cells = [tf.TH(name) for name in (tf.INPUT(type="checkbox", Class="all_usages-checkbox", checked="on"), 'Member', 'Resource', 'Qty', 'Start-End', 'Total')]
 
         content.usages = usages
 
         usage_tmpl = sphc.more.jq_tmpl("usage-tmpl")
         usage_tmpl.tr = tf.TR(id="usage_row-${id}")
         usage_tmpl.tr.td = tf.TD(tf.INPUT(type="checkbox", Class="usage-checkbox", checked="on"))
+        usage_tmpl.tr.td = tf.TD('${member_name}')
         usage_tmpl.tr.td = tf.TD('${resource_name}')
         usage_tmpl.tr.td = tf.TD('${quantity}')
         usage_tmpl.tr.td = tf.TD('${start_time} - ${end_time}')

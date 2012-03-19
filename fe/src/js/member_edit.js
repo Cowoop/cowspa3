@@ -249,12 +249,20 @@ $("#update-billingpref").click(function(){
    
     jsonrpc('billingpref.update', params, on_save_billingpref_success, on_save_billingpref_error);
 });
+$('#update-tax-exemption').click( function() {
+    function success(resp) {
+        $('#taxation_form .action-status').text("Updating Tax exemption settings is successful").addClass("status-success");
+    };
+    var params = {member: thismember_id, tax_exemption_at:current_ctx, applicable: $('#tax_exemption')[0].checked};
+    jsonrpc('billingpref.set_tax_exemption', params, success);
+});
 //------------------Get Billing Preferences-------------------------------------
 function get_billing_preferences(){
     function on_get_billingpref_success(resp){
-        mode = resp['result']['mode']; 
-        billto = resp['result']['billto'];
-        details = resp['result']['details'];
+        var result = resp.result;
+        mode = result.mode; 
+        billto = result.billto;
+        details = result.details;
         switch(mode){
             case 0 : $('input:radio[name=mode][value=0]').click();
                      break;
@@ -270,7 +278,8 @@ function get_billing_preferences(){
                      break;
             case 2 : $('input:radio[name=mode][value=2]').click();
                      break;
-        }   
+        };
+        $('#tax_exemption')[0].checked = ($.inArray(current_ctx, result.tax_exemptions_at) != -1);
         is_get_thismember_billingpref_done = true;
     };
     var params = {'member': thismember_id};
