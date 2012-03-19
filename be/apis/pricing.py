@@ -12,6 +12,7 @@ odict = commonlib.helpers.odict
 
 resource_store = dbaccess.resource_store
 pricing_store = dbaccess.pricing_store
+invoicepref_store = dbaccess.invoicepref_store
 
 class CalcMode:
 
@@ -234,7 +235,13 @@ def calculate_cost(member_id, resource_id, resource_owner, quantity, starts, end
     cost = cost if cost else calculated_cost
     result = dict(calculated_cost=costlib.to_decimal(calculated_cost))
     if return_taxes:
-        total, taxes = apply_taxes(resource_id, resource_owner, cost)
+        exemptions_at = invoicepref_store.get_by({'owner':member_id}, fields=['tax_exemptions_at'])[0].tax_exemptions_at or []
+        exemption_applicable = resource_owner in exemptions_at
+        if exemption_applicable:
+            total = cost
+            taxes = dict(total=0, breakdown=())
+        else:
+            total, taxes = apply_taxes(resource_id, resource_owner, cost)
         result['taxes'] = taxes
         result['total'] = total
     return result

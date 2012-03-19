@@ -303,9 +303,11 @@ class InvoicePref(PGStore):
     start_number INTEGER,
     mode INTEGER NOT NULL,
     billto INTEGER,
-    details BYTEA
+    details BYTEA,
+    tax_exemptions_at INTEGER[]
     """
     pickle_cols = ['details', 'taxes']
+    # tax_exemptions_at is list of locations where member has tax exemption
 
 class Activity(PGStore):
     create_sql = """
@@ -339,11 +341,4 @@ class MessageCust(PGStore):
     owner INTEGER NOT NULL,
     content TEXT NOT NULL,
     lang TEXT
-    """
-
-class TaxExemption(PGStore):
-    table_name = 'tax_exemption'
-    create_sql = """
-    member INTEGER NOT NULL,
-    issuer INTEGER NOT NULL
     """

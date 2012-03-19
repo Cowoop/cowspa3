@@ -42,12 +42,33 @@ class BillingprefResource:
         return details
 
     def info(self, member):
-        return invoicepref_store.get_by(dict(owner=member), fields=['mode', 'billto', 'details'])[0]
+        result = invoicepref_store.get_by(dict(owner=member), fields=['mode', 'billto', 'details', 'tax_exemptions_at'])[0]
+        if result.tax_exemptions_at == None:
+            result['tax_exemptions_at'] = []
+        return result
 
     def get_dependent_members(self, member):
         """
         returns list of members whose biiling is forwarded to specified member
         """
         return dbaccess.get_billing_dependent_members(member)
+
+    def set_tax_exemption(self, member, tax_exemption_at, applicable):
+        """
+        applicable: True/False
+        """
+        tax_exemptions_at = invoicepref_store.get_by({'owner':member}, fields=['tax_exemptions_at'])[0].tax_exemptions_at or []
+        exemption_now = tax_exemption_at in tax_exemptions_at
+        changed = False
+        if applicable == False and exemption_now:
+            tax_exemptions_at.remove(tax_exemption_at)
+            changed = True
+        elif applicable == True and not exemption_now:
+            tax_exemptions_at.append(tax_exemption_at)
+            changed = True
+        if changed:
+            mod_data = dict(tax_exemptions_at=tax_exemptions_at)
+            invoicepref_store.update_by(dict(owner=member), **mod_data)
+
 
 billingpref_resource = BillingprefResource()
