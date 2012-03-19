@@ -133,7 +133,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD()
             usage_row.td = tf.TD()
             usage_row.td = tf.TH("Taxes")
-            usage_row.td = tf.TD(show_currency(total_tax))
+            usage_row.td = tf.TD(format_number(total_tax))
             usages.row = usage_row
 
         usage_row = tf.TR()
@@ -141,7 +141,7 @@ class Template(sphc.more.HTML5Page):
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TH("Total")
-        usage_row.td = tf.TD(show_currency(data.invoice.total))
+        usage_row.td = tf.TD(format_number(data.invoice.total))
         usages.row = usage_row
         usage_details.table = usages
 
