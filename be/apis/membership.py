@@ -53,7 +53,7 @@ def create_membership_usages(starts, ends, tariff_id, tariff_name, tariff_owner,
     # usage 4: 1 Apr - 05 Apr 2021
     current_date = datetime.datetime.now().date()
     current_months_last_date = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
-    if not ends or ends > current_months_last_date: # Other usages would be created by scheduled job
+    if not ends: # Other usages would be created by scheduled job
         ends = current_months_last_date
     while starts <= ends:
         if starts.month == ends.month:
@@ -157,7 +157,7 @@ def update(membership_id, **mod_data):
         if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > usage_ends:
             usagelib.usage_collection.delete(usages[i]['id'])
             del(usages[i])
-            
+
     #Creating new membership usages
     if usages:
         if starts != usages[0]['start_time'].date():
@@ -169,7 +169,7 @@ def update(membership_id, **mod_data):
     else:
         create_membership_usages(starts, usage_ends, old_data['tariff_id'], old_data['tariff_name'],\
              old_data['bizplace_id'], old_data['member_id'])
-    
+
     return membership_store.update(membership_id, **mod_data)
 
 def delete(membership_id):
