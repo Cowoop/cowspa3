@@ -32,7 +32,6 @@ activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 oidgen_store = stores_mod.OidGen()
 messagecust_store = stores_mod.MessageCust()
-taxexemption_store = stores_mod.TaxExemption()
 
 class RStore(object): pass
 
