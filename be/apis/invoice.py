@@ -50,12 +50,13 @@ class InvoiceCollection:
             usages.append(usagelib.usage_collection.new(**usage))
 
         created = datetime.datetime.now()
-        usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'total'])
+        usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'tax_dict', 'total'])
 
         # safe guard
+        tax_exemption_applicable = issuer in (invoicepref_store.get_by({'owner':member}, fields=['tax_exemptions_at'])[0].tax_exemptions_at or [])
         usages_updated = False
         for usage in usages_linked:
-            if None in (usage.total, usage.cost):
+            if (None in (usage.total, usage.cost)) or (tax_exemption_applicable and usage.tax_dict['total']):
                 usagelib.usage_resource.update(usage.id, recalculate=True)
                 usages_updated = True
         usages_linked = usage_store.get_many(usages, ['id', 'resource_id', 'member', 'quantity', 'cost', 'start_time', 'end_time', 'total'])
