@@ -120,7 +120,7 @@ class Booking(BookingPage):
         suggested_usages_tmpl.usage.cond = '{{if (calc_mode == 0)}}'
         suggested_usages_tmpl.usage.value = tf.DIV(tf.INPUT(type='number', value="0", Class='selected-usage-resources', id='resource-${id}'), Class='field-input')
         suggested_usages_tmpl.usage.cond_end = '{{/if}}'
-        suggested_usages_tmpl.usage.cond = '{{if (calc_mode == 1)}}'
+        suggested_usages_tmpl.usage.cond = '{{if (calc_mode != 0)}}'
         suggested_usages_tmpl.usage.value = tf.DIV(tf.INPUT(type='CHECKBOX', Class='selected-usage-resources', id='resource-${id}'), Class='field-input')
         suggested_usages_tmpl.usage.cond_end = '{{/if}}'
 
