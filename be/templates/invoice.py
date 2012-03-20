@@ -23,8 +23,8 @@ class Template(sphc.more.HTML5Page):
         currency = data.bizplace.currency
         locale = data.memberpref[0].language
         taxes_text = 'Inclusive of Taxes' if data.invoicepref.tax_included else 'Exclusive of Taxes'
-        total_cost = sum([usage.cost for usage in data.usages])
-        total_tax = data.invoice.total - total_cost
+        total_cost = sum(usage.cost for usage in data.usages)
+        total_tax = sum(usage.tax_dict['total'] for usage in data.usages)
         date = data.invoice.sent or datetime.datetime.now()
         due_date = date + datetime.timedelta(data.invoicepref.due_date)
 
