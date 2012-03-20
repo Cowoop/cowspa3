@@ -89,6 +89,8 @@ pygments_style = 'sphinx'
 
 # RST prolog options to be included at the start of every source file
 def set_rst_prolog():
+    import sys
+    sys.path.insert(0, '../..') # add cowspa dir to module search path
     import commonlib.readconf as readconf
 
     CONF_DEFAULT = 'conf_default'
