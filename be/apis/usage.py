@@ -7,6 +7,7 @@ import be.apis.resource as resourcelib
 import be.apis.billingpref as billingpreflib
 import be.apis.messagecust as messagecustlib
 import be.apis.activities as activitylib
+import be.libs.cost as costlib
 
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
@@ -43,13 +44,13 @@ class UsageCollection:
         if resource:
             resource_owner = resource.owner
             if not resource.enabled or resource.archived:
-                raise errors.ErrorWithHint('Resource is either not enabled or is archived')
+                raise be.errors.ErrorWithHint('Resource is either not enabled or is archived')
 
         if not end_time: end_time = start_time
         created = datetime.datetime.now()
 
         if cancelled_against:
-            total = cost
+            total = cost + costlib.to_decimal(tax_dict.get('total', 0))
         else:
             result = pricinglib.calculate_cost(member_id=member, resource_id=resource_id, resource_owner=resource_owner, quantity=quantity, starts=start_time, ends=end_time, cost=cost, return_taxes=True)
             calculated_cost = result['calculated_cost']
@@ -125,9 +126,14 @@ class UsageCollection:
         return usage_store.remove(usage_id)
 
     def cancel(self, usage_id):
+        if usage_store.get_by(crit=dict(cancelled_against=usage_id)):
+            raise be.errors.ErrorWithHint('Usage [%s] is already canceled' % usage_id)
         data = usage_store.get(usage_id)
         data['cancelled_against'] = usage_id
-        data['cost'] = -data['total']
+        data['cost'] = -data['cost']
+        new_tax_dict = dict(total=-data['tax_dict']['total'])
+        new_tax_dict['breakdown'] = tuple((name, level, -amount) for (name, level, amount) in data['tax_dict']['breakdown'])
+        data['tax_dict'] = new_tax_dict
         linked_usage_ids = (data['usages_suggested'] or []) + (data['usages_contained'] or [])
         self.bulk_delete(linked_usage_ids)
         del(data['usages_contained'])
@@ -221,7 +227,7 @@ class UsageResource:
 
         if not recalculate:
             # attrs that force cost recalculation
-            cost_affecting_attrs = set(('start_time', 'end_time', 'resource_id', 'quantity', 'member'))
+            cost_affecting_attrs = set(('start_time', 'end_time', 'resource_id', 'quantity', 'member', 'cost'))
             recalculate = bool(cost_affecting_attrs.intersection(mod_data.keys()))
             recalculate = recalculate and not usage.cancelled_against
 
