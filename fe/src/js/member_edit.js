@@ -226,12 +226,13 @@ $("#update-billingpref").click(function(){
                  break;
         case 1 : params['billto'] = null;
                  params['details'] = {
-                    "name" :$("#details_1 #custom_name").val(),
-                    "address" :$("#details_1 #custom_address").val(),
-                    "city" :$("#details_1 #custom_city").val(),
-                    "country" :$("#details_1 #custom_country").val(),
-                    "phone" :$("#details_1 #custom_phone").val(),
-                    "email" :$("#details_1 #custom_email").val()
+                    name: $("#details_1 #custom_name").val(),
+                    address: $("#details_1 #custom_address").val(),
+                    city: $("#details_1 #custom_city").val(),
+                    country: $("#details_1 #custom_country").val(),
+                    phone: $("#details_1 #custom_phone").val(),
+                    email: $("#details_1 #custom_email").val(),
+                    taxation_no: $('#details_1 #custom_taxation_no').val()
                     };
                  break;
         case 2 : params['billto'] = billto;
@@ -274,6 +275,7 @@ function get_billing_preferences(){
                         $("#details_1 #custom_country option[value='" + details['country'] + "']").attr('selected', 'selected');
                         $('#details_1 #custom_phone').val(details['phone']);
                         $('#details_1 #custom_email').val(details['email']);
+                        $('#details_1 #custom_taxation_no').val(details['taxation_no']);
                      }
                      break;
             case 2 : $('input:radio[name=mode][value=2]').click();
