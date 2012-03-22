@@ -35,7 +35,7 @@ def week():
 def member_booking_form():
     form = sphc.more.Form(id="new-booking-form", Class='hform')
 
-    form.add(tf.DIV([tf.SPAN(id="new-booking-date"), tf.SPAN(tf.BUTTON("Cancel", id="booking-delete"), Class="booking-delete-section hidden")]))
+    form.add(tf.DIV([tf.SPAN(id="new-booking-date"), tf.SPAN(tf.BUTTON("Cancel Booking", id="booking-delete"), Class="booking-delete-section hidden")]))
     form.add(tf.INPUT(id="booking-id", type="hidden"))
     form.add_field("Booking name", tf.INPUT(id="booking-name", type="text"))
     form.add_field("Publicise event", tf.INPUT(id="booking-public", type="CHECKBOX"))
@@ -79,7 +79,7 @@ def host_booking_form():
     usages.add(tf.DIV(id='contained-usages'))
     usages.add(tf.DIV(id='suggested-usages'))
 
-    form.add_buttons(tf.INPUT(type="submit", id="add-booking-btn", value="Add Booking"),
+    form.add_buttons(tf.INPUT(type="submit", id="add-booking-btn", value="Save"),
         tf.INPUT(id="booking-progress-btn", value="Creating Booking ...", Class="hidden", disabled="disabled", type="submit"))
     return form.build()
 
