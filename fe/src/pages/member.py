@@ -78,6 +78,7 @@ def billing_pref_form():
     custom_form.add_field('Country', tf.SELECT(fe.src.common.country_options, id='custom_country', name='custom_country'))
     custom_form.add_field('Phone', tf.INPUT(type='text', id='custom_phone', name='custom_phone'))
     custom_form.add_field('Email', tf.INPUT(type='email', id='custom_email', name='custom_email').set_required())
+    custom_form.add_field('Taxation No.', tf.INPUT(type='text', id='custom_taxation_no', name='custom_taxation_no'))
     custom.form = custom_form.build()
     details.add(custom)
 
