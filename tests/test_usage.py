@@ -4,6 +4,7 @@ import test_data
 import datetime
 import be.repository.access as dbaccess
 import be.apis.usage as usagelib
+import be.apis.billingpref as billingpreflib
 import test_resources
 
 def setup():
@@ -20,6 +21,7 @@ def test_add_usage():
     data['end_time'] = datetime.datetime.now().isoformat()
     data['invoice'] = 1
     test_data.usage_id = usagelib.usage_collection.new(**data)
+    usage = usagelib.usage_store.get(test_data.usage_id)
     env.context.pgcursor.connection.commit()
     assert isinstance(test_data.usage_id, (int, long))
 
@@ -28,6 +30,7 @@ def test_update_usage():
     new_cost = 2000
     mod_data = dict(cost=new_cost)
     usagelib.usage_resource.update(test_data.usage_id, **mod_data)
+    env.context.pgcursor.connection.commit()
     assert old_cost == test_data.usage['cost']
     assert new_cost == usagelib.usage_resource.info(test_data.usage_id)['cost']
 
@@ -66,9 +69,23 @@ def test_uninvoiced():
     start = (datetime.datetime.now() - datetime.timedelta(1)).isoformat()
     end = datetime.datetime.now().isoformat()
     usages = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+    usages_again = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+    assert usages == usages_again # there is recusion used in finding billto member so just making sure
     #TODO we should make sure that all usage.member have billto pointing to member_id or usage.member == member_id
     assert len(usages) >= 1
     assert all((usage.member_id == test_data.member_id) for usage in usages)
+
+def test_uninvoiced_billto():
+    member_id = test_data.more_member_ids[0]
+    billto_member_id = test_data.member_id
+    mode = billingpreflib.modes.other
+    billingpreflib.billingpref_resource.update(member=member_id, mode=mode, billto=billto_member_id)
+    info = billingpreflib.billingpref_resource.info(member_id)
+    assert info.billto == billto_member_id
+    start = (datetime.datetime.now() - datetime.timedelta(1)).isoformat()
+    end = datetime.datetime.now().isoformat()
+    usages = usagelib.usage_collection.uninvoiced(member_id=billto_member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+    assert all((usage.member_id in (member_id, billto_member_id)) for usage in usages)
 
 def test_delete_usage():
     ret = usagelib.usage_collection._delete(1)
