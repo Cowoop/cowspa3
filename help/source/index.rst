@@ -1,9 +1,9 @@
-.. HubOps Help documentation master file, created by
+.. Help documentation master file, created by
    sphinx-quickstart on Mon Jan 16 21:42:38 2012.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to HubOps Help's documentation!
+Welcome to Help documentation!
 =======================================
 
 Contents:
