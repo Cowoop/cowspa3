@@ -1,7 +1,3 @@
-.. |NETWORK| replace:: The Hub
-.. |BIZPLACE| replace:: hub
-.. |PRODUCT| replace:: HubOps Platform
-
 =====================================
 Getting started for |NETWORK| Hosts
 =====================================
@@ -11,7 +7,7 @@ Welcome to |PRODUCT|.
 |PRODUCT| has invitation only access. Once you receive invitation email, you need to click activation link in the email and provide necessary details on activation page. On completing activation you should be able to access |PRODUCT|.
 
 .. Note ::
-    Useful for new |BIZPLACE|. Skip if yours is a hubspace migrated |BIZPLACE|.
+    Useful for new |BIZPLACE|.
 
 First things
 ============

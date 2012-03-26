@@ -1,7 +1,3 @@
-.. |NETWORK| replace:: The Hub
-.. |BIZPLACE| replace:: hub
-.. |PRODUCT| replace:: HubOps
-
 ======================================
 Importing member data from CSV files
 ======================================
