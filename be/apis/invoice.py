@@ -3,6 +3,7 @@ import decimal
 import be.repository.access as dbaccess
 import be.apis.usage as usagelib
 import be.templates.invoice
+import be.errors as errors
 import operator
 import os
 import commonlib.helpers
@@ -28,7 +29,8 @@ def create_invoice_pdf(invoice_id):
     member = member_store.get(invoice.member)
     memberpref = memberpref_store.get_by(dict(member=invoice.member))
     invoicepref = invoicepreflib.invoicepref_resource.info(invoice.issuer)
-    data = dict(invoice=invoice, usages=usages, bizplace=bizplace,
+    billingpref = billingpreflib.billingpref_resource.get_details(invoice.member)
+    data = dict(invoice=invoice, usages=usages, bizplace=bizplace, billingpref=billingpref,
             member=member, invoicepref=invoicepref, memberpref=memberpref)
     html_path = invoice_storage_dir + str(invoice_id) + '.html'
     be.templates.invoice.Template(data).write(html_path)
@@ -105,21 +107,18 @@ class InvoiceCollection:
         usages = usagelib.usage_collection.uninvoiced(member_id=member, res_owner_id=issuer, start=usages_before, end=None)
         return self.new(issuer, member, start_date=None, end_date=None, usages=[usage.id for usage in usages])
 
-    def delete(self, invoice_id):
+    def delete(self, invoice_id, force=False):
         """
         Delete Invoice
         """
-        if invoice_store.get(invoice_id, 'sent'):
+        if invoice_store.get(invoice_id, 'sent') and not force:
             msg = "You can not delete sent invoice."
-            raise Exception(msg)
-        if invoice_store.remove(invoice_id):
+            raise errors.ErrorWithHint(msg)
 
+        if invoice_store.remove(invoice_id):
             mod_data = dict(invoice=None)
-            usage_ids = usage_store.get_by(dict(invoice=invoice_id), ['id'])
-            usages = []
-            for usage_id in usage_ids:
-                usages.append(usage_id['id'])
-            return usage_store.update_many(tuple(usages), **mod_data)
+            usage_ids = tuple(row[0] for row in usage_store.get_by(dict(invoice=invoice_id), ['id'], hashrows=False))
+            return usage_store.update_many(usage_ids, **mod_data)
 
         return False
 
@@ -144,13 +143,33 @@ class InvoiceCollection:
         crit = dict(issuer=issuer, member=member)
         return invoice_store.get_by(crit, fields=['number', 'total', 'created', 'sent', 'id'], hashrows=hashrows)
 
+    def unsent(self, issuer):
+        """
+        list of unsent invoices
+        """
+        crit = dict(issuer=issuer)
+        unsent = invoice_store.get_by(crit, fields=['id', 'member', 'total', 'created'])
+        members = dict(member_store.get_many([invoice.member for invoice in unsent], fields=['id', 'name'], hashrows=False))
+        for invoice in unsent:
+            invoice['member_name'] = members[invoice.member]
+        return unsent
+
 class InvoiceResource:
+
+    def info(self, invoice_id):
+        return invoice_store.get(invoice_id, ['id', 'number', 'sent', 'member', 'issuer', 'total', 'created', 'usages'])
 
     def update(self, invoice_id, **mod_data):
         """
         """
+        invoice = invoice_store.get(invoice_id)
+
+        if invoice.sent:
+            msg = "You can not modify sent invoice."
+            raise Exception(msg)
+
         if 'usages' in mod_data:
-            old_usages = invoice_store.get(invoice_id, ['usages'])
+            old_usages = invoice.usages
             mod_data = dict(invoice=None)
             usage_store.update_many(old_usages, **mod_data)
 
@@ -171,7 +190,7 @@ class InvoiceResource:
         invoicing_pref = invoicepref_store.get_by(dict(owner=invoice.issuer))[0]
         issuer = bizplace_store.get(invoice['issuer'])
         if not invoice.number:
-            dbaccess.update_invoice_number(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
+            dbaccess.number_a_invoice(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
         invoice = invoice_store.get(invoice_id, ['member', 'issuer', 'number'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
@@ -187,7 +206,7 @@ class InvoiceResource:
         notification = commonlib.messaging.messages.invoice(data, overrides=dict(plain=mailtext, bcc=bcc, attachment=attachment))
         notification.build()
         notification.email()
-        return self.update(invoice_id, sent=datetime.datetime.now())
+        return True
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)

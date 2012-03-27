@@ -300,7 +300,7 @@ class InvoicePref(PGStore):
     tax_included BOOLEAN DEFAULT False,
     taxes BYTEA,
     taxation_no TEXT,
-    start_number INTEGER,
+    start_number INTEGER UNIQUE,
     mode INTEGER NOT NULL,
     billto INTEGER,
     details BYTEA,
