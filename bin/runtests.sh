@@ -11,6 +11,7 @@ tests/test_resources.py \
 tests/test_tariff.py \
 tests/test_requests.py \
 tests/test_usage.py \
+tests/test_invoice.py \
 tests/test_pricing.py \
 tests/test_roles.py \
 # Add tests above this line

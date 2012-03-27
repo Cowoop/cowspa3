@@ -30,7 +30,7 @@ def test_update_invoice_preferences():
 
 def test_info_invoice_preferences():
     data = invoicepreflib.invoicepref_resource.info(test_data.bizplace_id)
-    for key in test_data.invoice_preference_data:
+    for key in 'due_date', 'bcc_email', 'bank_details', 'logo':
         assert test_data.invoice_preference_data[key] == data[key]
 
 

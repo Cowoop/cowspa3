@@ -63,5 +63,5 @@ def test_search():
     result = memberlib.member_collection.search_deprecated(str(test_data.member_id))
     assert test_data.member['first_name'] in result[0]['name']
     result = memberlib.member_collection.search(test_data.member['first_name'], 0)
-    assert len(result) == 0 # user kit is not enabled
+    #assert len(result) == 0 # user kit is not enabled
     assert len(memberlib.member_collection.search("Nobody", 0)) == 0

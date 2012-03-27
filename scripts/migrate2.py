@@ -226,7 +226,7 @@ class InvoicePref(Object):
     later = dict(defaulttariff_id='default_tariff')
     def export(self):
         self.new_data['owner'] = migrated.location[self.id]
-        self.new_data['start_number'] = self.id
+        self.new_data['start_number'] = self.id * 10000000
         invlogo_filename = "location-invlogo-%s" % self.id
         invlogo = import_image(invlogo_filename)
         self.new_data['logo'] = invlogo
