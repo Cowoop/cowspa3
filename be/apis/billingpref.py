@@ -32,7 +32,7 @@ class BillingprefResource:
             details = preferences['details'] if billto != member or preferences['mode'] != modes.other else None
             mode = preferences['mode'] if billto != member or preferences['mode'] != modes.other else modes.self
             if mode == modes.self:
-                details = member_store.get(billto, ['name', 'address', 'city', 'country', 'phone', 'email'])
+                details = member_store.get(billto, ['name', 'address', 'city', 'province', 'country', 'pincode', 'phone', 'email'])
                 break
             elif mode == modes.custom:
                 break

@@ -28,6 +28,12 @@ class Template(sphc.more.HTML5Page):
         date = data.invoice.sent or datetime.datetime.now()
         due_date = date + datetime.timedelta(data.invoicepref.due_date)
 
+        address_lines = []
+        address_items = ('address', 'city', 'province', 'country', 'pincode')
+        for attr in address_items:
+            v = data.billingpref.get(attr)
+            if v: address_lines.append(v)
+
         def show_currency(num):
             return str(format_currency(num, currency, locale=locale))
 
@@ -48,6 +54,10 @@ class Template(sphc.more.HTML5Page):
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
         container.top.col1.receiver.data.caption = tf.CAPTION(data.member.name)
         container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.member.number))])
+
+        container.top.col1.receiver.address = tf.ADDRESS('\n'.join(address_lines), Class='pre-wrap')
+        #if data.billingpref['taxation_no']:
+        #    container.top.col1.receiver.taxation_no = tf.DIV(tf.STRONG(data.billingpref['taxation_no']))
 
         container.top.col2.invoice = tf.DIV(id="invoice-details")
         container.top.col2.invoice.details = tf.TABLE(Class="defs")
