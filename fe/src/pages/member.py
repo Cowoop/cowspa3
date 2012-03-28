@@ -241,8 +241,8 @@ class EditProfile(BasePage):
 
         # Info
         info = tf.DIV(id="info", Class="labeled-list hidden")
-        info.id = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-id")], Class="individual")
-        info.id = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-id")], Class="organization")
+        info.number = tf.DIV([tf.DIV("Membership id", Class="label"), tf.C(Class="data-number")], Class="individual")
+        info.number = tf.DIV([tf.DIV("Organization id", Class="label"), tf.C(Class="data-number")], Class="organization")
         info.username = tf.DIV([tf.DIV("Username", Class="label"), tf.C(Class="data-username")], Class="individual")
         info.membership = tf.DIV([tf.DIV("Membership", Class="label"), tf.C(Class="data-membership")], Class="individual")
         info.email = tf.DIV([tf.DIV("Email", Class="label"), tf.A(href="", Class="data-email-link")])

@@ -39,10 +39,11 @@ class BillingprefResource:
             elif mode == modes.other:
                 continue
 
+        details['number'] = member_store.get((billto or member), ['number'])
         return details
 
     def info(self, member):
-        result = invoicepref_store.get_by(dict(owner=member), fields=['mode', 'billto', 'details', 'tax_exemptions_at'])[0]
+        result = invoicepref_store.get_by(dict(owner=member), fields=['mode', 'taxation_no', 'billto', 'details', 'tax_exemptions_at'])[0]
         if result.tax_exemptions_at == None:
             result['tax_exemptions_at'] = []
         return result

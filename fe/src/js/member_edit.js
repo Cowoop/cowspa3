@@ -32,7 +32,7 @@ function on_member_profile(resp) {
     }
     $('.content-title').show();
     $('#content-title').text(thismember.profile.name);
-    $('.data-id').text(thismember_id);
+    $('.data-number').text(thismember.number);
     $('.data-username').text(thismember.account.username);
     $('.data-work').text(thismember.contact.work);
     $('.data-home').text(thismember.contact.home);
