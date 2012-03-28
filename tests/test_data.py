@@ -27,14 +27,9 @@ even_more_members = [
     dict(username='lothar', password='secret', first_name='Lothar', last_name='', email='lothar@localhost.localdomain'),
     ]
 
+even_more_member_ids = []
+
 member_to_register = dict(first_name='Bruce', last_name='Wayne', email='bat@localhost.localdomain')
-
-invoice_data = dict(member=1, usages=[1,3])
-
-more_invoice_data = [
-    dict(member=2, usages=[1]),
-    dict(member=3, usages=[3])
-    ]
 
 resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', enabled=True, host_only=False, default_price=10, calc_mode=1)
 resource_id = None
@@ -52,7 +47,7 @@ more_usages = [
     dict(resource_name='RES3', quantity=13, cost=1050, tax_dict=(('VAT', 100))),
     ]
 
-invoice_preference_data = dict(due_date=30, bcc_email="pune@cowoop.net", bank_details="Bank of India,\nPune", logo="")
+invoice_preference_data = dict(due_date=30, bcc_email="pune@cowoop.net", bank_details="Bank of India,\nPune", logo="", start_number=1500000)
 
 taxes = dict(tax=7.5, vat=5)
 

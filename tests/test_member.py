@@ -33,6 +33,13 @@ def test_update_member():
     assert old_state == test_data.member['enabled']
     assert new_state['enabled'] == memberlib.member_resource.get(test_data.member_id, 'enabled')
 
+def test_contact_update():
+    mod_data = dict(address='Address line 1\nAddress line 2', city='Timbaktu', province='Test State', country='Mail', pincode='012345')
+    memberlib.member_resource.update(test_data.member_id, **mod_data)
+    details = memberlib.member_resource.details(test_data.member_id)
+    for attr in mod_data.keys():
+        assert details['contact'][attr] == mod_data[attr]
+
 def test_auth():
     assert userlib.authenticate(test_data.member['username'], 'password') != True
     assert userlib.authenticate(test_data.member['username'], test_data.member['password']) == True

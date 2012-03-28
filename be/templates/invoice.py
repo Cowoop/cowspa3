@@ -45,15 +45,15 @@ class Template(sphc.more.HTML5Page):
         container.top.col2 = tf.DIV(id="top-col2")
 
         container.top.col1.sender = tf.DIV(id="issuer", Class="defs")
-        if not data.invoicepref.logo == 'data:':
+        if not data.invoicepref.logo in ('data:', '', None):
             container.top.col1.sender.logo = tf.DIV(tf.IMG(src=data.invoicepref.logo, Class="invoice-logo"))
         else:
             container.top.col1.sender.title = tf.DIV(tf.H1(data.bizplace.name))
 
         container.top.col1.receiver = tf.DIV(id="receiver")
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
-        container.top.col1.receiver.data.caption = tf.CAPTION(data.member.name)
-        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.member.number))])
+        container.top.col1.receiver.data.caption = tf.CAPTION(data.billingpref.name)
+        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.billingpref.number))])
 
         container.top.col1.receiver.address = tf.ADDRESS('\n'.join(address_lines), Class='pre-wrap')
         #if data.billingpref['taxation_no']:

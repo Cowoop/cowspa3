@@ -92,6 +92,7 @@ def test_add_pricing_for_default_tariff():
 def test_add_member_w_plan_subscription():
     data = test_data.even_more_members[0]
     member_id = test_member.test_create_member(data)
+    test_data.even_more_member_ids.append(member_id)
     starts = datetime.date.today().isoformat()
     ends = (datetime.date.today()+datetime.timedelta(30)).isoformat()
     created_by = test_data.admin
@@ -105,6 +106,7 @@ def test_member_tariff():
 def test_add_member_wo_plan_subscription():
     data = test_data.even_more_members[1]
     member_id = test_member.test_create_member(data)
+    test_data.even_more_member_ids.append(member_id)
     test_data.member_wo_plan = member_id
     env.context.pgcursor.connection.commit()
 

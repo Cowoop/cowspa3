@@ -1,5 +1,5 @@
 #!/bin/bash
-nosetests -vx --pdb-failures --pdb \
+nosetests -vx --pdb-failures --pdb  \
 tests/test_schemas.py \
 tests/test_system.py \
 tests/test_be_libs.py \
@@ -13,6 +13,7 @@ tests/test_requests.py \
 tests/test_usage.py \
 tests/test_invoice.py \
 tests/test_pricing.py \
+tests/test_billingpref.py \
 tests/test_roles.py \
 # Add tests above this line
 
