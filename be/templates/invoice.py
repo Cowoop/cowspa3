@@ -52,8 +52,8 @@ class Template(sphc.more.HTML5Page):
 
         container.top.col1.receiver = tf.DIV(id="receiver")
         container.top.col1.receiver.data = tf.TABLE(Class="defs")
-        container.top.col1.receiver.data.caption = tf.CAPTION(data.billingpref.name)
-        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.billingpref.number))])
+        container.top.col1.receiver.data.caption = tf.CAPTION(data.billingpref['name'])
+        container.top.col1.receiver.data.row = tf.TR([tf.TD("Membership No."),tf.TD(str(data.billingpref['number']))])
 
         container.top.col1.receiver.address = tf.ADDRESS('\n'.join(address_lines), Class='pre-wrap')
         #if data.billingpref['taxation_no']:
