@@ -189,19 +189,18 @@ class InvoiceResource:
         member_id = invoice['member']
         invoicing_pref = invoicepref_store.get_by(dict(owner=invoice.issuer))[0]
         issuer = bizplace_store.get(invoice['issuer'])
+        member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email', 'website'])
         if not invoice.number:
             dbaccess.number_a_invoice(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
         invoice = invoice_store.get(invoice_id, ['member', 'issuer', 'number'])
-        email = billingpreflib.billingpref_resource.get_details(member=member_id)['email']
+        email = billingpreflib.billingpref_resource.get_details(member=member_id)['email'] or member.email
         subject = issuer.name + ' | Invoice ' + str(invoice.number)
         attachment = ((invoice_storage_dir + str(invoice_id) + '.pdf'), "invoice-%s.pdf" % invoice.number)
         bcc = invoicing_pref.bcc_email if invoicing_pref.bcc_email else None
         if bcc and ',' in bcc: # we have multiple email addresses
             bcc = bcc.split(',')[:2] # max 2
-        member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email', 'website'])
-        billingpref = billingpreflib.billingpref_resource.get_details(member_id)
-        data = dict(LOCATION_PHONE=issuer.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=member.email, HOSTS_EMAIL=issuer.host_email or issuer.email, LOCATION_URL=issuer.website or '', CURRENCY=issuer.currency)
+        data = dict(LOCATION_PHONE=issuer.phone, LOCATION=issuer.name, MEMBER_FIRST_NAME=member.first_name, MEMBER_LAST_NAME=member.last_name, MEMBERSHIP_NUMBER=member.number, MEMBER_EMAIL=email, HOSTS_EMAIL=issuer.host_email or issuer.email, LOCATION_URL=issuer.website or '', CURRENCY=issuer.currency)
         mailtext = mailtext or messagecustlib.get(issuer.id, 'invoice')
         notification = commonlib.messaging.messages.invoice(data, overrides=dict(plain=mailtext, bcc=bcc, attachment=attachment))
         notification.build()
