@@ -851,7 +851,7 @@ function get_invoice_tab_data(){
         $('#send_invoice-form .action-status').addClass('status-fail').text('failed to send invoice');
     };
     $("#send-btn").click(function(){
-        var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").text()};
+        var params = {invoice_id : invoice_send_link_id.split("-")[1], mailtext:$("#email_text").val()};
         $('#send_invoice-form .action-status').removeClass('status-success');
         $('#send_invoice-form .action-status').removeClass('status-fail').text('sending ...');
         jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
