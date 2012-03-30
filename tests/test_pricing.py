@@ -17,6 +17,10 @@ import be.apis.invoicepref as invoicepreflib
 
 a_start_date = datetime.date(2011,8,1)
 a_end_date = datetime.date(2015,8,1)
+membership_starts = datetime.date(2013, 1, 2)
+membership_ends = datetime.date(2013, 3, 31)
+a_usage_time = datetime.datetime(2013, 1, 10, 10, 1, 1) # within membership_starts - membership_ends
+another_usage_time = datetime.datetime(2013, 3, 31, 18, 0, 0) # on last day of membership
 
 def setup():
     commontest.setup_test_env()
@@ -93,8 +97,8 @@ def test_add_member_w_plan_subscription():
     data = test_data.even_more_members[0]
     member_id = test_member.test_create_member(data)
     test_data.even_more_member_ids.append(member_id)
-    starts = datetime.date.today().isoformat()
-    ends = (datetime.date.today()+datetime.timedelta(30)).isoformat()
+    starts = membership_starts.isoformat()
+    ends = membership_ends.isoformat()
     created_by = test_data.admin
     assert membershiplib.memberships.new(test_data.plan_id, member_id, starts, ends) == True
     test_data.member_w_plan = member_id
@@ -111,8 +115,8 @@ def test_add_member_wo_plan_subscription():
     env.context.pgcursor.connection.commit()
 
 def test_get_pricing_for_member_w_plan():
-    usage_time = datetime.datetime.now()
-    assert pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, usage_time) == test_data.price_w_plan
+    assert pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, a_usage_time) == test_data.price_w_plan
+    assert pricinglib.pricings.get(test_data.member_w_plan, test_data.resource_id, another_usage_time) == test_data.price_w_plan # Important to test membership end date as memberships only stores date and usage stores datetime so on membership end date usage.start_time is greater that membership.ends
 
 def test_get_pricing_for_member_wo_plan():
     usage_time = datetime.datetime.now()
