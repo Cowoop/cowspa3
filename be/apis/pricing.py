@@ -86,8 +86,7 @@ def get(member_id, resource_id, usage_time=None):
     returns rate
     """
     # TODO: if resource owner is not bizplace then?
-    if not usage_time:
-        usage_time = datetime.datetime.now()
+    usage_time = commonlib.helpers.iso2date(usage_time) or datetime.date.today()
     bizplace_id = resource_store.get(resource_id, fields=['owner'], hashrows=False)
     plan_id = dbaccess.get_member_plan_id(member_id, bizplace_id, usage_time)
     pricing = dbaccess.get_resource_pricing(plan_id, resource_id, usage_time)
