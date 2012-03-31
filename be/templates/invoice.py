@@ -83,7 +83,7 @@ class Template(sphc.more.HTML5Page):
         usage_summary = tf.DIV()
         usages = tf.TABLE(id='usages_summary', Class="stripped")
         usages.caption = tf.h3("Usage Summary")
-        usages.header = tf.TR()
+        usages.header = tf.THEAD()
         usages.header.cell = tf.TH('Description')
         usages.header.cell = tf.TH([('Amount (%s) ' % currency), tf.SPAN(taxes_text, Class='note')])
         usages.header.cell = tf.TH('Taxes (%s)' % currency)
@@ -121,9 +121,9 @@ class Template(sphc.more.HTML5Page):
             table_headers.insert(1, 'Member')
             multimember_invoice = True
         usage_details = tf.DIV()
-        usages = tf.TABLE(id='usages_details', Class="stripped")
+        usages = tf.TABLE(id='usages_details', Class="stripped pagefix")
         usages.caption = tf.CAPTION("Usage Details")
-        usages.header = tf.TR()
+        usages.header = tf.THEAD()
         usages.header.cells = [tf.TH(name) for name in table_headers]
         sr_no = 1
         for usage in data.usages:
@@ -176,5 +176,8 @@ class Template(sphc.more.HTML5Page):
         footer = ' | '.join(item for item in footer_items if item)
         container.nl = tf.BR()
         container.footer = tf.DIV(footer, Class='footer')
+
+        container.jquery = sphc.more.script_fromfile('be/templates/jquery-1.7.1.min.js')
+        container.script = sphc.more.script_fromfile("be/templates/pagefix.js")
 
         return container
