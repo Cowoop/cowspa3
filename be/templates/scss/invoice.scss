@@ -26,7 +26,7 @@ $other-text-color: white;
 
 html { 
     margin: 0; padding: 0;
-    background: $page-background;
+    // background: $page-background;
     // background-image: -moz-radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%); background-image: radial-gradient(50% 50.5%, circle farthest-corner, $page-background 0%, $page-background 50%, #ddd 97%, #ccc 98.5%, #aaa 100%);
 }
 
@@ -57,7 +57,7 @@ a { text-shadow: 1px 0px 2px $other-text-color;
 
 div[role="main"] {
     width: 90%;
-    border: 1px solid $main-color;
+    // border: 1px solid $main-color;
     padding: 0.5em;
     margin: auto;
 }
@@ -91,10 +91,10 @@ table.defs {
 table.stripped {
     width: 100%;
     margin: 0 0 0.7em;
-    th {font-weight: bold;}
+    th {font-weight: bold; background-color: darken($page-background, 10%);}
     caption {font-size: 120%; border-bottom: 1px solid; }
     tr {
-        &:nth-child(odd) { background-color: darken($page-background, 10%); }
+        &:nth-child(even) { background-color: darken($page-background, 10%); }
         &:hover { background-color: darken($page-background, 10%);  }
     }
     th, td {
@@ -133,5 +133,10 @@ table.stripped {
 }
 .footer {
     font-size: small;
+    text-align: center;
+}
+
+.page-break {
+    page-break-after: always;
     text-align: center;
 }
