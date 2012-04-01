@@ -169,6 +169,26 @@ function toggle_ctx_menu() {
     $('#main .content').toggleClass('simple-box');
 };
 
+function check_page_access(roles) {
+    var allow_access = false;
+    for (var i=0; i<roles.length; i++) {
+        if (roles[i].context == current_ctx) {
+            var ctx_roles = roles[i].roles;
+            $.each(ctx_roles, function(idx, role) {
+                if (role.role == current_role) {
+                    allow_access = true;
+                };
+            });
+            if (allow_access) {
+                break;
+            };
+        };
+    };
+    if (!allow_access) {
+        window.location = "/logout";
+    };
+};
+
 function on_roles_list(resp) {
     var result = resp.result;
     $(document).ready( function() {
@@ -210,6 +230,7 @@ function on_roles_list(resp) {
             set_locale(current_ctx);
         };
     };
+    check_page_access(result);
     $('#ctx-switcher-title').text(ctx_label + " ▼");
     $('#ctx-switcher-title').click( function () {
         toggle_ctx_menu();
