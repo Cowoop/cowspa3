@@ -1,4 +1,5 @@
 ipython
 nose
+coverage
 sphc
 sphinx

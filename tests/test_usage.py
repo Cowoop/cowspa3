@@ -1,11 +1,16 @@
 import commontest
+from nose.tools import assert_raises
 import test_data
 
 import datetime
 import be.repository.access as dbaccess
 import be.apis.usage as usagelib
+import be.apis.user as userlib
 import be.apis.billingpref as billingpreflib
+import be.errors
 import test_resources
+
+usage_to_delete_late = None # booking can not be canceled if it is less than 14 days away
 
 def setup():
     commontest.setup_test_env()
@@ -22,6 +27,19 @@ def test_add_usage():
     data['invoice'] = 1
     test_data.usage_id = usagelib.usage_collection.new(**data)
     usage = usagelib.usage_store.get(test_data.usage_id)
+    env.context.pgcursor.connection.commit()
+    assert isinstance(test_data.usage_id, (int, long))
+
+def test_add_another_usage():
+    global usage_to_delete_late
+    data = test_data.usage
+    data['member'] = test_data.more_member_ids[-1]
+    data['resource_id'] = test_data.resource_id
+    data['resource_owner'] = test_data.bizplace_id
+    data['start_time'] = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
+    data['end_time'] = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
+    usage_to_delete_late = usagelib.usage_collection.new(**data)
+    usage = usagelib.usage_store.get(usage_to_delete_late)
     env.context.pgcursor.connection.commit()
     assert isinstance(test_data.usage_id, (int, long))
 
@@ -87,8 +105,20 @@ def test_uninvoiced_billto():
     usages = usagelib.usage_collection.uninvoiced(member_id=billto_member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
     assert all((usage.member_id in (member_id, billto_member_id)) for usage in usages)
 
+def test_delete_usage_unauthorized():
+    current_user_id = env.context.user_id
+    userlib.set_context(test_data.more_member_ids[-1])
+    assert_raises(be.errors.SecurityViolation, usagelib.usage_collection.delete, 1)
+    userlib.set_context(current_user_id)
+
+def test_delete_usage_late():
+    current_user_id = env.context.user_id
+    userlib.set_context(test_data.more_member_ids[-1])
+    assert_raises(be.errors.SecurityViolation, usagelib.usage_collection.delete, usage_to_delete_late)
+    userlib.set_context(current_user_id)
+
 def test_delete_usage():
-    ret = usagelib.usage_collection._delete(1)
+    ret = usagelib.usage_collection.delete(1)
     assert ret == True
 
 def test_custom_usage():
@@ -102,5 +132,3 @@ def test_custom_usage():
     test_data.usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
     assert isinstance(test_data.usage_id, (int, long))
-
-
