@@ -17,11 +17,13 @@ Setup |BIZPLACE|
 
 Successful account activation/Login should land you to Dashboard. Dashboard page would suggest you next action "Add your |BIZPLACE|". Clicking this button would present you a form. Fill necessary details and click "Create" button. This should add your |BIZPLACE|. It will also create a Guest Tariff which can be used later when you add resources and their pricings.
 
+If you do not see this button, most likely that your |BIZPLACE| is already added by Application administrator. So you should review your |BIZPLACE| profile. To do so, click your |BIZPLACE|'s name at top left corner in topbar. In the drop down menu select "Manage". This will open your |BIZPLACE| profile page. Please verify all the configuration carefully, especially the email addresses.
+
 Next suggested action is adding memberships details.
 
 Creating new tariffs
 ---------------------
-After adding |BIZPLACE| you will notice more options in navigation menu bar. Click Admin and select Tariffs from Admin submenu. Create new Tariffs.
+ Click Admin and select Tariffs from Admin submenu. Create new Tariffs.
 
 Taxes
 -----
