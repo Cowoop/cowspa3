@@ -170,14 +170,12 @@ class InvoiceResource:
 
         if 'usages' in mod_data:
             old_usages = invoice.usages
-            mod_data = dict(invoice=None)
-            usage_store.update_many(old_usages, **mod_data)
+            usage_store.update_many(old_usages, invoice=None)
 
             new_usages = mod_data['usages']
-            mod_data = dict(invoice=invoice_id)
-            usage_store.update_many(new_usages, **mod_data)
+            usage_store.update_many(new_usages, invoice=invoice_id)
 
-            mod_data['total'] = decimal.Decimal(sum([row[0] for row in usagelib.usage_resource.get_many(new_usages, 'amount', False)]))
+            mod_data['total'] = decimal.Decimal(sum([row[0] for row in usage_store.get_many(new_usages, ['total'], False)]))
 
         invoice_store.update(invoice_id, **mod_data)
         return True
