@@ -1,5 +1,5 @@
-var pagebreak_after = 3600;
-var step = 5000;
+var pagebreak_after = 2700;
+var step = 3000;
 var pb_table = $('table.pagefix');
 var pb_header = $('table.pagefix thead');
 
