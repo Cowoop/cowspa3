@@ -7,3 +7,7 @@ class APIExecutionError(Exception):
         self.code = code
         self.msg = msg
         self.data = data
+
+class SecurityViolation(Exception):
+    def __init__(self, msg):
+        self.msg = msg

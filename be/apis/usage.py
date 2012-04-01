@@ -33,6 +33,16 @@ def add_suggested_usages(resource_owner, suggesting_usage, suggested_resources, 
             suggested_usages_data.append(new_data)
     return [usage_collection.new(**new_data) for new_data in suggested_usages_data]
 
+def allow_delete(usage):
+    allow = False
+    ctx_roles = env.context.current_roles.get(usage.resource_owner, None)
+    if ctx_roles:
+        if set(['director', 'host']).intersection(ctx_roles.role_names):
+            allow = True
+        elif usage.member == env.context.user_id and (usage.start_time - datetime.datetime.now()) > datetime.timedelta(14):
+            allow = True
+    return allow
+
 class UsageCollection:
 
     def new(self, resource_id, resource_name, resource_owner, member, start_time, end_time=None, quantity=1, cost=None, tax_dict={}, invoice=None, cancelled_against=None, calculated_cost=None, notes=None, usages=[], name=None, description=None, no_of_people=0, suppress_notification=False, public=False, repetition_id=None):
@@ -147,7 +157,9 @@ class UsageCollection:
         return self.new(**data)
 
     def delete(self, usage_id):
-        usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice', 'usages_suggested'])
+        usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice', 'usages_suggested', 'resource_owner'])
+        if not allow_delete(usage):
+            raise be.errors.SecurityViolation("Usage delete action is not allowed")
         for suggested_usage_id in (usage.usages_suggested or []): # None guard
             self.delete(suggested_usage_id)
         suggesting_usage = dbaccess.find_suggesting_usage(usage_id)
