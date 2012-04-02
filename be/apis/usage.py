@@ -33,7 +33,7 @@ def add_suggested_usages(resource_owner, suggesting_usage, suggested_resources, 
             suggested_usages_data.append(new_data)
     return [usage_collection.new(**new_data) for new_data in suggested_usages_data]
 
-def allow_delete(usage):
+def allow_cancel(usage):
     allow = False
     ctx_roles = env.context.current_roles.get(usage.resource_owner, None)
     if ctx_roles:
@@ -158,7 +158,7 @@ class UsageCollection:
 
     def delete(self, usage_id):
         usage = usage_store.get(usage_id, fields=['id', 'cancelled_against', 'invoice', 'usages_suggested', 'resource_owner'])
-        if not allow_delete(usage):
+        if not allow_cancel(usage):
             raise be.errors.SecurityViolation("Usage delete action is not allowed")
         for suggested_usage_id in (usage.usages_suggested or []): # None guard
             self.delete(suggested_usage_id)
@@ -232,6 +232,7 @@ class UsageResource:
     def details(self, usage_id):
         usage = self.info(usage_id)
         usage['usages_suggested'] = usage_store.get_many(usage.usages_suggested, ['id', 'resource_id', 'start_time', 'end_time', 'quantity'])
+        usage['cancel_allowed'] = allow_cancel(usage)
         return usage
 
     def update(self, usage_id, recalculate=False, **mod_data):

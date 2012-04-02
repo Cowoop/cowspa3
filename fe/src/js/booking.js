@@ -161,7 +161,11 @@ function open_booking_form(resource_id, resource_name, new_booking_date, start_t
 
 function open_edit_booking_form(booking) {
     new_booking_date = new_booking_date || iso2date(booking.start_time);
-    $('.booking-delete-section').show();
+    if (booking.cancel_allowed) {
+        $('.booking-delete-section').show();
+    } else {
+        $('.booking-delete-section').hide();
+    };
     $('#booking-name').val(booking.name);
     $('#booking-public').attr('checked', 'checked');
     $('#booking-description').val(booking.description);
