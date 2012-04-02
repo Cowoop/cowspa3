@@ -87,10 +87,9 @@ def host_booking_form():
 class BookingPage(BasePage):
     current_nav = 'Bookings'
     title = 'Bookings'
-    content_menu = [tf.A('+ New', href=ctxpath + "/booking/new", Class="item"),
+    content_menu = [tf.A('+ New Booking', href=ctxpath + "/booking/new", Class="item"),
         tf.C('|', Class="item-w"),
-        tf.C('Agenda', Class="item"),
-        tf.A("Week", href=ctxpath + "/booking/week", Class="item"),
+        tf.A("Week Overview", href=ctxpath + "/booking/week", Class="item"),
         ]
 
 class Booking(BookingPage):
