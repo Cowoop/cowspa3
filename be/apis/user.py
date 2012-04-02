@@ -78,8 +78,15 @@ def set_context(id_or_username):
     else:
         user = user_store.get(id_or_username)
     env.context.user_id = user.id
-    roles = dbaccess.userrole_store.get_by(dict(user_id = env.context.user_id), ['context',  'role'], False)
     env.context.roles = rolelib.get_roles(user.id)
+    current_roles = {}
+    for role in env.context.roles:
+        context = role['context']
+        current_roles[context] = commonlib.helpers.odict(ctx=context, ctx_label=role['label'])
+        current_roles[context]['ctx_roles'] = \
+            tuple(dict(name=ctx_role['role'], order=ctx_role['order'], label=ctx_role['label']) for ctx_role in role['roles'])
+        current_roles[context]['role_names'] = tuple(ctx_role['role'] for ctx_role in role['roles'])
+    env.context.current_roles = current_roles
     try:
         env.context.name = member_store.get(env.context.user_id, fields=['name'])
     except:
@@ -108,3 +115,11 @@ def create_system_account():
 
 def get_user_preferences(user_id):
     return dbaccess.stores.memberpref_store.get_by(dict(member=user_id), ['theme', 'language'])[0]
+
+def is_host():
+    #set_context_by_session(session_id)
+    for role in env.context.roles:
+        ctx_roles = role['roles']
+        for ctx_role in ctx_roles:
+            if ctx_role['role'] in ('admin', 'host', 'director'):
+                return True
