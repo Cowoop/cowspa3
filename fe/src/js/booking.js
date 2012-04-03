@@ -4,6 +4,7 @@ var shown_dates = [];
 var new_booking_date = null;
 var dropped_slot = null;
 var booking_action = 'click';
+var booking_ids = [];
 
 function add_days(adate, days) {
     return new Date(adate.getTime() + (days * day_miliseconds));
@@ -29,7 +30,19 @@ function get_selected_date() {
 };
 
 function on_get_usages(resp) {
-    mark_slots(resp.result);
+    // cleanup
+    $('.booking-editable').unbind('click');
+    for (var i=0; i<booking_ids.length; i++) {
+        $('[data-booking_id=' + booking_ids[i] +']').unwrap();
+    };
+    $('[data-booking_id]').removeAttr('data-booking_id');
+    booking_ids = [];
+    // setup
+    var usages = resp.result;
+    for (var i=0; i<usages.length; i++) {
+        booking_ids.push(usages[i].id);
+    };
+    mark_slots(usages);
     init_cal();
 };
 
@@ -77,15 +90,15 @@ function mark_slot(usage) {
             $(this).removeClass('slot-available');
             matched_slots.push(this);
         };
-        // $(this).draggable({containment: 'window', snap: 'window'});
     });
 
-    var this_booking_slot = 'booking_' + booking_id;
-    $(matched_slots).wrapAll('<DIV id="' + this_booking_slot + '" class="booking"></DIV>');
+    matched_slots = $(matched_slots);
+    matched_slots.attr('data-booking_id', booking_id);
+    matched_slots.wrapAll('<DIV id="booking_' + booking_id + '" class="booking"></DIV>');
     if (($.inArray(current_role, ['host', 'director', 'admin']) != -1) || ((current_role == 'member') && (usage.member_id == current_userid))) {
-        var this_slot = $('#' + this_booking_slot)
-        this_slot.draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
-        this_slot.addClass('booking-editable');
+        var booking = $('#booking_' + booking_id)
+        booking.draggable({appendTo: "#booking-cal", helper: "clone", cursor: 'move', containment: '.cal-week'});
+        booking.addClass('booking-editable');
     };
 };
 
