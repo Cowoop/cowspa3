@@ -29,7 +29,7 @@ class InvoiceprefResource:
         return True
 
     def info(self, owner):
-        fields = ['company_no', 'payment_terms', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included', 'freetext1', 'freetext2', 'email_text']
+        fields = ['company_no', 'payment_terms', 'due_date', 'bcc_email', 'bank_details', 'logo', 'tax_included', 'freetext1', 'freetext2']
         return invoicepref_store.get_by(dict(owner=owner), fields)[0]
 
     def get(self, owner, attrname):

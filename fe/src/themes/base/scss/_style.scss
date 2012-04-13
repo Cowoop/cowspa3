@@ -248,7 +248,7 @@ legend {
 }
 .heading3 { font-size: 120%; }
 .text-xl { font-size: 200%; }
-.text-xxl { font-size: 300%; }
+.text-xxl { font-size: 300%; margin: 0.2em; }
 
 .tabs {
     border-bottom: 1px solid $main-color;
@@ -562,7 +562,6 @@ ul.as-selections li.as-original { width: 100%; height: 100%; overflow: hidden; m
 
 input { 
     text-align: left;
-    font-size: 1.1em;
     height: 1.5em;
     background: darken($page-background, 5%);
     border: 1px solid lighten($main-color, 10%);
@@ -580,6 +579,7 @@ textarea {
 
 textarea#email_text, textarea.email-text {
     height: 20em;
+    width: 90%;
 }
 
 form.profile-forms {
@@ -630,6 +630,7 @@ button, input[type="button"] {
     border: 1px solid $page-background;
     font-size: 1em;
     @include box-shadow(0 0 3px rgba(0,0,0,0.5));
+    c {color: inherit; background: inherit}
 }
 
 .big-button {
@@ -655,11 +656,24 @@ button:hover {
     border: 1px solid $main-color;
     background: $other-text-color;
     color: $main-color;
+    c {color: inherit; background: inherit}
 }
+
+.faint, .disabled {
+    color: lighten($main-color, 40%);
+}
+
+.pipe {
+    @extend .faint;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
 button[disabled], button[disabled]:hover {
     color: lighten($other-text-color, 20%);
     background: lighten($main-color, 20%);
     border: 1px solid lighten($page-background, 20%);
+    c {color: inherit; background: inherit}
 }
 
 .bottombar {
@@ -741,20 +755,23 @@ button[disabled], button[disabled]:hover {
 }
 
 table.stripped {
+    width: 100%;
     margin: 0 0 0.7em;
-    width: 90%;
-    th {text-shadow: 1px 0px 1px lighten($main-color, 15%);}
-    caption {font-size: 120%; border-bottom: 1px solid; padding: 0.3em; }
+    th {font-weight: bold; background-color: darken($page-background, 10%);}
+    caption {font-size: 120%; border-bottom: 1px solid; }
     tr {
-        border-bottom: 1px solid lighten($main-color, 20%);
-        &:nth-child(odd) { background-color: darken($page-background, 10%); }
+        &:nth-child(even) { background-color: darken($page-background, 10%); }
         &:hover { background-color: darken($page-background, 10%);  }
-        border-left: 1px dotted lighten($main-color, 20%);
     }
     th, td {
         padding: 0 0.3em 0 0.3em;
         text-align: left;
-        border-left: 1px dotted lighten($main-color, 20%);
+        border: 1px solid lighten($main-color, 10%);
+    }
+    input {
+        border: none;
+        border-bottom: 1px dotted;
+        background: none; 
     }
 }
 
@@ -850,6 +867,7 @@ form.hform {
         line-height: 1.3em;
     };
     .field-help {
+        font-size: 95%;
         font-style: italic;
         display: block;
         margin-left: 25%;
@@ -1149,6 +1167,25 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     text-align: center;
     padding: 0.5em;
     button {margin: 1em;}
+}
+
+.in-brackets:before { content: '('; }
+.in-brackets:after { content: ')'; }
+
+.invoicing-section {
+    border-bottom: 1px solid lighten($main-color, 25%);
+    .heading {
+        width: 100%;
+        text-align: left; 
+        border-bottom: 1px dashed lighten($main-color, 50%);
+        padding: 1em;
+        span {vertical-align: middle; color: inherit;}
+        .status {text-align: middle;}
+    }
+    .workspace {
+        padding: 1em;
+        text-align: left; 
+    }
 }
 
 

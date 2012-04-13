@@ -8,5 +8,8 @@ function on_roles(roles) {}; // HOOK
 
 if(current_userid) {
     var params = {'user_id': current_userid};
-    jsonrpc('roles.list', params, on_roles_list);
+    function on_error(resp) {
+        window.location = "/";
+    };
+    jsonrpc('roles.list', params, on_roles_list, on_error);
 };
