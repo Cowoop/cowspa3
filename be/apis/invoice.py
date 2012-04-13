@@ -47,6 +47,7 @@ class InvoiceCollection:
         usages --> The list of existing usage_ids
         new_usages --> The list of usage data which needs to create
         """
+        end_date = commonlib.helpers.iso2date(end_date)
         for usage in new_usages:
             usage['member'] = member
             usages.append(usagelib.usage_collection.new(**usage))
@@ -103,9 +104,24 @@ class InvoiceCollection:
 
         return invoice_id
 
-    def generate(self, issuer, member, usages_before):
+    def generate_for_member(self, issuer, member, usages_before):
         usages = usagelib.usage_collection.uninvoiced(member_id=member, res_owner_id=issuer, start=usages_before, end=None)
         return self.new(issuer, member, start_date=None, end_date=None, usages=[usage.id for usage in usages])
+
+    def generate(self, issuer, usages_before, zero_usage_members=False, only_tariff=False):
+        member_usages = usagelib.usage_collection.uninvoiced_members(issuer, usages_before, zero_usage_members, only_tariff)
+        generated = []
+        member_map = {}
+        for mu in member_usages:
+            usage_ids = [usage.id for usage in mu['usages']]
+            member_id = mu['member']
+            invoice_id = self.new(issuer, member_id, start_date=None, end_date=usages_before, usages=usage_ids)
+            generated.append(invoice_id)
+            member_map[member_id] = mu['member_name']
+        invoices = invoice_store.get_many(generated, ['id', 'member', 'po_number', 'total', 'created'])
+        for invoice in invoices:
+            invoice['member_name'] = member_map[invoice.member]
+        return invoices
 
     def delete(self, invoice_id, force=False):
         """
@@ -118,9 +134,9 @@ class InvoiceCollection:
         if invoice_store.remove(invoice_id):
             mod_data = dict(invoice=None)
             usage_ids = tuple(row[0] for row in usage_store.get_by(dict(invoice=invoice_id), ['id'], hashrows=False))
-            return usage_store.update_many(usage_ids, **mod_data)
+            usage_store.update_many(usage_ids, **mod_data)
 
-        return False
+        return invoice_id
 
     def search(self, q, options={'mybizplace': False}, limit=5):
         """
@@ -147,8 +163,8 @@ class InvoiceCollection:
         """
         list of unsent invoices
         """
-        crit = dict(issuer=issuer)
-        unsent = invoice_store.get_by(crit, fields=['id', 'member', 'total', 'created'])
+        crit = dict(issuer=issuer, sent=None)
+        unsent = invoice_store.get_by(crit, fields=['id', 'member', 'po_number', 'total', 'created'])
         members = dict(member_store.get_many([invoice.member for invoice in unsent], fields=['id', 'name'], hashrows=False))
         for invoice in unsent:
             invoice['member_name'] = members[invoice.member]
@@ -180,7 +196,7 @@ class InvoiceResource:
         invoice_store.update(invoice_id, **mod_data)
         return True
 
-    def send(self, invoice_id, mailtext=None):
+    def send(self, invoice_id, po_number=None, mailtext=None):
         """
         """
         invoice = invoice_store.get(invoice_id, ['member', 'issuer', 'number'])
@@ -188,10 +204,12 @@ class InvoiceResource:
         invoicing_pref = invoicepref_store.get_by(dict(owner=invoice.issuer))[0]
         issuer = bizplace_store.get(invoice['issuer'])
         member = dbaccess.member_store.get(member_id, ['first_name', 'last_name', 'name', 'number', 'email', 'website'])
+        if po_number:
+            self.update(invoice_id, po_number=po_number)
         if not invoice.number:
             dbaccess.number_a_invoice(invoice_id, invoice['issuer'], invoicing_pref['start_number'])
             create_invoice_pdf(invoice_id)
-        invoice = invoice_store.get(invoice_id, ['member', 'issuer', 'number'])
+        invoice = invoice_store.get(invoice_id, ['id', 'member', 'issuer', 'number', 'sent'])
         email = billingpreflib.billingpref_resource.get_details(member=member_id)['email'] or member.email
         subject = issuer.name + ' | Invoice ' + str(invoice.number)
         attachment = ((invoice_storage_dir + str(invoice_id) + '.pdf'), "invoice-%s.pdf" % invoice.number)
@@ -203,7 +221,7 @@ class InvoiceResource:
         notification = commonlib.messaging.messages.invoice(data, overrides=dict(plain=mailtext, bcc=bcc, attachment=attachment))
         notification.build()
         notification.email()
-        return True
+        return invoice
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)
