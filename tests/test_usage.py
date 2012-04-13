@@ -88,22 +88,50 @@ def test_uninvoiced():
     end = datetime.datetime.now().isoformat()
     usages = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
     usages_again = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
-    assert usages == usages_again # there is recusion used in finding billto member so just making sure
+    assert usages == usages_again # there is recursion used in finding billto member so just making sure
     #TODO we should make sure that all usage.member have billto pointing to member_id or usage.member == member_id
     assert len(usages) >= 1
     assert all((usage.member_id == test_data.member_id) for usage in usages)
 
 def test_uninvoiced_billto():
-    member_id = test_data.more_member_ids[0]
+    billing_member_id = test_data.more_member_ids[0]
     billto_member_id = test_data.member_id
+    test_data.billing_member_id = billing_member_id
+    test_data.billto_member_id = billto_member_id
     mode = billingpreflib.modes.other
-    billingpreflib.billingpref_resource.update(member=member_id, mode=mode, billto=billto_member_id)
-    info = billingpreflib.billingpref_resource.info(member_id)
+    billingpreflib.billingpref_resource.update(member=billing_member_id, mode=mode, billto=billto_member_id)
+    info = billingpreflib.billingpref_resource.info(billing_member_id)
     assert info.billto == billto_member_id
     start = (datetime.datetime.now() - datetime.timedelta(1)).isoformat()
     end = datetime.datetime.now().isoformat()
     usages = usagelib.usage_collection.uninvoiced(member_id=billto_member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
-    assert all((usage.member_id in (member_id, billto_member_id)) for usage in usages)
+    assert all((usage.member_id in (billing_member_id, billto_member_id)) for usage in usages)
+
+def test_uninvoiced_members():
+    # 1. Add usage for member whose billto is set
+    data = dict(resource_name='BILLTO Usage')
+    data['member'] = test_data.billing_member_id
+    data['resource_id'] = test_data.resource_id
+    data['resource_owner'] = test_data.bizplace_id
+    data['start_time'] = datetime.datetime.now().isoformat()
+    data['end_time'] = datetime.datetime.now().isoformat()
+    this_usage_id = usagelib.usage_collection.new(**data)
+    assert isinstance(test_data.usage_id, (int, long))
+    env.context.pgcursor.connection.commit()
+
+    # 2. Find above usage in uninvoiced_members usage search
+    start = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
+    uninvoiced = usagelib.usage_collection.uninvoiced_members(res_owner_id=test_data.bizplace_id, start=start)
+    uninvoiced_member_ids = []
+    for member_uninvoiced in uninvoiced:
+        this_member = member_uninvoiced['member']
+        if this_member == test_data.billto_member_id:
+            billto_usages = member_uninvoiced['usages']
+        uninvoiced_member_ids.append(this_member)
+        assert this_member != test_data.billing_member_id, 'billing member should not appear in uninvoiced'
+        assert test_data.usage_id not in (usage.id for usage in member_uninvoiced['usages']) # test_data.usage_id is invoiced
+    assert test_data.billto_member_id in uninvoiced_member_ids
+    assert this_usage_id in (usage.id for usage in billto_usages)
 
 def test_delete_usage_unauthorized():
     current_user_id = env.context.user_id

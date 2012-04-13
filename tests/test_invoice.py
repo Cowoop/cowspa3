@@ -39,6 +39,7 @@ def test_send():
     start_number = invoicepreflib.invoicepref_resource.get(info.issuer, 'start_number')
     assert info.number > start_number, \
         "invoice number [%s] must be greater than start_number [%s]" % (info.number, start_number)
+    assert bool(info.sent)
 
 def test_add_another_invoice():
     global another_invoice_id
@@ -53,6 +54,17 @@ def test_add_another_invoice():
         assert dbaccess.usage_store.get(usage_id, ['invoice']) == invoice_id
     env.context.pgcursor.connection.commit()
 
+def test_add_more(): # we won't sent these
+    for x in range(5):
+        start = datetime.datetime.now() - datetime.timedelta(1)
+        end = datetime.datetime.now() + datetime.timedelta(100)
+        uninvoiced = usagelib.usage_collection.uninvoiced(member_id=test_data.member_id, start=start, end=end, res_owner_id=test_data.bizplace_id)
+        data = dict(usages=[usage.id for usage in uninvoiced], member=test_data.member_id, issuer=test_data.bizplace_id, start_date=start.date(), end_date=end.date())
+        invoice_id = invoicelib.invoice_collection.new(**data)
+        for usage_id in data['usages']:
+            assert dbaccess.usage_store.get(usage_id, ['invoice']) == invoice_id
+    env.context.pgcursor.connection.commit()
+
 def test_send_another():
     global another_invoice_id
     first_invoice_info = invoicelib.invoice_resource.info(test_data.invoice_id)
@@ -65,6 +77,7 @@ def test_send_another():
     assert info.number > start_number, \
         "invoice number [%s] must be greater than start_number [%s]" % (info.number, start_number)
     assert (info.number - first_invoice_info.number) == 1
+    assert bool(info.sent)
 
 def test_tamper_invoice():
     assert_raises(Exception, invoicelib.invoice_resource.update, test_data.invoice_id, usages=[2, 4])
