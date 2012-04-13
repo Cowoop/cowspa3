@@ -203,13 +203,13 @@ class UsageCollection:
         if only_tariff:
             find_crit['resource_types'] = ['tariff']
         usages = self.find(**find_crit)
-        sorter = lambda usage: usage.member_id
-        usages_grouped = [(member, tuple(g)) for member, g in commonlib.helpers.sortngroupby(usages, sorter)]
-        member_ids = tuple(member for member, g in usages_grouped)
+        member_ids = set(usage.member_id for usage in usages)
         member_billto_map = dbaccess.get_billto_members(member_ids)
-        billto_members = dict((member.id, member) for member in \
+        sorter = lambda usage: member_billto_map[usage.member_id]
+        usages_grouped = [(billto_member, tuple(g)) for billto_member, g in commonlib.helpers.sortngroupby(usages, sorter)]
+        member_names = dict((member.id, member.name) for member in \
             member_store.get_many(member_billto_map.values(), ['id', 'name']))
-        result = [dict(member=billto_members[member_billto_map[m]], usages=g, total=sum(usg.total for usg in g if usg.total)) for m, g in usages_grouped]
+        result = [dict(member_name=member_names[m], member=m, usages=g, total=sum(usg.total for usg in g if usg.total)) for m, g in usages_grouped]
         if not zero_usage_members:
             result = [d for d in result if d['total']]
         return result
