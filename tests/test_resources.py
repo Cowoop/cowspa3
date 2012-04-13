@@ -17,6 +17,14 @@ def test_create():
     test_data.resource_id = res_id
     assert isinstance(res_id, (int, long))
 
+def test_create_another():
+    resource_data = test_data.resource_data
+    resource_data['owner'] = test_data.bizplace_id
+    res_id = resourcelib.resource_collection.new(**resource_data)
+    env.context.pgcursor.connection.commit()
+    test_data.another_resource_id = res_id
+    assert isinstance(res_id, (int, long))
+
 def test_create_more():
     for data in test_data.more_resources:
         data['owner'] = test_data.bizplace_id

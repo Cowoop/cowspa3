@@ -31,8 +31,11 @@ even_more_member_ids = []
 
 member_to_register = dict(first_name='Bruce', last_name='Wayne', email='bat@localhost.localdomain')
 
-resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', enabled=True, host_only=False, default_price=10, calc_mode=1)
+resource_data = dict(name='GlassHouse', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', enabled=True, host_only=False, default_price=10, calc_mode=1, calendar=True)
+another_resource_data = dict(name='GlassHouse II', short_description='Room with glass walls', long_description='Situated on 3rd floor GlassHouse provide nice city view. Has capacity to accomodate 17 people.', type='Type1', enabled=True, host_only=False, default_price=20, calc_mode=1, calendar=True)
+
 resource_id = None
+another_resource_id = None
 
 more_resources = [dict(name='RES1', short_description='Resource 1', type='Type1', default_price=10),
     dict(name='RES2', short_description='Resource 2', type='Type2', enabled=True, host_only=True, default_price=10.10),
