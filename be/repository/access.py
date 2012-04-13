@@ -498,7 +498,7 @@ def get_billto_from_pref(pref):
 def get_billto_members(members):
     """
     members: list of member.ids
-    return dict keyed by member.id, billto
+    returns dict keyed by member.id and billto as value
         billto is same as member.id if billing is not redirected
     """
     clause = 'owner IN %(members)s'

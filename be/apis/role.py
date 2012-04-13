@@ -65,7 +65,7 @@ def get_roles_in_context(user_id, context):
 def get_roles(user_id=None, role_filter=[]):
     """
     role_filter: eg. ['host', 'director']
-    returns [{id: 1, label: '<name>', roles: [{role:'<role1>', label:<label1>, order: <int>}, {role:'<role2>', ..}, ...], ...]
+    returns [{context: 1, label: '<name>', roles: [{role:'<role1>', label:<label1>, order: <int>}, {role:'<role2>', ..}, ...], ...]
     order: <int> higher the order value lower are the permissions to that role
     """
     if user_id is None:
