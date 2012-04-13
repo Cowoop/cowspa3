@@ -2,6 +2,7 @@
 import sphc
 import sphc.more
 import fe.bases
+import commonlib.shared.symbols as symbols
 
 tf = sphc.TagFactory()
 BasePage = fe.bases.CSAuthedPage
@@ -194,6 +195,8 @@ class Preferences(BasePage):
 
         return container
 
+pipe = tf.SPAN(' | ', Class='pipe')
+
 class History(BasePage):
 
     title = "Invoice History"
@@ -228,42 +231,90 @@ class History(BasePage):
         container.script = sphc.more.script_fromfile("fe/src/js/invoice_history.js")
         return container
 
+def invoices_action_bar():
+    bar = tf.DIV(Class='button-bar')
+    bar.buttons = [
+        tf.BUTTON(['Send selected ', tf.C(Class='in-brackets', data_bind="text: no_of_selected()")],
+            data_bind="enable: no_of_selected() > 0, click: send_selected"),
+        tf.BUTTON(['Cancel selected ', tf.C(Class='in-brackets', data_bind="text: no_of_selected()")],
+            data_bind="enable: no_of_selected() > 0, click: cancel_selected"),
+        tf.BUTTON(">> Ignore unsent, proceed to next step >>", data_bind="visible: no_of_unsent() > 0 && section_active() == 'unsent', click: ignore_unsent")
+        ]
+    return bar
+
 class Uninvoiced(BasePage):
 
-    title = "Uninvoiced usages"
+    title = "Auto-Generate Invoices"
     current_nav = "Invoicing"
 
     def content(self):
         container = tf.DIV()
-        container.view_invoice_dialog = tf.DIV(id="view_invoice_window", Class='hidden')
+        container.view_invoice_dialog = tf.DIV(id="invoice_popup", Class='hidden')
         container.view_invoice_dialog.frame = tf.IFRAME(id="invoice-iframe", src="#", width="800", height="600")
 
-        container.dashboard = tf.DIV(id='invoicing-dashboard')
-        form = sphc.more.Form(id='uninvoiced-form', action='#', classes=['hform'])
+        invoice_conf_form = sphc.more.Form(Class='vform', id='invoice_conf_form', data_bind="submit: set_invoice_conf")
+        invoice_conf_form.add_field("Email text", tf.TEXTAREA(data_bind="text: invoice_email_text_default", id='invoice-email_text',  Class='email-text'), "Optional: Customize invoice email text")
+        invoice_conf_form.add_buttons(tf.INPUT(value="Save", type="submit"))
+
+        container.invoice_conf = tf.DIV(invoice_conf_form.build(), id='invoice_conf_popup', Class='hidden')
+
+        container.unsent = tf.DIV(Class='invoicing-section unsent')
+        container.unsent.heading = tf.DIV(Class='heading', data_bind="css: {disabled: section_active() !== 'unsent'}")
+        container.unsent.heading.number = tf.SPAN(symbols.circled_nums.one, Class='text-xxl')
+        container.unsent.heading.description = tf.SPAN('Unsent invoices')
+        container.unsent.workspace = tf.DIV(Class='workspace', data_bind="visible: section_active() == 'unsent'")
+        container.unsent.workspace.status = tf.DIV('Searching unsent invoices ...', data_bind="visible: searching_unsent()")
+        container.unsent.workspace.unsent_warn = tf.DIV(['There are ',  tf.SPAN(data_bind="text: no_of_unsent", Class='text-xl'), " unsent invoices. You may want to send or cancel them.", tf.BR()], \
+            data_bind="if: no_of_unsent() > 0, visible: section_active() == 'unsent'")
+        container.unsent.workspace.unsent_0 = tf.DIV('There are no unsent invoices. We are good to start auto-invoicing.', data_bind="visible: !searching_unsent() && no_of_unsent() == 0")
+        container.unsent.workspace.init_err = tf.DIV('Error getting invoicing preferences', data_bind="visible: invoicing_pref_err()", Class='status-fail')
+        container.unsent.workspace.status_err = tf.DIV('Error searching unsent invoices', data_bind="visible: unsent_error()", Class='status-fail')
+
+        invoices = tf.DIV(id='invoices-table')
+        invoices.action_bar = tf.DIV(invoices_action_bar(), data_bind="visible: no_of_invoices() && no_of_invoices() > 15")
+        invoices.table = tf.TABLE(Class='stripped', data_bind="visible: no_of_invoices() > 0")
+        invoices.table.header = tf.THEAD(
+            tf.TR([tf.TH(tf.INPUT(type='checkbox', data_bind="click: select_all, checked: all_selected")), tf.TH('Name'), tf.TH('Created'), tf.TH('Number'), tf.TH('Sent Date'), tf.TH('Total'), tf.TH('P. O. Number'), tf.TH('Actions')]) )
+        invoices.table.tbody = tf.TBODY(data_bind='foreach: invoices()', Class='stripped')
+        invoices.table.tbody.tr = tf.TR()
+        invoices.table.tbody.tr.cells = [
+            tf.TD(tf.INPUT(type='checkbox', data_bind="visible: is_unsent, checked: is_selected")),
+            tf.TD(data_bind="text: member_name"),
+            tf.TD(data_bind="text: isodate2fdate(created)"),
+            tf.TD(data_bind="text: number"),
+            tf.TD(data_bind="text: sent_s"),
+            tf.TD(data_bind="text: total"),
+            tf.TD(tf.INPUT(placeholder='Optional', data_bind="value: po_number")),
+            tf.TD([tf.A('View', data_bind="click: show_invoice"), pipe, tf.A('Change email text', data_bind="click: show_invoice_conf, visible: is_unsent()")]),
+            ]
+        invoices.action_bar = tf.DIV(invoices_action_bar(), data_bind="visible: no_of_invoices()")
+
+        container.unsent.workspace.invoices = tf.DIV(invoices, id='icontainer-unsent')
+
+        container.search = tf.DIV(Class='invoicing-section search')
+        container.search.title = tf.DIV(Class='heading', data_bind="css: {disabled: section_active() !== 'search'}")
+        container.search.title.number = tf.SPAN(symbols.circled_nums.two, Class='text-xxl')
+        container.search.title.description = tf.SPAN('Search uninvoiced usages')
+        container.search.workspace = tf.DIV(Class='workspace')
+        container.search.workspace.status = tf.DIV('Searching for uninvoiced usages ...', data_bind="visible: uninvoiced_status == 0")
+        container.search.workspace.status_err = tf.DIV('Error searching uninvoiced usages', Class='status-failure', data_bind="visible: uninvoiced_status == 2")
+
+        form = sphc.more.Form(classes=['hform'], data_bind="visible: section_active() == 'search', submit: generate")
         form.add_field('Usage types to include', tf.SPAN([tf.INPUT(name='only_tariff', type='radio', value='on'), 'Only tariffs', tf.INPUT(name='only_tariff', type='radio', checked='checked', value='off'), 'All usages (including tariffs)']))
         form.add_field('Zero usage cost members', tf.INPUT(name='zero_usage_members', type='checkbox', checked='on'), 'Generate invoices even if total usages cost is zero')
         form.add_field('Usages start on or before', tf.INPUT(id='uninvoiced-start-vis', type='text'))
-        form.add(tf.INPUT(name='start', id='uninvoiced-start', type='hidden'))
-        form.add_buttons(tf.INPUT(id="send-btn", type="submit", value="Generate Invoices"))
-        container.dashboard.form = form.build()
+        form.add(tf.INPUT(id='uninvoiced-start', name='usages_before', type='hidden'))
+        form.add(tf.DIV("Invoice generation in progress..", data_bind="visible: generating()"))
+        form.add(tf.DIV("Invoice generation failed", data_bind="visible: generation_failed()"))
+        form.add_buttons(tf.INPUT(type="submit", value="Generate Invoices"))
+        container.search.workspace.form = form.build()
 
-        config_form = sphc.more.Form(Class='vform', id='invoice-config-form_${member.id}')
-        config_form.add_field("P.O. Number", tf.INPUT(type='text', id='invoice-ponumber_${member.id}', Class='invoice-ponumber'), "Optional: Purchase order number")
-        config_form.add_field("Email text", tf.TEXTAREA('${invoice_email_text_default}', id='invoice-email-text_${member.id}', Class='invoice-email-text email-text'), "Optional: Customize invoice email text")
-        config_form.add_buttons(tf.INPUT(value="Save", type="submit", id="save-inv-config_${member.id}", Class='save-inv-config'))
-        container.actions = tf.DIV(Class='invoicing-actions hidden')
-        container.actions.buttons = tf.DIV([tf.BUTTON("Send selected", id="send-invoices"), tf.BUTTON("Delete selected", id="delete-invoices")], Class="button-bar")
-        container.actions.bills = tf.TABLE(id='bills-section', Class='stripped')
-        container.actions.bills.header = tf.TR([tf.TH(tf.INPUT(type='checkbox', id='invoice-select-all')), \
-            tf.TH("Name"), tf.TH("Amount"), tf.TH()])
-        container.actions.bill_template = sphc.more.jq_tmpl(id='bill-template')
-        container.actions.bill_template.bill = tf.TR(id='bill-${member.id}')
-        container.actions.bill_template.bill.select = tf.TD(tf.INPUT(type='checkbox', id='select-${member.id}', Class='invoice-select'))
-        container.actions.bill_template.bill.name = tf.TD('${member.name}')
-        container.actions.bill_template.bill.summary = tf.TD('${total}')
-        container.actions.bill_template.bill.status = tf.TD(id='bill-status-${member.id}')
-        container.actions.bill_template.bill.status.msg = tf.C('Generating Invoice ..', id='gen-invoice-msg_${member.id}')
-        container.actions.bill_template.bill.status.actions = tf.DIV([tf.A('View', id='view-invoice_${member.id}'), ' | ',  tf.A('Email', id='email-invoice_${member.id}')], id='invoice-actions_${member.id}', Class='hidden')
-        container.actions.bill_template.bill.status.config = tf.DIV(config_form.build(), id='invoice-config_${member.id}', Class='hidden')
+        container.send = tf.DIV(Class='invoicing-section send')
+        container.send.title = tf.DIV(Class='heading', data_bind="css: {disabled: section_active() !== 'send'}")
+        container.send.title.number = tf.SPAN(symbols.circled_nums.three, Class='text-xxl')
+        container.send.title.description = tf.SPAN('Send Invoices')
+        container.send.workspace = tf.DIV(Class='workspace')
+        container.send.workspace.invoices = tf.DIV(id='icontainer-send')
+
         container.script = sphc.more.script_fromfile("fe/src/js/uninvoiced.js")
         return container
