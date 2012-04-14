@@ -209,7 +209,7 @@ class History(BasePage):
         container.invoice_row.tmpl.number = tf.TD('${number || "-"}')
         container.invoice_row.tmpl.name = tf.TD('${member_name}')
         container.invoice_row.tmpl.total = tf.TD('${total}')
-        container.invoice_row.tmpl.sent = tf.TD('${isodate2fdate(sent) || "-"}')
+        container.invoice_row.tmpl.sent = tf.TD('${sent}')
         container.invoice_row.tmpl.cond = '{{if (sent)}}'
         container.invoice_row.tmpl.actions = tf.TD([tf.A('View ', id='view-${id}', Class='view-invoice'), ' | ', \
             tf.A('Resend', id='send-${id}', Class='send-invoice')])

@@ -56,6 +56,15 @@ function on_get_invoices_success(response) {
         "bDestroy": true,
         "sPaginationType": "full_numbers",
         "aaSorting": [[ 3, "asc" ]],
+        "aoColumnDefs": [
+            {
+                "fnRender": function( obj ) {
+                    return isodate2fdate(obj.aData[3]) || "-";
+                },
+                "bUseRendered": false,
+                "aTargets": [ 3 ]
+            }
+        ],
         "fnDrawCallback": function() {
             rebind_actions();
         }
