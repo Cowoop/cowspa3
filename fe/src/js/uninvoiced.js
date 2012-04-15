@@ -48,6 +48,11 @@ function InvoicingViewModel() {
             return item.is_selected();
         });
     });
+    self.invoices_unsent = ko.computed(function() {
+        return ko.utils.arrayFilter(self.invoices(), function(item) {
+            return item.is_unsent();
+        });
+    });
     self.invoices_selected_unsent = ko.computed(function() {
         return ko.utils.arrayFilter(self.invoices(), function(item) {
             return item.is_selected() && item.is_unsent();
@@ -56,7 +61,7 @@ function InvoicingViewModel() {
     self.all_selected = ko.observable(false);
     self.select_all = function() {
         var all = self.all_selected();
-        ko.utils.arrayForEach(self.invoices(), function(invoice) {
+        ko.utils.arrayForEach(self.invoices_unsent(), function(invoice) {
             invoice.is_selected(!all);
         });
         return true;
@@ -66,14 +71,15 @@ function InvoicingViewModel() {
         return self.invoices().length;
     });
     self.no_of_unsent = ko.computed(function() {
-        return ko.utils.arrayFilter(self.invoices(), function(item) {
-            return item.is_unsent();
-        }).length;
+        return self.invoices_unsent().length;
     });
     self.no_of_selected = ko.computed(function() { return self.invoices_selected().length; });
 
     // Behaviours
     self.section_active.subscribe(function(section) { 
+        if (section == 'search') {
+            self.invoices.removeAll();
+        };
         if (section != 'unsent') {
             $('#invoices-table').detach().appendTo('#icontainer-send');
             self.all_selected(false);
@@ -143,14 +149,12 @@ function cancel_invoices(invoices) {
 function on_invoice_send(resp) {
     var invoice = resp.result;
     var invoices = model.invoices();
-    for (var i=0; i<invoices.length; i++) {
-        var invoice_vm = invoices[i];
-        if (invoice_vm.id == invoice.id) {
-            invoice_vm.sent(invoice.sent);
-            invoice_vm.number(invoice.number);
-            invoice_vm.is_selected(false);
-        };
-    };
+    var invoice_vm = ko.utils.arrayFirst(invoices, function(item) {
+        return (item.id == invoice.id);
+    });
+    invoice_vm.sent(invoice.sent);
+    invoice_vm.number(invoice.number);
+    invoice_vm.is_selected(false);
     send_selected();
 };
 
