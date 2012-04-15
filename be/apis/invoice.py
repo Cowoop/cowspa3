@@ -121,7 +121,7 @@ class InvoiceCollection:
         invoices = invoice_store.get_many(generated, ['id', 'member', 'po_number', 'total', 'created'])
         for invoice in invoices:
             invoice['member_name'] = member_map[invoice.member]
-        return invoices
+        return sorted(invoices, key=lambda inv: inv['member_name'])
 
     def delete(self, invoice_id, force=False):
         """
