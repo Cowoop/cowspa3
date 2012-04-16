@@ -19,8 +19,7 @@ function get_invoicee_name_and_contact(id){
     inv_member_id = parseInt(id, 10);
     var params = {'member_id': inv_member_id};
     function on_get_contact_success (response) {
-        var data = response['result'];
-        data.id = inv_member_id;
+        var data = response.result;
         $('#invoicee-info').empty();
         $('#invoicee-info-tmpl').tmpl(data).appendTo('#invoicee-info');
         $('#invoicee-info').show();
@@ -31,15 +30,9 @@ function get_invoicee_name_and_contact(id){
         $('#inv-action-status').removeClass('status-success');
         $('#inv-action-status').text('');
         $('#usages tr:gt(0)').remove();
+        $("#invoicee-search").val(data.name);
     };
-    function on_get_contact_error () {};
-    jsonrpc('member.contact', params, on_get_contact_success, on_get_contact_error);
-    params['attrname'] = "name";
-    function on_get_name_success (response) {
-        $("#invoicee-search").val(response['result']);
-    };
-    function on_get_name_error () {};
-    jsonrpc('member.get', params, on_get_name_success, on_get_name_error);
+    jsonrpc('member.info', params, on_get_contact_success);
 }
 $('#invoicee-search').autocomplete({
     source: "/search/member",

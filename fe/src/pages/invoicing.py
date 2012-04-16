@@ -34,9 +34,7 @@ class New(BasePage):
 
         content.col1.member_field = tf.INPUT(type="text", name="invoicee", id="invoicee-search", placeholder="Invoicee")
         content.col1.member_info_tmpl = tf.DIV(id="invoicee-info-tmpl", Class="hidden")
-        content.col1.member_info_tmpl.m_id = tf.C("Membership id: ${id}")
-        content.col1.member_info_tmpl.br = tf.BR()
-        content.col1.member_info_tmpl.address = tf.PRE("${address}")
+        content.col1.member_info_tmpl.m_id = tf.C("Membership id: ${number}")
         content.col1.member_info = tf.DIV(id="invoicee-info", Class="hidden")
 
         info = tf.TABLE()
