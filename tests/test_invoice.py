@@ -90,3 +90,14 @@ def test_force_delete_invoice():
     invoicelib.invoice_collection.delete(test_data.invoice_id, force=True)
     for id in usage_ids:
         assert usagelib.usage_resource.info(id).invoice == None
+
+def test_generate():
+    usages_before = datetime.date.today() + datetime.timedelta(30)
+    invoices = invoicelib.invoice_collection.generate(test_data.bizplace_id, usages_before=usages_before)
+    for invoice in invoices:
+        usaged_ids = invoice.usages
+        usages = (usagelib.usage_resource.info(id) for id in usaged_ids)
+        member_ids = set(usage.member for usage in usages)
+        expected_members = set(dbaccess.get_billfrom_members(invoice.member))
+        assert member_ids.issubset(expected_members)
+    env.context.pgcursor.connection.commit()
