@@ -55,3 +55,5 @@ invoice_preference_data = dict(due_date=30, bcc_email="pune@cowoop.net", bank_de
 taxes = dict(tax=7.5, vat=5)
 
 pricing_id = None
+
+billto_usage = {} # id, member, billto
