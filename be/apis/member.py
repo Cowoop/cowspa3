@@ -14,7 +14,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, enabled=True, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, work=None, home=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by=''):
+    def new(self, email, username=None, password=None, first_name=None, enabled=True, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, work=None, home=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by='', tariff_id=None):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = created if created else datetime.datetime.now() # migration specific
