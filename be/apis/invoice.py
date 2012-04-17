@@ -118,7 +118,7 @@ class InvoiceCollection:
             invoice_id = self.new(issuer, member_id, start_date=None, end_date=usages_before, usages=usage_ids)
             generated.append(invoice_id)
             member_map[member_id] = mu['member_name']
-        invoices = invoice_store.get_many(generated, ['id', 'member', 'po_number', 'total', 'created'])
+        invoices = invoice_store.get_many(generated, ['id', 'member', 'po_number', 'total', 'created', 'usages'])
         for invoice in invoices:
             invoice['member_name'] = member_map[invoice.member]
         return sorted(invoices, key=lambda inv: inv['member_name'])
