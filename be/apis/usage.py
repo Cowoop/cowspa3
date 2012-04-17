@@ -250,7 +250,7 @@ class UsageResource:
                 resource_owner=mod_data.get('resource_owner', usage.resource_owner),
                 quantity=mod_data.get('quantity', usage.quantity),
                 starts=mod_data.get('start_time', usage.start_time),
-                cost=mod_data.get('cost', usage.cost),
+                cost=mod_data.get('cost'),
                 ends=mod_data.get('end_time', usage.end_time) )
             result = pricinglib.calculate_cost(return_taxes=True, **usage_data)
             mod_data.update(calculated_cost = result['calculated_cost'],
@@ -260,7 +260,6 @@ class UsageResource:
             if not 'cost' in mod_data:
                 if usage.cost is None:
                     mod_data['cost'] = result['calculated_cost']
-                    total = result['total']
 
         if 'usages' in mod_data:
             usages = mod_data.pop('usages')
