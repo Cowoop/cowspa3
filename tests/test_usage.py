@@ -7,10 +7,13 @@ import be.repository.access as dbaccess
 import be.apis.usage as usagelib
 import be.apis.user as userlib
 import be.apis.billingpref as billingpreflib
+import be.apis.invoicepref as invoicepreflib
 import be.errors
+import be.libs.cost as costlib
 import test_resources
 
 usage_to_delete_late = None # booking can not be canceled if it is less than 14 days away
+booking_id = None
 
 def setup():
     commontest.setup_test_env()
@@ -72,6 +75,41 @@ def test_add_more_usage():
         usage_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
 
+def test_add_booking():
+    global booking_id
+    now = datetime.datetime.now()
+    data = dict(resource_id=test_data.resource_id) # time based resource
+    data['resource_name'] = test_data.resource_data['name']
+    data['member'] = test_data.member_id
+    data['resource_owner'] = test_data.bizplace_id
+    data['start_time'] = now.isoformat()
+    data['end_time'] = (now + datetime.timedelta(0, 60*60)).isoformat()
+    booking_id = usagelib.usage_collection.new(**data)
+    env.context.pgcursor.connection.commit()
+
+def test_extend_booking():
+    info = usagelib.usage_resource.info(booking_id)
+    old_total = info.total
+    new_end_time = (info.end_time + datetime.timedelta(0, 60*60)).isoformat()
+    usagelib.usage_resource.update(booking_id, end_time=new_end_time)
+    new_total = usagelib.usage_resource.info(booking_id).total
+    env.context.pgcursor.connection.commit()
+    assert new_total == old_total * 2
+
+def test_update_booking_custom_cost():
+    info = usagelib.usage_resource.info(booking_id)
+    old_total = info.total
+    new_cost = old_total + 100
+    usagelib.usage_resource.update(booking_id, cost=new_cost)
+    usage = usagelib.usage_resource.info(booking_id)
+    new_total = usage.total
+    env.context.pgcursor.connection.commit()
+    taxes = costlib.to_decimal(usage.tax_dict['total'])
+    taxes_included = invoicepreflib.invoicepref_resource.info(test_data.bizplace_id).tax_included
+    expected_total = new_cost if taxes_included else (new_cost + taxes)
+    assert new_total != old_total
+    assert new_total == expected_total
+
 def test_find_by():
     data = dict(start=(datetime.datetime.now() - datetime.timedelta(1)), end=datetime.datetime.now())
     usages = usagelib.usage_collection.find(**data)
@@ -115,7 +153,9 @@ def test_uninvoiced_members():
     data['resource_owner'] = test_data.bizplace_id
     data['start_time'] = datetime.datetime.now().isoformat()
     data['end_time'] = datetime.datetime.now().isoformat()
-    this_usage_id = usagelib.usage_collection.new(**data)
+    test_data.billto_usage['id'] = usagelib.usage_collection.new(**data)
+    test_data.billto_usage['member'] = test_data.billing_member_id
+    test_data.billto_usage['billto'] = test_data.billto_member_id
     assert isinstance(test_data.usage_id, (int, long))
     env.context.pgcursor.connection.commit()
 
@@ -131,7 +171,7 @@ def test_uninvoiced_members():
         assert this_member != test_data.billing_member_id, 'billing member should not appear in uninvoiced'
         assert test_data.usage_id not in (usage.id for usage in member_uninvoiced['usages']) # test_data.usage_id is invoiced
     assert test_data.billto_member_id in uninvoiced_member_ids
-    assert this_usage_id in (usage.id for usage in billto_usages)
+    assert test_data.billto_usage['id'] in (usage.id for usage in billto_usages)
 
 def test_delete_usage_unauthorized():
     current_user_id = env.context.user_id
