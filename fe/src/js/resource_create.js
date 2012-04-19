@@ -1,23 +1,41 @@
 //*****************************Global Section***********************************
 var picture = null;
 var image_size_limit = 256000;//256kb
-var checked_map = {'checked':1, 'on':1, undefined:0};
+var calc_modes = {quantity_based: 0, time_based: 1, monthly: 2}
+
+function ResourceViewModel(invoice) {
+    var self = this;
+    self.resource_type = ko.observable('room');
+    self.time_based = ko.observable(true);
+    self.calendar = ko.observable(true);
+
+    self.resource_type.subscribe(function(type) {
+        var is_room = (type == 'room');
+        self.time_based(is_room);
+        self.calendar(is_room);
+    });
+};
+
+model = new ResourceViewModel();
+ko.applyBindings(model);
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Global Sectionxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //****************************Save Resource*************************************
-var create_resource_form = $('#createresource_form');
-$("#calc_mode").click();
-function create_resource () {
-    var action_status = $('#createresource_form .action-status');
+
+function create_resource (form) {
+    var theform = $(form);
+    theform.checkValidity();
+    var action_status = $('.action-status');
     action_status.text("Creating resource ...");
-    var inputs = create_resource_form.serializeArray();
+    var inputs = theform.serializeArray();
     var params = {}
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     }
     params.owner = current_ctx;    
     params.picture = picture;
-    params.calc_mode = checked_map[params.calc_mode];
+    params.calc_mode = model.time_based() ? calc_modes.time_based : calc_modes.quantity_based;
+    params.calendar = model.calendar();
     function success() {
         action_status.text("Resource created successfully").attr('class', 'status-success');
         setTimeout(function(){
@@ -30,11 +48,6 @@ function create_resource () {
     jsonrpc('resource.new', params, success, error);
 };
 
-create_resource_form.submit( function () {
-    $(this).checkValidity();
-    create_resource();
-    return false;
-});
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxEnd Save Resourcexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //***************************Upload Resource Picture****************************
