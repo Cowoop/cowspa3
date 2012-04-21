@@ -4,6 +4,7 @@ import be.repository.access as dbaccess
 import commonlib.helpers as helpers
 import be.apis.activities as activitylib
 import be.apis.user as userlib
+import be.apis.role as rolelib
 import commonlib.shared.static as data_lists
 import be.apis.invoicepref as invoicepreflib
 
@@ -14,7 +15,7 @@ profile_store = dbaccess.stores.memberprofile_store
 memberpref_store = dbaccess.stores.memberpref_store
 
 class MemberCollection:
-    def new(self, email, username=None, password=None, first_name=None, enabled=True, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, work=None, home=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by='', tariff_id=None):
+    def new(self, email, username=None, password=None, first_name=None, enabled=True, language='en', last_name=None, name=None, interests=None, expertise=None, address=None, city=None, province=None, country=None, pincode=None, work=None, home=None, mobile=None, fax=None, skype=None, website=None, short_description=None, long_description=None, twitter=None, facebook=None, blog=None, linkedin=None, use_gravtar=None, theme="default", mtype="individual", organization=None, company_no=None, number=None, created=None, enc_password=None,  biz_type='', introduced_by='', tariff_id=None, bizplace_id=0):
 
         if not name: name = first_name + ' ' + (last_name or '')
         created = created if created else datetime.datetime.now() # migration specific
@@ -34,8 +35,11 @@ class MemberCollection:
 
         invoicepreflib.invoicepref_collection.new(**dict(owner=user_id))
 
+        new_roles = ['member'] if bizplace_id else ['registered']
+        rolelib.new_roles(user_id=user_id, roles=['member'], context=bizplace_id)
+
         data = dict(name=name, id=user_id)
-        member_activities = dict(individual=dict(category='member_management', name='member_created'),\
+        member_activities = dict(individual=dict(category='member_management', name='member_created'),
                                  organization=dict(category='organization_management', name='organization_created'))
         activity_id = activitylib.add(member_activities[mtype]['category'], member_activities[mtype]['name'], data, created)
 
