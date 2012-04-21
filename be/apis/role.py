@@ -89,24 +89,18 @@ def get_roles(user_id=None, role_filter=[]):
 def get_permissions(user_id):
     return dbaccess.userpermission_store.get_by(dict(user_id=user_id), ['context', 'permission'], hashrows=False)
 
-def get_team_in_context(context):
+def get_team(context):
     """
     returns all entries having role defined for that context
     """
-    users = set()
-    res = dbaccess.userrole_store.get_by(dict(context=context),['user_id'])
-    #To ensure that user with multiple role is shown only once
-    #TODO : Is there a better way ?
-    for rec in res:
-        users.add(rec['user_id'])
+    user_ids = set(row[0] for row in dbaccess.userrole_store.get_by(dict(context=context), ['user_id'], hashrows=False))
 
     result = []
-    for usrid in users:
-        usr_dict = {}
-        usr_dict['user'] = member_store.get(usrid, 'name')
-        usr_dict['user_id'] = usrid
-        usr_dict['roles'] = get_roles_in_context(usrid,context)
-        result.append(usr_dict)
+    for id in user_ids:
+        d = dict(id=id)
+        d['name'] = member_store.get(id, 'name')
+        d['roles'] = get_roles_in_context(id, context)
+        if not d['roles'] == ['member']:
+            result.append(d)
 
     return result
-

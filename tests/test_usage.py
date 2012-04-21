@@ -18,7 +18,7 @@ booking_id = None
 def setup():
     commontest.setup_test_env()
     env.context.pgcursor.connection.commit()
-    commontest.setup_system_context()
+    be.apis.user.set_context(test_data.member_id)
 
 def test_add_usage():
     data = test_data.usage
