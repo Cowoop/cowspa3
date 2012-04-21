@@ -2,7 +2,7 @@ $('#createmember_form').submit(function () {
     var theform = $(this);
     theform.checkValidity();
     var inputs = theform.serializeArray();
-    var params = {};
+    var params = {bizplace_id: current_ctx};
     for(var i in inputs){
         params[inputs[i].name] = inputs[i].value;
     };

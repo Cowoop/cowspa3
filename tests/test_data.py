@@ -8,6 +8,8 @@ admin = None
 bizplace = dict(name='Hub Timbaktu', address='118, Lotus road', city='Timbaktu', country='466', email='info@localhost.localdomain', short_description='An awesome Coworking place at Timbaktu', booking_email='booking@localhost.localdomain', host_email='hosts@localhost.localdomain')
 bizplace_id = None
 
+bizplace_sample = dict(name='CoBiz Place', address='119, Lotus road', city='Timbaktu', country='466', email='info@localhost.localdomain', short_description='An awesome Coworking place at Timbaktu', booking_email='booking@localhost.localdomain', host_email='hosts@localhost.localdomain')
+
 plan_data = dict(name="Hub 25", short_description="Not just another plan", type="tariff", default_price=90)
 plan_id = None
 more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
@@ -15,6 +17,8 @@ new_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", def
 
 member = dict(username='kit', password='x', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
 member_id = None
+
+bizplace_member = dict(username='bruba', password='x', first_name='Bruce', last_name='Banner', email='hulk@localhost.localdomain', enabled=True)
 
 more_member = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@localhost.localdomain'),

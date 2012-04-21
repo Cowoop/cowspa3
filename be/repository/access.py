@@ -358,7 +358,7 @@ def search_members(words, context, options, limit):
         member_ids = tuple(row[0] for row in member_store.query_exec(q, values, hashrows=False))
         # Query below purposely leave starts clause. Including starts makes it 10x slower.
         q = "SELECT DISTINCT member_id FROM membership WHERE membership.bizplace_id = %(context)s AND (ends >= now() OR ends IS NULL) AND member_id IN %(member_ids)s"
-        q_values = dict(context=context, member_ids=member_ids)
+        values = values.update(context=context, member_ids=member_ids)
         member_ids = tuple(row[0] for row in member_store.query_exec(q, q_values, hashrows=False))
         q = "SELECT " + fields_s + " FROM member WHERE id IN %(member_ids)s LIMIT %(limit)s"
         q_values = dict(member_ids=member_ids, limit=limit)
@@ -367,6 +367,21 @@ def search_members(words, context, options, limit):
         q = "SELECT " + fields_s + " FROM member WHERE member.name ilike %(pat)s"
         q += " LIMIT %(limit)s"
         return member_store.query_exec(q, values)
+
+def search_members(words, context, options, limit):
+    pat = ''.join((word + '%') for word in words)
+    values = dict(pat=pat, context=context, limit=limit)
+    values.update(options)
+    options_clause = "member.enabled = %(enabled)s " + (" AND type = %(type)s" if options['type'] else "")
+    fields_s = "member.id, member.name, member.name as label"
+    if context:
+        q = "SELECT DISTINCT user_id FROM userrole WHERE context = %(context)s"
+        member_ids = tuple(row[0] for row in member_store.query_exec(q, values, hashrows=False))
+        q = "SELECT " + fields_s + " FROM member WHERE (member.name ILIKE %(pat)s OR member.email ILIKE %(pat)s) AND member.id IN %(member_ids)s AND " + options_clause
+        values['member_ids'] = member_ids
+        return member_store.query_exec(q, values)
+    q = "SELECT " + fields_s + " FROM member WHERE (member.name ILIKE %(pat)s OR member.email ILIKE %(pat)s) AND " + options_clause + " LIMIT %(limit)s"
+    return member_store.query_exec(q, values)
 
 
 def get_resource_pricing(plan_id, resource_id, usage_time, exclude_pricings=[]):
