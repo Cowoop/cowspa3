@@ -79,10 +79,8 @@ function load_team() {
 
 }
 
-$(document).ready(function() {
-    search_members_autocomplete();
-    load_team();
-});
+search_members_autocomplete();
+load_team();
 
 
 var theform = $('#team_form');
