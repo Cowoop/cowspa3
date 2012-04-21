@@ -27,7 +27,8 @@ class BizplaceCollection:
                 host_email=host_email, booking_email=booking_email, tz=tz)
         bizplace_store.add(**data)
 
-        rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
+        if not env.context.name == env.config.system_username:
+            rolelib.new_roles(user_id=env.context.user_id, roles=['director', 'host'], context=bizplace_id)
 
         start_number=dbaccess.generate_invoice_start_number()
         invoicepreflib.invoicepref_collection.new(**dict(owner=bizplace_id, start_number=start_number))
