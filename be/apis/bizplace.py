@@ -4,6 +4,7 @@ import be.apis.role as rolelib
 import be.apis.activities as activitylib
 import be.apis.member as memberlib
 import be.apis.resource as resourcelib
+import be.apis.usage as usagelib
 import commonlib.shared.static as static
 import be.apis.invoicepref as invoicepreflib
 from babel.numbers import get_currency_symbol, get_decimal_symbol, get_group_symbol
@@ -11,11 +12,9 @@ from babel.numbers import get_currency_symbol, get_decimal_symbol, get_group_sym
 bizplace_store = dbaccess.stores.bizplace_store
 
 class BizplaceCollection:
-    def new(self, name, address, city, country, email, short_description, province=None,
-            long_description=None, tags=None, website=None, blog=None,
-            twitter=None, facebook=None, linkedin=None, phone=None, fax=None,
-            skype=None, mobile=None, currency='USD', host_email=None,
-            booking_email=None, tz='UTC', skip_default_tariff=False):
+    def new(self, name, address, city, country, email, short_description, province=None, long_description=None, tags=None, website=None,
+        blog=None, twitter=None, facebook=None, linkedin=None, phone=None, fax=None, skype=None, mobile=None, currency='USD',
+        host_email=None, booking_email=None, tz='UTC', skip_default_tariff=False, add_dummy_data=False):
 
         created = datetime.datetime.now()
         bizplace_id = dbaccess.OidGenerator.next("BizPlace")
@@ -39,6 +38,20 @@ class BizplaceCollection:
 
         data = dict(name=name, id=bizplace_id)
         activity_id = activitylib.add('bizplace_management', 'bizplace_created', data, created)
+
+        if add_dummy_data:
+# name, short_description, type, owner, default_price=None, enabled=True, calendar=False, host_only=False, long_description=None, calc_mode=CalcMode.monthly
+            resource_id = resourcelib.resource_collection.new(name="Sunshine Room (Sample)", short_description="Room with nice windows. Can accomodate twenty people. _Sample resource_", type="room", owner=bizplace_id, default_price=100, calendar=True, calc_mode=resourcelib.CalcMode.time_based)
+            # Sample usage 1
+            now = datetime.datetime.now()
+            start_time = datetime.datetime(now.year, now.month, now.day, 9, 0, 0)
+            end_time = datetime.datetime(now.year, now.month, now.day, 12, 0, 0)
+            usagelib.usage_collection.new(resource_id=resource_id, resource_name="Sunshin Room (Sample)", resource_owner=bizplace_id, member=env.context.user_id, start_time=start_time, end_time=end_time)
+            # Sample usage 2
+            start_time = datetime.datetime(now.year, now.month, now.day, 12, 0, 0)
+            end_time = datetime.datetime(now.year, now.month, now.day, 15, 0, 0)
+            usagelib.usage_collection.new(resource_id=resource_id, resource_name="Sunshin Room (Sample)", resource_owner=bizplace_id, member=env.context.user_id, start_time=start_time, end_time=end_time)
+            tariff_id = resourcelib.resource_collection.new_tariff(name="Starter Plan (Sample)", short_description="_Sample membership plan_ Great plan for startups", type="tariff", owner=bizplace_id, default_price=299)
 
         return bizplace_id
 
