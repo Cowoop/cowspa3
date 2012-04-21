@@ -261,7 +261,7 @@ class EditProfile(BasePage):
         about.add_field("First Name", tf.INPUT(name='first_name', type="text").set_required(), container_classes=['individual'])
         about.add_field("Last Name", tf.INPUT(name='last_name', type="text"), container_classes=['individual'])
         about.add_field("Name", tf.INPUT(name='name', type="text"), container_classes=['organization'])
-        about.add_field("Organization Number", tf.INPUT(name='organization_no', type="text"), container_classes=['organization'])
+        #about.add_field("Organization Number", tf.INPUT(name='company_no', type="text"), container_classes=['organization'])
         about.add_field("Short description", tf.INPUT(name='short_description', type="text"))
         about.add_field("Long description", tf.TEXTAREA(name='long_description', type="text"))
         about.add_buttons(tf.BUTTON("Update", type="submit"))
