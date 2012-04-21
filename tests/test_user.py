@@ -18,3 +18,7 @@ def test_role_assign():
     roles = ['host', 'director']
     rolelib.new_roles(member_id, roles, test_data.bizplace_id)
     env.context.pgcursor.connection.commit()
+
+def test_team():
+    team = rolelib.get_team(test_data.bizplace_id)
+    assert True == any(member['id'] == test_data.member_id for member in team)
