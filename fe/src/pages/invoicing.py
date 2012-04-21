@@ -294,7 +294,7 @@ class Uninvoiced(BasePage):
         container.search.title.number = tf.SPAN(symbols.circled_nums.two, Class='text-xxl')
         container.search.title.description = tf.SPAN('Search uninvoiced usages')
         container.search.workspace = tf.DIV(Class='workspace')
-        container.search.workspace.status = tf.DIV('Searching for uninvoiced usages ...', data_bind="visible: uninvoiced_status == 0")
+        container.search.workspace.status = tf.DIV('Searching for uninvoiced usages ...', data_bind="visible: uninvoiced_status() == 0")
         container.search.workspace.status_err = tf.DIV('Error searching uninvoiced usages', Class='status-failure', data_bind="visible: uninvoiced_status == 2")
 
         form = sphc.more.Form(classes=['hform'], data_bind="visible: section_active() == 'search', submit: generate")
