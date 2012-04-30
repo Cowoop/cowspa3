@@ -41,7 +41,7 @@ function search_members_autocomplete() {
 // Based on the roles
 function init_checkboxes(result) {
     for (var i=0; i < result.length; i++) {
-        var usrid = result[i]['user_id'];
+        var usrid = result[i].id;
         $('#chkboxes-'+usrid+' [name="roles"]').each(function() {
             if (result[i]['roles'].indexOf($(this).val()) != -1) {
                 $(this).attr('checked', true);
