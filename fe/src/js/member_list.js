@@ -5,7 +5,6 @@ function on_get_member_list_success(response) {
         var item = data[i];
         aaData.push([item.name, item.number, item.tariff_name, item.email]);
     };
-    console.log(aaData);
     $('#member_table').dataTable({
     	"sDom": '<"H"lT>rt<"F"ip>',
     	"oTableTools": {
