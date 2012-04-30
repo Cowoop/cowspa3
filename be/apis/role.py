@@ -100,7 +100,7 @@ def get_team(context):
         d = dict(id=id)
         d['name'] = member_store.get(id, 'name')
         d['roles'] = get_roles_in_context(id, context)
-        if not d['roles'] == ['member']:
+        if not d['roles'] == ('member',):
             result.append(d)
 
     return result
