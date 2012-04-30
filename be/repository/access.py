@@ -527,3 +527,21 @@ def get_billfrom_members(member, members=None):
     for member_id in (row[0] for row in invoicepref_store.get_by(dict(billto=member, mode=2), fields=['owner'], hashrows=False)):
         get_billfrom_members(member_id, members)
     return members
+
+def find_members_by_roles(ctx, roles):
+    values = dict(context=ctx, roles=tuple(roles))
+    clause = "context=%(context)s AND role IN %(roles)s"
+    userroles = userrole_store.get_by_clause(clause, values, fields=['user_id'], hashrows=False)
+    ids = set(row[0] for row in userroles)
+    members = member_store.get_many(ids, fields=['id', 'name', 'number', 'email'])
+
+    q = 'member_id IN %(ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL) AND bizplace_id = %(bizplace_id)s'
+    values = dict(at_time=datetime.datetime.now(), bizplace_id=ctx, ids=tuple(ids))
+    memberships = membership_store.get_by_clause(q, values, fields=['member_id', 'tariff_name', 'tariff_id'])
+    memberships_d = dict((membership.member_id, membership) for member in memberships)
+
+    for member in members:
+        tariff_d = memberships_d.get(member.id, dict(tariff_name=None, tariff_id=None))
+        member.update(tariff_d)
+
+    return members

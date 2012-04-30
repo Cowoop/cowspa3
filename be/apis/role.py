@@ -104,3 +104,6 @@ def get_team(context):
             result.append(d)
 
     return result
+
+def members_by_roles(context, roles=['member']):
+    return dbaccess.find_members_by_roles(context, roles)
