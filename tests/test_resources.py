@@ -51,6 +51,6 @@ def test_set_relations():
     resourcelib.resource_resource.set_relations(test_data.resource_id, relations)
     env.context.pgcursor.connection.commit()
     relation_dicts = resourcelib.resource_resource.get_relations(test_data.resource_id)
-    assert relation_dicts[False] == [dict(id=res_ids[2], name='RES3', calc_mode=2)]
-    assert relation_dicts[True] == [dict(id=res_ids[0], name='RES1', calc_mode=2), dict(id=res_ids[1], name='RES2', calc_mode=2)]
+    assert relation_dicts[False] == [dict(id=res_ids[2], name='RES3', calc_mode=0)]
+    assert relation_dicts[True] == [dict(id=res_ids[0], name='RES1', calc_mode=0), dict(id=res_ids[1], name='RES2', calc_mode=0)]
     assert res_ids[2] not in resourcelib.resource_collection.bookable(test_data.bizplace_id)

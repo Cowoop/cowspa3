@@ -101,3 +101,17 @@ def test_generate():
         expected_members = set(dbaccess.get_billfrom_members(invoice.member))
         assert member_ids.issubset(expected_members)
     env.context.pgcursor.connection.commit()
+
+def test_add_usages():
+    # to test uninvoiced usages
+    data = dict(
+        resource_id=test_data.more_resource_ids[-1],
+        member=test_data.member_id,
+        resource_owner=test_data.bizplace_id )
+    for i in range(21):
+        data['start_time'] = datetime.datetime.now().isoformat()
+        data['quantity'] = i
+        data['resource_name'] = 'Usage %s' % i
+        usage_id = usagelib.usage_collection.new(**data)
+        assert isinstance(usage_id, (int, long))
+    env.context.pgcursor.connection.commit()
