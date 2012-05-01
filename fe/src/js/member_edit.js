@@ -585,11 +585,13 @@ $('#submit-usage').click(function(){
 $("#new_usage-btn").click(function(){
     window.location.hash = "/" + thismember_id + "/usages/new";
 });
-$(".cancel-usage").click(function(){
-    window.location.hash = "/" + thismember_id + "/usages";
-    $('#add-usage-form .action-status').text("").removeClass('status-fail status-success');
-    $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
-});
+function bind_actions() {
+    $(".cancel-usage").click(function(){
+        window.location.hash = "/" + thismember_id + "/usages";
+        $('#add-usage-form .action-status').text("").removeClass('status-fail status-success');
+        $('#edit_usage-form .action-status').text("").removeClass('status-fail status-success');
+    });
+};
 //-----------------------------Uninvoiced Usages--------------------------------
 function get_uninvoiced_usages(){
     function success(response){
@@ -635,9 +637,14 @@ function get_uninvoiced_usages(){
                         return edit_link + "<c> | </c>" + cancel_link;
                         }
                 },
-            ]
+            ],
+        "fnDrawCallback": function() {
+            var delete_usage_links = $('.delete-usage');
+            delete_usage_links.unbind();
+            delete_usage_links.click(delete_usage);
+        }
+
         });
-        $(".delete-usage").click(delete_usage);
     };
     function error(){};
     var params = { 'member_ids' : [thismember_id], 'uninvoiced':true, 'res_owner_ids':[parseInt(current_ctx, 10)]};

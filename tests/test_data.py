@@ -41,9 +41,9 @@ another_resource_data = dict(name='GlassHouse II', short_description='Room with 
 resource_id = None
 another_resource_id = None
 
-more_resources = [dict(name='RES1', short_description='Resource 1', type='Type1', default_price=10),
-    dict(name='RES2', short_description='Resource 2', type='Type2', enabled=True, host_only=True, default_price=10.10),
-    dict(name='RES3', short_description='Resource 3', type='Type1', default_price=11)]
+more_resources = [dict(name='RES1', short_description='Resource 1', type='Type1', default_price=10, calc_mode=0),
+    dict(name='RES2', short_description='Resource 2', type='Type2', enabled=True, host_only=True, default_price=10.10, calc_mode=0),
+    dict(name='RES3', short_description='Resource 3', type='Printer', default_price=11, calc_mode=0)]
 more_resource_ids = []
 
 usage = dict(resource_name='RES1', quantity=11, cost=1050, tax_dict=(('VAT', 100), ('Service Tax', 50)))
@@ -54,7 +54,7 @@ more_usages = [
     dict(resource_name='RES3', quantity=13, cost=1050, tax_dict=(('VAT', 100))),
     ]
 
-invoice_preference_data = dict(due_date=30, bcc_email="pune@cowoop.net", bank_details="Bank of India,\nPune", logo="", start_number=1500000)
+invoice_preference_data = dict(due_date=30, bcc_email="pune@localhost.localdomain", bank_details="Coop Bank,\nPune", logo="", start_number=1500000)
 
 taxes = dict(tax=7.5, vat=5)
 
