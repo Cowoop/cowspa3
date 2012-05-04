@@ -82,7 +82,7 @@ function set_userid(uid) {
 function jsonrpc(apiname, params, success, error, async) {
     var waiting_ele = $('div#main');
     waiting_ele.addClass('waiting');
-    if (typeof(error) === 'undefined') { async = allow_async; };
+    if (typeof(async) === 'undefined') { async = allow_async; };
     if (typeof(error) === 'undefined') { error = function(resp) { alert('Remote error: ' + apiname + ': ' + resp.error.message); }; };
     var cs_success = function(args) {
         waiting_ele.removeClass('waiting');
