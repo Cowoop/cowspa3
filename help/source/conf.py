@@ -93,22 +93,8 @@ def set_rst_prolog():
     sys.path.insert(0, '../..') # add cowspa dir to module search path
     import commonlib.readconf as readconf
 
-    CONF_DEFAULT = 'conf_default'
-    CONF_TEST = 'conf_test'
-    CONF_PRODUCTION = 'conf_pro'
-    CONF_DEVELOPMENT = 'conf_dev'
+    config = readconf.parse_config()
 
-    conf_default = __import__(CONF_DEFAULT)
-    config = readconf.parse_config(conf_default)
-
-    if config.conf_mode == 'testing':
-        conf_local = __import__(CONF_TEST)
-    elif config.conf_mode == 'production':
-        conf_local = __import__(CONF_PRODUCTION)
-    elif config.conf_mode == 'development':
-        conf_local = __import__(CONF_DEVELOPMENT)
- 
-    config = readconf.parse_config(conf_default, conf_local)
     network = config.words['NETWORK']
     bizplace = config.words['BIZPLACE']
     product = config.words['PRODUCT']
