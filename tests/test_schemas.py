@@ -2,7 +2,7 @@ import commontest
 import be.repository.stores as stores
 import be.repository.access
 
-commontest.setup_test_simple_env()
+commontest.setup_test_env()
 
 def test_create():
     assert bool(stores.known_stores) == True
