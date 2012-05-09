@@ -1,8 +1,9 @@
 config = {
-    'pg_uri': 'dbname=shon',
+    'mode': 'DEV', # Options: DEV, TEST, PROD
+    'pgdb': {'database': 'shon'}, # eg. {'database': 'mydb', 'username': 'shon', 'password': 'secret', 'host': 'localhost', 'port': ..}
     'random_str': 'PLEASE_CHANGE',
     'mail': {
-        'mail.on': True,
+        'mail.on': False,
         'mail.transport': 'smtp',
         'mail.smtp.server': 'localhost',
         'mail.smtp.port': 25,

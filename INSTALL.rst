@@ -28,8 +28,7 @@ Development env setup
     pip install -r requirements.txt
     pip install -r dev-requirements.txt # optional packages useful in cowspa3 development
     bash wkhtmltox-installer.sh
-    vi conf_dev.py # Refer conf_default.py
-    vi conf_test.py 
+    vi conf_local.py # Refer conf_default.py
 
     # Admin account setup
     python bin/setup.py

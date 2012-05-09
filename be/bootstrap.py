@@ -20,14 +20,9 @@ def setup_process_model(use_gevent=True):
         localprov = threading
     return localprov
 
-def setup_env(conf):
+def setup_env():
     class env: pass
-    try:
-        conf_local = __import__(conf)
-    except Exception as err:
-        print(err)
-        conf_local = None
-    env.config = readconf.parse_config(conf_default, conf_local)
+    env.config = readconf.parse_config()
     use_gevent = not env.config.threaded
     localprov = setup_process_model(use_gevent)
     commonlib.helpers.random_key_gen = commonlib.helpers.RandomKeyFactory(env.config.random_str)
@@ -49,14 +44,14 @@ def setup_pg_provider():
     provider.startup()
     return provider
 
-def start(conf, debug=False):
+def start():
     commonlib.helpers.setdefaultencoding()
-    env = setup_env(conf)
-    env.__cs_debug__ = debug
+    env = setup_env()
+    env.__cs_debug__ = env.config.mode in ('DEV', 'TEST')
     provider = setup_pg_provider()
     provider.tr_start(env.context)
     setup_stores()
     provider.tr_complete(env.context)
     provider.tr_start(env.context) # This is to make sure other db transactions in same thread works. Such as Test cases.
 
-#start(conf='conf_dev')
+#start()
