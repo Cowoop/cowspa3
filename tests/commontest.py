@@ -7,30 +7,20 @@ import sys
 import psycopg2
 import psycopg2.extras
 import psycopg2.pool
-import conf_test
+import conf_local
 import be.bootstrap
 import be.apis.user
 
 sys.path.append('.')
 
-def setup_test_cursor():
-    pool = psycopg2.pool.SimpleConnectionPool(5, 5, conf_test.config['pg_uri'])
-    cursor = pool.getconn().cursor()
-    cursor_getter = lambda x=None: cursor
-    return cursor_getter
-
-def setup_test_simple_env():
-    cursor_getter = setup_test_cursor()
-    class env:
-        class context:
-            pgcursor = cursor_getter()
-    builtins.env = env
-
 def load_apis():
     import be.apps
-    
+
 def setup_test_env():
-    be.bootstrap.start('conf_test', 1)
+    be.bootstrap.start()
+    if not env.config.mode == 'TEST':
+        sys.stderr.write('Not in TEST mode\n')
+        sys.exit(1)
     load_apis()
 
 def setup_system_context():

@@ -28,9 +28,9 @@ class PGProvider(persistence.DBProvider):
     def startup(self):
         global pool
         if self.threaded:
-            pool = psycopg2.pool.PersistentConnectionPool(5, 10, env.config.pg_uri)
+            pool = psycopg2.pool.PersistentConnectionPool(5, 10, **env.config.pgdb)
         else:
-            pool = psycopg2.pool.SimpleConnectionPool(5, 10, env.config.pg_uri)
+            pool = psycopg2.pool.SimpleConnectionPool(5, 10, **env.config.pgdb)
 
     def shutdown(self):
         pool.close_all()
