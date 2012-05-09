@@ -6,7 +6,7 @@ path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, current_app
 from werkzeug.wsgi import SharedDataMiddleware
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -15,6 +15,10 @@ import commonlib.helpers as helpers
 
 static_root = 'pub'
 landing_pages = dict(member='booking/new', host='dashboard', director='dashboard', new='/new', admin='dashboard')
+
+def jsonify(obj):
+    dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
+    return current_app.response_class(simplejson.dumps(obj, use_decimal=True, default=dthandler), mimetype='application/json')
 
 def construct_home_url(auth_token, context):
     home_url = 'login'
@@ -78,7 +82,7 @@ def search(entity):
         options = request.args.get('options', {}) )
     params = {"jsonrpc": "2.0", "method": "members.search", "params": params, "id": 1}
     data = cowspa.dispatch(auth_token, params)
-    return helpers.jsonify(data['result'])
+    return jsonify(data['result'])
 
 @app.route('/swf/<file_name>', methods=['GET', 'POST'])
 def get_swf(file_name):
@@ -100,7 +104,7 @@ def api_dispatch():
     auth_token = request.cookies.get('authcookie') if request.json.get('method') != 'login' else None
     # ex. request.json: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
     data = cowspa.dispatch(auth_token, request.json)
-    return helpers.jsonify(data)
+    return jsonify(data)
 
 
 if __name__ == '__main__':

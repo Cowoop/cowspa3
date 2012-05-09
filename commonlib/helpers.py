@@ -8,9 +8,7 @@ import itertools
 import collections
 import base64, random, hashlib
 import dateutil.parser
-import wkhtmltox
 import simplejson
-from flask import current_app
 
 random_key_gen = None
 
@@ -59,13 +57,6 @@ def setdefaultencoding():
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-def html2pdf(input_file ,output_file):
-    pdf = wkhtmltox.Pdf()
-    pdf.set_global_setting('out', output_file)
-    pdf.add_page({'page': input_file})
-    pdf.convert()
-    return True
-
 def date4human(date_or_iso):
     if not isinstance(date_or_iso, (datetime.date, datetime.datetime)):
         date_or_iso = iso2date(date_or_iso)
@@ -89,10 +80,14 @@ def iso2datetime(iso):
         return iso
     return dateutil.parser.parse(iso) if iso else None
 
-def jsonify(obj):
-    dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
-    return current_app.response_class(simplejson.dumps(obj, use_decimal=True, default=dthandler), mimetype='application/json')
-
 def sortngroupby(iterable, keyfn, reverse=False):
     l = sorted(iterable, key=keyfn)
     return itertools.groupby(l, keyfn)
+
+def html2pdf(input_file ,output_file):
+    import wkhtmltox
+    pdf = wkhtmltox.Pdf()
+    pdf.set_global_setting('out', output_file)
+    pdf.add_page({'page': input_file})
+    pdf.convert()
+    return True
