@@ -1,6 +1,6 @@
 import os
 import sys
-from jsonrpc2 import JsonRpc
+import simplejson
 
 path = os.path.abspath(os.getcwd())
 sys.path.insert(0, '.')
@@ -111,7 +111,6 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Run cowspa server.')
     parser.add_argument('-d', '--dev', action="store_true", default=False, help='Development mode. Caching turned off')
-    parser.add_argument('-c', '--conf', action="store", default="prod", help='Conf mode. Load conf from conf_<mode>.py')
     args = parser.parse_args()
     if args.dev :
         print('Development mode ON. Caching turned OFF')
@@ -120,7 +119,7 @@ if __name__ == '__main__':
 
     import be.bootstrap
     import be.apis.user as userlib
-    be.bootstrap.start('conf_' + args.conf, args.dev)
+    be.bootstrap.start()
     import be.apps
     cowspa = be.apps.cowspa
     import be.apis.invoice as invoicelib

@@ -1,4 +1,5 @@
 config = {
+    'name': 'NAME_OF_THE_INSTANCE', # eg. cowork_org_prod
     'mode': 'DEV', # Options: DEV, TEST, PROD
     'pgdb': {'database': 'shon'}, # eg. {'database': 'mydb', 'username': 'shon', 'password': 'secret', 'host': 'localhost', 'port': ..}
     'random_str': 'PLEASE_CHANGE',

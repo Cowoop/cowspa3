@@ -7,8 +7,6 @@ import datetime
 import itertools
 import collections
 import base64, random, hashlib
-import dateutil.parser
-import simplejson
 
 random_key_gen = None
 
@@ -76,6 +74,7 @@ def iso2date(iso):
     return datetime.datetime.strptime(iso[0:10], "%Y-%m-%d").date() if iso else None
 
 def iso2datetime(iso):
+    import dateutil.parser
     if isinstance(iso, datetime.datetime):
         return iso
     return dateutil.parser.parse(iso) if iso else None
