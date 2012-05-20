@@ -532,15 +532,14 @@ def get_members_data(ctx, extra_fields=[]):
     """
     extra_fields: list of more fields to include. Options: organzation, website, long_description
     """
-    values = dict(context=ctx, role='member')
-    clause = "context=%(context)s AND role = %(role)s"
-    userroles = userrole_store.get_by_clause(clause, values, fields=['user_id'], hashrows=False)
+    userroles = userrole_store.get_by(crit=dict(context=ctx), fields=['user_id'], hashrows=False)
     ids = set(row[0] for row in userroles)
     fields = ['id', 'first_name', 'last_name', 'number', 'mobile', 'email'] + extra_fields
     data = member_store.get_many(ids, fields, hashrows=False)
     header = list(fields) # copy
 
     tariff_fields = ['tariff_name', 'tariff_id']
+    header.extend(tariff_fields)
     q = 'member_id IN %(ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL) AND bizplace_id = %(bizplace_id)s'
     values = dict(at_time=datetime.datetime.now(), bizplace_id=ctx, ids=tuple(ids))
     memberships = membership_store.get_by_clause(q, values, fields=(['member_id'] + tariff_fields))
