@@ -90,8 +90,12 @@ class MemberCollection:
         options = dict((k, options.get(k, v)) for k,v in options_default.items())
         return dbaccess.search_members(words, context, options, limit)
 
-    def export(self, context, format=None):
-        header, data = dbaccess.get_members_data(context)
+    def export(self, context, extra_fields=[], format=None):
+        """
+        extra_fields: list of more fields to include. Options: organzation, website, long_description
+        format: None, csv
+        """
+        header, data = dbaccess.get_members_data(context, extra_fields)
         contents = (header, data)
         if format == 'csv':
             out = cStringIO.StringIO()
