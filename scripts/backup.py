@@ -34,6 +34,7 @@ def pg_prep():
     pgpass_fd.close()
     os.chmod(pgpass_path, 0600)
     env = dict(os.environ)
+    env['PGUSER'] = pgconf['user']
     env['PGDATABASE'] = pgconf['database']
     env['PGPASSFILE'] = pgpass_path
     return env
