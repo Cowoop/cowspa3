@@ -1,4 +1,6 @@
 import datetime
+import csv
+import cStringIO
 import commonlib.shared.constants
 import be.repository.access as dbaccess
 import commonlib.helpers as helpers
@@ -87,6 +89,18 @@ class MemberCollection:
         options_default = dict(enabled=True, type=None)
         options = dict((k, options.get(k, v)) for k,v in options_default.items())
         return dbaccess.search_members(words, context, options, limit)
+
+    def export(self, context, format=None):
+        header, data = dbaccess.get_members_data(context)
+        contents = (header, data)
+        if format == 'csv':
+            out = cStringIO.StringIO()
+            writer = csv.writer(out, lineterminator='\n', quoting=csv.QUOTE_ALL)
+            writer.writerow(header)
+            writer.writerows(data)
+            contents = out.getvalue()
+            out.close()
+        return contents
 
 class MemberResource:
 

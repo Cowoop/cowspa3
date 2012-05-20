@@ -528,20 +528,26 @@ def get_billfrom_members(member, members=None):
         get_billfrom_members(member_id, members)
     return members
 
-def find_members_by_roles(ctx, roles):
-    values = dict(context=ctx, roles=tuple(roles))
-    clause = "context=%(context)s AND role IN %(roles)s"
+def get_members_data(ctx, extra_fields=[]):
+    """
+    extra_fields: list of more fields to include. Options: organzation, website, long_description
+    """
+    values = dict(context=ctx, role='member')
+    clause = "context=%(context)s AND role = %(role)s"
     userroles = userrole_store.get_by_clause(clause, values, fields=['user_id'], hashrows=False)
     ids = set(row[0] for row in userroles)
-    members = member_store.get_many(ids, fields=['id', 'name', 'number', 'email'])
+    fields = ['id', 'first_name', 'last_name', 'number', 'mobile', 'email'] + extra_fields
+    data = member_store.get_many(ids, fields, hashrows=False)
+    header = list(fields) # copy
 
+    tariff_fields = ['tariff_name', 'tariff_id']
     q = 'member_id IN %(ids)s AND starts <= %(at_time)s AND (ends >= %(at_time)s OR ends is NULL) AND bizplace_id = %(bizplace_id)s'
     values = dict(at_time=datetime.datetime.now(), bizplace_id=ctx, ids=tuple(ids))
-    memberships = membership_store.get_by_clause(q, values, fields=['member_id', 'tariff_name', 'tariff_id'])
+    memberships = membership_store.get_by_clause(q, values, fields=(['member_id'] + tariff_fields))
     memberships_d = dict((membership.member_id, membership) for membership in memberships)
 
-    for member in members:
-        tariff_d = memberships_d.get(member.id, dict(tariff_name=None, tariff_id=None))
-        member.update(tariff_d)
+    for member in data:
+        tariff_d = memberships_d.get(member[0], dict(tariff_name=None, tariff_id=None))
+        member.extend((tariff_d[tariff_fields[0]], tariff_d[tariff_fields[1]]))
 
-    return members
+    return header, data

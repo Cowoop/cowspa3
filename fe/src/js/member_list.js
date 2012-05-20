@@ -1,10 +1,13 @@
+var headers = ["Name", "Membership No.", "Tariff", "Mobile", "Email"]
+
 function on_get_member_list_success(response) {
-    var data = response.result;
+    var data = response.result[1];
     var aaData = [];
     for (var i=0; i < data.length; i++) {
         var item = data[i];
-        aaData.push([item.name, item.number, item.tariff_name, item.email]);
+        aaData.push([item[1] + ' ' + item[2], item[3], item[6], item[4], item[5]]);
     };
+
     $('#member_table').dataTable({
     	"sDom": '<"H"lT>rt<"F"ip>',
     	"oTableTools": {
@@ -16,10 +19,11 @@ function on_get_member_list_success(response) {
     "sPaginationType": "full_numbers",
     "aaSorting": [[ 0, "asc" ]],
     "aoColumns": [
-            { "sTitle": "Name", "sWidth": "25%" },
-            { "sTitle": "Membership No", "sWidth": "25%"},
-            { "sTitle": "Membership", "sWidth": "25%" },
-            { "sTitle": "Email", "sWidth": "25%",
+            { "sTitle": headers[0], "sWidth": "25%" },
+            { "sTitle": headers[1], "sWidth": "15%" },
+            { "sTitle": headers[2], "sWidth": "20%"},
+            { "sTitle": headers[3], "sWidth": "20%" },
+            { "sTitle": headers[4], "sWidth": "20%",
                 "fnRender": function(obj) {
                     var email = obj.aData[obj.iDataColumn];
                     return "<A href='mailto:"+email+"'>"+email+"</A>";
@@ -27,5 +31,10 @@ function on_get_member_list_success(response) {
             }
             ]
     });
+    on_render_table();
 };
-jsonrpc('roles.members_by_roles', {context: current_ctx}, on_get_member_list_success);
+
+function on_render_table() {
+};
+
+jsonrpc('members.export', {context: current_ctx}, on_get_member_list_success);
