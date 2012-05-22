@@ -50,7 +50,8 @@ function get_usages(resource_id) {
     var params = {'resource_ids': [resource_id],
         calc_mode: [1],
         start: date2isodate(add_days(get_selected_date(), -3)),
-        end: date2isodate(add_days(get_selected_date(), 3))
+        end: date2isodate(add_days(get_selected_date(), 3)),
+        exclude_cancelled_usages: true
     };
     jsonrpc("usages.find", params, on_get_usages);
 };
