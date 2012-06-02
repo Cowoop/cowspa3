@@ -7,4 +7,4 @@ MAILTO=address@example.com
 #
 # Invoking supervisord starts supervisord in daemon mode if it hasn't already started and also starts all programs configured to autostart 
 
-*/30 * * * * /home/<username>/<apphome>/<source> && ../bin/supervisord
+*/30 * * * * cd /home/<username>/<apphome>/<source> && ../bin/supervisord
