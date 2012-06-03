@@ -8,6 +8,7 @@ tests/test_bizplace.py \
 tests/test_invoicepref.py \
 tests/test_member.py \
 tests/test_user.py \
+tests/test_access.py \
 tests/test_resources.py \
 tests/test_tariff.py \
 tests/test_requests.py \

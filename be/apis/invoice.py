@@ -7,6 +7,7 @@ import be.errors as errors
 import operator
 import os
 import commonlib.helpers
+from be.libs.accesscontrol import *
 import be.apis.activities as activitylib
 import be.apis.invoicepref as invoicepreflib
 import be.apis.billingpref as billingpreflib
@@ -85,6 +86,8 @@ class InvoiceCollection:
 
         return invoice_id
 
+    new.access = HAS_PERMS('manage_invoices')
+
     def m_new(self, issuer, member, po_number, start_date, end_date, created, total, sent=None, notice='', usages=[], new_usages=[], state=0, number=None):
         for usage in new_usages:
             usage['member'] = member
@@ -123,6 +126,8 @@ class InvoiceCollection:
             invoice['member_name'] = member_map[invoice.member]
         return sorted(invoices, key=lambda inv: inv['member_name'])
 
+    generate.access = HAS_PERMS('manage_invoices')
+
     def delete(self, invoice_id, force=False):
         """
         Delete Invoice
@@ -137,6 +142,8 @@ class InvoiceCollection:
             usage_store.update_many(usage_ids, **mod_data)
 
         return invoice_id
+
+    delete.access = HAS_PERMS('manage_invoices')
 
     def search(self, q, options={'mybizplace': False}, limit=5):
         """
@@ -173,6 +180,10 @@ class InvoiceCollection:
 class InvoiceResource:
 
     def info(self, invoice_id):
+        invoice = invoice_store.get(invoice_id, ['id', 'number', 'sent', 'member', 'issuer', 'total', 'created', 'usages'])
+        condition = HAS_PERMS('manage_invoices')
+        if invoice.member == env.context.user_id or condition():
+            raise errors.SecurityViolation('No permission to access Invoice id [%s]' % invoice_id)
         return invoice_store.get(invoice_id, ['id', 'number', 'sent', 'member', 'issuer', 'total', 'created', 'usages'])
 
     def update(self, invoice_id, **mod_data):
@@ -195,6 +206,8 @@ class InvoiceResource:
 
         invoice_store.update(invoice_id, **mod_data)
         return True
+
+    update.access = HAS_PERMS('manage_invoices')
 
     def send(self, invoice_id, po_number=None, mailtext=None):
         """
@@ -222,6 +235,8 @@ class InvoiceResource:
         notification.build()
         notification.email()
         return invoice
+
+    send.access = HAS_PERMS('manage_invoices')
 
     def get(self, invoice_id, attr):
         return invoice_store.get(invoice_id, attr)
