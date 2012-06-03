@@ -13,7 +13,7 @@ class Permission(ACObject): pass
 admin_application = Permission('admin')
 access_business = Permission('access_business')
 manage_own_profile = Permission('manage_own_profile')
-manage_biz_invoices = Permission('manage_biz_invoices')
+manage_invoices = Permission('manage_invoices')
 manage_biz_profile = Permission('manage_biz_profile')
 apply_membership = Permission('apply_membership')
 view_own_invoices = Permission('view_own_invoices')
@@ -48,7 +48,7 @@ host.permissions = [
     invite_member,
     manage_biz_profile,
     activate_member,
-    manage_biz_invoices,
+    manage_invoices,
     manage_team,
     ]
 
@@ -58,7 +58,7 @@ director.permissions = [
     invite_member,
     manage_biz_profile,
     activate_member,
-    manage_biz_invoices,
+    manage_invoices,
     manage_team,
     ]
 

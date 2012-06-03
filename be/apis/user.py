@@ -5,6 +5,7 @@ import be.repository.access as dbaccess
 import be.errors as errors
 import commonlib.helpers as helpers
 import be.apis.role as rolelib
+from be.libs.accesscontrol import Anonymous
 
 user_store = dbaccess.stores.user_store
 session_store = dbaccess.stores.session_store
@@ -63,7 +64,7 @@ def login(username=None, password=None, auth_token=None):
     if username:
         if authenticate(username, password):
             auth_token = get_or_create_session(username)
-            set_context(username)
+            set_context(username, None)
             return dict(auth_token=auth_token, \
                 id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
     elif auth_token:
@@ -72,7 +73,23 @@ def login(username=None, password=None, auth_token=None):
                 id=env.context.user_id, roles=env.context.roles, name=env.context.name, pref=get_user_preferences(env.context.user_id))
     raise errors.ErrorWithHint('Authentication failed')
 
-def set_context(id_or_username):
+login.access = Anonymous()
+
+def set_context(id_or_username, context_id=0):
+    """
+    user_id: user.id
+    name: name of the current user
+    id: context_id
+    current_roles: {context1: { ctx: context_id,
+                                ctx_label: <context-label>,
+                                ctx_roles: (
+                                        {name: <role-name>, order: <role-order>, label: <role-label>},
+                                        {name: <role-name>, order: <role-order>, label: <role-label>}, .. ),
+                                role_names: (<role-name1>, <role-name2>, <role-name3>, ..) }
+                    context2: {..},
+                    ..
+                    }
+    """
     if isinstance(id_or_username, basestring):
         user = user_store.get_one_by(dict(username=id_or_username))
     else:
@@ -85,15 +102,17 @@ def set_context(id_or_username):
         current_roles[context] = commonlib.helpers.odict(ctx=context, ctx_label=role['label'])
         current_roles[context]['ctx_roles'] = \
             tuple(dict(name=ctx_role['role'], order=ctx_role['order'], label=ctx_role['label']) for ctx_role in role['roles'])
-        current_roles[context]['role_names'] = tuple(ctx_role['role'] for ctx_role in role['roles'])
+        current_roles[context]['role_names'] = set(ctx_role['role'] for ctx_role in role['roles'])
     env.context.current_roles = current_roles
+    env.context.current_perms = rolelib.permissions_by_current_roles()
     try:
         env.context.name = member_store.get(env.context.user_id, fields=['name'])
     except:
         env.context.name = user.username
+    env.context.id = context_id
 
-def set_context_by_session(session_id):
-    set_context(session_lookup(session_id))
+def set_context_by_session(session_id, context_id=0):
+    set_context(session_lookup(session_id), context_id)
 
 def logout(token):
     try:
