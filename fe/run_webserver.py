@@ -25,7 +25,7 @@ def construct_home_url(auth_token, context):
     home_url = 'login'
     if auth_token:
         json = dict(method='login', id=1, jsonrpc="2.0", params=dict(username=None, password=None, auth_token=auth_token))
-        data = cowspa.dispatch(auth_token, json)
+        data = cowspa.dispatch(auth_token, context, json)
         if 'result' in data:
             roles = data['result']['roles']
             pref = data['result']['pref']
@@ -102,10 +102,15 @@ def get_invoice(oid, format):
 
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
-    auth_token = request.cookies.get('authcookie') if request.json.get('method') != 'login' else None
+    method = request.json.get('method')
+    context_id = None
+    auth_token = None
+    if method != 'login':
+        auth_token = request.cookies.get('authcookie')
+        context_id = int(request.cookies.get('current_ctx'), 0)
     # ex. request.json: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
-    data = cowspa.dispatch(auth_token, request.json)
-    return jsonify(data)
+    result = cowspa.dispatch(auth_token, context_id, request.json)
+    return jsonify(result)
 
 
 if __name__ == '__main__':

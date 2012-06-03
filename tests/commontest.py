@@ -24,7 +24,7 @@ def setup_test_env():
     load_apis()
 
 def setup_system_context():
-    be.apis.user.set_context(env.config.system_username)
+    be.apis.user.set_context(env.config.system_username, 0)
 
 def destroy_test_env():
     import be.repository.stores as storeslib

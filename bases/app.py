@@ -1,6 +1,7 @@
 import sys
 import traceback
 import commonlib.helpers
+import functools
 
 # * Resource and Collection *
 # Structures that helps clean organize Resource/Collection APIs.
@@ -32,9 +33,8 @@ class APIExecutor(object):
         f = target
         for wrapper in self.wrappers:
             target_pref = getattr(target, wrapper.prop, None)
-            if target_pref is None: target_pref = getattr(wrapper, 'default', None)
-            if target_pref:
-                f = wrapper(f)
+            f = wrapper(f, target_pref)
+            functools.update_wrapper(f, target)
         self.f = f
 
     def __call__(self, *args, **kw):
@@ -86,7 +86,8 @@ class Application(object):
     def tr_abort(self):
         for f in self.on_tr_abort:
             f()
-    def dispatch(self, auth_token, params):
+
+    def dispatch(self, auth_token, context_id, params):
         """
         params: eg. {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
         """
@@ -95,7 +96,7 @@ class Application(object):
         data = {}
         if auth_token:
             try:
-                self.context_setter(auth_token)
+                self.context_setter(auth_token, context_id)
                 set_context_successful = True
             except Exception, err:
                 print (err)
