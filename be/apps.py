@@ -25,7 +25,7 @@ pg_tr_complete = lambda: pg_provider.tr_complete(env.context)
 pg_tr_abort = lambda: pg_provider.tr_abort(env.context)
 
 class CSAPIExecutor(applib.APIExecutor):
-    wrappers = [wrapperlib.pg_transaction]
+    wrappers = [wrapperlib.pg_transaction, wrapperlib.access_check]
 
 class CowspaApp(applib.Application):
     mapper = jsonrpc2.JsonRpc()

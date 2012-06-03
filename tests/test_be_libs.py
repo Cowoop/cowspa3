@@ -1,11 +1,12 @@
 import commonlib.helpers
 import commonlib.shared.constants
 import be.libs.macros as macroslib
+from be.libs.accesscontrol import AND, OR, NOT, Condition
 
 class dummy_obj_state(commonlib.shared.constants.states):
     names = ["enabled", "available", "hidden"]
-states = dummy_obj_state()    
-    
+states = dummy_obj_state()
+
 def add_a_b(context, data, macro_data):
     return str(data['a'] + data['b'])
 
@@ -37,7 +38,7 @@ def test_state():
     assert states.enabled == 1
     assert states.available == 2
     assert states.hidden == 4
-    
+
 def test_state_fromflags():
     state_flags = 5
     state_dict = states.to_dict(state_flags)
@@ -57,3 +58,15 @@ def test_state_fromdict():
     state_dict['hidden'] = True
     assert state_dict != states.to_dict(state_flags)
     assert states.to_flags(state_dict) == 6
+
+def test_basic_access_clauses():
+
+    class TRUE(Condition):
+        def __call__(self):
+            return True
+
+    assert AND(TRUE(), TRUE())() == True
+    assert OR(TRUE(), TRUE())() == True
+    assert NOT(TRUE())() == False
+    assert OR(TRUE(), NOT(TRUE()))() == True
+    assert OR(NOT(TRUE()), NOT(TRUE()))() == False

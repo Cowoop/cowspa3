@@ -9,5 +9,6 @@ class APIExecutionError(Exception):
         self.data = data
 
 class SecurityViolation(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg, data={}):
         self.msg = msg
+        self.data = data
