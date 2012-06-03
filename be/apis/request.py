@@ -108,6 +108,5 @@ def in_queue(for_id, only_pending=True):
     return list of dicts
     {id=id, created=created, state=state, msg=msg, requestor=requestor}
     """
-    perms = rolelib.get_permissions(for_id)
-    requests_list = []
+    perms = env.context.current_perms # TODO for_id is ignored
     return add_messages(dbaccess.find_requests_for_approval(perms))
