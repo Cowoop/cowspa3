@@ -17,6 +17,11 @@ import be.errors as errors
 
 another_invoice_id = None
 
+def setup():
+    commontest.setup_test_env()
+    env.context.pgcursor.connection.commit()
+    commontest.setup_system_context()
+
 def test_add_invoice():
     start = datetime.datetime.now() - datetime.timedelta(1)
     end = datetime.datetime.now() + datetime.timedelta(1)

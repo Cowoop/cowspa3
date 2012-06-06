@@ -31,3 +31,6 @@ def destroy_test_env():
     print( storeslib.known_stores.values())
     for store in storeslib.known_stores.values():
         store.destroy()
+
+def jsonrpc(app, authtoken, context, api, params):
+    return app.dispatch(authtoken, context, {"jsonrpc": "2.0", "method": api, "params": params, "id": 1})

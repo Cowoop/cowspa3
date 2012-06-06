@@ -1,4 +1,7 @@
+import commonlib.helpers
 import datetime
+
+odict = commonlib.helpers.odict
 
 admin_user = dict(username='admin', password='x', email='admin@localhost.localdmain', first_name='Admin')
 admin = None
@@ -15,10 +18,11 @@ plan_id = None
 more_plan_data = dict(name="Plan ", short_description="Not just another plan", default_price=90)
 new_tariff_data = dict(name="Hub Connect", short_description="Guest Tariff", default_price=0)
 
-member = dict(username='kit', password='x', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
+member = odict(username='kit', password='x', first_name='Kit', last_name='Walker', email='kit@localhost.localdomain', enabled=True)
 member_id = None
 
-bizplace_member = dict(username='bruba', password='x', first_name='Bruce', last_name='Banner', email='hulk@localhost.localdomain', enabled=True)
+bizplace_host = member
+bizplace_member = odict(username='bruba', password='x', first_name='Bruce', last_name='Banner', email='hulk@localhost.localdomain', enabled=True)
 
 more_member = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@localhost.localdomain'),
