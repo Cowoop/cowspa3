@@ -82,7 +82,7 @@ def search(entity):
         context = context,
         options = request.args.get('options', {}) )
     params = {"jsonrpc": "2.0", "method": "members.search", "params": params, "id": 1}
-    data = cowspa.dispatch(auth_token, params)
+    data = cowspa.dispatch(auth_token, context, params)
     return jsonify(data['result'])
 
 @app.route('/swf/<file_name>', methods=['GET', 'POST'])
