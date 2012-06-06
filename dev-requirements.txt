@@ -1,5 +1,5 @@
 ipython
 nose
 coverage
-sphc
 sphinx
+python-magic
