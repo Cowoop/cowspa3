@@ -17,6 +17,7 @@ tests/test_invoice.py \
 tests/test_pricing.py \
 tests/test_billingpref.py \
 tests/test_roles.py \
+tests/test_rpc_access.py
 # Add tests above this line
 
 #nosetests -vx  --pdb-failures --pdb tests/test_schemas.py # Destroys all stores
