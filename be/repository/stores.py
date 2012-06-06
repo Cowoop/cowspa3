@@ -121,13 +121,6 @@ class UserRole(PGStore):
     role TEXT NOT NULL
     """
 
-class UserPermission(PGStore):
-    create_sql = """
-    user_id integer NOT NULL,
-    context integer NOT NULL,
-    permission TEXT NOT NULL
-    """
-
 class BizplaceProfile(PGStore):
     create_sql = """
     short_description TEXT,
