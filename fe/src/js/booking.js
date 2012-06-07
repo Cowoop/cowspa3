@@ -159,6 +159,7 @@ function id2datetime(id) {
 function open_booking_form(resource_id, resource_name, new_booking_date, start_time, end_time) {
     $('.booking-delete-section').hide();
     $('#booking-id').val('0'); // important
+    $('#for-member').val('');
     $('#new-booking-form').reset();
     // $('#new-booking-date').text($.datepicker.formatDate('D, MM d, yy', new_booking_date));
     $('#new-booking-date').text(moment(new_booking_date).format("ddd, MMMM Do, YYYY"));
