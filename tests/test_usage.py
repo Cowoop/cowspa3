@@ -110,6 +110,16 @@ def test_update_booking_custom_cost():
     assert new_total != old_total
     assert new_total == expected_total
 
+def test_add_booking_incorrect_times():
+    now = datetime.datetime.now()
+    data = dict(resource_id=test_data.resource_id) # time based resource
+    data['resource_name'] = test_data.resource_data['name']
+    data['member'] = test_data.member_id
+    data['resource_owner'] = test_data.bizplace_id
+    data['start_time'] = now.isoformat()
+    data['end_time'] = (now - datetime.timedelta(0, 60*60)).isoformat()
+    assert_raises(be.errors.ErrorWithHint, usagelib.usage_collection.new, **data)
+
 def test_find_by():
     data = dict(start=(datetime.datetime.now() - datetime.timedelta(1)), end=datetime.datetime.now())
     usages = usagelib.usage_collection.find(**data)
