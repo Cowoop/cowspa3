@@ -6,6 +6,7 @@ import be.templates.invoice
 import be.errors as errors
 import operator
 import os
+import wkhtmltox # Making sure wkhtmltox is available
 import commonlib.helpers
 from be.libs.accesscontrol import *
 import be.apis.activities as activitylib
