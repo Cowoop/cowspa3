@@ -49,6 +49,8 @@ class UsageCollection:
         # TODO shouldn't we name the parameter member_id and not member
 
         if quantity is None: quantity = 1
+        if not end_time: end_time = start_time
+
         resource = resourcelib.resource_resource.info(resource_id) if resource_id else None
         member_dict = member_store.get(member, ['id', 'first_name', 'name', 'email'])
         if resource:
@@ -56,7 +58,8 @@ class UsageCollection:
             if not resource.enabled or resource.archived:
                 raise be.errors.ErrorWithHint('Resource is either not enabled or is archived')
 
-        if not end_time: end_time = start_time
+        if end_time < start_time:
+            raise be.errors.ErrorWithHint('Start time is less than end time')
         created = datetime.datetime.now()
 
         if cancelled_against:

@@ -8,9 +8,9 @@ Javascript
     - css http://datatables.net/release-datatables/media/css/demo_table_jui.css
 - git clone git://github.com/trentrichardson/jQuery-Timepicker-Addon.git
     cp css to ../css
-- SugarSkull for client side routing: http://hij1nx.github.com/SugarSkull/
+- SugarSkull for client side routing: https://github.com/flatiron/director
     cp build/*.min.js fe/contrib/js/SS.min.js
-- webshims
+- webshims: https://github.com/aFarkas/webshim
     Download webshims
     copy demo/js-webshim/minified/ to fe/contrib/webshims-<version>
 - jquery TableTools http://www.datatables.net/download/build/TableTools.min.js
