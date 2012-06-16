@@ -12,7 +12,8 @@ config = {
         'mail.smtp.username': '',
         'mail.smtp.password': '',
         'mail.smtp.debug': False,
-        'mail.utf8qp.on': True
+        'mail.utf8qp.on': True,
+        'mail.encoding': 'utf-8'
         },
     'http_baseurl': 'http://127.0.0.1:5000',
     'system_username': 'system',
