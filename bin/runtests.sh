@@ -1,6 +1,7 @@
 #!/bin/bash
 #nosetests -vx --pdb-failures --pdb --with-coverage --cover-package be --cover-html \
 nosetests -vx --pdb-failures --pdb --with-coverage --cover-package be \
+tests/test_commonlib.py \
 tests/test_schemas.py \
 tests/test_system.py \
 tests/test_be_libs.py \

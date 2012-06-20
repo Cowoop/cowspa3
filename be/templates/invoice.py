@@ -29,7 +29,7 @@ class Template(sphc.more.HTML5Page):
         due_date = date + datetime.timedelta(data.invoicepref.due_date)
 
         address_lines = []
-        address_items = ('address', 'city', 'province', 'country', 'pincode')
+        address_items = ('address', 'city', 'province', 'country_label', 'pincode')
         for attr in address_items:
             v = data.billingpref.get(attr)
             if v: address_lines.append(v)

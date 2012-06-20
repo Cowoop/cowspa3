@@ -3,7 +3,9 @@ import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 import be.apis.member as memberlib
 import commonlib.helpers
+import commonlib.shared.static
 
+countries_map = commonlib.shared.static.countries_map
 member_store = dbaccess.stores.member_store
 invoicepref_store = dbaccess.stores.invoicepref_store
 
@@ -40,6 +42,8 @@ class BillingprefResource:
                 continue
 
         details['number'] = member_store.get((billto or member), ['number'])
+        country_code = details.get('country')
+        details['country_label'] = countries_map.get(country_code, '')
         return details
 
     def info(self, member):
