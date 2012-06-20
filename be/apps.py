@@ -36,7 +36,6 @@ class CowspaApp(applib.Application):
 
 cowspa = CowspaApp()
 cowspa.context_setter = userlib.set_context_by_session # ugly
-cowspa.connect(systemlib.setup)
 cowspa.connect(userlib.login)
 cowspa.connect(userlib.logout)
 #cowspa.connect(registrationlib.new, "registration.new")
