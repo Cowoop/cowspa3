@@ -9,7 +9,7 @@ webshims = [webshims_base + "/extras/modernizr-custom.js", webshims_base + "/pol
 ctxpath = '/${lang}/${role}/${theme}'
 
 class CSPage(sphc.more.HTML5Page):
-    jslibs = ['/js/json2.js', '/js/jquery-1.7.1.min.js', '/js/jquery-ui.min.js',
+    jslibs = ['/js/json2.js', '/js/jquery-1.7.2.min.js', '/js/jquery-ui.min.js',
             '/js/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js',
             '/js/jquery.jsonrpc.js', '/js/jquery.cookie.js', '/js/moment.min.js',
             '/js/jquery.autoSuggest.js', '/js/jquery.tmpl.js', '/js/knockout-2.0.0.js',
