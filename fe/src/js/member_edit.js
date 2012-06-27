@@ -331,6 +331,15 @@ $('#next-tariff-form #end-vis').datepicker( {
         }, 1);
     }
 });
+
+$('#next-tariff-form #start-vis').change( function() {
+    var start = $(this).val();
+    var start_m = moment(start);
+    var monthend = start_m.date(start_m.daysInMonth()).toDate();
+    $('#next-tariff-form #end-vis').datepicker("option", "minDate", start);
+    $('#next-tariff-form #end-vis').datepicker("setDate", monthend);
+});
+
 $('#next_tariff-btn').click(function() {
     $("#next-tariff-form .action-status").text("").removeClass('status-fail');
     $('#next-tariff-form #start-vis').datepicker("setDate", null);
