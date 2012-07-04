@@ -171,7 +171,9 @@ function open_booking_form(resource_id, resource_name, new_booking_date, start_t
     $('#new-booking').dialog({
         title: resource_name,
         close: on_close_booking_form,
-        width: '60em'
+        modal: true,
+        width: '40em',
+        position: 'top'
     });
 };
 
@@ -234,7 +236,9 @@ function open_edit_booking_form(booking) {
     $('#new-booking').dialog({
         title: booking.resource_name,
         close: on_close_booking_form,
-        width: '60em'
+        modal: true,
+        width: '40em',
+        position: 'top'
     });
 };
 
