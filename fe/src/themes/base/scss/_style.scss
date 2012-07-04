@@ -1051,7 +1051,7 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
     .cal-min15 { 
         border-bottom: 1px dotted; 
         border-right: 1px solid; 
-        width: 5em;
+        width: auto;
         height: 1em;
     }
     .booking { cursor: move; }
@@ -1080,7 +1080,10 @@ input[type="button"].resource_type-hide, input[type="button"].resource_filter-hi
         font-weight: lighter;
         height: 1.5em;
     }
-    .day-title { border-bottom: 1px solid; }
+    .day-title {
+        border-bottom: 1px solid;
+        padding-left: 0.5em;
+    }
     .day-title.today { 
         // border: 2px dashed; 
         overflow: hidden;
