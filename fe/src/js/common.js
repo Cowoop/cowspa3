@@ -310,14 +310,14 @@ function fdate2datetime(fdate){
     if(jQuery.trim(fdate) == ""){
         return "";
     };
-    return moment(fdate, fdatetime_format).native();
+    return moment(fdate, fdatetime_format).toDate();
 };
 
 function fdate2date(fdate){
     if(jQuery.trim(fdate) == ""){
         return "";
     };
-    return moment(fdate, fdate_format).native();
+    return moment(fdate, fdate_format).toDate();
 };
 
 function fdate2iso(fdate){
