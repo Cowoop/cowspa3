@@ -4,11 +4,10 @@
 // we won't need this hackery. But wkhtml supports css3, html much better than others
 // Note that correct top calculation depends on box-sizing:border-box
 
-var step = 1000;
-var next_break = 0;
+var step = 2400;
+var next_break = step;
 
 function split_table(idx, the_table) {
-    next_break += step;
     // idx is unused, it is there mainly for each() compatibility
     var the_table = $(the_table);
     var tbody = the_table.children('tbody');
@@ -26,13 +25,14 @@ function split_table(idx, the_table) {
     if (removed.length) {
         var page_break = $('<div class="page-break"></div>')
         page_break.insertAfter(the_table);
+        next_break += step;
         var new_table = $(the_table.clone());
         new_table.children('tbody').empty();
         new_table.insertAfter(page_break);
         for (var i=0; i < removed.length; i++) {
             new_table.append(removed[i]);
         };
-        split_table(0, new_table.children('tbody')[0]);
+        split_table(0, new_table);
     };
 };
 
