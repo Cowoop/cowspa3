@@ -1,18 +1,17 @@
-from commonlib.messaging.email import Mailer
-from conf_test import config
-import os
+# -*- coding: utf-8 -*-
+# Simple script to test SMTP configuration
 
-def test_basic_send():
+import commontest
+import be.bootstrap
+be.bootstrap.start()
+import commonlib.messaging
 
-    mailer = Mailer(config['mail'])
-    to = config['mail']['mail.smtp.username']
-    subject = "TurboMail test"
-    rich = """
-    <html>
-        <body>
-            <strong>Hi There</strong>
-        </body>
-    </html>"""
-    attachment = os.getcwd()+'/requirements.txt'
-    mailer.start()
-    mailer.send(to, to, subject, rich=rich, attachment=attachment)
+def test_send():
+    author = ('Shön', 'shon@example.com') # UTF-8 test
+    to = ('Shon', 'launch@cowoop.net')
+    subject = 'Shön'
+    rich = subject
+    env.mailer.send(author, to, subject, rich)
+
+if __name__ == '__main__':
+    test_send()

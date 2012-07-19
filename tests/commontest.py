@@ -4,14 +4,14 @@ except:
     import __builtin__ as builtins
 
 import sys
+sys.path.append('.')
+
 import psycopg2
 import psycopg2.extras
 import psycopg2.pool
 import conf_local
 import be.bootstrap
 import be.apis.user
-
-sys.path.append('.')
 
 def load_apis():
     import be.apps
