@@ -1,27 +1,24 @@
-var pagebreak_after = 2700;
-var step = 3000;
-var pb_table = $('table.pagefix');
-var pb_header = $('table.pagefix thead');
+// split_table inserts page breaks in the table retaining readability of the table across the pages
+// this is mainly work around for the chrome problem
+// since we generate invoice pdfs using wkhtml this is needed, had we using pisa (xhtml2pdf) or some other pdf generator \ 
+// we won't need this hackery. But wkhtml supports css3, html much better than others
+// Note that correct top calculation depends on box-sizing:border-box
 
-function find_top(obj) {
-    var top = !!obj.offsetTop ? obj.offsetTop : 0;
-    while(obj = obj.offsetParent) {
-        top += !!obj.offsetTop ? obj.offsetTop : 0;
-    };
-    return top;
-};
+var step = 1000;
+var next_break = 0;
 
-function split_table(the_table, pb_tbody) {
-    var pb_tbody = the_table.children('tbody');
-    var rows = pb_tbody.children('tr');
+function split_table(idx, the_table) {
+    next_break += step;
+    // idx is unused, it is there mainly for each() compatibility
+    var the_table = $(the_table);
+    var tbody = the_table.children('tbody');
+    var rows = tbody.children('tr');
     var removed = [];
     for (var i=0; i < rows.length; i++) {
         var row_dom = rows[i];
         var row = $(row_dom);
         var top = row.offset().top;
-        var top = row_dom.offsetTop;
-        var top = find_top(row_dom);
-        if (top > pagebreak_after) {
+        if (top > next_break) {
             row.remove();
             removed.push(row);
         };
@@ -35,9 +32,8 @@ function split_table(the_table, pb_tbody) {
         for (var i=0; i < removed.length; i++) {
             new_table.append(removed[i]);
         };
-        pagebreak_after = pagebreak_after + step;
-        split_table(new_table, new_table.children('tbody'));
+        split_table(0, new_table.children('tbody')[0]);
     };
 };
 
-split_table(pb_table, $('table.pagefix tbody'));
+$('table.pagefix').each(split_table);
