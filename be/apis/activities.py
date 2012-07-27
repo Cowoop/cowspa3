@@ -35,11 +35,9 @@ def delete(activity_ids):
 
 def get_latest(for_member=None, limit=30):
     # must secure it using wrappers
-    for_member = for_member if for_member else env.context.user_id
-    if for_member == env.context.user_id:
-        roles = env.context.roles
-    else:
-        roles = rolelib.get_roles(for_member)
+    if not for_member:
+        for_member = env.context.user_id
+    roles = dbaccess.userrole_store.get_by(dict(user_id=for_member), ['context', 'role'], False)
     activities = dbaccess.find_activities([for_member], roles)
     messages = []
     for act in activities:
