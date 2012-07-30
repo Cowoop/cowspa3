@@ -185,7 +185,7 @@ function check_page_access(roles) {
         };
     };
     if (!allow_access) {
-        window.location = "/logout";
+        window.location = "/";
     };
 };
 
@@ -236,7 +236,7 @@ function on_roles_list(resp) {
         toggle_ctx_menu();
     });
     $('.ctx-opt').click( function () {
-        var ctx_id = $(this).attr('id').split('_')[1];
+        var ctx_id = parseInt($(this).attr('id').split('_')[1], 10);
         set_context(ctx_id);
         toggle_ctx_menu();
         window.location.reload();
