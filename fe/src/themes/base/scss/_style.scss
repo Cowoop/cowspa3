@@ -518,6 +518,8 @@ ul.as-selections li.as-original input { width: 100%; }
         .date { 
             color: lighten($main-color, 20%);
             font-size: 85%;
+            text-transform:capitalize;
+            margin-right: 1em;
         }
         a {
             border-bottom: 1px dotted $main-color;
