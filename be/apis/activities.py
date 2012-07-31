@@ -38,11 +38,11 @@ def get_latest(for_member=None, limit=30):
     if not for_member:
         for_member = env.context.user_id
     roles = dbaccess.userrole_store.get_by(dict(user_id=for_member), ['context', 'role'], False)
-    activities = dbaccess.find_activities([for_member], roles)
+    activities = dbaccess.find_activities([for_member], roles, limit)
     messages = []
     for act in activities:
         event = events.categories[act.category][act.name](act.actor, act.created, act.data)
-        messages.append(dict(message=event.message, tags=event.tags))
+        messages.append(dict(message=event.message, tags=event.tags, time=event.created.isoformat()))
     return messages
 
 def find_activities_by_categories(category_list, from_date, to_date, limit=30):
