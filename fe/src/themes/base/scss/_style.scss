@@ -514,19 +514,18 @@ ul.as-selections li.as-original input { width: 100%; }
 
 #activities {
     margin-top: 1em;
-    li {
-        .date { 
-            color: lighten($main-color, 20%);
-            font-size: 85%;
-            text-transform:capitalize;
-            margin-right: 1em;
-        }
-        a {
-            border-bottom: 1px dotted $main-color;
-            text-shadow: 1px 0px 1px lighten($main-color, 15%);
-            text-decoration: none;
-            &:hover { border-bottom: 1px solid $main-color; }
-        }
+    .date {
+        color: lighten($main-color, 20%);
+        font-size: 85%;
+        text-transform:capitalize;
+        padding-right: 1em;
+        white-space: nowrap;
+    }
+    a {
+        border-bottom: 1px dotted $main-color;
+        text-shadow: 1px 0px 1px lighten($main-color, 15%);
+        text-decoration: none;
+        &:hover { border-bottom: 1px solid $main-color; }
     }
 }
 
