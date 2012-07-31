@@ -75,7 +75,9 @@ class Dashboard(BasePage):
 
     def content(self):
         container = tf.DIV()
-        container.activities_pane = tf.UL(id="activities", name="activities")
+        container.activities_pane = tf.UL(id="activities", name="activities", data_bind="foreach: activities")
+        container.activities_pane.item = tf.LI([tf.C(Class='date', data_bind="text: moment(time).fromNow()"), \
+            tf.C(data_bind="html: message")])
         container.script = tf.SCRIPT(open("fe/src/js/dashboard.js").read(), escape=False, type="text/javascript", language="javascript")
         return container
 
