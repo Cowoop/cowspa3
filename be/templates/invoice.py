@@ -92,7 +92,7 @@ class Template(sphc.more.HTML5Page):
             group = list(group)
             row = tf.TR()
             row.td1 = tf.TD(name)
-            row.td2 = tf.TD(format_number(sum([usage.cost for usage in group])))
+            row.td2 = tf.TD(format_number(sum([usage.cost for usage in group]), locale))
             row.td3 = tf.TD()
             #row.td3.tax = tf.DIV(format_number(sum(usage.tax_dict['total'] for usage in group)))
             tax_amount = collections.defaultdict(lambda: 0)
@@ -103,13 +103,13 @@ class Template(sphc.more.HTML5Page):
                     tax_amount[name] += amount
                     tax_level[name] = level
             for (name, amount) in tax_amount.items():
-                row.td3.taxline = tf.DIV('%s %s%%: %s' % (name, tax_level[name], format_number(amount)))
+                row.td3.taxline = tf.DIV('%s %s%%: %s' % (name, tax_level[name], format_number(amount, locale)))
             usages.row = row
 
         row = tf.TR()
         row.td1 = tf.TD("Sub Total")
-        row.td2 = tf.TD(format_number(total_cost))
-        row.td3 = tf.TD(format_number(total_tax))
+        row.td2 = tf.TD(format_number(total_cost, locale))
+        row.td3 = tf.TD(format_number(total_tax, locale))
         usages.row = row
         usage_summary.table = usages
         container.usage_summary = usage_summary
@@ -133,7 +133,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD(usage.resource_name)
             usage_row.td = tf.TD(str(usage.quantity))
             usage_row.td = tf.TD(commonlib.helpers.datetime4human(usage.start_time)+" - "+commonlib.helpers.datetime4human(usage.end_time))
-            usage_row.td = tf.TD(format_number(usage.cost))
+            usage_row.td = tf.TD(format_number(usage.cost, locale))
             usages.row = usage_row
             sr_no += 1
 
@@ -144,7 +144,7 @@ class Template(sphc.more.HTML5Page):
             usage_row.td = tf.TD()
             usage_row.td = tf.TD()
             usage_row.td = tf.TH("Taxes")
-            usage_row.td = tf.TD(format_number(total_tax))
+            usage_row.td = tf.TD(format_number(total_tax, locale))
             usages.row = usage_row
 
         usage_row = tf.TR()
@@ -153,7 +153,7 @@ class Template(sphc.more.HTML5Page):
         usage_row.td = tf.TD()
         usage_row.td = tf.TD()
         usage_row.td = tf.TH("Total")
-        usage_row.td = tf.TD(format_number(data.invoice.total))
+        usage_row.td = tf.TD(format_number(data.invoice.total, locale))
         usages.row = usage_row
         usage_details.table = usages
 
