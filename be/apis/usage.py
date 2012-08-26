@@ -1,4 +1,6 @@
 import datetime
+import psycopg2
+
 import commonlib.helpers
 import be.errors
 import be.repository.access as dbaccess
@@ -12,6 +14,47 @@ import be.libs.cost as costlib
 usage_store = dbaccess.stores.usage_store
 member_store = dbaccess.stores.member_store
 bizplace_store = dbaccess.stores.bizplace_store
+bookingslot_store = dbaccess.stores.bookingslot_store
+
+interval = 1 # one minute
+
+def gen_slot_ids(resource_id, start, end):
+    """
+    """
+    start = commonlib.helpers.iso2datetime(start)
+    end = commonlib.helpers.iso2datetime(end)
+
+    slot_ids = []
+    delta = end - start
+    fmt = str(resource_id) + '%Y%m%d%H%M'
+    start_m = int(start.strftime(fmt))
+    end_m = int(end.strftime(fmt))
+    next_m = start_m
+    while next_m < end_m:
+        slot_ids.append(next_m)
+        next_m += interval
+    return slot_ids
+
+def reserve_slots(booking_id, resource_id, start, end):
+    """
+    raises Exception on failing to reserve a slot
+    """
+    slot_ids = gen_slot_ids(resource_id, start, end)
+    slots = [dict(id=id, booking=booking_id) for id in slot_ids]
+    try:
+        bookingslot_store.add_many(slots)
+    except psycopg2.IntegrityError:
+        raise be.errors.ErrorWithHint('Time slot conflicts with other booking')
+
+def release_slots(booking_id):
+    """
+    tries to find slots and removes if there are
+    """
+    bookingslot_store.remove_by(crit=dict(booking=booking_id))
+
+def update_slots(booking_id, resource_id, start, end):
+    release_slots(booking_id)
+    reserve_slots(booking_id, resource_id, start, end)
 
 def add_suggested_usages(resource_owner, suggesting_usage, suggested_resources, usages):
     suggested_usages_data = []
@@ -107,6 +150,10 @@ class UsageCollection:
 
         usage_id = usage_store.add(**data)
 
+
+        if resource and resource.calc_mode == resourcelib.CalcMode.time_based:
+            reserve_slots(usage_id, resource.id, start_time, end_time)
+
         suppress_email = cancelled_against or suppress_notification or resource_id == 0 or \
             (resource and resource.calc_mode != resourcelib.CalcMode.time_based)
         if not suppress_email:
@@ -136,6 +183,7 @@ class UsageCollection:
         """
         Delete a usage.
         """
+        release_slots(usage_id)
         return usage_store.remove(usage_id)
 
     def cancel(self, usage_id):
@@ -157,6 +205,8 @@ class UsageCollection:
         del(data['created'])
         del(data['invoice'])
         del(data['pricing'])
+
+        release_slots(usage_id)
         return self.new(**data)
 
     def delete(self, usage_id):
@@ -270,6 +320,11 @@ class UsageResource:
                 usage_collection.delete(suggested_usage_id)
             relations = resourcelib.resource_resource.get_relations(usage.resource_id)
             mod_data['usages_suggested'] = add_suggested_usages(usage.resource_owner, usage, relations[False], usages)
+
+        if 'start_time' in mod_data or 'end_time' in mod_data:
+            start_time = mod_data.get('start_time', usage.start_time)
+            end_time = mod_data.get('end_time', usage.end_time)
+            update_slots(usage_id, usage.resource_id, start_time, end_time)
 
         usage_store.update(usage_id, **mod_data)
 

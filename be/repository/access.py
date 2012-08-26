@@ -31,6 +31,7 @@ activityaccess_store = stores_mod.ActivityAccess()
 invoicepref_store = stores_mod.InvoicePref()
 oidgen_store = stores_mod.OidGen()
 messagecust_store = stores_mod.MessageCust()
+bookingslot_store = stores_mod.BookingSlot()
 
 class RStore(object): pass
 
@@ -242,6 +243,12 @@ def find_suggesting_usage(suggested_usage):
     clause_values = dict(suggested_usage=suggested_usage)
     suggesting_usages = usage_store.get_by_clause(clause, clause_values, fields=['id', 'usages_suggested'])
     return suggesting_usages[0] if suggesting_usages else None
+
+def find_usages_within_date_range(resource_id, member_id, monthstart, monthend):
+    clause = 'resource_id = %(resource_id)s AND member_id= %(member_id)s \
+        (start_time >= %(monthstart)s AND start_time <= %(monthend)s) OR (end_time >= %(monthstart) AND end_time <= %(monthend)s)'
+    clause_values = dict(resource_id=resource_id, member_id=member_id, monthend=monthend, monthstart=monthstart)
+    return usage_store.get_by_clause(clause, clause_values, fields=['id'])
 
 def get_member_plan_id(member_id, bizplace_id, date, default=True):
     clause = 'member_id = %(member_id)s AND bizplace_id = %(bizplace_id)s AND starts <= %(date)s AND (ends >= %(date)s OR ends IS NULL)'

@@ -21,12 +21,13 @@ def setup():
     be.apis.user.set_context(test_data.member_id, test_data.bizplace_id)
 
 def test_add_usage():
+    now = datetime.datetime.now()
     data = test_data.usage
     data['member'] = test_data.member_id
     data['resource_id'] = test_data.resource_id
     data['resource_owner'] = test_data.bizplace_id
-    data['start_time'] = datetime.datetime.now().isoformat()
-    data['end_time'] = datetime.datetime.now().isoformat()
+    data['start_time'] = now.isoformat()
+    data['end_time'] = (now + datetime.timedelta(0, 2*3600)).isoformat()
     data['invoice'] = 1
     test_data.usage_id = usagelib.usage_collection.new(**data)
     usage = usagelib.usage_store.get(test_data.usage_id)
@@ -35,12 +36,13 @@ def test_add_usage():
 
 def test_add_another_usage():
     global usage_to_delete_late
+    now = datetime.datetime.now()
     data = test_data.usage
     data['member'] = test_data.more_member_ids[-1]
     data['resource_id'] = test_data.resource_id
     data['resource_owner'] = test_data.bizplace_id
-    data['start_time'] = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
-    data['end_time'] = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
+    data['start_time'] = (now + datetime.timedelta(1)).isoformat()
+    data['end_time'] = (now + datetime.timedelta(1, 2*3600)).isoformat()
     usage_to_delete_late = usagelib.usage_collection.new(**data)
     usage = usagelib.usage_store.get(usage_to_delete_late)
     env.context.pgcursor.connection.commit()
@@ -86,6 +88,30 @@ def test_add_booking():
     data['end_time'] = (now + datetime.timedelta(0, 60*60)).isoformat()
     booking_id = usagelib.usage_collection.new(**data)
     env.context.pgcursor.connection.commit()
+
+def test_conflicting_booking():
+    info = usagelib.usage_resource.info(booking_id)
+    data = dict(resource_id=info.resource_id) # time based resource
+    data['member'] = info.member
+    data['resource_name'] = test_data.resource_data['name']
+    data['resource_owner'] = None
+    data['start_time'] = info.start_time.isoformat()
+    data['end_time'] = info.end_time.isoformat()
+    assert_raises(be.errors.ErrorWithHint, usagelib.usage_collection.new, **data)
+    env.context.pgcursor.connection.commit()
+
+def test_gen_slot_ids():
+    no_of_slots = 10
+    now = datetime.datetime.now()
+    then = now - datetime.timedelta(0, usagelib.interval * 60 * no_of_slots)
+    slot_ids = usagelib.gen_slot_ids(11, then, now)
+    assert len(slot_ids) == no_of_slots
+
+    no_of_slots = 1
+    now = datetime.datetime.now()
+    then = now - datetime.timedelta(0, usagelib.interval * 60 * no_of_slots)
+    slot_ids = usagelib.gen_slot_ids(11, then, now)
+    assert len(slot_ids) == no_of_slots
 
 def test_extend_booking():
     info = usagelib.usage_resource.info(booking_id)
@@ -158,11 +184,12 @@ def test_uninvoiced_billto():
 def test_uninvoiced_members():
     # 1. Add usage for member whose billto is set
     data = dict(resource_name='BILLTO Usage')
+    now = datetime.datetime.now()
     data['member'] = test_data.billing_member_id
     data['resource_id'] = test_data.resource_id
     data['resource_owner'] = test_data.bizplace_id
-    data['start_time'] = datetime.datetime.now().isoformat()
-    data['end_time'] = datetime.datetime.now().isoformat()
+    data['start_time'] = (now + datetime.timedelta(2, 3600)).isoformat()
+    data['end_time'] = (now + datetime.timedelta(2, 7200)).isoformat()
     test_data.billto_usage['id'] = usagelib.usage_collection.new(**data)
     test_data.billto_usage['member'] = test_data.billing_member_id
     test_data.billto_usage['billto'] = test_data.billto_member_id
@@ -170,7 +197,7 @@ def test_uninvoiced_members():
     env.context.pgcursor.connection.commit()
 
     # 2. Find above usage in uninvoiced_members usage search
-    start = (datetime.datetime.now() + datetime.timedelta(1)).isoformat()
+    start = (datetime.datetime.now() + datetime.timedelta(3)).isoformat()
     uninvoiced = usagelib.usage_collection.uninvoiced_members(res_owner_id=test_data.bizplace_id, start=start)
     uninvoiced_member_ids = []
     for member_uninvoiced in uninvoiced:

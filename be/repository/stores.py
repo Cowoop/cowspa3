@@ -335,3 +335,9 @@ class MessageCust(PGStore):
     content TEXT NOT NULL,
     lang TEXT
     """
+
+class BookingSlot(PGStore):
+    create_sql = """
+    id BIGINT NOT NULL UNIQUE,
+    booking INTEGER NOT NULL
+    """
