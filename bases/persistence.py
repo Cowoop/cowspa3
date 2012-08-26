@@ -8,8 +8,12 @@ from commonlib.helpers import odict
 class BaseStore(object):
     def setup(self):
         raise NotImplemented
-
     def add(self, **data):
+        raise NotImplemented
+    def add_many(self, items):
+        """
+        items: list of dicts
+        """
         raise NotImplemented
     def get(self, oid, fields, hashrows=True):
         """
