@@ -5,11 +5,8 @@ var send_status = $('#send_invoice-form .action-status');
 //****************************Get Invoice History*******************************
 
 function on_send_invoice_success() {
-    function success() {
-        invoice_to_send = null;
-        $("#send-btn").removeAttr('disabled');
-        window.location.reload();
-    };
+    invoice_to_send = null;
+    $("#send-btn").removeAttr('disabled');
     send_status.removeClass('status-fail');
     send_status.addClass('status-success').text('Invoice sent successfully');
 };
@@ -17,6 +14,7 @@ function on_send_invoice_success() {
 function on_send_invoice_failure() {
     send_status.removeClass('status-success');
     send_status.addClass('status-fail').text('failed to send invoice');
+    $("#send-btn").removeAttr('disabled');
 };
 
 
@@ -71,7 +69,7 @@ function on_get_invoices_success(response) {
     });
 
     $("#send-btn").click(function(){
-        var params = {invoice_id : invoice_to_send, mailtext:$("#email_text").text()};
+        var params = {invoice_id : invoice_to_send, mailtext:$("#email_text").val()};
         send_status.text("Sending invoice.. please wait");
         $(this).attr('disabled', 'disabled');
         jsonrpc('invoice.send', params, on_send_invoice_success, on_send_invoice_failure);
