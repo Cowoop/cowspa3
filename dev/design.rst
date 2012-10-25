@@ -1,11 +1,12 @@
 Design goals
 ==================
 
-- Moeular code, clear code layers seperation especially frontend and backend
+- Modular code, clear code layers seperation especially frontend and backend
 - Web framework agnostic
 - Make API exposing and publishing easier
 - Reasonably fast on commodity hardware
 - scale horizontally without added complexities
+- Easy and enjoyable to maintain
 
 High level design
 =================
