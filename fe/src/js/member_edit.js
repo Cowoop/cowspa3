@@ -321,9 +321,9 @@ $('#next-tariff-form #end-vis').datepicker( {
     beforeShow: function( input ) {
         setTimeout(function() {
             var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
-            $( "<button>", {
-                text: "Clear",
-                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+            $('<button>', {
+                'text': 'Clear',
+                'class': 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
                 click: function() {
                     $.datepicker._clearDate( input );
                 }
@@ -430,10 +430,10 @@ $('#change-tariff-form #ends-vis').datepicker( {
     beforeShow: function( input ) {
         setTimeout(function() {
             var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
-            $( "<button>", {
-                text: "Clear",
-                class: 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
-                click: function() {
+            $('<button>', {
+                'text': 'Clear',
+                'class': 'ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all',
+                'click': function() {
                     $.datepicker._clearDate( input );
                 }
             }).appendTo( buttonPane );

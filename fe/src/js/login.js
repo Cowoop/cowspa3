@@ -1,7 +1,7 @@
-var ordered_roles = ['admin', 'director', 'host', 'member', 'new']
+var ordered_roles = ['admin', 'director', 'host', 'member', 'new'];
 var login_form = $('#login-form');
 var signup_form = $('#signup-form');
-var first_pages = {member: 'booking/new', host: 'dashboard', director: 'dashboard', new: 'dashboard', admin:'dashboard'}
+var first_pages = {'member': 'booking/new', 'host': 'dashboard', 'director': 'dashboard', 'new': 'dashboard', 'admin':'dashboard'};
 
 function construct_home_url(result) {
     var lang = 'en'; // hard coding language for now
@@ -76,7 +76,7 @@ function register() {
     action_status.text("Signing up...");
 };
 
-login_form.submit(function () {
+login_form.click(function () {
     $(this).checkValidity();
     login();
     return false;

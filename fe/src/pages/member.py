@@ -249,7 +249,7 @@ class EditProfile(BasePage):
         info.work = tf.DIV([tf.DIV("Work Phone", Class="label"), tf.C(Class="data-work")])
         info.home = tf.DIV([tf.DIV("Home Phone", Class="label"), tf.C(Class="data-home")])
         info.mobile = tf.DIV([tf.DIV("Mobile", Class="label"), tf.C(Class="data-mobile")])
-        info.line = tf.hr(Class="light")
+        info.line = tf.HR(Class="light")
 
         # Profile
         profile = tf.DIV(id="profile")
