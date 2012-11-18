@@ -809,7 +809,7 @@ form.vform {
     .field-help {
         font-style: italic;
         display: block;
-        font-size: medium;
+        font-size: 90%;
         color: lighten($main-color, 10%);
     }
     .buttons {
@@ -869,12 +869,11 @@ form.hform {
         line-height: 1.3em;
     };
     .field-help {
-        font-size: 95%;
+        font-size: 90%;
         font-style: italic;
         display: block;
         margin-left: 25%;
         padding-left: 1em;
-        font-size: medium;
         border-left: 1px dotted lighten($main-color, 60%);
     }
 }
