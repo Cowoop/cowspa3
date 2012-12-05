@@ -1,11 +1,11 @@
-var headers = ["Name", "Membership No.", "Tariff", "Mobile", "Email"]
+var headers = ["First Name", "Last Name", "Membership No.", "Tariff", "Mobile", "Email"]
 
 function on_get_member_list_success(response) {
     var data = response.result[1];
     var aaData = [];
     for (var i=0; i < data.length; i++) {
         var item = data[i];
-        aaData.push([item[1] + ' ' + item[2], item[3], item[6], item[4], item[5]]);
+        aaData.push([item[1], item[2], item[3], item[6], item[4], item[5]]);
     };
 
     $('#member_table').dataTable({
@@ -17,13 +17,14 @@ function on_get_member_list_success(response) {
     "bJQueryUI": true,
     "bDestroy": true,
     "sPaginationType": "full_numbers",
-    "aaSorting": [[ 0, "asc" ]],
+    "aaSorting": [[ 0, "asc" ], [1, 'asc']],
     "aoColumns": [
-            { "sTitle": headers[0], "sWidth": "25%" },
+            { "sTitle": headers[0], "sWidth": "15%" },
             { "sTitle": headers[1], "sWidth": "15%" },
-            { "sTitle": headers[2], "sWidth": "20%"},
-            { "sTitle": headers[3], "sWidth": "20%" },
-            { "sTitle": headers[4], "sWidth": "20%",
+            { "sTitle": headers[2], "sWidth": "12%" },
+            { "sTitle": headers[3], "sWidth": "23%" },
+            { "sTitle": headers[4], "sWidth": "15%" },
+            { "sTitle": headers[5], "sWidth": "20%",
                 "fnRender": function(obj) {
                     var email = obj.aData[obj.iDataColumn];
                     return "<A href='mailto:"+email+"'>"+email+"</A>";
