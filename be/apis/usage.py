@@ -26,13 +26,11 @@ def gen_slot_ids(resource_id, start, end):
 
     slot_ids = []
     delta = end - start
+    next_ = start
     fmt = str(resource_id) + '%Y%m%d%H%M'
-    start_m = int(start.strftime(fmt))
-    end_m = int(end.strftime(fmt))
-    next_m = start_m
-    while next_m < end_m:
-        slot_ids.append(next_m)
-        next_m += interval
+    while next_ < end:
+        slot_ids.append(next_.strftime(fmt))
+        next_ += datetime.timedelta(0, interval*60)
     return slot_ids
 
 def reserve_slots(booking_id, resource_id, start, end):
