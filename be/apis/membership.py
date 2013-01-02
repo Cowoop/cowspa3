@@ -2,16 +2,20 @@ import datetime
 import collections
 import calendar
 
-import commonlib.helpers
 import bases.app as applib
+import commonlib.helpers
+import commonlib.messaging.messages as messages
 import be.repository.access as dbaccess
 import be.apis.activities as activitylib
 import be.apis.usage as usagelib
 import be.apis.resource as resourcelib
 
+import be.apis.activities as activitylib
+
 resource_store = dbaccess.stores.resource_store
 bizplace_store = dbaccess.stores.bizplace_store
 membership_store = dbaccess.stores.membership_store
+member_store = dbaccess.stores.member_store
 
 membership = applib.Resource()
 memberships = applib.Collection()
@@ -106,6 +110,46 @@ def get_total_memberships(bizplace, starts, ends, by_tariff=False):
     """
     return dbaccess.get_count_of_memberships(bizplace, starts, ends, by_tariff)
 
+def autoextend(bizplace_id=None, month=None, year=None):
+    """
+    bizplace_id: int or None if None, tariffs of all bizplaces would be extended
+    Extends tariff with no end date for specified month (with year). If month is None, current month is assumed.
+    Supposed to be called from a monthly scheduled job
+    """
+    # find memberships with ends None or >= month, year
+    # for each membership:
+    #    find usage in next month
+    #    if no usage: create one
+    if not month or not year:
+        today = datetime.date.today()
+        month = today.month
+        year = today.year
+    monthstart = datetime.date(year, month, 1)
+    monthend = datetime.date(year, month, calendar.monthrange(year, month)[1])
+    crit = dict(ends=None) if not bizplace_id else dict(ends=None, bizplace_id=bizplace_id)
+    memberships = membership_store.get_by(crit=crit)
+    member_ids = [mb.member_id for mb in memberships]
+    members = dict((member.id, member) for member in member_store.get_many(member_ids, ['id', 'name', 'member']))
+    bizplaces = dict(bizplace_store.get_all(['id', 'name'], hashrows=False))
+
+    count = 0
+    extensions = collections.defaultdict(list)
+    for ms in memberships:
+        usages = dbaccess.find_usages_within_date_range(ms.tariff_id, ms.member_id, monthstart, monthend)
+        if not usages:
+            data = dict(resource_id=ms.tariff_id, resource_name=ms.tariff_name, resource_owner=ms.bizplace_id, member=ms.member_id, start_time=monthstart.isoformat(), end_time=monthend.isoformat())
+            usagelib.usage_collection.new(**data)
+            extensions[ms.bizplace_id].append(dict(tariff_id=ms.tariff_id, member=members[ms.member_id]))
+            count += 1
+
+    data = dict(month=month, year=year, extensions=extensions, count=count, bizplaces=bizplaces)
+    notification = messages.autoextend(data, dict(to=('Admin', 'cowspa.dev@gmail.com')))
+    notification.build()
+    notification.email()
+    #activitylib.add('scheduled_job', 'tariff_autoextend', data) #TODO
+
+    return True
+
 memberships.new = new
 memberships.bulk_new = bulk_new
 memberships.list = list_memberships
@@ -148,10 +192,11 @@ def update(membership_id, **mod_data):
     #Deleting usages which are out of starts<->ends
     current_date = datetime.datetime.now().date()
     current_months_last_date = datetime.date(current_date.year, current_date.month, calendar.monthrange(current_date.year, current_date.month)[1])
-    if not ends or ends>current_months_last_date:
+    if not ends or ends > current_months_last_date:
         usage_ends = current_months_last_date
     else:
         usage_ends = ends
+
     rev_usages = range(len(usages)-1, -1, -1)
     for i in rev_usages:
         if usages[i]['start_time'].date() < starts or usages[i]['end_time'].date() > usage_ends:

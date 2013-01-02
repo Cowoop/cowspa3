@@ -1,0 +1,22 @@
+to = "${ADMIN_EMAIL}"
+author = ('Server notofications', 'cowspa.dev@gmail.com')
+subject = "Application alert | Tariff Autoupdate"
+plain = """
+Admin,
+
+Here is the summary of scheduled Tariff Autoupdate.
+
+Details
+-------
+
+<% for bizplace_id, memberships in extensions.items() %>
+
+* ${ bizplaces[bizplace_id] } *
+
+    <% for mb in memberships %>
+    - ${mb['member'].name} (${mb['member'].member}): ${mb['tariff_name']}: ${mb['start_time']}
+    <% endfor %>
+
+<% endfor %>
+
+"""

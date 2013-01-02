@@ -23,6 +23,7 @@ member_id = None
 
 bizplace_host = member
 bizplace_member = odict(username='bruba', password='x', first_name='Bruce', last_name='Banner', email='hulk@localhost.localdomain', enabled=True)
+membership_member_id = None # used by membership tests
 
 more_member = [
     dict(username='pepa', password='secret', first_name='Peter', last_name='Parker', email='peter@localhost.localdomain'),

@@ -47,6 +47,7 @@ def test_search_member():
     data = test_data.bizplace_member
     data['bizplace_id'] = bizplace_id
     member_id = memberlib.member_collection.new(**data)
+    test_data.membership_member_id = member_id
     env.context.pgcursor.connection.commit()
     assert isinstance(member_id, (int, long)) == True
     term = test_data.bizplace_member['first_name'][:2]

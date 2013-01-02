@@ -36,6 +36,8 @@ class Message(object):
                 v = render(v, self.macros_data)
             self.message_dict[k] = v
     def email(self):
+        if getattr(env, '__cs_debug__', True):
+            print 'mail: from: %(author)s\nto: %(to)s\nsubject: %(subject)s\nplain:\n%(plain)s' % self.message_dict
         if env.config.mail['mail.on']:
             return env.mailer.send(**self.message_dict)
 
@@ -47,3 +49,5 @@ class invoice(Message):
     name = 'invoice'
 class booking_confirmation(Message):
     name = 'booking_confirmation'
+class autoextend(Message):
+    name = 'autoextend'
