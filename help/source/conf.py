@@ -201,8 +201,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Help.tex', u'Help Documentation',
-   u'Cowspa Dev Team', 'manual'),
+  ('index', 'Help.tex', u'Cowoop Documentation',
+   u'Cowoop', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -246,7 +246,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Help', u'Help',
-   u'Cowspa Dev Team', 'Help', 'Coworking business management software.',
+   u'Cowoop', 'Help', 'Coworking business management software.',
    'Miscellaneous'),
 ]
 
