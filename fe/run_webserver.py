@@ -102,14 +102,15 @@ def get_invoice(oid, format):
 
 @app.route('/app', methods=['GET', 'POST'])
 def api_dispatch():
-    method = request.json.get('method')
+    json = request.json or simplejson.loads(request.form.keys()[0])
+    method = json.get('method')
     context_id = None
     auth_token = None
     if method != 'login':
-        auth_token = request.cookies.get('authcookie')
-        context_id = int(request.cookies.get('current_ctx'), 0)
+        auth_token = request.cookies.get('authcookie') or json['params'].pop('_token', None)
+        context_id = int(request.cookies.get('current_ctx', json['params'].pop('_ctx', 0)))
     # ex. request.json: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
-    result = cowspa.dispatch(auth_token, context_id, request.json)
+    result = cowspa.dispatch(auth_token, context_id, json)
     return jsonify(result)
 
 
