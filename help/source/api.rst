@@ -26,7 +26,7 @@ Authentication
 API Call
 ========
 
-    - Date/time format follow iso8602 standard
+    - Date/time format follow iso8601 standard
     - each call supports two special parameters 
         - _ctx: context (bizplace_id in most cases)
         - _token: session id
