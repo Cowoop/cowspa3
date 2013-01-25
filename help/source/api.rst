@@ -1,5 +1,5 @@
 ==========================
-JSPRPC API Documentation
+JSONRPC API Documentation
 ==========================
 
 Prerequisites
