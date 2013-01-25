@@ -21,6 +21,7 @@ Contents:
     getting_started
     usage
     contribute
+    api
 
 Indices and tables
 ==================
