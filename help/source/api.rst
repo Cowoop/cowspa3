@@ -76,3 +76,10 @@ Get member invoicing preferences
 .. code-block:: python
 
     result = print proxy.call('invoicepref.info', owner=<member_id>, _token=token, _ctx=<ctx_id>)
+
+List available tariffs
+
+
+.. code-block:: python
+
+    result = proxy.call('tariffs.list', owner=<bizplace_id>, _token=token, _ctx=<ctx_id>)
